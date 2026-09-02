@@ -6,7 +6,6 @@ import Chip from '@mui/material/Chip'
 import FondPropre from '../ui-components/FondPropre'
 import { BandeauAccent } from '../ui-components/FondPropre'
 import TitreSection from '../ui-components/TitreSection'
-import FondHalos from '../ui-components/FondHalos'
 import FondDonnees from '../ui-components/FondDonnees'
 import { useContenu } from '../../lib/contenu'
 import { CELLULES_TAGGABLES } from '../../lib/contenu'
@@ -23,7 +22,7 @@ export default function Actualites() {
     <Box id="actualites" sx={{ py: { xs: 6, md: 8 }, position: 'relative', overflow: 'hidden' }}>
       <FondPropre variante="doux" />
       <BandeauAccent couleur="#1FAF72" />
-      <FondHalos couleurs={['rgba(31,175,114,.12)', 'rgba(245,166,35,.09)', 'rgba(37,99,235,.08)']} trame={false} />
+      <FondDonnees intensite={0.85} />
 
       <Container maxWidth={false} sx={{ position: 'relative', maxWidth: '1440px !important', px: { xs: 2.5, md: 4 } }}>
         <TitreSection

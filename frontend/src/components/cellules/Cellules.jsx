@@ -87,7 +87,7 @@ export default function Cellules() {
             onMouseLeave={() => setHover(false)}
           >
             <Box sx={{
-              position: 'relative', height: { xs: 300, md: 420 },
+              position: 'relative', height: { xs: 320, md: 420 },
               perspective: 1600, display: 'grid', placeItems: 'center',
             }}>
               {/* Ombre au sol de l'anneau */}

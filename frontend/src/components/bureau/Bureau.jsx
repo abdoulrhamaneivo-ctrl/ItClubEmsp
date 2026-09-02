@@ -7,7 +7,6 @@ import Button from '@mui/material/Button'
 import FondPropre from '../ui-components/FondPropre'
 import { BandeauAccent } from '../ui-components/FondPropre'
 import TitreSection from '../ui-components/TitreSection'
-import FondHalos from '../ui-components/FondHalos'
 import FondDonnees from '../ui-components/FondDonnees'
 import { IcMembres, IcCube, IcDocument, iconePoste } from '../ui-components/IconesClub'
 import { useBureau } from '../../hooks/useApi'
@@ -62,7 +61,7 @@ export default function Bureau() {
     <Box id="bureau" sx={{ py: { xs: 6, md: 8 }, position: 'relative', overflow: 'hidden' }}>
       <FondPropre variante="gris" />
       <BandeauAccent couleur="#1FAF72" />
-      <FondHalos couleurs={['rgba(31,175,114,.13)', 'rgba(37,99,235,.10)', 'rgba(245,166,35,.08)']} />
+      <FondDonnees intensite={0.85} />
 
       <Container maxWidth={false} sx={{ position: 'relative', maxWidth: '1440px !important', px: { xs: 2.5, md: 4 } }}>
         <TitreSection

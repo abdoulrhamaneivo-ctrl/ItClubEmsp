@@ -73,7 +73,7 @@ export default function Hero() {
           position: 'relative', maxWidth: '1440px !important', px: { xs: 2.5, md: 4 },
           height: '100%', minHeight: { xs: '92vh', md: '100vh' },
           display: 'flex', flexDirection: 'column', justifyContent: 'center',
-          pt: '72px', pb: '170px',
+          pt: '88px', pb: { xs: '190px', md: '170px' },
         }}
       >
         {/* Badge glassmorphism */}

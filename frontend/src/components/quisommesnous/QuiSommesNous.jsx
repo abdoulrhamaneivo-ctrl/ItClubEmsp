@@ -14,6 +14,7 @@ import { SectionTitleUnifiee, CarteUnifiee, gridStandard, colors, ButtonStyles, 
 import { usePresentation } from '../../hooks/useApi'
 import { mediasGalerie } from '../../data/galerie'
 import { MotFort, ParagrapheIntro } from '../ui-components/Typographie'
+import FondDonnees from '../ui-components/FondDonnees'
 import { ArrowRight } from '../ui-components/IconesClub'
 
 /**
@@ -38,6 +39,7 @@ export default function QuiSommesNous() {
       {/* Fond PROPRE — blanc */}
       <FondPropre variante="blanc" />
       <BandeauAccent couleur="#1FAF72" />
+      <FondDonnees intensite={0.85} />
 
       <Container maxWidth={false} sx={{ position: 'relative', maxWidth: '1440px !important', px: { xs: 2.5, md: 4 } }}>
         <motion.div
