@@ -9,6 +9,7 @@ import FondPropre from '../ui-components/FondPropre'
 import { BandeauAccent } from '../ui-components/FondPropre'
 import TitreSection from '../ui-components/TitreSection'
 import FondHalos from '../ui-components/FondHalos'
+import FondDonnees from '../ui-components/FondDonnees'
 import { IcCalendrier, IcRocket, IcMembres, IcLieu, IcFormation, IcTrophee } from '../ui-components/IconesClub'
 import { useActivites } from '../../hooks/useApi'
 

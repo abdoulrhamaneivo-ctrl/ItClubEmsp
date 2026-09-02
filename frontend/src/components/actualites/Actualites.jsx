@@ -7,6 +7,7 @@ import FondPropre from '../ui-components/FondPropre'
 import { BandeauAccent } from '../ui-components/FondPropre'
 import TitreSection from '../ui-components/TitreSection'
 import FondHalos from '../ui-components/FondHalos'
+import FondDonnees from '../ui-components/FondDonnees'
 import { useContenu } from '../../lib/contenu'
 import { CELLULES_TAGGABLES } from '../../lib/contenu'
 

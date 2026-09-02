@@ -32,8 +32,8 @@ export default function Hero() {
         background: 'linear-gradient(140deg,#0A1628 0%,#0D1B2A 42%,#0F5B3A 135%)',
       }}
     >
-      {/* ── Décor : FondDonnées (fibre + paquets + satellite) + orbes ── */}
-      <FondDonnees intensite={0.9} />
+      {/* ── Décor : fibres de données discrètes + orbes ── */}
+      <FondDonnees intensite={0.45} sansSatellite sansEnveloppes fibresSeules />
       <Box sx={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
         <motion.div
           animate={{ x: [0, 40, 0], y: [0, -30, 0] }}
