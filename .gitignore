@@ -1,0 +1,33 @@
+# Dépendances
+node_modules/
+**/node_modules/
+
+# Builds
+frontend/dist/
+**/dist/
+build/
+
+# Env & secrets
+.env
+.env.*
+**/.env*
+!.env.example
+
+# Notion token (jamais en clair)
+*.token
+
+# OS / éditeur
+.DS_Store
+Thumbs.db
+*.swp
+*~
+
+# Divers
+docs.zip
+*.log
+.claude/
+.hermes_sessions/
+
+# Caches
+.cache/
+.vite/

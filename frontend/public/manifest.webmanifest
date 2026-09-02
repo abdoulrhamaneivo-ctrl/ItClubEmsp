@@ -1,0 +1,13 @@
+{
+  "name": "IT-CLUB EMSP",
+  "short_name": "IT-CLUB",
+  "description": "Plateforme du IT-CLUB EMSP : annonces, cellules, activités et ressources.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fbfbfb",
+  "theme_color": "#1E1E1E",
+  "icons": [
+    { "src": "/logo192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/logo512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

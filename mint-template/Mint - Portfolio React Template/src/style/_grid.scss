@@ -1,0 +1,33 @@
+@use "sass:math";
+
+/* Mini-grille flexbox (remplace react-flexbox-grid) */
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  margin-left: -10px;
+  margin-right: -10px;
+
+  > [class*="col-"] {
+    padding-left: 10px;
+    padding-right: 10px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+}
+
+@for $i from 1 through 12 {
+  .col-xs-#{$i} { width: math.percentage(math.div($i, 12)); }
+}
+
+@media (min-width: 768px) {
+  @for $i from 1 through 12 {
+    .col-sm-#{$i} { width: math.percentage(math.div($i, 12)); }
+    .col-md-#{$i} { width: math.percentage(math.div($i, 12)); }
+  }
+}
+
+@media (min-width: 1024px) {
+  @for $i from 1 through 12 {
+    .col-lg-#{$i} { width: math.percentage(math.div($i, 12)); }
+  }
+}
