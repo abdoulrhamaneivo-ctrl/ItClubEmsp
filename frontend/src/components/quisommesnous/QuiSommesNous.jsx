@@ -230,19 +230,47 @@ export default function QuiSommesNous() {
           </Box>
         </motion.div>
 
-        {/* CTA */}
+        {/* CTA — carte d'engagement ancrée (pas de boutons flottants) */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.38, delay: 0.062, ease: [0.22, 1, 0.36, 1] }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '0px' }}
+          transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
         >
-          <Box sx={{ mt: 4, display: 'flex', gap: 3, justifyContent: 'center', flexWrap: 'wrap' }}>
-            <Button variant="contained" size="large" href="#adhesion" sx={{ bgcolor: '#1FAF72', '&:hover': { bgcolor: '#179963' }, px: 4, py: 1.4, fontWeight: 700 }}>
-              Tu te reconnais ? Rejoins-nous
-            </Button>
-            <Button variant="outlined" size="large" href="#documentation" sx={{ borderColor: '#1FAF72', color: '#1FAF72', px: 4, py: 1.4, fontWeight: 700 }}>
-              Voir la charte
-            </Button>
+          <Box sx={{
+            mt: 6, position: 'relative', overflow: 'hidden',
+            borderRadius: '22px',
+            background: 'linear-gradient(120deg,#0D1B2A 0%,#0F5B3A 100%)',
+            px: { xs: 3, md: 6 }, py: { xs: 4, md: 5 },
+            boxShadow: '0 18px 44px rgba(15,91,58,.25)',
+            textAlign: 'center',
+          }}>
+            {/* Orbes subtils */}
+            <Box sx={{ position: 'absolute', top: -70, left: '10%', width: 200, height: 200, borderRadius: '50%', background: 'radial-gradient(circle,rgba(31,175,114,.25),transparent 70%)', filter: 'blur(36px)' }} />
+            <Box sx={{ position: 'absolute', bottom: -80, right: '6%', width: 230, height: 230, borderRadius: '50%', background: 'radial-gradient(circle,rgba(154,251,215,.14),transparent 70%)', filter: 'blur(40px)' }} />
+            <Box sx={{ position: 'relative' }}>
+              <Typography sx={{ color: '#9AFBD7', fontWeight: 800, fontSize: '0.7rem', letterSpacing: '0.22em', textTransform: 'uppercase', mb: 1.5 }}>
+                Prêt à faire partie de l'aventure ?
+              </Typography>
+              <Typography sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 800, fontSize: { xs: '1.3rem', md: '1.8rem' }, color: '#fff', mb: 1.2 }}>
+                Tu te reconnais dans nos valeurs ?
+              </Typography>
+              <Typography variant="body2" sx={{ color: 'rgba(255,255,255,.75)', maxWidth: 520, mx: 'auto', mb: 3.5, lineHeight: 1.75 }}>
+                Rejoins un club où l'on apprend en construisant — et lis la charte pour connaître l'état d'esprit avant de t'inscrire.
+              </Typography>
+              <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', flexWrap: 'wrap' }}>
+                <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
+                  <Button variant="contained" size="large" href="#adhesion" sx={{ bgcolor: '#1FAF72', color: '#fff', '&:hover': { bgcolor: '#25C482' }, px: 4.5, py: 1.5, fontWeight: 800, borderRadius: 9999, boxShadow: '0 8px 24px rgba(31,175,114,.5)' }}>
+                    Rejoins-nous
+                  </Button>
+                </motion.div>
+                <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
+                  <Button variant="outlined" size="large" href="#documentation" sx={{ borderColor: 'rgba(255,255,255,.5)', color: '#fff', '&:hover': { borderColor: '#fff', bgcolor: 'rgba(255,255,255,.08)' }, px: 4, py: 1.5, fontWeight: 800, borderRadius: 9999 }}>
+                    Lire la charte
+                  </Button>
+                </motion.div>
+              </Box>
+            </Box>
           </Box>
         </motion.div>
       </Container>

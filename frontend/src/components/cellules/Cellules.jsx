@@ -1,4 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
+import useMediaQuery from '@mui/material/useMediaQuery'
+import { useTheme } from '@mui/material/styles'
 import { motion, AnimatePresence } from 'framer-motion'
 import Box from '@mui/material/Box'
 import Container from '@mui/material/Container'
@@ -28,10 +30,13 @@ function IconeCellule({ cellule, taille = 28, couleur = 'currentColor' }) {
  * affiche sa description complète + programme. Auto-rotation, pause au hover.
  */
 
-const RAYON = 380        // rayon de l'anneau (px)
+const RAYON_DESKTOP = 380        // rayon de l'anneau (px)
 const DUREE_TOUR = 4200  // ms par cellule en auto-rotation
 
 export default function Cellules() {
+  const theme = useTheme()
+  const mobile = useMediaQuery(theme.breakpoints.down('sm'))
+  const RAYON = mobile ? 250 : RAYON_DESKTOP
   const { data: cellules, loading, error } = useCellules()
   const [index, setIndex] = useState(0)
   const [hover, setHover] = useState(false)

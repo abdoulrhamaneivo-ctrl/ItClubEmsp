@@ -4,6 +4,7 @@ import Box from '@mui/material/Box'
 import Container from '@mui/material/Container'
 import Typography from '@mui/material/Typography'
 import Button from '@mui/material/Button'
+import FondDonnees from '../ui-components/FondDonnees'
 
 /**
  * Hero — style « feuille » : fond sombre immersif, badge glassmorphism,
@@ -31,7 +32,8 @@ export default function Hero() {
         background: 'linear-gradient(140deg,#0A1628 0%,#0D1B2A 42%,#0F5B3A 135%)',
       }}
     >
-      {/* ── Décor : orbes lumineux + trame de points ─────────────── */}
+      {/* ── Décor : FondDonnées (fibre + paquets + satellite) + orbes ── */}
+      <FondDonnees intensite={0.9} />
       <Box sx={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
         <motion.div
           animate={{ x: [0, 40, 0], y: [0, -30, 0] }}
@@ -178,39 +180,38 @@ export default function Hero() {
         </motion.div>
       </Container>
 
-      {/* ── Bande de stats translucide (pleine largeur) ──────────── */}
+      {/* ── Bande de stats — grille équilibrée, lisible ──────────── */}
       <motion.div
         initial={{ opacity: 0, y: 24 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.064, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-        style={{ position: 'absolute', left: 0, right: 0, bottom: 52, zIndex: 3 }}
+        transition={{ delay: 0.5, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+        style={{ position: 'absolute', left: 0, right: 0, bottom: 56, zIndex: 3 }}
       >
         <Box
           sx={{
-            bgcolor: 'rgba(10,22,40,.55)', backdropFilter: 'blur(14px)',
-            borderTop: '1px solid rgba(154,251,215,.16)',
-            borderBottom: '1px solid rgba(154,251,215,.16)',
+            bgcolor: 'rgba(10,22,40,.62)', backdropFilter: 'blur(14px)',
+            borderTop: '1px solid rgba(154,251,215,.2)',
+            borderBottom: '1px solid rgba(154,251,215,.2)',
           }}
         >
           <Container
             maxWidth={false}
-            sx={{ maxWidth: '1440px !important', px: { xs: 2.5, md: 4 }, py: 2.4, display: 'flex', alignItems: 'center' }}
+            sx={{ maxWidth: '1440px !important', px: { xs: 2, md: 4 }, py: { xs: 2.5, md: 3 } }}
           >
-            <Box sx={{ display: 'flex', flex: 1, flexWrap: 'wrap', alignItems: 'center', justifyContent: { xs: 'center', md: 'flex-start' } }}>
+            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: 'repeat(2,1fr)', md: 'repeat(4,1fr)' }, gap: { xs: 2.5, md: 0 }, alignItems: 'center' }}>
               {stats.map((s, i) => (
                 <Box
                   key={s.label}
                   sx={{
-                    px: { xs: 2.5, md: 4.5 },
-                    py: { xs: 1, md: 0 },
-                    borderLeft: i === 0 ? 'none' : '1px solid rgba(255,255,255,.16)',
+                    px: { xs: 1, md: 3 },
+                    borderLeft: { xs: 'none', md: i === 0 ? 'none' : '1px solid rgba(255,255,255,.18)' },
                     textAlign: 'center',
                   }}
                 >
-                  <Typography sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 800, fontSize: { xs: '1.4rem', md: '1.8rem' }, color: '#fff', fontVariantNumeric: 'tabular-nums', lineHeight: 1.15 }}>
+                  <Typography sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 800, fontSize: { xs: '1.75rem', md: '2.15rem' }, color: '#fff', fontVariantNumeric: 'tabular-nums', lineHeight: 1.2 }}>
                     {s.valeur}
                   </Typography>
-                  <Typography sx={{ color: 'rgba(255,255,255,.62)', fontSize: '0.66rem', fontWeight: 700, letterSpacing: '0.18em', textTransform: 'uppercase' }}>
+                  <Typography sx={{ color: 'rgba(255,255,255,.85)', fontSize: { xs: '0.66rem', md: '0.74rem' }, fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', lineHeight: 1.5 }}>
                     {s.label}
                   </Typography>
                 </Box>
@@ -218,7 +219,7 @@ export default function Hero() {
             </Box>
           </Container>
         </Box>
-        </motion.div>
+      </motion.div>
 
         {/* ── Feuille claire arrondie qui ouvre la vitrine ─────────── */}
         <Box

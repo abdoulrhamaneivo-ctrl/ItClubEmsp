@@ -199,11 +199,11 @@ function CartePoste({ m, ouvert, onToggle, moyenne = false }) {
         <Box sx={{ flex: 1, minWidth: 0 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8, mb: 0.3 }}>
             <I taille={13} couleur={m.couleur} />
-            <Typography sx={{ color: m.couleur, fontWeight: 800, fontSize: '0.62rem', letterSpacing: '0.1em', textTransform: 'uppercase', lineHeight: 1.3 }}>
+            <Typography noWrap sx={{ color: m.couleur, fontWeight: 800, fontSize: '0.62rem', letterSpacing: '0.1em', textTransform: 'uppercase', lineHeight: 1.3, maxWidth: '100%' }}>
               {m.poste}
             </Typography>
           </Box>
-          <Typography sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 800, fontSize: moyenne ? '1rem' : '0.9rem', color: '#111827', lineHeight: 1.3 }}>
+          <Typography sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 800, fontSize: moyenne ? '0.98rem' : '0.88rem', color: '#111827', lineHeight: 1.35 }}>
             {m.nom}
           </Typography>
         </Box>
