@@ -1,5 +1,9 @@
-import { lazy, Suspense } from 'react'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { lazy, Suspense, useEffect } from 'react'
+import { motion } from 'framer-motion'
+import Button from '@mui/material/Button'
+import Box from '@mui/material/Box'
+import Typography from '@mui/material/Typography'
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
 import { ThemeProvider, CssBaseline } from '@mui/material'
 import theme from '../theme'
 import BandeauDefilant from '../components/ui-components/BandeauDefilant'
@@ -52,12 +56,81 @@ function Vitrine() {
   )
 }
 
+/* ── Fallback lazy : même splash que index.html, continuité visuelle ── */
+function FallbackPage() {
+  return (
+    <Box sx={{
+      minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center',
+      background: 'linear-gradient(140deg,#0A1628,#0D1B2A 42%,#0F5B3A)',
+    }}>
+      <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 0.9, ease: 'linear' }}
+        style={{ width: 42, height: 42, borderRadius: '50%', border: '3px solid rgba(154,251,215,.25)', borderTopColor: '#1FAF72' }} />
+    </Box>
+  )
+}
+
+/* ── Page 404 — cohérente avec la charte, jamais de blanc ── */
+function Page404() {
+  return (
+    <Box sx={{
+      minHeight: '100vh', display: 'flex', flexDirection: 'column',
+      alignItems: 'center', justifyContent: 'center', gap: 2.5,
+      background: 'linear-gradient(140deg,#0A1628,#0D1B2A 42%,#0F5B3A 135%)',
+      px: 3, textAlign: 'center',
+    }}>
+      <motion.div
+        initial={{ scale: 0.6, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ type: 'spring', stiffness: 200, damping: 16 }}
+      >
+        <Typography sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 800, fontSize: { xs: '4.5rem', md: '7rem' }, color: '#9AFBD7', lineHeight: 1 }}>
+          404
+        </Typography>
+      </motion.div>
+      <Typography sx={{ color: '#fff', fontFamily: "'Orbitron',sans-serif", fontWeight: 700, fontSize: { xs: '1.1rem', md: '1.4rem' } }}>
+        Cette page n'existe pas (encore).
+      </Typography>
+      <Typography variant="body2" sx={{ color: 'rgba(255,255,255,.7)', maxWidth: 420, lineHeight: 1.8 }}>
+        Le lien est peut-être obsolète — retourne à l'accueil, tout le club t'y attend.
+      </Typography>
+      <Button variant="contained" href="/" size="large" sx={{
+        bgcolor: '#1FAF72', color: '#fff', '&:hover': { bgcolor: '#25C482' },
+        fontWeight: 800, borderRadius: 9999, px: 4, py: 1.4, mt: 1.5,
+        boxShadow: '0 8px 24px rgba(31,175,114,.45)',
+      }}>
+        ← Retour à l'accueil
+      </Button>
+    </Box>
+  )
+}
+
+/* ── ScrollToTop : remonte en haut à chaque changement de page,
+      sauf s'il y a un #hash (alors le navigateur gère l'ancre) ── */
+function ScrollToTop() {
+  const { pathname, hash } = useLocation()
+  useEffect(() => {
+    if (!hash) window.scrollTo({ top: 0, behavior: 'instant' in document.documentElement.style ? 'instant' : 'auto' })
+    // Titre d'onglet lisible par page — historique navigateur clair
+    const titres = {
+      '/': 'IT-CLUB EMSP — Ensemble, innovons, communiquons',
+      '/galerie': 'Galerie — IT-CLUB EMSP',
+      '/login': 'Connexion — IT-CLUB EMSP',
+      '/espace': 'Mon espace — IT-CLUB EMSP',
+      '/backoffice': 'Back-office — IT-CLUB EMSP',
+    }
+    document.title = titres[pathname] ?? 'IT-CLUB EMSP'
+  }, [pathname, hash])
+  return null
+}
+
 export default function AppRoutes() {
   return (
     <BrowserRouter>
-      <Suspense fallback={null}>
+      <ScrollToTop />
+      <Suspense fallback={<FallbackPage />}>
       <Routes>
         <Route path="/" element={<Vitrine />} />
+        <Route path="*" element={<Page404 />} />
         <Route path="/galerie" element={<><Navbar /><Galerie /></>} />
         <Route path="/login" element={<Login />} />
         <Route
