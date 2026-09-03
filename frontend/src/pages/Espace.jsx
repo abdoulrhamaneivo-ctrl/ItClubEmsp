@@ -70,6 +70,7 @@ function Palette({ ouvert, fermer, user, estBureau, scrollTo, logout }) {
   const [q, setQ] = useState('')
   const [sel, setSel] = useState(0)
   const inputRef = useRef(null)
+  const focusPrecedent = useRef(null)
 
   const items = useMemo(() => {
     const base = [
@@ -90,7 +91,17 @@ function Palette({ ouvert, fermer, user, estBureau, scrollTo, logout }) {
     return base.filter((it) => (it.label + ' ' + (it.mots ?? '')).toLowerCase().includes(norm))
   }, [q, estBureau])
 
-  useEffect(() => { if (ouvert) { setQ(''); setSel(0); setTimeout(() => inputRef.current?.focus(), 60) } }, [ouvert])
+  // Règle modale : mémoriser le focus, le donner à l'input, le RESTAURER à la fermeture
+  useEffect(() => {
+    if (ouvert) {
+      focusPrecedent.current = document.activeElement
+      setQ(''); setSel(0)
+      setTimeout(() => inputRef.current?.focus(), 60)
+    } else if (focusPrecedent.current) {
+      focusPrecedent.current?.focus?.()
+      focusPrecedent.current = null
+    }
+  }, [ouvert])
   useEffect(() => { setSel(0) }, [q])
 
   const executer = useCallback((it) => {
@@ -102,8 +113,8 @@ function Palette({ ouvert, fermer, user, estBureau, scrollTo, logout }) {
   }, [fermer, scrollTo, logout])
 
   const surTouche = (e) => {
-    if (e.key === 'ArrowDown') { e.preventDefault(); setSel((s) => Math.min(s + 1, items.length - 1)) }
-    else if (e.key === 'ArrowUp') { e.preventDefault(); setSel((s) => Math.max(s - 1, 0)) }
+    if (e.key === 'ArrowDown') { e.preventDefault(); setSel((s) => (s + 1) % items.length) }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); setSel((s) => (s - 1 + items.length) % items.length) }
     else if (e.key === 'Enter') { e.preventDefault(); executer(items[sel]) }
     else if (e.key === 'Escape') fermer()
   }
@@ -245,7 +256,7 @@ export default function Espace() {
   ]
 
   const BoutonDock = ({ actif, label, onClick, children, href }) => (
-    <Tooltip title={label} placement="left" arrow>
+    <Tooltip title={label} placement="left" arrow enterDelay={400} enterNextDelay={200}>
       <motion.div whileHover={{ scale: 1.14, y: -2 }} whileTap={{ scale: 0.92 }}>
         <IconButton
           href={href} onClick={onClick} aria-label={label}
@@ -312,10 +323,12 @@ export default function Espace() {
             <Avatar sx={{ width: 32, height: 32, bgcolor: '#1FAF72', fontFamily: "'Orbitron',sans-serif", fontWeight: 800, fontSize: 14, border: '2px solid rgba(154,251,215,.4)' }}>
               {initiale}
             </Avatar>
-            <IconButton size="small" onClick={logout} aria-label="Déconnexion"
+            <Tooltip title="Déconnexion" arrow enterDelay={400}>
+            <IconButton size="small" onClick={() => { if (window.confirm('Se déconnecter de ton espace ?')) logout() }} aria-label="Déconnexion"
               sx={{ color: '#fff', border: '1px solid rgba(255,255,255,.3)', borderRadius: '10px', px: 1.2 }}>
               <CloseIcon fontSize="small" />
             </IconButton>
+          </Tooltip>
           </Box>
         </Box>
       </motion.div>
@@ -450,11 +463,11 @@ export default function Espace() {
 
         {/* ═══ NOTIFICATIONS ════════════════════════════════════ */}
         <Section refE={refs.notifications} id="notifications" titre="notifications" sousTitre="Ce que tu as manqué" icone={<NotificationsIcon sx={{ fontSize: 18 }} />}>
-          {[
+          {([
             { id: 1, titre: 'Ta place au Hackathon est en liste d’attente', date: 'il y a 2h', couleur: '#2563EB' },
             { id: 2, titre: 'Session Cellule Web — vendredi 15h, salle info 2', date: 'il y a 1j', couleur: '#1FAF72' },
             { id: 3, titre: 'Le PV du 7 mai est disponible dans la Documentation', date: 'il y a 3j', couleur: '#F5A623' },
-          ].map((n, i) => (
+          ]).map((n, i) => (
             <Box key={n.id} sx={{
               display: 'flex', gap: 1.8, px: 2.6, py: 2.1,
               borderBottom: i < 2 ? '1px solid #F0F4F2' : 'none',

@@ -55,3 +55,32 @@ button:focus-visible,
   background: rgba(31, 175, 114, .22);
   color: #0D1B2A;
 }
+
+
+/* ── Détails UX transversaux ────────────────────────────── */
+
+/* Autofill MUI/Chrome : garder la charte (sinon fond bleu navigateur) */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px #fff inset;
+  -webkit-text-fill-color: #111827;
+  transition: background-color 9999s ease-in-out 0s;
+}
+
+/* Scrollbar palette/results : fine et discrète sur fond sombre */
+.MuiModal-root ::-webkit-scrollbar,
+[data-palette] ::-webkit-scrollbar {
+  width: 6px;
+}
+.MuiModal-root ::-webkit-scrollbar-thumb {
+  background: rgba(154, 251, 215, .25);
+  border-radius: 3px;
+}
+
+/* Empêcher le zoom auto iOS sur focus input (16px minimum) */
+@media (max-width: 768px) {
+  input, select, textarea {
+    font-size: 16px !important;
+  }
+}

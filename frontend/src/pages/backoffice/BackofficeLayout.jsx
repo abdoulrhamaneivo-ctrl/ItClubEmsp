@@ -55,7 +55,7 @@ export default function BackofficeLayout() {
         const I = m.Icone ?? iconeModule(m.path)
         const actif = location.pathname.includes(m.path)
         return (
-          <Tooltip key={m.path} title={m.label} placement="left" arrow>
+          <Tooltip key={m.path} title={m.label} placement="left" arrow enterDelay={400} enterNextDelay={200}>
             <motion.div whileHover={{ scale: 1.14, y: -2 }} whileTap={{ scale: 0.92 }}>
               <IconButton
                 component={NavLink}
@@ -132,7 +132,7 @@ export default function BackofficeLayout() {
             <Avatar sx={{ width: 32, height: 32, bgcolor: '#1FAF72', fontFamily: "'Orbitron',sans-serif", fontWeight: 800, fontSize: 14, border: '2px solid rgba(154,251,215,.4)' }}>
               {(user?.nom || 'M')[0]}
             </Avatar>
-            <IconButton size="small" onClick={logout} aria-label="Déconnexion"
+            <IconButton size="small" onClick={() => { if (window.confirm('Se déconnecter du back-office ?')) logout() }} aria-label="Déconnexion"
               sx={{ color: '#fff', border: '1px solid rgba(255,255,255,.3)', borderRadius: '10px', px: 1.2 }}>
               <CloseIcon fontSize="small" />
             </IconButton>
