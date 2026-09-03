@@ -17,8 +17,7 @@ import Avatar from '@mui/material/Avatar'
 import Container from '@mui/material/Container'
 import Divider from '@mui/material/Divider'
 import { useAuth, hasRole } from '../../stores/auth'
-import { modulesPour, modulesBackoffice } from '../../data/backoffice'
-import { iconePoste } from '../../components/ui-components/IconesClub'
+import { modulesPour, modulesBackoffice, iconeModule } from '../../data/backoffice'
 import TachesNotion from './TachesNotion'
 import EditeurFormulaire from './EditeurFormulaire'
 import GestionContenu from './GestionContenu'
@@ -32,19 +31,9 @@ import GestionContenu from './GestionContenu'
 
 const drawerWidth = 264
 
-/* Icône par module (matching sur le path — léger et sans dépendance). */
-const iconesModules = {
-  annonces: 'communication', dashboard: 'dashboard', 'projets-suivi': 'innovation',
-  'taches-notion': 'secret', 'comptes-rendus': 'secret', 'registre-membres': 'membres',
-  cellules: 'cellules', communication: 'communication', evenements: 'activites',
-  adhesion: 'rocket', contenu: 'communication', formulaire: 'secret',
-  opportunites: 'partenariats', calendrier: 'programmation', ateliers: 'programmation',
-  admin: 'president',
-}
-
 function IconeModule({ path, couleur = '#0F5B3A', taille = 19 }) {
-  const I = iconePoste(iconesModules[path] ?? '')
-  return <I taille={taille} couleur={couleur} />
+  const I = iconeModule(path)
+  return <I size={taille} color={couleur} strokeWidth={1.8} />
 }
 
 export default function BackofficeLayout() {
@@ -191,7 +180,7 @@ export default function BackofficeLayout() {
                     m.path === 'taches-notion' ? <TachesNotion /> :
                     m.path === 'formulaire' ? <EditeurFormulaire /> :
                     m.path === 'contenu' ? <GestionContenu /> :
-                    <PlaceholderModule titre={m.label} desc={m.desc} roles={m.roles} />
+                    <PlaceholderModule titre={m.label} desc={m.desc} roles={m.roles} path={m.path} />
                   } />
               ))}
             </Routes>
@@ -203,7 +192,7 @@ export default function BackofficeLayout() {
 }
 
 /* ── Placeholder utile : roadmap du module + statut ─────────── */
-function PlaceholderModule({ titre, desc, roles }) {
+function PlaceholderModule({ titre, desc, roles, path }) {
   return (
     <Container maxWidth="md" sx={{ py: { xs: 1, md: 2 } }}>
       <Box sx={{
@@ -217,7 +206,7 @@ function PlaceholderModule({ titre, desc, roles }) {
             display: 'grid', placeItems: 'center',
             boxShadow: '0 8px 20px rgba(31,175,114,.35)',
           }}>
-            <IconeModule path={titre} couleur="#fff" taille={24} />
+            <IconeModule path={path} couleur="#fff" taille={24} />
           </Box>
           <Box>
             <Typography sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 800, fontSize: { xs: '1.2rem', md: '1.5rem' }, color: '#111827' }}>
@@ -256,9 +245,40 @@ function PlaceholderModule({ titre, desc, roles }) {
           ))}
         </Box>
 
-        <Typography variant="caption" sx={{ display: 'block', mt: 2.5, color: '#5A6B63', lineHeight: 1.7, fontStyle: 'italic' }}>
-          Ce module est réservé à ton poste : les autres membres ne le voient pas dans leur menu.
-        </Typography>
+        {/* Terminal signature du club */}
+        <Box sx={{
+          mt: 3, borderRadius: '12px', overflow: 'hidden',
+          bgcolor: '#0D1B2A', border: '1px solid rgba(154,251,215,.25)',
+          boxShadow: '0 10px 26px rgba(13,27,42,.3)',
+        }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.7, px: 1.6, py: 1, bgcolor: 'rgba(255,255,255,.06)' }}>
+            {['#FF5F57', '#FEBC2E', '#28C840'].map((c) => (
+              <Box key={c} sx={{ width: 9, height: 9, borderRadius: '50%', bgcolor: c }} />
+            ))}
+            <Typography sx={{ ml: 1, color: 'rgba(255,255,255,.5)', fontSize: '0.66rem', fontFamily: "'JetBrains Mono',monospace" }}>
+              itclub@emsp:~
+            </Typography>
+          </Box>
+          <Box sx={{ p: 2, fontFamily: "'JetBrains Mono',monospace", fontSize: '0.74rem', lineHeight: 1.9 }}>
+            <Typography component="div" sx={{ color: '#9AFBD7', fontFamily: 'inherit', fontSize: 'inherit' }}>
+              <span style={{ color: '#1FAF72' }}>$</span> npm run module -- {path}
+            </Typography>
+            <Typography component="div" sx={{ color: 'rgba(255,255,255,.45)', fontFamily: 'inherit', fontSize: 'inherit' }}>
+              → design système du club : <span style={{ color: '#FEBC2E' }}>prêt</span>
+            </Typography>
+            <Typography component="div" sx={{ color: 'rgba(255,255,255,.45)', fontFamily: 'inherit', fontSize: 'inherit' }}>
+              → contrat API doc 04 : <span style={{ color: '#FEBC2E' }}>en attente du backend Django</span>
+            </Typography>
+            <Typography component="div" sx={{ color: 'rgba(255,255,255,.45)', fontFamily: 'inherit', fontSize: 'inherit' }}>
+              → permissions {roles.join(' · ')} : <span style={{ color: '#28C840' }}>actives</span>
+            </Typography>
+            <motion.div
+              animate={{ opacity: [1, 0, 1] }}
+              transition={{ duration: 1.1, repeat: Infinity, ease: 'steps(1)' }}
+              style={{ display: 'inline-block', width: 7, height: 13, bgcolor: '#1FAF72', background: '#1FAF72', marginTop: 4 }}
+            />
+          </Box>
+        </Box>
       </Box>
     </Container>
   )
