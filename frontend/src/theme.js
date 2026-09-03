@@ -27,11 +27,18 @@ const theme = createTheme({
   },
   typography: {
     fontFamily: "'Poppins', sans-serif",
+    // Lisibilité desktop : corps 16-17px, interlignes généreux, gris assez foncé
+    body1: { fontSize: '1.02rem', lineHeight: 1.8, color: '#374151' },
+    body2: { fontSize: '0.94rem', lineHeight: 1.75, color: '#4B5563' },
+    caption: { fontSize: '0.72rem', lineHeight: 1.6, color: '#5A6B63' },
     h1: { fontFamily: "'Orbitron', sans-serif", fontWeight: 800 },
     h2: { fontFamily: "'Orbitron', sans-serif", fontWeight: 800, letterSpacing: '0.02em' },
     h3: { fontFamily: "'Orbitron', sans-serif", fontWeight: 700 },
     h4: { fontFamily: "'Orbitron', sans-serif", fontWeight: 700 },
     h5: { fontWeight: 600 },
+    h6: { fontWeight: 700 },
+    subtitle1: { fontSize: '1.05rem', lineHeight: 1.7, fontWeight: 600, color: '#111827' },
+    subtitle2: { fontSize: '0.9rem', lineHeight: 1.6, fontWeight: 700, color: '#111827' },
     button: { textTransform: 'none', fontWeight: 700 },
   },
   shape: { borderRadius: 14 },

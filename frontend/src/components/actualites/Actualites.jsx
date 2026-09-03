@@ -67,7 +67,7 @@ export default function Actualites() {
                       size="small"
                       sx={{ bgcolor: '#F0F5F2', color: '#374151', fontWeight: 700, fontSize: '0.64rem', height: 22 }}
                     />
-                    <Typography variant="caption" sx={{ color: '#6B7280', fontWeight: 600, ml: 'auto' }}>
+                    <Typography variant="caption" sx={{ color: '#4B5563', fontWeight: 600, ml: 'auto' }}>
                       {new Date(n.date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
                     </Typography>
                   </Box>

@@ -110,8 +110,8 @@ export default function Documentation() {
                         px: { xs: 2.2, md: 3 }, py: 2.2,
                         borderTop: i === 0 ? 'none' : '1px solid #EDF2EF',
                         textDecoration: 'none',
-                        transition: 'background 200ms ease',
-                        '&:hover': { bgcolor: '#F6FBF9' },
+                        transition: 'background 180ms ease',
+                        '&:hover': { bgcolor: '#EDF7F1' },
                       }}
                     >
                       {/* Icône fichier */}

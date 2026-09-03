@@ -152,14 +152,14 @@ export default function Activites() {
                               <Chip label={a.type} size="small" sx={{ bgcolor: '#F5F7F6', color: '#4B5563', fontWeight: 800, fontSize: '0.66rem', height: 22 }} />
                               <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.6 }}>
                                 <IcLieu taille={13} couleur="#6B7280" />
-                                <Typography variant="caption" sx={{ color: '#4B5563', fontWeight: 600 }}>
+                                <Typography variant="caption" sx={{ color: '#374151', fontWeight: 600, fontSize: '0.78rem' }}>
                                   {a.lieu}
                                 </Typography>
                               </Box>
                               {a.places && (
                                 <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.6 }}>
                                   <IcMembres taille={13} couleur="#6B7280" />
-                                  <Typography variant="caption" sx={{ color: '#4B5563', fontWeight: 600 }}>
+                                  <Typography variant="caption" sx={{ color: '#374151', fontWeight: 600, fontSize: '0.78rem' }}>
                                     {a.places} places
                                   </Typography>
                                 </Box>

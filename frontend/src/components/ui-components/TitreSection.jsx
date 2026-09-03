@@ -25,14 +25,14 @@ export default function TitreSection({ badge, titre, sousTitre, couleur = '#1FAF
           component="h2"
           sx={{
             fontFamily: "'Orbitron', sans-serif", fontWeight: 700,
-            fontSize: { xs: '1.75rem', md: '2.5rem' }, lineHeight: 1.2,
+            fontSize: { xs: '1.75rem', md: '2.6rem' }, lineHeight: 1.2,
             color: '#111827', mb: sousTitre ? 2 : 0,
           }}
         >
           {titre}
         </Typography>
         {sousTitre && (
-          <Typography color="textSecondary" sx={{ maxWidth: maxWidthTexte, lineHeight: 1.8, mx: 'auto', fontSize: { xs: '0.98rem', md: '1.05rem' } }}>
+          <Typography color="textSecondary" sx={{ maxWidth: maxWidthTexte, lineHeight: 1.8, mx: 'auto', fontSize: { xs: '0.98rem', md: '1.1rem' } }}>
             {sousTitre}
           </Typography>
         )}
