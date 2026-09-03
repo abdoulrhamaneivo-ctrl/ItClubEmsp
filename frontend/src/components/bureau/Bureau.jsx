@@ -82,7 +82,7 @@ export default function Bureau() {
             onMouseEnter={() => setHover(true)}
             onMouseLeave={() => setHover(false)}
             sx={{
-              position: 'relative', height: { xs: 340, sm: 380, md: HAUTEUR_CARTE + 40 },
+              position: 'relative', height: { xs: 340, sm: 380, md: 420, lg: HAUTEUR_CARTE + 40 },
               display: 'grid', placeItems: 'center',
               perspective: 1600,
               cursor: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='17' fill='rgba(15,91,58,.9)'/%3E%3Ctext x='20' y='26' text-anchor='middle' font-size='18' fill='white' font-family='sans-serif'%3E%E2%80%BA%E2%80%BA%3C/text%3E%3C/svg%3E") 20 20, pointer`,
@@ -258,7 +258,7 @@ function VisuelMembre({ membre: m, compact = false }) {
 /* ── Stat rapide ────────────────────────────────────────────── */
 function StatRapide({ label, valeur, icone, couleur }) {
   return (
-    <Box sx={{ textAlign: 'center', p: { xs: 2, md: 3 }, minWidth: 130, bgcolor: '#fff', borderRadius: 3, border: '1px solid #E5E7EB', boxShadow: '0 2px 12px rgba(0,0,0,.04)' }}>
+    <Box sx={{ textAlign: 'center', p: { xs: 1.5, md: 3 }, minWidth: { xs: 108, sm: 130 }, bgcolor: '#fff', borderRadius: 3, border: '1px solid #E5E7EB', boxShadow: '0 2px 12px rgba(0,0,0,.04)' }}>
       <Box sx={{ width: 46, height: 46, borderRadius: '12px', mx: 'auto', mb: 1, bgcolor: `${couleur}14`, display: 'grid', placeItems: 'center' }}>
         {icone}
       </Box>

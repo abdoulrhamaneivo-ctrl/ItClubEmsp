@@ -126,14 +126,14 @@ function Palette({ ouvert, fermer, user, estBureau, scrollTo, logout }) {
           initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
           transition={{ duration: 0.16 }}
           onClick={fermer}
-          style={{ position: 'fixed', inset: 0, zIndex: 1500, background: 'rgba(5,12,22,.72)', backdropFilter: 'blur(8px)', display: 'flex', justifyContent: 'center', alignItems: 'flex-start', paddingTop: '14vh' }}
+          style={{ position: 'fixed', inset: 0, zIndex: 1500, background: 'rgba(5,12,22,.72)', backdropFilter: 'blur(8px)', display: 'flex', justifyContent: 'center', alignItems: 'flex-start', paddingTop: 'min(14vh, 110px)' }}
         >
           <motion.div
             initial={{ scale: 0.96, y: -12 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.97, y: -8 }}
             transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
             onClick={(e) => e.stopPropagation()}
             onKeyDown={surTouche}
-            style={{ width: 'min(580px, 92vw)' }}
+            style={{ width: 'min(580px, 94vw)' }}
           >
             <Box sx={{
               bgcolor: 'rgba(13,27,42,.97)', borderRadius: '18px',
@@ -152,7 +152,7 @@ function Palette({ ouvert, fermer, user, estBureau, scrollTo, logout }) {
                 <Chip label="ESC" size="small" sx={{ bgcolor: 'rgba(154,251,215,.1)', color: 'rgba(154,251,215,.6)', fontFamily: "'JetBrains Mono',monospace", fontSize: '0.58rem', height: 20 }} />
               </Box>
               {/* Résultats */}
-              <Box sx={{ maxHeight: '46vh', overflowY: 'auto', p: 1 }}>
+              <Box sx={{ maxHeight: 'min(46vh, 380px)', overflowY: 'auto', p: 1 }}>
                 {items.length === 0 && (
                   <Typography sx={{ color: 'rgba(255,255,255,.45)', textAlign: 'center', py: 3, fontFamily: "'JetBrains Mono',monospace", fontSize: '0.8rem' }}>
                     Aucun résultat pour « {q} »
@@ -304,7 +304,7 @@ export default function Espace() {
         }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.4, minWidth: 0 }}>
             <Box component="img" src="/logo-itclub.jpg" alt="" sx={{ width: 30, height: 30, borderRadius: 1, objectFit: 'cover' }} />
-            <Typography noWrap sx={{ color: '#fff', fontWeight: 800, fontSize: '0.9rem', fontFamily: "'Orbitron',sans-serif" }}>
+            <Typography noWrap sx={{ color: '#fff', fontWeight: 800, fontSize: { xs: '0.78rem', md: '0.9rem' }, fontFamily: "'Orbitron',sans-serif" }}>
               EMSP<span style={{ color: '#1FAF72' }}>://</span>
               <span style={{ color: '#9AFBD7', fontFamily: "'JetBrains Mono',monospace", fontWeight: 600, fontSize: '0.8rem' }}>espace</span>
             </Typography>
@@ -402,7 +402,7 @@ export default function Espace() {
       {/* ── CONTENU ──────────────────────────────────────────── */}
       <Container maxWidth={false} sx={{
         position: 'relative', maxWidth: '1200px !important',
-        px: { xs: 2.5, md: 4 }, pt: { xs: 10, md: 12 }, pb: { xs: 12, md: 10 },
+        px: { xs: 2.5, md: 4 }, pt: { xs: 10, md: 12 }, pb: { xs: 14, lg: 10 },
         minHeight: '100vh',
       }}>
         {/* ═══ ACCUEIL — carte membre ═══════════════════════════ */}
@@ -659,7 +659,7 @@ export default function Espace() {
         style={{ position: 'fixed', bottom: 14, left: 14, right: 102, zIndex: 1100 }}
       >
         <Box sx={{
-          display: { xs: 'none', md: 'flex' }, alignItems: 'center', gap: 2.5,
+          display: { xs: 'none', lg: 'flex' }, alignItems: 'center', gap: 2.5,
           bgcolor: 'rgba(13,27,42,.72)', backdropFilter: 'blur(14px)',
           border: '1px solid rgba(154,251,215,.16)', borderRadius: '12px',
           px: 2, py: 0.9,

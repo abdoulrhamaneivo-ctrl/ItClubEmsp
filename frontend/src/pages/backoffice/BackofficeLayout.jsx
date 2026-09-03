@@ -114,7 +114,7 @@ export default function BackofficeLayout() {
               <MenuIcon fontSize="small" />
             </IconButton>
             <Box component="img" src="/logo-itclub.jpg" alt="" sx={{ width: 30, height: 30, borderRadius: 1, objectFit: 'cover' }} />
-            <Typography noWrap sx={{ color: '#fff', fontWeight: 800, fontSize: '0.9rem', fontFamily: "'Orbitron',sans-serif" }}>
+            <Typography noWrap sx={{ color: '#fff', fontWeight: 800, fontSize: { xs: '0.78rem', md: '0.9rem' }, fontFamily: "'Orbitron',sans-serif" }}>
               EMSP<span style={{ color: '#1FAF72' }}>://</span>
               <span style={{ color: '#9AFBD7', fontFamily: "'JetBrains Mono',monospace", fontWeight: 600, fontSize: '0.8rem' }}>
                 {moduleActif ? moduleActif.path : 'home'}
@@ -254,7 +254,7 @@ export default function BackofficeLayout() {
       {/* ── CONTENU plein écran (sans sidebar !) ────────────── */}
       <Container maxWidth={false} sx={{
         position: 'relative', maxWidth: '1280px !important',
-        px: { xs: 2, md: 4 }, pt: { xs: 10, md: 12 }, pb: { xs: 12, md: 8 },
+        px: { xs: 2, md: 4 }, pt: { xs: 10, md: 12 }, pb: { xs: 14, lg: 8 },
         minHeight: '100vh',
       }}>
         <AnimatePresence mode="wait">
@@ -288,7 +288,7 @@ export default function BackofficeLayout() {
         style={{ position: 'fixed', bottom: 14, left: 14, right: DOCK_W + 28, zIndex: 1100 }}
       >
         <Box sx={{
-          display: { xs: 'none', md: 'flex' }, alignItems: 'center', gap: 2.5,
+          display: { xs: 'none', lg: 'flex' }, alignItems: 'center', gap: 2.5,
           bgcolor: 'rgba(13,27,42,.72)', backdropFilter: 'blur(14px)',
           border: '1px solid rgba(154,251,215,.16)', borderRadius: '12px',
           px: 2, py: 0.9,

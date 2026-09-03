@@ -370,7 +370,7 @@ export default function Adhesion() {
 
               {/* ── Navigation — CTA aligné à droite (convention formulaire progressif) ── */}
               <Box sx={{
-                px: { xs: 2.5, md: 5 }, py: 2.5, borderTop: '1px solid #EEF2F0',
+                px: { xs: 2, sm: 2.5, md: 5 }, py: 2.5, borderTop: '1px solid #EEF2F0',
                 display: 'flex', justifyContent: 'space-between', alignItems: 'center', bgcolor: '#FBFDFC',
               }}>
                 <Button onClick={() => allerA(etape - 1)} disabled={etape === 0} sx={{ color: '#5A6B63', fontWeight: 700, visibility: etape === 0 ? 'hidden' : 'visible' }}>

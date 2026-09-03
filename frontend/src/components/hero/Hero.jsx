@@ -39,7 +39,7 @@ export default function Hero() {
           animate={{ x: [0, 40, 0], y: [0, -30, 0] }}
           transition={{ duration: 16, repeat: Infinity, ease: 'easeInOut' }}
           style={{
-            position: 'absolute', top: '-12%', left: '-8%', width: 480, height: 480,
+            position: 'absolute', top: '-12%', left: '-8%', width: { xs: 280, md: 480 }, height: { xs: 280, md: 480 },
             borderRadius: '50%', background: 'radial-gradient(circle,#1FAF72 0%,transparent 65%)',
             opacity: 0.28, filter: 'blur(70px)',
           }}
@@ -48,7 +48,7 @@ export default function Hero() {
           animate={{ x: [0, -50, 0], y: [0, 40, 0] }}
           transition={{ duration: 20, repeat: Infinity, ease: 'easeInOut' }}
           style={{
-            position: 'absolute', bottom: '6%', right: '-6%', width: 560, height: 560,
+            position: 'absolute', bottom: '6%', right: '-6%', width: { xs: 320, md: 560 }, height: { xs: 320, md: 560 },
             borderRadius: '50%', background: 'radial-gradient(circle,#2563EB 0%,transparent 65%)',
             opacity: 0.2, filter: 'blur(80px)',
           }}

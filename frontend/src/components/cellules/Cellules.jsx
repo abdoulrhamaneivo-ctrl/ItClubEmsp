@@ -88,7 +88,7 @@ export default function Cellules() {
             onMouseLeave={() => setHover(false)}
           >
             <Box sx={{
-              position: 'relative', height: { xs: 320, md: 420 },
+              position: 'relative', height: { xs: 320, sm: 380, md: 420 },
               perspective: 1600, display: 'grid', placeItems: 'center',
             }}>
               {/* Ombre au sol de l'anneau */}
@@ -376,7 +376,7 @@ function ModaleCellule({ cellule, onClose }) {
 
 function StatRapide({ label, valeur, icone, couleur }) {
   return (
-    <Box sx={{ textAlign: 'center', p: { xs: 2, md: 3 }, minWidth: 130, bgcolor: '#fff', borderRadius: 3, border: '1px solid #E5E7EB', boxShadow: '0 2px 12px rgba(0,0,0,.04)' }}>
+    <Box sx={{ textAlign: 'center', p: { xs: 1.5, md: 3 }, minWidth: { xs: 108, sm: 130 }, bgcolor: '#fff', borderRadius: 3, border: '1px solid #E5E7EB', boxShadow: '0 2px 12px rgba(0,0,0,.04)' }}>
       <Box sx={{ width: 46, height: 46, borderRadius: '12px', mx: 'auto', mb: 1, bgcolor: `${couleur}14`, display: 'grid', placeItems: 'center', fontSize: 22 }}>
         {icone}
       </Box>
