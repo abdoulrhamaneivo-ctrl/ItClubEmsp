@@ -25,7 +25,7 @@ function ColonneCode({ x, duree, retard, opacite, hauteurChute = 900 }) {
     <motion.text
       x={x} y={-40}
       fill="#0F5B3A"
-      fontSize="11"
+      fontSize="14"
       fontFamily="'JetBrains Mono','Fira Code',monospace"
       style={{ opacity: opacite }}
       animate={{ y: [null, hauteurChute] }}
@@ -44,8 +44,8 @@ function Bits({ x, y, taille = 9, duree = 4, retard = 0 }) {
       fontSize={taille}
       fontFamily="'JetBrains Mono',monospace"
       fill="#1FAF72"
-      style={{ opacity: 0.18 }}
-      animate={{ opacity: [0.08, 0.26, 0.08] }}
+      style={{ opacity: 0.5 }}
+      animate={{ opacity: [0.3, 0.75, 0.3] }}
       transition={{ duration: duree, repeat: Infinity, ease: 'easeInOut', delay: retard }}
     >
       01101
@@ -58,8 +58,8 @@ function Curseur({ x, y, duree = 1.2, retard = 0 }) {
   return (
     <motion.rect
       x={x} y={y} width={7} height={12} rx={1.5} fill="#0F5B3A"
-      style={{ opacity: 0.3 }}
-      animate={{ opacity: [0.3, 0.02, 0.3] }}
+      style={{ opacity: 0.7 }}
+      animate={{ opacity: [0.7, 0.05, 0.7] }}
       transition={{ duration: duree, repeat: Infinity, ease: 'steps(1)', delay: retard }}
     />
   )
@@ -71,7 +71,7 @@ function FenetreCode({ x, y, taille = 1, duree, retard }) {
     <motion.g
       animate={{ y: [0, -18, 0], x: [0, 9, 0] }}
       transition={{ duration: duree, repeat: Infinity, ease: 'easeInOut', delay: retard }}
-      style={{ opacity: 0.5, transformOrigin: `${x}px ${y}px` }}
+      style={{ opacity: 0.92, transformOrigin: `${x}px ${y}px` }}
       transform={`translate(${x},${y}) scale(${taille})`}
     >
       <rect x={0} y={0} width={128} height={78} rx={8} fill="rgba(255,255,255,.55)" stroke="#B9CCC2" strokeWidth="1.2" />
@@ -81,11 +81,11 @@ function FenetreCode({ x, y, taille = 1, duree, retard }) {
       <circle cx={26} cy={10} r={3.2} fill="#FFD666" opacity="0.75" />
       <circle cx={38} cy={10} r={3.2} fill="#7BE3A6" opacity="0.75" />
       {/* lignes de code */}
-      <rect x={12} y={28} width={70} height={4} rx={2} fill="#1FAF72" opacity="0.4" />
-      <rect x={20} y={38} width={88} height={4} rx={2} fill="#2563EB" opacity="0.3" />
-      <rect x={20} y={48} width={56} height={4} rx={2} fill="#8FA89C" opacity="0.45" />
-      <rect x={12} y={58} width={92} height={4} rx={2} fill="#2563EB" opacity="0.25" />
-      <rect x={20} y={68} width={40} height={4} rx={2} fill="#1FAF72" opacity="0.35" />
+      <rect x={12} y={28} width={70} height={4} rx={2} fill="#1FAF72" opacity="0.85" />
+      <rect x={20} y={38} width={88} height={4} rx={2} fill="#2563EB" opacity="0.6" />
+      <rect x={20} y={48} width={56} height={4} rx={2} fill="#8FA89C" opacity="0.85" />
+      <rect x={12} y={58} width={92} height={4} rx={2} fill="#2563EB" opacity="0.5" />
+      <rect x={20} y={68} width={40} height={4} rx={2} fill="#1FAF72" opacity="0.7" />
     </motion.g>
   )
 }
@@ -102,7 +102,7 @@ function Circuit({ x, y, echelle = 1, opacite = 0.14, duree = 6, retard = 0 }) {
       viewport={{ once: true }}
       transition={{ duration: 1.2, delay: retard }}
     >
-      <path d={trace} fill="none" stroke="#0F5B3A" strokeWidth="1.6" strokeLinejoin="round" />
+      <path d={trace} fill="none" stroke="#0F5B3A" strokeWidth="2.2" strokeLinejoin="round" />
       {/* pastilles de soudure */}
       {[[0, 0], [40, -24], [76, 0], [120, -16], [158, -16]].map(([cx, cy], i) => (
         <circle key={i} cx={cx} cy={cy} r={3.4} fill="none" stroke="#0F5B3A" strokeWidth="1.4" />
@@ -124,7 +124,7 @@ function Paquet({ path, duree, retard, couleur, taille = 4 }) {
   )
 }
 
-function Enveloppe({ x, y, taille = 26, duree, retard, opacite = 0.3 }) {
+function Enveloppe({ x, y, taille = 26, duree, retard, opacite = 0.6 }) {
   return (
     <motion.g
       animate={{ y: [0, -14, 0], x: [0, 7, 0], rotate: [0, 3, 0] }}
@@ -142,7 +142,7 @@ function Satellite({ cx, cy, duree = 46 }) {
     <motion.g
       animate={{ rotate: 360 }}
       transition={{ duration: duree, repeat: Infinity, ease: 'linear' }}
-      style={{ transformOrigin: `${cx}px ${cy}px`, opacity: 0.28 }}
+      style={{ transformOrigin: `${cx}px ${cy}px`, opacity: 0.55 }}
     >
       <ellipse cx={cx} cy={cy} rx={130} ry={54} fill="none" stroke="#A9BCB2" strokeWidth="0.8" strokeDasharray="3 7" />
       <g transform={`translate(${cx + 130},${cy})`}>
@@ -185,25 +185,25 @@ export default function FondGlobalDonnees() {
         preserveAspectRatio="xMidYMid slice"
         style={{ position: 'absolute', width: '100%', height: '130%', top: 0, y: yFibres }}
       >
-        <motion.path d={fibre1} fill="none" stroke="#1FAF72" strokeWidth="1.2" opacity="0.15"
+        <motion.path d={fibre1} fill="none" stroke="#1FAF72" strokeWidth="2" opacity="0.4"
           initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 2.4, ease: 'easeOut' }} />
-        <motion.path d={fibre2} fill="none" stroke="#2563EB" strokeWidth="1.2" opacity="0.11"
+        <motion.path d={fibre2} fill="none" stroke="#2563EB" strokeWidth="2" opacity="0.3"
           initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 2.8, ease: 'easeOut', delay: 0.3 }} />
-        <motion.path d={fibre3} fill="none" stroke="#8FA89C" strokeWidth="1" opacity="0.12"
+        <motion.path d={fibre3} fill="none" stroke="#8FA89C" strokeWidth="1.8" opacity="0.3"
           initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 3.2, ease: 'easeOut', delay: 0.6 }} />
-        <motion.path d={fibre4} fill="none" stroke="#1FAF72" strokeWidth="1" opacity="0.09"
+        <motion.path d={fibre4} fill="none" stroke="#1FAF72" strokeWidth="1.8" opacity="0.26"
           initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 3.6, ease: 'easeOut', delay: 0.9 }} />
 
-        <Paquet path={fibre1} duree={8} retard={0} couleur="#1FAF72" taille={4} />
-        <Paquet path={fibre1} duree={10} retard={3.1} couleur="#0F5B3A" taille={3} />
-        <Paquet path={fibre2} duree={9} retard={1.2} couleur="#2563EB" taille={3.5} />
-        <Paquet path={fibre3} duree={11} retard={2} couleur="#F5A623" taille={3} />
-        <Paquet path={fibre4} duree={12} retard={4.6} couleur="#1FAF72" taille={3.2} />
+        <Paquet path={fibre1} duree={8} retard={0} couleur="#1FAF72" taille={6} />
+        <Paquet path={fibre1} duree={10} retard={3.1} couleur="#0F5B3A" taille={4.5} />
+        <Paquet path={fibre2} duree={9} retard={1.2} couleur="#2563EB" taille={5} />
+        <Paquet path={fibre3} duree={11} retard={2} couleur="#F5A623" taille={4.5} />
+        <Paquet path={fibre4} duree={12} retard={4.6} couleur="#1FAF72" taille={5} />
 
         {/* Circuits imprimés avec courant qui circule */}
-        <Circuit x={90} y={330} echelle={1.15} retard={0.4} />
-        <Circuit x={1180} y={700} echelle={1.3} duree={7} retard={1.6} opacite={0.12} />
-        <Circuit x={620} y={840} echelle={0.9} duree={8} retard={2.8} opacite={0.1} />
+        <Circuit x={90} y={330} echelle={1.15} retard={0.4} opacite={0.4} />
+        <Circuit x={1180} y={700} echelle={1.3} duree={7} retard={1.6} opacite={0.32} />
+        <Circuit x={620} y={840} echelle={0.9} duree={8} retard={2.8} opacite={0.28} />
       </motion.svg>
 
       {/* Couche 2 : code, bits, terminaux (parallaxe moyenne) */}
@@ -213,12 +213,12 @@ export default function FondGlobalDonnees() {
         style={{ position: 'absolute', width: '100%', height: '130%', top: 0, y: yCode }}
       >
         {/* Chute de code matrix ultra-discrète */}
-        <ColonneCode x={140} duree={26} retard={0} opacite={0.1} />
-        <ColonneCode x={310} duree={32} retard={6} opacite={0.08} />
-        <ColonneCode x={560} duree={29} retard={12} opacite={0.1} />
-        <ColonneCode x={880} duree={35} retard={3} opacite={0.07} />
-        <ColonneCode x={1150} duree={27} retard={9} opacite={0.09} />
-        <ColonneCode x={1330} duree={31} retard={15} opacite={0.07} />
+        <ColonneCode x={140} duree={26} retard={0} opacite={0.38} />
+        <ColonneCode x={310} duree={32} retard={6} opacite={0.32} />
+        <ColonneCode x={560} duree={29} retard={12} opacite={0.4} />
+        <ColonneCode x={880} duree={35} retard={3} opacite={0.28} />
+        <ColonneCode x={1150} duree={27} retard={9} opacite={0.36} />
+        <ColonneCode x={1330} duree={31} retard={15} opacite={0.28} />
 
         {/* Bits binaires qui pulsent */}
         <Bits x={90} y={120} retard={0} />

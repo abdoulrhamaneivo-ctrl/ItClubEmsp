@@ -8,10 +8,10 @@ import Box from '@mui/material/Box'
  */
 export default function FondPropre({ variante = 'clair' }) {
   const fonds = {
-    clair: 'rgba(250,250,250,.82)',   // Blanc cassé translucide
-    blanc: 'rgba(255,255,255,.78)',   // Blanc pur translucide
-    gris: 'rgba(245,245,245,.88)',    // Gris très clair (un peu plus couvrant)
-    doux: 'rgba(248,249,250,.9)',     // Très doux (le plus couvrant)
+    clair: 'rgba(250,250,250,.6)',   // Blanc cassé translucide
+    blanc: 'rgba(255,255,255,.55)',   // Blanc pur translucide
+    gris: 'rgba(245,245,245,.72)',    // Gris très clair (un peu plus couvrant)
+    doux: 'rgba(248,249,250,.75)',     // Très doux (le plus couvrant)
   }
 
   const fond = fonds[variante] ?? fonds.clair
@@ -22,7 +22,7 @@ export default function FondPropre({ variante = 'clair' }) {
         position: 'absolute',
         inset: 0,
         background: fond,
-        backdropFilter: 'blur(1.5px)',
+        backdropFilter: 'blur(1px)',
         // Texture ultra-subtile via CSS
         '&::before': {
           content: '""',
