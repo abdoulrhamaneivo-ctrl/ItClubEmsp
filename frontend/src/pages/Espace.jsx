@@ -12,7 +12,7 @@ import Divider from '@mui/material/Divider'
 import { useAuth, hasRole } from '../stores/auth'
 import FondGlobalDonnees from '../components/ui-components/FondGlobalDonnees'
 import TitreSection from '../components/ui-components/TitreSection'
-import { IcMembres, IcCube, IcCalendrier, IcDocument, IcPhoto, IcTrophee, iconePoste } from '../components/ui-components/IconesClub'
+import { IcMembres, IcCube, IcCalendrier, IcDocument, IcPhoto, IcTrophee, IcCommunication, iconePoste } from '../components/ui-components/IconesClub'
 
 /**
  * Espace membre — dashboard personnel cohérent avec la vitrine :
@@ -107,7 +107,7 @@ export default function Espace() {
             background: 'linear-gradient(120deg,#0D1B2A 0%,#0F5B3A 100%)',
             boxShadow: '0 18px 44px rgba(15,91,58,.25)',
             px: { xs: 3, md: 5 }, py: { xs: 3.5, md: 4.5 },
-            mb: 5,
+            mb: 4,
           }}>
             <Box sx={{ position: 'absolute', top: -70, right: '8%', width: 220, height: 220, borderRadius: '50%', background: 'radial-gradient(circle,rgba(31,175,114,.28),transparent 70%)', filter: 'blur(34px)' }} />
             <Box sx={{ position: 'relative', display: 'flex', alignItems: 'center', gap: { xs: 2.5, md: 4 }, flexWrap: 'wrap' }}>
@@ -147,6 +147,69 @@ export default function Espace() {
             </Box>
           </Box>
         </motion.div>
+
+        {/* ── Notifications + raccourcis rapides ────────────────── */}
+        <Box sx={{ display: 'grid', gap: 2.5, gridTemplateColumns: { xs: '1fr', md: '1.2fr 1fr' }, mb: 5, alignItems: 'start' }}>
+          {/* Notifications */}
+          <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08, duration: 0.3 }}>
+            <Box sx={{ bgcolor: '#fff', borderRadius: '18px', border: '1px solid #E8ECEA', overflow: 'hidden' }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', px: 2.8, py: 2, borderBottom: '1px solid #EEF2F0' }}>
+                <Typography sx={{ fontWeight: 800, color: '#111827', fontSize: '0.95rem', display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <IcCommunication taille={17} couleur="#0F5B3A" /> Notifications
+                </Typography>
+                <Chip label="3 nouvelles" size="small" sx={{ bgcolor: '#E4F8EF', color: '#0E9F6E', fontWeight: 800, fontSize: '0.64rem', height: 22 }} />
+              </Box>
+              {[
+                { id: 1, titre: 'Ta place au Hackathon est en liste d’attente', date: 'il y a 2h', couleur: '#2563EB' },
+                { id: 2, titre: 'Session Cellule Web — vendredi 15h, salle info 2', date: 'il y a 1j', couleur: '#1FAF72' },
+                { id: 3, titre: 'Le PV du 7 mai est disponible dans la Documentation', date: 'il y a 3j', couleur: '#F5A623' },
+              ].map((n, i, arr) => (
+                <Box key={n.id} sx={{
+                  display: 'flex', gap: 1.8, px: 2.8, py: 2,
+                  borderBottom: i < arr.length - 1 ? '1px solid #F0F4F2' : 'none',
+                  transition: 'background 160ms ease',
+                  '&:hover': { bgcolor: '#F6FBF9' }, cursor: 'pointer',
+                }}>
+                  <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: n.couleur, mt: 1, flexShrink: 0 }} />
+                  <Box sx={{ flex: 1, minWidth: 0 }}>
+                    <Typography sx={{ fontWeight: 700, color: '#111827', fontSize: '0.86rem', lineHeight: 1.5 }}>
+                      {n.titre}
+                    </Typography>
+                    <Typography variant="caption" sx={{ color: '#6B7280', fontWeight: 600, fontSize: '0.68rem' }}>
+                      {n.date}
+                    </Typography>
+                  </Box>
+                </Box>
+              ))}
+            </Box>
+          </motion.div>
+
+          {/* Raccourcis contextuels */}
+          <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.14, duration: 0.3 }}>
+            <Box sx={{ bgcolor: '#fff', borderRadius: '18px', border: '1px solid #E8ECEA', p: 2.8 }}>
+              <Typography sx={{ fontWeight: 800, color: '#111827', fontSize: '0.95rem', mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
+                <IcTrophee taille={17} couleur="#0F5B3A" /> Accès rapides
+              </Typography>
+              <Box sx={{ display: 'grid', gap: 1.2 }}>
+                {[
+                  { label: 'Voir les activités à venir', href: '/#activites', icone: <IcCalendrier taille={16} couleur="#2563EB" /> },
+                  { label: 'Les actualités du club', href: '/#actualites', icone: <IcCommunication taille={16} couleur="#1FAF72" /> },
+                  { label: 'Explorer la galerie', href: '/galerie', icone: <IcPhoto taille={16} couleur="#F5A623" /> },
+                  { label: 'Documentation officielle', href: '/#documentation', icone: <IcDocument taille={16} couleur="#7B61FF" /> },
+                ].map((r) => (
+                  <Button key={r.label} component="a" href={r.href} fullWidth sx={{
+                    justifyContent: 'flex-start', gap: 1.4, py: 1.4,
+                    bgcolor: '#F6FBF9', border: '1px solid #E3EEE8', borderRadius: '12px',
+                    color: '#111827', fontWeight: 700, fontSize: '0.84rem',
+                    '&:hover': { bgcolor: '#EDF7F1', borderColor: '#C9DED4' },
+                  }}>
+                    {r.icone} {r.texte ?? r.label}
+                  </Button>
+                ))}
+              </Box>
+            </Box>
+          </motion.div>
+        </Box>
 
         {/* ── Onglets ──────────────────────────────────────────── */}
         <Tabs value={onglet} onChange={(_, v) => setOnglet(v)} variant="fullWidth"
