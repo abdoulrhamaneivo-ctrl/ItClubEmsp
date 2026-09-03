@@ -57,7 +57,7 @@ export default function Activites() {
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '0px' }}
-          transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
         >
           {/* ── Timeline journal — ligne neutre fine ──────────────── */}
           <Box sx={{ position: 'relative', paddingLeft: { xs: 0, md: 2 } }}>
@@ -195,7 +195,7 @@ export default function Activites() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '0px' }}
-          transition={{ duration: 0.4, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 0.3, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
         >
           <Box sx={{ mt: 8, textAlign: 'center' }}>
             <Typography variant="body2" color="textSecondary" sx={{ mb: 2 }}>

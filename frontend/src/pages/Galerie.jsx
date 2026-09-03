@@ -103,7 +103,7 @@ export default function Galerie() {
         </motion.div>
 
         {/* Grille */}
-        <Box sx={{ columns: { xs: 1, sm: 2, md: 3, lg: 4 }, columnGap: 3.5, '& > *': { breakInside: 'avoid', mb: 3.5 } }}>
+        <Box sx={{ columns: { xs: 2, sm: 2, md: 3, lg: 4 }, columnGap: { xs: 1.8, md: 3.5 }, '& > *': { breakInside: 'avoid', mb: { xs: 1.8, md: 3.5 } } }}>
           <AnimatePresence mode="popLayout">
             {liste.map((m, i) => (
               <motion.div
@@ -144,7 +144,7 @@ export default function Galerie() {
                       )}
                     </Box>
                   )}
-                  <Box sx={{ p: 2, position: 'relative' }}>
+                  <Box sx={{ p: { xs: 1.4, md: 2 }, position: 'relative' }}>
                     <Box sx={{ position: 'absolute', top: -12, left: 12, display: 'flex', gap: 0.8 }}>
                       <Box sx={{ bgcolor: 'rgba(13,27,42,.72)', color: '#fff', px: 1.1, py: 0.3, borderRadius: 9999, fontSize: '0.6rem', fontWeight: 800, letterSpacing: '0.08em' }}>
                         {m.type === 'video' ? 'VIDÉO' : 'PHOTO'}
@@ -153,8 +153,8 @@ export default function Galerie() {
                         {dateCourte(m.date)}
                       </Box>
                     </Box>
-                    <Typography sx={{ fontWeight: 800, color: '#111827', fontSize: '0.92rem', lineHeight: 1.35, mt: 1.2 }}>{m.titre}</Typography>
-                    <Typography variant="caption" color="textSecondary" sx={{ display: 'block', mt: 0.4, lineHeight: 1.5 }}>{m.legende}</Typography>
+                    <Typography sx={{ fontWeight: 800, color: '#111827', fontSize: { xs: '0.8rem', md: '0.92rem' }, lineHeight: 1.35, mt: 1.2 }}>{m.titre}</Typography>
+                    <Typography variant="caption" color="textSecondary" sx={{ display: { xs: 'none', sm: 'block' }, mt: 0.4, lineHeight: 1.5 }}>{m.legende}</Typography>
                   </Box>
                 </Box>
               </motion.div>

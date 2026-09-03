@@ -1,5 +1,7 @@
 import { motion, useScroll, useTransform } from 'framer-motion'
 import Box from '@mui/material/Box'
+import useMediaQuery from '@mui/material/useMediaQuery'
+import { useTheme } from '@mui/material/styles'
 
 /**
  * FondGlobalDonnees — LE fond animé du club informatique :
@@ -159,10 +161,13 @@ function Satellite({ cx, cy, duree = 46 }) {
 }
 
 export default function FondGlobalDonnees() {
+  const theme = useTheme()
+  const mobile = useMediaQuery(theme.breakpoints.down('md'))
   const { scrollY } = useScroll()
-  const yFibres = useTransform(scrollY, [0, 8000], [0, -260])
-  const yObjets = useTransform(scrollY, [0, 8000], [0, -120])
-  const yCode = useTransform(scrollY, [0, 8000], [0, -420])
+  const echelleParallaxe = mobile ? 0.4 : 1
+  const yFibres = useTransform(scrollY, [0, 8000], [0, -260 * echelleParallaxe])
+  const yObjets = useTransform(scrollY, [0, 8000], [0, -120 * echelleParallaxe])
+  const yCode = useTransform(scrollY, [0, 8000], [0, -420 * echelleParallaxe])
 
   const fibre1 = 'M-60,260 C 320,60 720,620 1560,180'
   const fibre2 = 'M-60,620 C 380,420 820,120 1560,520'
@@ -183,7 +188,7 @@ export default function FondGlobalDonnees() {
       <motion.svg
         viewBox="0 0 1440 900"
         preserveAspectRatio="xMidYMid slice"
-        style={{ position: 'absolute', width: '100%', height: '130%', top: 0, y: yFibres }}
+        style={{ position: 'absolute', width: '100%', height: '130%', top: 0, y: yFibres, willChange: 'transform' }}
       >
         <motion.path d={fibre1} fill="none" stroke="#1FAF72" strokeWidth="2" opacity="0.4"
           initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 2.4, ease: 'easeOut' }} />
@@ -202,30 +207,30 @@ export default function FondGlobalDonnees() {
 
         {/* Circuits imprimés avec courant qui circule */}
         <Circuit x={90} y={330} echelle={1.15} retard={0.4} opacite={0.4} />
-        <Circuit x={1180} y={700} echelle={1.3} duree={7} retard={1.6} opacite={0.32} />
-        <Circuit x={620} y={840} echelle={0.9} duree={8} retard={2.8} opacite={0.28} />
+        {!mobile && <Circuit x={1180} y={700} echelle={1.3} duree={7} retard={1.6} opacite={0.32} />}
+        {!mobile && <Circuit x={620} y={840} echelle={0.9} duree={8} retard={2.8} opacite={0.28} />}
       </motion.svg>
 
       {/* Couche 2 : code, bits, terminaux (parallaxe moyenne) */}
       <motion.svg
         viewBox="0 0 1440 900"
         preserveAspectRatio="xMidYMid slice"
-        style={{ position: 'absolute', width: '100%', height: '130%', top: 0, y: yCode }}
+        style={{ position: 'absolute', width: '100%', height: '130%', top: 0, y: yCode, willChange: 'transform' }}
       >
-        {/* Chute de code matrix ultra-discrète */}
+        {/* Chute de code matrix ultra-discrète (3 col mobile / 6 desktop) */}
         <ColonneCode x={140} duree={26} retard={0} opacite={0.38} />
         <ColonneCode x={310} duree={32} retard={6} opacite={0.32} />
-        <ColonneCode x={560} duree={29} retard={12} opacite={0.4} />
-        <ColonneCode x={880} duree={35} retard={3} opacite={0.28} />
-        <ColonneCode x={1150} duree={27} retard={9} opacite={0.36} />
-        <ColonneCode x={1330} duree={31} retard={15} opacite={0.28} />
+        {!mobile && <ColonneCode x={560} duree={29} retard={12} opacite={0.4} />}
+        {!mobile && <ColonneCode x={880} duree={35} retard={3} opacite={0.28} />}
+        {!mobile && <ColonneCode x={1150} duree={27} retard={9} opacite={0.36} />}
+        {!mobile && <ColonneCode x={1330} duree={31} retard={15} opacite={0.28} />}
 
         {/* Bits binaires qui pulsent */}
         <Bits x={90} y={120} retard={0} />
         <Bits x={760} y={90} retard={1.3} />
-        <Bits x={1300} y={420} retard={2.2} />
+        {!mobile && <Bits x={1300} y={420} retard={2.2} />}
         <Bits x={420} y={700} retard={0.7} />
-        <Bits x={1040} y={780} retard={1.8} />
+        {!mobile && <Bits x={1040} y={780} retard={1.8} />}
 
         {/* Curseurs terminaux qui clignotent */}
         <Curseur x={146} y={112} retard={0} />
@@ -234,22 +239,22 @@ export default function FondGlobalDonnees() {
 
         {/* Fenêtres de code flottantes */}
         <FenetreCode x={1050} y={250} taille={1.15} duree={10} retard={0} />
-        <FenetreCode x={200} y={560} taille={0.95} duree={13} retard={3} />
-        <FenetreCode x={660} y={330} taille={0.8} duree={16} retard={6} />
+        {!mobile && <FenetreCode x={200} y={560} taille={0.95} duree={13} retard={3} />}
+        {!mobile && <FenetreCode x={660} y={330} taille={0.8} duree={16} retard={6} />}
       </motion.svg>
 
       {/* Couche 3 : enveloppes + satellites (parallaxe rapide) */}
       <motion.svg
         viewBox="0 0 1440 900"
         preserveAspectRatio="xMidYMid slice"
-        style={{ position: 'absolute', width: '100%', height: '130%', top: 0, y: yObjets }}
+        style={{ position: 'absolute', width: '100%', height: '130%', top: 0, y: yObjets, willChange: 'transform' }}
       >
         <Enveloppe x={1120} y={130} duree={9} retard={0} />
         <Enveloppe x={260} y={210} taille={22} duree={11} retard={2.5} opacite={0.24} />
         <Enveloppe x={980} y={620} taille={24} duree={10} retard={4.5} opacite={0.26} />
         <Enveloppe x={480} y={760} taille={20} duree={12} retard={1.4} opacite={0.2} />
         <Satellite cx={1160} cy={150} />
-        <Satellite cx={240} cy={640} duree={58} />
+        {!mobile && <Satellite cx={240} cy={640} duree={58} />}
       </motion.svg>
     </Box>
   )

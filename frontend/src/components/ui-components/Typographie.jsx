@@ -16,7 +16,7 @@ export function ParagrapheIntro({ children, couleur = '#1FAF72', maxWidth = 640,
       initial={{ opacity: 0, y: 14 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '0px' }}
-      transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
     >
       <Typography
         sx={{
@@ -65,7 +65,7 @@ export function LabelLigne({ children, couleur = '#1FAF72' }) {
         initial={{ scaleX: 0 }}
         whileInView={{ scaleX: 1 }}
         viewport={{ once: true, margin: '0px' }}
-        transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+        transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
         style={{ width: 26, height: 2.5, borderRadius: 2, background: couleur, transformOrigin: 'left' }}
       />
       <Typography sx={{ color: couleur, fontWeight: 800, fontSize: '0.72rem', letterSpacing: '0.2em', textTransform: 'uppercase' }}>
@@ -83,7 +83,7 @@ export function Separateur({ couleur = '#1FAF72' }) {
         initial={{ scaleX: 0 }}
         whileInView={{ scaleX: 1 }}
         viewport={{ once: true, margin: '0px' }}
-        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+        transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
         style={{ width: 90, height: 1, background: `linear-gradient(90deg,transparent,${couleur}88)`, transformOrigin: 'right' }}
       />
       <motion.span
@@ -97,7 +97,7 @@ export function Separateur({ couleur = '#1FAF72' }) {
         initial={{ scaleX: 0 }}
         whileInView={{ scaleX: 1 }}
         viewport={{ once: true, margin: '0px' }}
-        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+        transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
         style={{ width: 90, height: 1, background: `linear-gradient(90deg,${couleur}88,transparent)`, transformOrigin: 'left' }}
       />
     </Box>

@@ -109,7 +109,7 @@ export default function QuiSommesNous() {
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true, margin: '0px' }}
-          transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
         >
           <Box sx={{ mb: 8 }}>
             <Typography component="h3" sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 700, fontSize: { xs: '1.25rem', md: '1.5rem' }, color: '#111827', mb: 3 }}>
@@ -129,7 +129,7 @@ export default function QuiSommesNous() {
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true, margin: '0px' }}
-          transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
         >
           <Box sx={{ mb: 4 }}>
             <Typography variant="overline" sx={{ color: '#1FAF72', fontWeight: 800, letterSpacing: '0.15em', textTransform: 'uppercase', mb: 1.5, display: 'inline-block', borderBottom: '3px solid #1FAF72', paddingBottom: 4 }}>
@@ -188,7 +188,7 @@ export default function QuiSommesNous() {
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true, margin: '0px' }}
-          transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
         >
           <Box
             component="a" href="/galerie"
@@ -235,7 +235,7 @@ export default function QuiSommesNous() {
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '0px' }}
-          transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
         >
           <Box sx={{
             mt: 6, position: 'relative', overflow: 'hidden',
