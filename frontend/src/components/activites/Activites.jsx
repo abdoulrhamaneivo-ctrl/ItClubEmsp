@@ -8,7 +8,6 @@ import Chip from '@mui/material/Chip'
 import FondPropre from '../ui-components/FondPropre'
 import { BandeauAccent } from '../ui-components/FondPropre'
 import TitreSection from '../ui-components/TitreSection'
-import FondDonnees from '../ui-components/FondDonnees'
 import { IcCalendrier, IcRocket, IcMembres, IcLieu, IcFormation, IcTrophee } from '../ui-components/IconesClub'
 import { useActivites } from '../../hooks/useApi'
 
@@ -45,7 +44,6 @@ export default function Activites() {
     <Box id="activites" sx={{ py: { xs: 6, md: 8 }, position: 'relative', overflow: 'hidden' }}>
       <FondPropre variante="blanc" />
       <BandeauAccent couleur="#2563EB" />
-      <FondDonnees intensite={0.85} />
 
       <Container maxWidth={false} sx={{ position: 'relative', maxWidth: '1440px !important', px: { xs: 2.5, md: 4 } }}>
         <TitreSection

@@ -8,7 +8,6 @@ import Button from '@mui/material/Button'
 import FondPropre from '../ui-components/FondPropre'
 import { BandeauAccent } from '../ui-components/FondPropre'
 import TitreSection from '../ui-components/TitreSection'
-import FondDonnees from '../ui-components/FondDonnees'
 import { IcDocument, IcCube, IcMembres } from '../ui-components/IconesClub'
 import { useContenu } from '../../lib/contenu'
 
@@ -57,7 +56,6 @@ export default function Documentation() {
     <Box id="documentation" sx={{ py: { xs: 6, md: 8 }, position: 'relative', overflow: 'hidden' }}>
       <FondPropre variante="doux" />
       <BandeauAccent couleur="#1FAF72" />
-      <FondDonnees intensite={0.85} />
 
       <Container maxWidth={false} sx={{ position: 'relative', maxWidth: '1100px !important', px: { xs: 2.5, md: 4 } }}>
         <TitreSection

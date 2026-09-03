@@ -152,7 +152,7 @@ export default function Cellules() {
                   transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
                 >
                   <Box sx={{
-                    borderRadius: '22px', p: { xs: 3, md: 4 }, bgcolor: '#fff',
+                    borderRadius: '22px', p: { xs: 2.5, md: 4 }, bgcolor: '#fff', overflowX: 'hidden',
                     border: `1px solid ${actuelle.couleur}45`,
                     boxShadow: `0 18px 44px ${actuelle.couleur}2E`,
                     position: 'relative', overflow: 'hidden',

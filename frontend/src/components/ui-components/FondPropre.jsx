@@ -2,15 +2,16 @@ import { useRef } from 'react'
 import Box from '@mui/material/Box'
 
 /**
- * Fond neutre PROPRE — blanc/gris très clair, lisibilité absolue.
- * Aucun vert dominant. Juste une texture subtile.
+ * Fond neutre PROPRE — voiles semi-transparents laissant deviner
+ * le fond de données global (fixé derrière toute la page).
+ * Lisibilité préservée : voiles à 78-92% d'opacité.
  */
 export default function FondPropre({ variante = 'clair' }) {
   const fonds = {
-    clair: '#FAFAFA',           // Blanc cassé
-    blanc: '#FFFFFF',           // Blanc pur
-    gris: '#F5F5F5',            // Gris très clair
-    doux: '#F8F9FA',            // Très doux
+    clair: 'rgba(250,250,250,.82)',   // Blanc cassé translucide
+    blanc: 'rgba(255,255,255,.78)',   // Blanc pur translucide
+    gris: 'rgba(245,245,245,.88)',    // Gris très clair (un peu plus couvrant)
+    doux: 'rgba(248,249,250,.9)',     // Très doux (le plus couvrant)
   }
 
   const fond = fonds[variante] ?? fonds.clair
@@ -21,6 +22,7 @@ export default function FondPropre({ variante = 'clair' }) {
         position: 'absolute',
         inset: 0,
         background: fond,
+        backdropFilter: 'blur(1.5px)',
         // Texture ultra-subtile via CSS
         '&::before': {
           content: '""',

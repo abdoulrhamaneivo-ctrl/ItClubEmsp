@@ -7,7 +7,6 @@ import Button from '@mui/material/Button'
 import FondPropre from '../ui-components/FondPropre'
 import { BandeauAccent } from '../ui-components/FondPropre'
 import TitreSection from '../ui-components/TitreSection'
-import FondDonnees from '../ui-components/FondDonnees'
 import { IcMembres, IcCube, IcDocument, iconePoste } from '../ui-components/IconesClub'
 import { useBureau } from '../../hooks/useApi'
 
@@ -61,7 +60,6 @@ export default function Bureau() {
     <Box id="bureau" sx={{ py: { xs: 6, md: 8 }, position: 'relative', overflow: 'hidden' }}>
       <FondPropre variante="gris" />
       <BandeauAccent couleur="#1FAF72" />
-      <FondDonnees intensite={0.85} />
 
       <Container maxWidth={false} sx={{ position: 'relative', maxWidth: '1440px !important', px: { xs: 2.5, md: 4 } }}>
         <TitreSection
@@ -91,7 +89,8 @@ export default function Bureau() {
           >
             <Box sx={{ height: 8, background: `linear-gradient(90deg,${president.couleur},#1FAF72,#0D1B2A)` }} />
             <Box sx={{ p: 3.5, display: 'flex', gap: 3, alignItems: 'center', flexWrap: 'wrap' }}>
-              <AvatarMembre m={president} px={96} radius="24px" />
+              <Box sx={{ display: { xs: 'none', sm: 'block' } }}><AvatarMembre m={president} px={96} radius="24px" /></Box>
+              <Box sx={{ display: { xs: 'block', sm: 'none' } }}><AvatarMembre m={president} px={64} radius="18px" /></Box>
               <Box sx={{ flex: 1, minWidth: 220 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.2, mb: 0.5 }}>
                   {(() => { const I = iconePoste(president.poste); return <I taille={16} couleur={president.couleur} /> })()}

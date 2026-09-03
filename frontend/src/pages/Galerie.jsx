@@ -184,7 +184,7 @@ export default function Galerie() {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.94, y: 20 }}
               transition={{ type: 'spring', stiffness: 240, damping: 24 }}
-              style={{ width: 'min(960px, 94vw)' }}
+              style={{ width: 'min(960px, 96vw)', maxHeight: '92vh', overflowY: 'auto' }}
             >
               <Box sx={{ bgcolor: '#0D1B2A', borderRadius: '20px', overflow: 'hidden', border: '1px solid rgba(154,251,215,.25)' }}>
                 <Box sx={{ position: 'relative', background: '#000' }}>

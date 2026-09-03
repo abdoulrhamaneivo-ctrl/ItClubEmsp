@@ -12,7 +12,6 @@ import Alert from '@mui/material/Alert'
 import Chip from '@mui/material/Chip'
 import FondPropre from '../ui-components/FondPropre'
 import { BandeauAccent } from '../ui-components/FondPropre'
-import FondHalos from '../ui-components/FondHalos'
 import { ButtonStyles } from '../ui-components/DesignSystem'
 import { api } from '../../lib/api'
 import { chargerConfig, validerChamp } from '../../data/formulaireConfig'
@@ -131,7 +130,6 @@ export default function Adhesion() {
     <Box id="adhesion" sx={{ py: { xs: 6, md: 8 }, position: 'relative', overflow: 'hidden' }}>
       <FondPropre variante="doux" />
       <BandeauAccent couleur="#F5A623" />
-      <FondHalos couleurs={['rgba(245,166,35,.13)', 'rgba(31,175,114,.12)', 'rgba(37,99,235,.10)']} />
 
       <Container maxWidth="md" sx={{ position: 'relative' }}>
         {/* ── Titre ─────────────────────────────────────────────── */}

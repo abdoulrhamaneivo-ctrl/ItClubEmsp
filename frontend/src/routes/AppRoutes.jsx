@@ -5,6 +5,8 @@ import BandeauDefilant from '../components/ui-components/BandeauDefilant'
 import Adhesion from '../components/adhesion/Adhesion'
 import Footer from '../components/footer/Footer'
 import Navbar from '../components/navbar/Navbar'
+import FondGlobalDonnees from '../components/ui-components/FondGlobalDonnees'
+import BarreProgression from '../components/ui-components/BarreProgression'
 import Hero from '../components/hero/Hero'
 import QuiSommesNous from '../components/quisommesnous/QuiSommesNous'
 import Bureau from '../components/bureau/Bureau'
@@ -21,8 +23,10 @@ import BackofficeLayout from '../pages/backoffice/BackofficeLayout'
 function Vitrine() {
   return (
     <>
+      <BarreProgression />
+      <FondGlobalDonnees />
       <Navbar />
-      <main>
+      <main style={{ position: 'relative', zIndex: 1 }}>
         <Hero />
         <BandeauDefilant
           items={[
