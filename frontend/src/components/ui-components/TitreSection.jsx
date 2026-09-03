@@ -32,7 +32,7 @@ export default function TitreSection({ badge, titre, sousTitre, couleur = '#1FAF
           {titre}
         </Typography>
         {sousTitre && (
-          <Typography color="textSecondary" sx={{ maxWidth: maxWidthTexte, lineHeight: 1.8, mx: 'auto', fontSize: { xs: '0.98rem', md: '1.1rem' } }}>
+          <Typography sx={{ color: '#4B5563', maxWidth: maxWidthTexte, lineHeight: 1.8, mx: 'auto', fontSize: { xs: '0.98rem', md: '1.1rem' } }}>
             {sousTitre}
           </Typography>
         )}

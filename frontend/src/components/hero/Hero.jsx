@@ -96,7 +96,7 @@ export default function Hero() {
               transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
               style={{ width: 8, height: 8, borderRadius: '50%', background: '#1FAF72', boxShadow: '0 0 10px #1FAF72' }}
             />
-            <Typography sx={{ color: '#9AFBD7', fontWeight: 800, fontSize: '0.72rem', letterSpacing: '0.22em', textTransform: 'uppercase' }}>
+            <Typography sx={{ color: '#9AFBD7', fontWeight: 800, fontSize: '0.72rem', letterSpacing: '0.18em', textTransform: 'uppercase' }}>
               Le club informatique — EMSP
             </Typography>
           </Box>

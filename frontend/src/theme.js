@@ -23,7 +23,7 @@ const theme = createTheme({
     secondary: { main: charte.emeraude, contrastText: '#fff' },
     info: { main: charte.bleu },
     background: { default: charte.blanc, paper: '#F6FBF9' },
-    text: { primary: charte.marine, secondary: '#5A6B63' },
+    text: { primary: charte.marine, secondary: '#4B5563' },
   },
   typography: {
     fontFamily: "'Poppins', sans-serif",

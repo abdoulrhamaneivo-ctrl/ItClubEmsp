@@ -303,10 +303,10 @@ export default function BackofficeLayout() {
               {moduleActif ? `module: ${moduleActif.path}` : 'ready'}
             </Typography>
           </Box>
-          <Typography sx={{ color: 'rgba(255,255,255,.4)', fontSize: '0.66rem', fontFamily: "'JetBrains Mono',monospace" }}>
+          <Typography sx={{ color: 'rgba(255,255,255,.6)', fontSize: '0.66rem', fontFamily: "'JetBrains Mono',monospace" }}>
             rôle: {(user?.roles ?? []).map((r) => r.code).join(' · ') || '—'}
           </Typography>
-          <Typography sx={{ color: 'rgba(255,255,255,.4)', fontSize: '0.66rem', fontFamily: "'JetBrains Mono',monospace", ml: 'auto' }}>
+          <Typography sx={{ color: 'rgba(255,255,255,.6)', fontSize: '0.66rem', fontFamily: "'JetBrains Mono',monospace", ml: 'auto' }}>
             itclub@emsp
           </Typography>
         </Box>

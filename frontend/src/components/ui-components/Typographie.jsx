@@ -70,7 +70,7 @@ export function LabelLigne({ children, couleur = '#1FAF72' }) {
         transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
         style={{ width: 26, height: 2.5, borderRadius: 2, background: couleur, transformOrigin: 'left' }}
       />
-      <Typography sx={{ color: couleurTexte, fontWeight: 800, fontSize: '0.72rem', letterSpacing: '0.2em', textTransform: 'uppercase' }}>
+      <Typography sx={{ color: couleurTexte, fontWeight: 800, fontSize: '0.72rem', letterSpacing: '0.16em', textTransform: 'uppercase' }}>
         {children}
       </Typography>
     </Box>

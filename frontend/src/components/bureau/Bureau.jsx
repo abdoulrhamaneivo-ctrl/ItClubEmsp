@@ -202,7 +202,7 @@ export default function Bureau() {
                 sx={{ bgcolor: '#1FAF72', color: '#fff', transition: 'all 180ms ease', '&:hover': { bgcolor: '#179963', boxShadow: '0 6px 18px rgba(31,175,114,.4)' } }}>
                 <ArrowForwardIosIcon fontSize="small" />
               </IconButton>
-              <Typography sx={{ color: '#6B7280', fontWeight: 700, fontSize: '0.78rem', fontFamily: "'JetBrains Mono',monospace", ml: 1 }}>
+              <Typography sx={{ color: '#5A6B63', fontWeight: 700, fontSize: '0.78rem', fontFamily: "'JetBrains Mono',monospace", ml: 1 }}>
                 {String((index % n) + 1).padStart(2, '0')} / {String(n).padStart(2, '0')}
               </Typography>
             </Box>

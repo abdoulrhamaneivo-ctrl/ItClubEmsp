@@ -39,9 +39,9 @@ const libellesRoles = {
 
 /* Données de démonstration — contrat GET /api/v1/me/* (doc 04) */
 const MES_INSCRIPTIONS = [
-  { id: 1, titre: 'Atelier Git & GitHub', date: '2026-10-12', lieu: 'Salle info 2', statut: 'Confirmé', couleur: '#1FAF72' },
-  { id: 2, titre: 'Hackathon interne — 48h', date: '2026-10-25', lieu: 'Amphi A', statut: 'En liste d’attente', couleur: '#2563EB' },
-  { id: 3, titre: 'Sortie culturelle — Grand-Bassam', date: '2026-11-08', lieu: 'Rendez-vous campus', statut: 'Confirmé', couleur: '#F5A623' },
+  { id: 1, titre: 'Atelier Git & GitHub', date: '2026-10-12', lieu: 'Salle info 2', statut: 'Confirmé', couleur: '#1FAF72', couleurTexte: '#0E7A50' },
+  { id: 2, titre: 'Hackathon interne — 48h', date: '2026-10-25', lieu: 'Amphi A', statut: 'En liste d’attente', couleur: '#2563EB', couleurTexte: '#1D4ED8' },
+  { id: 3, titre: 'Sortie culturelle — Grand-Bassam', date: '2026-11-08', lieu: 'Rendez-vous campus', statut: 'Confirmé', couleur: '#F5A623', couleurTexte: '#B45309' },
 ]
 
 const MA_CELLULE = {
@@ -154,7 +154,7 @@ function Palette({ ouvert, fermer, user, estBureau, scrollTo, logout }) {
               {/* Résultats */}
               <Box sx={{ maxHeight: 'min(46vh, 380px)', overflowY: 'auto', p: 1 }}>
                 {items.length === 0 && (
-                  <Typography sx={{ color: 'rgba(255,255,255,.45)', textAlign: 'center', py: 3, fontFamily: "'JetBrains Mono',monospace", fontSize: '0.8rem' }}>
+                  <Typography sx={{ color: 'rgba(255,255,255,.62)', textAlign: 'center', py: 3, fontFamily: "'JetBrains Mono',monospace", fontSize: '0.8rem' }}>
                     Aucun résultat pour « {q} »
                   </Typography>
                 )}
@@ -188,7 +188,7 @@ function Palette({ ouvert, fermer, user, estBureau, scrollTo, logout }) {
                     <Typography sx={{ color: 'rgba(154,251,215,.7)', fontSize: '0.6rem', fontFamily: "'JetBrains Mono',monospace", border: '1px solid rgba(154,251,215,.25)', borderRadius: '5px', px: 0.7 }}>
                       {touche}
                     </Typography>
-                    <Typography sx={{ color: 'rgba(255,255,255,.4)', fontSize: '0.64rem' }}>{sens}</Typography>
+                    <Typography sx={{ color: 'rgba(255,255,255,.6)', fontSize: '0.64rem' }}>{sens}</Typography>
                   </Box>
                 ))}
               </Box>
@@ -452,7 +452,7 @@ export default function Espace() {
                   <Typography sx={{ color: '#9AFBD7', fontWeight: 700, fontSize: '0.82rem', letterSpacing: '0.08em' }}>
                     IT-EMSP-{String(user.nom?.length || 5).padStart(3, '0')}-{(user.roles ?? [])[0]?.code ?? 'M'}
                   </Typography>
-                  <Typography sx={{ color: 'rgba(255,255,255,.45)', fontSize: '0.56rem', letterSpacing: '0.14em' }}>
+                  <Typography sx={{ color: 'rgba(255,255,255,.62)', fontSize: '0.56rem', letterSpacing: '0.14em' }}>
                     VALIDE · 2026-2027
                   </Typography>
                 </Box>
@@ -480,7 +480,7 @@ export default function Espace() {
               }} />
               <Box sx={{ flex: 1, minWidth: 0 }}>
                 <Typography sx={{ fontWeight: 700, color: '#111827', fontSize: '0.88rem', lineHeight: 1.5 }}>{n.titre}</Typography>
-                <Typography variant="caption" sx={{ color: '#6B7280', fontWeight: 600, fontSize: '0.68rem' }}>{n.date}</Typography>
+                <Typography variant="caption" sx={{ color: '#5A6B63', fontWeight: 600, fontSize: '0.68rem' }}>{n.date}</Typography>
               </Box>
             </Box>
           ))}
@@ -674,10 +674,10 @@ export default function Espace() {
               section: {sectionActive}
             </Typography>
           </Box>
-          <Typography sx={{ color: 'rgba(255,255,255,.4)', fontSize: '0.66rem', fontFamily: "'JetBrains Mono',monospace" }}>
+          <Typography sx={{ color: 'rgba(255,255,255,.6)', fontSize: '0.66rem', fontFamily: "'JetBrains Mono',monospace" }}>
             rôle: {(user.roles ?? []).map((r) => r.code).join(' · ') || '—'}
           </Typography>
-          <Typography sx={{ color: 'rgba(255,255,255,.4)', fontSize: '0.66rem', fontFamily: "'JetBrains Mono',monospace", ml: 'auto' }}>
+          <Typography sx={{ color: 'rgba(255,255,255,.6)', fontSize: '0.66rem', fontFamily: "'JetBrains Mono',monospace", ml: 'auto' }}>
             <Horloge /> · itclub@espace
           </Typography>
         </Box>
@@ -697,7 +697,7 @@ function Section({ refE, id, titre, sousTitre, icone, children }) {
         <Typography sx={{ color: '#fff', fontFamily: "'JetBrains Mono',monospace", fontWeight: 700, fontSize: { xs: '1.05rem', md: '1.25rem' }, display: 'flex', alignItems: 'center', gap: 1.2 }}>
           {icone} {titre}
         </Typography>
-        <Typography sx={{ color: 'rgba(255,255,255,.35)', fontSize: '0.72rem', fontFamily: "'JetBrains Mono',monospace", ml: 'auto', display: { xs: 'none', sm: 'block' } }}>
+        <Typography sx={{ color: 'rgba(255,255,255,.55)', fontSize: '0.72rem', fontFamily: "'JetBrains Mono',monospace", ml: 'auto', display: { xs: 'none', sm: 'block' } }}>
           // {sousTitre}
         </Typography>
       </Box>
