@@ -181,7 +181,10 @@ export default function TachesNotion() {
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: Math.min(i * 0.02, 0.15), duration: 0.3 }}
-                  style={{ borderBottom: '1px solid #EDF4F0' }}
+                  style={{ borderBottom: '1px solid #EDF4F0', transition: 'background 150ms ease' }}
+                  sx={{
+                    '&:hover': { bgcolor: '#F6FBF9' },
+                  }}
                 >
                   <td style={{ padding: '12px 20px', fontWeight: 600, color: '#0D1B2A', fontSize: '0.92rem' }}>
                     {t.tache || '—'}
@@ -206,7 +209,10 @@ export default function TachesNotion() {
                       sx={{
                         minWidth: 132, fontWeight: 700, fontSize: '0.82rem',
                         bgcolor: COULEURS_STATUT[t.statut]?.bg ?? '#EEE',
-                        borderRadius: '10px', '& .MuiOutlinedInput-notchedOutline': { border: 'none' },
+                        borderRadius: '10px', cursor: 'pointer',
+                        transition: 'box-shadow 160ms ease, transform 120ms ease',
+                        '&:hover': { boxShadow: '0 0 0 3px rgba(31,175,114,.15)' },
+                        '& .MuiOutlinedInput-notchedOutline': { border: 'none' },
                         '& .MuiSelect-select': { py: 0.8, color: COULEURS_STATUT[t.statut]?.fg ?? '#555' },
                       }}
                     >

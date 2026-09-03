@@ -39,3 +39,19 @@ body {
     scroll-behavior: auto !important;
   }
 }
+
+
+/* ── Focus visible accessible (clavier) ──────────────────── */
+a:focus-visible,
+button:focus-visible,
+[role='button']:focus-visible {
+  outline: 2.5px solid #1FAF72;
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* ── Sélection de texte aux couleurs du club ─────────────── */
+::selection {
+  background: rgba(31, 175, 114, .22);
+  color: #0D1B2A;
+}

@@ -285,7 +285,13 @@ function OngletGalerie({ notify }) {
 /* ═══════════ Briques communes ═══════════ */
 function LigneItem({ titre, sousTitre, chip, surImage, onEdit, onDelete }) {
   return (
-    <Paper elevation={0} sx={{ p: 2, mb: 1.2, borderRadius: '12px', border: '1px solid #E8ECEA', display: 'flex', alignItems: 'center', gap: 2 }}>
+    <Paper elevation={0} sx={{
+      p: 2, mb: 1.2, borderRadius: '12px', border: '1px solid #E8ECEA',
+      display: 'flex', alignItems: 'center', gap: 2,
+      transition: 'border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease',
+      '&:hover': { borderColor: '#BFD8CC', boxShadow: '0 6px 18px rgba(13,27,42,.08)', transform: 'translateY(-1px)' },
+      '&:hover .actions-item': { opacity: 1, transform: 'translateX(0)' },
+    }}>
       <Box sx={{ flex: 1, minWidth: 0 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
           {surImage && <Chip label="🖼️ image" size="small" sx={{ bgcolor: '#E7F0FE', color: '#175CD3', fontWeight: 700, height: 20, fontSize: '0.62rem' }} />}
@@ -298,8 +304,20 @@ function LigneItem({ titre, sousTitre, chip, surImage, onEdit, onDelete }) {
           {sousTitre}
         </Typography>
       </Box>
-      <IconButton onClick={onEdit} size="small" sx={{ color: '#2563EB' }}><EditIcon fontSize="small" /></IconButton>
-      <IconButton onClick={onDelete} size="small" sx={{ color: '#B42318' }}><DeleteIcon fontSize="small" /></IconButton>
+      <Box className="actions-item" sx={{
+        display: 'flex', gap: 0.4,
+        opacity: { xs: 1, md: 0.45 }, transform: { xs: 'none', md: 'translateX(4px)' },
+        transition: 'opacity 180ms ease, transform 180ms ease',
+      }}>
+        <IconButton onClick={onEdit} size="small" aria-label="Modifier" sx={{
+          color: '#2563EB', '&:hover': { bgcolor: '#E8F0FE', transform: 'scale(1.12)' },
+          transition: 'transform 140ms ease, background 140ms ease',
+        }}><EditIcon fontSize="small" /></IconButton>
+        <IconButton onClick={onDelete} size="small" aria-label="Supprimer" sx={{
+          color: '#B42318', '&:hover': { bgcolor: '#FDECE9', transform: 'scale(1.12)' },
+          transition: 'transform 140ms ease, background 140ms ease',
+        }}><DeleteIcon fontSize="small" /></IconButton>
+      </Box>
     </Paper>
   )
 }
@@ -307,7 +325,10 @@ function LigneItem({ titre, sousTitre, chip, surImage, onEdit, onDelete }) {
 function Formulaire({ titre, onAnnuler, onEnregistrer, children }) {
   return (
     <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.28 }}>
-      <Paper elevation={0} sx={{ p: 3, borderRadius: '16px', border: '1px solid #1FAF7245', bgcolor: '#FBFDFC' }}>
+      <Paper elevation={0} sx={{
+        p: 3, borderRadius: '16px', border: '1px solid #1FAF7245', bgcolor: '#FBFDFC',
+        boxShadow: '0 10px 30px rgba(31,175,114,.08)',
+      }}>
         <Typography sx={{ fontWeight: 800, color: '#0F5B3A', mb: 2.5, fontFamily: "'Orbitron',sans-serif", fontSize: '1.05rem' }}>
           {titre}
         </Typography>

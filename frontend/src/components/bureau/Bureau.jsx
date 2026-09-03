@@ -190,7 +190,7 @@ function CartePoste({ m, ouvert, onToggle, moyenne = false }) {
         boxShadow: ouvert ? `0 12px 30px ${m.couleur}22` : '0 2px 10px rgba(13,27,42,.05)',
         cursor: 'pointer', height: '100%',
         transition: 'border 220ms ease, box-shadow 220ms ease',
-        '&:hover': { boxShadow: '0 8px 22px rgba(13,27,42,.1)' },
+        '&:hover': { boxShadow: '0 8px 22px rgba(13,27,42,.12)', borderColor: '#C9DED4' },
       }}
     >
       <Box sx={{ p: moyenne ? 2.4 : 2, display: 'flex', gap: 2, alignItems: 'center' }}>

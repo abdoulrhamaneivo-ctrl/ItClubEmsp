@@ -227,7 +227,7 @@ export default function Cellules() {
         {/* ── Contrôles : flèches + pastilles ────────────────────── */}
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 3, mt: 4 }}>
           <IconButton onClick={() => setIndex((index - 1 + n) % n)}
-            sx={{ bgcolor: '#fff', border: '1px solid #E5E7EB', boxShadow: '0 4px 14px rgba(0,0,0,.08)', '&:hover': { bgcolor: '#F6FBF9' } }}>
+            sx={{ bgcolor: '#fff', border: '1px solid #E5E7EB', boxShadow: '0 4px 14px rgba(0,0,0,.08)', transition: 'all 180ms ease', '&:hover': { bgcolor: '#1FAF72', borderColor: '#1FAF72', color: '#fff', boxShadow: '0 6px 18px rgba(31,175,114,.4)', transform: 'scale(1.06)' }, '&:active': { transform: 'scale(0.96)' } }}>
             <ArrowBackIosNewIcon fontSize="small" />
           </IconButton>
           <Box sx={{ display: 'flex', gap: 1.6 }}>
@@ -249,7 +249,7 @@ export default function Cellules() {
             ))}
           </Box>
           <IconButton onClick={() => setIndex((index + 1) % n)}
-            sx={{ bgcolor: '#fff', border: '1px solid #E5E7EB', boxShadow: '0 4px 14px rgba(0,0,0,.08)', '&:hover': { bgcolor: '#F6FBF9' } }}>
+            sx={{ bgcolor: '#fff', border: '1px solid #E5E7EB', boxShadow: '0 4px 14px rgba(0,0,0,.08)', transition: 'all 180ms ease', '&:hover': { bgcolor: '#1FAF72', borderColor: '#1FAF72', color: '#fff', boxShadow: '0 6px 18px rgba(31,175,114,.4)', transform: 'scale(1.06)' }, '&:active': { transform: 'scale(0.96)' } }}>
             <ArrowForwardIosIcon fontSize="small" />
           </IconButton>
         </Box>

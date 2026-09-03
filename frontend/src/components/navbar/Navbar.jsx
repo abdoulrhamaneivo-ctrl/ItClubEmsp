@@ -67,14 +67,24 @@ export default function Navbar() {
 
         <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 0.5, alignItems: 'center' }}>
           {liens.map((l) => (
-            <Button key={l.cible} color="inherit" href={l.route ? l.cible : (surAccueil ? `#${l.cible}` : `/#${l.cible}`)}>
+            <Button key={l.cible} color="inherit"
+              href={l.route ? l.cible : (surAccueil ? `#${l.cible}` : `/#${l.cible}`)}
+              sx={{
+                position: 'relative', fontWeight: 600, fontSize: '0.9rem',
+                '&::after': {
+                  content: '""', position: 'absolute', bottom: 4, left: '50%',
+                  width: 0, height: 2, borderRadius: 2, bgcolor: '#1FAF72',
+                  transform: 'translateX(-50%)', transition: 'width 220ms cubic-bezier(0.22,1,0.36,1)',
+                },
+                '&:hover::after': { width: '55%' },
+              }}>
               {l.label}
             </Button>
           ))}
           <Button
             variant="contained"
             href={surAccueil ? '#adhesion' : '/#adhesion'}
-            sx={{ bgcolor: '#1FAF72', color: '#fff', '&:hover': { bgcolor: '#179963' }, mx: 0.5 }}
+            sx={{ bgcolor: '#1FAF72', color: '#fff', '&:hover': { bgcolor: '#179963', boxShadow: '0 6px 18px rgba(31,175,114,.45)' }, mx: 0.5, transition: 'background 200ms ease, box-shadow 200ms ease' }}
           >
             Rejoindre le club
           </Button>

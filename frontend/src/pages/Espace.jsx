@@ -170,7 +170,10 @@ export default function Espace() {
                   transition: 'background 160ms ease',
                   '&:hover': { bgcolor: '#F6FBF9' }, cursor: 'pointer',
                 }}>
-                  <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: n.couleur, mt: 1, flexShrink: 0 }} />
+                  <Box sx={{
+                    width: 8, height: 8, borderRadius: '50%', bgcolor: n.couleur, mt: 1, flexShrink: 0,
+                    ...(i === 0 && { boxShadow: `0 0 0 4px ${n.couleur}22` }),
+                  }} />
                   <Box sx={{ flex: 1, minWidth: 0 }}>
                     <Typography sx={{ fontWeight: 700, color: '#111827', fontSize: '0.86rem', lineHeight: 1.5 }}>
                       {n.titre}

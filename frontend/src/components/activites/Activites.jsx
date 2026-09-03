@@ -129,6 +129,7 @@ export default function Activites() {
                             bgcolor: `${a.couleur}14`, border: `1px solid ${a.couleur}30`,
                             display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 0.2,
                             alignSelf: 'flex-start',
+                            transition: 'transform 200ms ease',
                           }}>
                             <Typography sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 800, fontSize: '1.35rem', lineHeight: 1, color: a.couleur }}>
                               {d.getDate()}

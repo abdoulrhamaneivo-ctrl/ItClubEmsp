@@ -45,7 +45,7 @@ export default function Actualites() {
                 bgcolor: '#fff', borderRadius: '18px', overflow: 'hidden',
                 border: '1px solid #E8ECEA', boxShadow: '0 4px 16px rgba(13,27,42,.05)',
                 transition: 'box-shadow 220ms ease, transform 220ms ease',
-                '&:hover': { transform: 'translateY(-4px)', boxShadow: '0 12px 30px rgba(13,27,42,.1)' },
+                '&:hover': { transform: 'translateY(-4px)', boxShadow: '0 12px 30px rgba(13,27,42,.1)', borderColor: '#BFD8CC' },
               }}>
                 {/* Image d'illustration si présente */}
                 {n.image ? (
