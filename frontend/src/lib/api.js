@@ -5,7 +5,7 @@
  */
 
 const BASE_URL = import.meta.env.VITE_API_URL ?? ''
-const USE_MOCK = !BASE_URL || import.meta.env.DEV
+const USE_MOCK = !BASE_URL  // VITE_API_URL défini → API réelle (même en dev)
 
 // Mocks locaux (fallback) — structure identique aux réponses Django attendues
 const mocks = {

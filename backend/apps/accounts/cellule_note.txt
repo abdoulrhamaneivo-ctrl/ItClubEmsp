@@ -1,0 +1,1 @@
+# La cellule est gérée dans accounts (Cellule) — re-export pour cohérence
