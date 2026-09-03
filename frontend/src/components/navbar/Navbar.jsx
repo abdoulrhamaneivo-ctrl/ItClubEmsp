@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
+import { useLocation } from 'react-router-dom'
 import Box from '@mui/material/Box'
 import AppBar from '@mui/material/AppBar'
 import Toolbar from '@mui/material/Toolbar'
@@ -25,6 +26,8 @@ const liens = [
 ]
 
 export default function Navbar() {
+  const location = useLocation()
+  const surAccueil = location.pathname === '/'
   const [open, setOpen] = useState(false)
   const scrolled = useScrollTrigger({ disableHysteresis: true, threshold: 80 })
   const user = useAuth((s) => s.user)
@@ -45,7 +48,7 @@ export default function Navbar() {
     >
       <Toolbar sx={{ justifyContent: 'space-between' }}>
         <motion.a
-          href="#club"
+          href={surAccueil ? '#club' : '/#club'}
           style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none', color: 'inherit' }}
           initial={{ opacity: 0, x: -16 }}
           animate={{ opacity: 1, x: 0 }}
@@ -64,13 +67,13 @@ export default function Navbar() {
 
         <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 0.5, alignItems: 'center' }}>
           {liens.map((l) => (
-            <Button key={l.cible} color="inherit" href={l.route ? l.cible : `#${l.cible}`}>
+            <Button key={l.cible} color="inherit" href={l.route ? l.cible : (surAccueil ? `#${l.cible}` : `/#${l.cible}`)}>
               {l.label}
             </Button>
           ))}
           <Button
             variant="contained"
-            href="#adhesion"
+            href={surAccueil ? '#adhesion' : '/#adhesion'}
             sx={{ bgcolor: '#1FAF72', color: '#fff', '&:hover': { bgcolor: '#179963' }, mx: 0.5 }}
           >
             Rejoindre le club
@@ -100,11 +103,11 @@ export default function Navbar() {
         <Drawer anchor="right" open={open} onClose={() => setOpen(false)}>
           <List sx={{ width: 240, pt: 2 }} onClick={() => setOpen(false)}>
             {liens.map((l) => (
-              <ListItemButton key={l.cible} component="a" href={l.route ? l.cible : `#${l.cible}`} sx={{ borderRadius: 2 }}>
+              <ListItemButton key={l.cible} component="a" href={l.route ? l.cible : (surAccueil ? `#${l.cible}` : `/#${l.cible}`)} sx={{ borderRadius: 2 }}>
                 {l.label}
               </ListItemButton>
             ))}
-            <ListItemButton component="a" href="#adhesion" sx={{ borderRadius: 2, fontWeight: 700, color: '#0F5B3A' }}>
+            <ListItemButton component="a" href={surAccueil ? '#adhesion' : '/#adhesion'} sx={{ borderRadius: 2, fontWeight: 700, color: '#0F5B3A' }}>
               Rejoindre le club
             </ListItemButton>
             <ListItemButton
