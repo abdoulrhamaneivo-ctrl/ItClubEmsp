@@ -133,6 +133,23 @@ export default function Espace() {
                   ))}
                 </Box>
               </Box>
+              {/* Badge façon carte d'accès — signature club info */}
+              <Box sx={{
+                display: { xs: 'none', md: 'flex' }, flexDirection: 'column', gap: 0.6,
+                px: 2.4, py: 1.8, borderRadius: '12px',
+                bgcolor: 'rgba(0,0,0,.28)', border: '1px dashed rgba(154,251,215,.4)',
+                fontFamily: "'JetBrains Mono',monospace",
+              }}>
+                <Typography sx={{ color: 'rgba(154,251,215,.6)', fontSize: '0.56rem', letterSpacing: '0.2em' }}>
+                  MEMBRE-ID
+                </Typography>
+                <Typography sx={{ color: '#9AFBD7', fontWeight: 700, fontSize: '0.82rem', letterSpacing: '0.08em' }}>
+                  IT-EMSP-{String(user.nom?.length || 5).padStart(3, '0')}-{(user.roles ?? [])[0]?.code ?? 'M'}
+                </Typography>
+                <Typography sx={{ color: 'rgba(255,255,255,.45)', fontSize: '0.56rem', letterSpacing: '0.14em' }}>
+                  VALIDE · 2026-2027
+                </Typography>
+              </Box>
               {estBureau && (
                 <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
                   <Button variant="contained" href="/backoffice" size="large" sx={{
@@ -221,9 +238,9 @@ export default function Espace() {
             border: '1px solid #E8ECEA', overflow: 'hidden',
             '& .MuiTab-root': { minHeight: 56, fontWeight: 800, fontSize: { xs: '0.8rem', md: '0.9rem' } },
           }}>
-          <Tab icon={<IcCalendrier taille={19} couleur={onglet === 0 ? '#0F5B3A' : '#5A6B63'} />} iconPosition="start" label="Mes inscriptions" />
-          <Tab icon={<IcCube taille={19} couleur={onglet === 1 ? '#0F5B3A' : '#5A6B63'} />} iconPosition="start" label="Ma cellule" />
-          <Tab icon={<IcMembres taille={19} couleur={onglet === 2 ? '#0F5B3A' : '#5A6B63'} />} iconPosition="start" label="Mon profil" />
+          <Tab icon={<IcCalendrier taille={19} couleur={onglet === 0 ? '#0F5B3A' : '#5A6B63'} />} iconPosition="start" label={<>01. Inscriptions</>} />
+          <Tab icon={<IcCube taille={19} couleur={onglet === 1 ? '#0F5B3A' : '#5A6B63'} />} iconPosition="start" label={<>02. Ma cellule</>} />
+          <Tab icon={<IcMembres taille={19} couleur={onglet === 2 ? '#0F5B3A' : '#5A6B63'} />} iconPosition="start" label={<>03. Profil</>} />
         </Tabs>
 
         {/* ── Contenu des onglets ──────────────────────────────── */}

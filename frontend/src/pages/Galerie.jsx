@@ -103,7 +103,7 @@ export default function Galerie() {
         </motion.div>
 
         {/* Grille */}
-        <Box sx={{ columns: { xs: 2, sm: 2, md: 3, lg: 4 }, columnGap: { xs: 1.8, md: 3.5 }, '& > *': { breakInside: 'avoid', mb: { xs: 1.8, md: 3.5 } } }}>
+        <Box sx={{ columns: { xs: 2, sm: 3, md: 3, lg: 4 }, columnGap: { xs: 1.8, md: 3.5 }, '& > *': { breakInside: 'avoid', mb: { xs: 1.8, md: 3.5 } } }}>
           <AnimatePresence mode="popLayout">
             {liste.map((m, i) => (
               <motion.div

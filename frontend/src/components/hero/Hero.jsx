@@ -27,7 +27,7 @@ export default function Hero() {
       ref={ref}
       sx={{
         position: 'relative',
-        minHeight: { xs: '92vh', md: '100vh' },
+        minHeight: { xs: '92vh', sm: '94vh', md: '100vh' },
         overflow: 'hidden',
         background: 'linear-gradient(140deg,#0A1628 0%,#0D1B2A 42%,#0F5B3A 135%)',
       }}
@@ -71,7 +71,7 @@ export default function Hero() {
         maxWidth={false}
         sx={{
           position: 'relative', maxWidth: '1440px !important', px: { xs: 2.5, md: 4 },
-          height: '100%', minHeight: { xs: '92vh', md: '100vh' },
+          height: '100%', minHeight: { xs: '92vh', sm: '94vh', md: '100vh' },
           display: 'flex', flexDirection: 'column', justifyContent: 'center',
           pt: '88px', pb: { xs: '190px', md: '170px' },
         }}

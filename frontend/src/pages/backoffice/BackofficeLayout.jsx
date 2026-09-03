@@ -76,9 +76,10 @@ export default function BackofficeLayout() {
                   bgcolor: '#0F5B3A',
                   color: '#fff',
                   '& .MuiListItemIcon-root': { color: '#9AFBD7' },
+                  '& .MuiListItemText-primary': { color: '#fff', fontWeight: 800 },
                   boxShadow: '0 6px 16px rgba(15,91,58,.3)',
                 },
-                '&:hover': { bgcolor: '#EDF7F1' },
+                '&:hover': { bgcolor: '#EDF7F1', '& .MuiListItemIcon-root': { color: '#0F5B3A' } },
                 '&.active:hover': { bgcolor: '#0c4a2f' },
               }}
             >

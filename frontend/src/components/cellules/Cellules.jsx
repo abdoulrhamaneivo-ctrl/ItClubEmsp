@@ -36,7 +36,8 @@ const DUREE_TOUR = 4200  // ms par cellule en auto-rotation
 export default function Cellules() {
   const theme = useTheme()
   const mobile = useMediaQuery(theme.breakpoints.down('sm'))
-  const RAYON = mobile ? 250 : RAYON_DESKTOP
+  const tablette = useMediaQuery(theme.breakpoints.between('sm', 'lg'))
+  const RAYON = mobile ? 250 : tablette ? 320 : RAYON_DESKTOP
   const { data: cellules, loading, error } = useCellules()
   const [index, setIndex] = useState(0)
   const [hover, setHover] = useState(false)
