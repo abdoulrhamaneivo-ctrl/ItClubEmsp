@@ -107,7 +107,7 @@ function OngletActualites({ notify }) {
       {!edition ? (
         <>
           <Button variant="contained" startIcon={<AddIcon />} onClick={() => { setForm(initForm()); setEdition('nouveau') }}
-            sx={{ bgcolor: '#1FAF72', '&:hover': { bgcolor: '#179963' }, fontWeight: 800, borderRadius: '28px', mb: 2 }}>
+            sx={{ bgcolor: '#1FAF72', '&:hover': { bgcolor: '#179963' }, fontWeight: 800, borderRadius: '12px', mb: 2 }}>
             Nouvelle actualité
           </Button>
           {items.map((a) => (
@@ -178,7 +178,7 @@ function OngletDocuments({ notify }) {
       {!edition ? (
         <>
           <Button variant="contained" startIcon={<AddIcon />} onClick={() => { setForm(initForm()); setEdition('nouveau') }}
-            sx={{ bgcolor: '#1FAF72', '&:hover': { bgcolor: '#179963' }, fontWeight: 800, borderRadius: '28px', mb: 2 }}>
+            sx={{ bgcolor: '#1FAF72', '&:hover': { bgcolor: '#179963' }, fontWeight: 800, borderRadius: '12px', mb: 2 }}>
             Ajouter un document
           </Button>
           {items.map((d) => (
@@ -232,7 +232,7 @@ function OngletGalerie({ notify }) {
       {!edition ? (
         <>
           <Button variant="contained" startIcon={<AddIcon />} onClick={() => { setForm(initForm()); setEdition('nouveau') }}
-            sx={{ bgcolor: '#1FAF72', '&:hover': { bgcolor: '#179963' }, fontWeight: 800, borderRadius: '28px', mb: 2 }}>
+            sx={{ bgcolor: '#1FAF72', '&:hover': { bgcolor: '#179963' }, fontWeight: 800, borderRadius: '12px', mb: 2 }}>
             Ajouter un média
           </Button>
           {items.map((m) => (

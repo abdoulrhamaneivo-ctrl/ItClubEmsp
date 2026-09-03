@@ -82,10 +82,13 @@ export default function Login() {
             <Box component="img" src="/logo-itclub.jpg" alt="Logo" sx={{ width: 64, height: 64, borderRadius: 3, border: '2px solid #1FAF72' }} />
           </Box>
 
-          <Typography variant="h4" fontWeight={800} gutterBottom>
+          <Typography sx={{ fontFamily: "'JetBrains Mono',monospace", color: '#0E7A50', fontWeight: 700, fontSize: '0.78rem', mb: 0.8 }}>
+            $ ssh membre@itclub-emsp
+          </Typography>
+          <Typography sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 800, fontSize: { xs: '1.6rem', md: '2rem' }, color: '#111827', mb: 1 }}>
             Espace membre
           </Typography>
-          <Typography color="text.secondary" mb={4}>
+          <Typography color="text.secondary" mb={4} sx={{ lineHeight: 1.8 }}>
             Annonces, activités, ressources — tout t'attend ici.
           </Typography>
 
@@ -97,21 +100,24 @@ export default function Login() {
 
           <Box component="form" onSubmit={submit} sx={{ display: 'grid', gap: 2.5 }}>
             <TextField
-              name="email" label="E-mail" type="email" required fullWidth
+              name="email" label="E-mail (@emsp.int)" type="email" required fullWidth autoComplete="email"
               InputProps={{ startAdornment: <InputAdornment position="start"><EmailIcon fontSize="small" sx={{ color: '#1FAF72' }} /></InputAdornment> }}
             />
             <TextField
-              name="password" label="Mot de passe" type="password" required fullWidth
+              name="password" label="Mot de passe" type="password" required fullWidth autoComplete="current-password"
               InputProps={{ startAdornment: <InputAdornment position="start"><LockIcon fontSize="small" sx={{ color: '#1FAF72' }} /></InputAdornment> }}
             />
             <motion.div whileHover={{ scale: 1.015 }} whileTap={{ scale: 0.985 }}>
               <Button type="submit" variant="contained" size="large" fullWidth disabled={chargement}
-                sx={{ bgcolor: '#0F5B3A', '&:hover': { bgcolor: '#0c4a2f' }, py: 1.4 }}>
+                sx={{ bgcolor: '#1FAF72', '&:hover': { bgcolor: '#179963', boxShadow: '0 8px 22px rgba(31,175,114,.4)' }, py: 1.4, fontWeight: 800, borderRadius: '14px', transition: 'background 200ms ease, box-shadow 200ms ease' }}>
                 {chargement ? 'Connexion…' : 'Se connecter'}
               </Button>
             </motion.div>
-            <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center' }}>
+            <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', lineHeight: 1.8 }}>
               Pas encore membre ? <RouterLink to="/#adhesion" style={{ color: '#0E7A50', fontWeight: 700 }}>Remplis le formulaire d'adhésion</RouterLink>.
+            </Typography>
+            <Typography variant="caption" sx={{ textAlign: 'center', color: '#9CA3AF', display: 'block', fontFamily: "'JetBrains Mono',monospace", fontSize: '0.66rem' }}>
+              // démo : n'importe quels identifiants fonctionnent
             </Typography>
           </Box>
         </motion.div>

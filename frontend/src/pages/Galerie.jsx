@@ -76,7 +76,7 @@ export default function Galerie() {
         <TitreSection
           badge="Médias"
           titre="La galerie du club"
-          sousTitre="Photos et vidéos de tout ce que le club vit : ateliers, compétitions, sorties. Clique sur un média pour l'ouvrir en grand."
+          sousTitre="Le club en images, alimenté par la Communication — ateliers, compétitions, sorties. Clique sur un média pour l'ouvrir en grand."
           couleur="#1FAF72"
         />
 
