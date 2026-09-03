@@ -15,10 +15,10 @@ export default function Hero() {
   const ref = useRef(null)
 
   const stats = [
-    { valeur: '142+', label: 'Membres actifs' },
-    { valeur: '5', label: 'Cellules & pôles' },
+    { valeur: '24/7', label: 'Le club est actif' },
+    { valeur: '4', label: 'Domaines tech' },
     { valeur: '28', label: 'Activités / an' },
-    { valeur: '15', label: 'Documents officiels' },
+    { valeur: '0', label: 'Frais d’adhésion' },
   ]
 
   return (

@@ -214,7 +214,7 @@ export default function Bureau() {
         </Box>
 
         {/* KPIs */}
-        <Box sx={{ mt: 7, display: 'flex', gap: { xs: 2, md: 4 }, justifyContent: 'center', flexWrap: 'wrap' }}>
+        <Box sx={{ mt: 7, display: 'flex', gap: { xs: 1.5, sm: 2, md: 4 }, justifyContent: 'center', flexWrap: 'wrap' }}>
           <StatRapide label="Postes du Bureau" valeur={n} icone={<IcMembres taille={22} couleur="#1FAF72" />} />
           <StatRapide label="Cellules animées" valeur={4} icone={<IcCube taille={22} couleur="#2563EB" />} />
           <StatRapide label="Documents de référence" valeur={15} icone={<IcDocument taille={22} couleur="#7B61FF" />} />

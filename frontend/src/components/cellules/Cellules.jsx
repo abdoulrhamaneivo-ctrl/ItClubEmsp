@@ -256,14 +256,13 @@ export default function Cellules() {
         </Box>
 
         {/* KPIs dynamiques — suivent la cellule de face de l'anneau */}
-        <Box sx={{ mt: 7, display: 'flex', gap: { xs: 2, md: 4 }, justifyContent: 'center', flexWrap: 'wrap' }}>
+        <Box sx={{ mt: 7, display: 'flex', gap: { xs: 1.5, sm: 2, md: 4 }, justifyContent: 'center', flexWrap: 'wrap' }}>
           <AnimatePresence mode="wait">
             <motion.div key={index} style={{ display: 'flex', gap: { xs: 2, md: 4 }, flexWrap: 'wrap', justifyContent: 'center' }}
               initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}>
               <StatRapide label="Membres de la cellule" valeur={actuelle?.membres ?? '—'} icone={<IcMembres taille={22} couleur={actuelle?.couleur ?? "#1FAF72"} />} couleur={actuelle?.couleur ?? '#1FAF72'} />
               <StatRapide label="Position sur l'anneau" valeur={`${(index % n) + 1} / ${n}`} icone={<IcRocket taille={22} couleur={actuelle?.couleur ?? "#2563EB"} />} couleur={actuelle?.couleur ?? '#2563EB'} />
-              <StatRapide label="Membres du club" valeur={cellules.reduce((s, c) => s + (c.membres || 0), 0)} icone={<IcCalendrier taille={22} couleur={actuelle?.couleur ?? "#F5A623"} />} couleur={actuelle?.couleur ?? '#F5A623'} />
             </motion.div>
           </AnimatePresence>
         </Box>
