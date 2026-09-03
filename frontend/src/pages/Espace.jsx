@@ -112,6 +112,11 @@ function Palette({ ouvert, fermer, user, estBureau, scrollTo, logout }) {
     else if (it.action === 'logout') logout()
   }, [fermer, scrollTo, logout])
 
+  // L'item sélectionné reste visible quand on navigue au clavier
+  useEffect(() => {
+    document.getElementById('palette-item-' + sel)?.scrollIntoView({ block: 'nearest' })
+  }, [sel])
+
   const surTouche = (e) => {
     if (e.key === 'ArrowDown') { e.preventDefault(); setSel((s) => (s + 1) % items.length) }
     else if (e.key === 'ArrowUp') { e.preventDefault(); setSel((s) => (s - 1 + items.length) % items.length) }
@@ -161,6 +166,7 @@ function Palette({ ouvert, fermer, user, estBureau, scrollTo, logout }) {
                 {items.map((it, i) => (
                   <Box
                     key={it.label}
+                    id={'palette-item-' + i}
                     onClick={() => executer(it)}
                     onMouseEnter={() => setSel(i)}
                     sx={{
@@ -181,8 +187,11 @@ function Palette({ ouvert, fermer, user, estBureau, scrollTo, logout }) {
                   </Box>
                 ))}
               </Box>
-              {/* Aide touches */}
-              <Box sx={{ display: 'flex', gap: 2, px: 2.4, py: 1.4, borderTop: '1px solid rgba(154,251,215,.12)' }}>
+              {/* Aide touches + compteur résultats */}
+              <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', px: 2.4, py: 1.4, borderTop: '1px solid rgba(154,251,215,.12)' }}>
+                <Typography sx={{ color: 'rgba(154,251,215,.55)', fontSize: '0.64rem', fontFamily: "'JetBrains Mono',monospace" }}>
+                  {items.length} resultat{items.length > 1 ? 's' : ''}
+                </Typography>
                 {[['↑↓', 'naviguer'], ['↵', 'ouvrir'], ['esc', 'fermer']].map(([touche, sens]) => (
                   <Box key={touche} sx={{ display: 'flex', alignItems: 'center', gap: 0.8 }}>
                     <Typography sx={{ color: 'rgba(154,251,215,.7)', fontSize: '0.6rem', fontFamily: "'JetBrains Mono',monospace", border: '1px solid rgba(154,251,215,.25)', borderRadius: '5px', px: 0.7 }}>

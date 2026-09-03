@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Box from '@mui/material/Box'
 import Container from '@mui/material/Container'
@@ -48,6 +48,18 @@ export default function Galerie() {
       return liste[(idx + dir + liste.length) % liste.length]
     })
   }
+
+  // Lightbox : Escape ferme, flèches naviguent (convention universelle)
+  useEffect(() => {
+    if (!lightbox) return
+    const h = (e) => {
+      if (e.key === 'Escape') setLightbox(null)
+      else if (e.key === 'ArrowRight') naviguer(1)
+      else if (e.key === 'ArrowLeft') naviguer(-1)
+    }
+    window.addEventListener('keydown', h)
+    return () => window.removeEventListener('keydown', h)
+  }, [lightbox, liste])
 
   const IconeDe = (m) => {
     const Comp = ICONES[m.iconeId] ?? IcPhoto

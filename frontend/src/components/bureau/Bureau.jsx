@@ -79,6 +79,10 @@ export default function Bureau() {
         }}>
           {/* ── Pile de cartes 3D ── */}
           <Box
+            role="button"
+            tabIndex={0}
+            aria-label="Tourner la page vers le membre suivant"
+            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); tourner(1) } }}
             onMouseEnter={() => setHover(true)}
             onMouseLeave={() => setHover(false)}
             sx={{
