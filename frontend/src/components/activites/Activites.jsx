@@ -49,7 +49,7 @@ export default function Activites() {
         <TitreSection
           badge="Calendrier"
           titre="Activités à venir"
-          sousTitre="Inscriptions en ligne, places limitées, rappels automatiques. Clique sur une activité pour t'inscrire."
+          sousTitre="Réservé aux membres — inscriptions en ligne, places limitées, rappels automatiques. Clique pour réserver ta place."
           couleur="#2563EB"
         />
 

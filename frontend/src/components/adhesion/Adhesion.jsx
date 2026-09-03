@@ -140,7 +140,7 @@ export default function Adhesion() {
           transition={{ duration: 0.38, ease: [0.22, 1, 0.36, 1] }}
         >
           <Box sx={{ mb: 5 }}>
-            <Typography variant="overline" sx={{ color: '#F5A623', fontWeight: 800, letterSpacing: '0.15em', textTransform: 'uppercase', mb: 1.5, display: 'inline-block', borderBottom: '3px solid #F5A623', paddingBottom: 4 }}>
+            <Typography variant="overline" sx={{ color: '#B45309', fontWeight: 800, letterSpacing: '0.15em', textTransform: 'uppercase', mb: 1.5, display: 'inline-block', borderBottom: '3px solid #F5A623', paddingBottom: 0.5 }}>
               Nous rejoindre
             </Typography>
             <Typography component="h2" sx={{ fontFamily: "'Orbitron', sans-serif", fontWeight: 700, fontSize: { xs: '1.75rem', md: '2.5rem' }, lineHeight: 1.2, color: '#111827', mb: 2 }}>

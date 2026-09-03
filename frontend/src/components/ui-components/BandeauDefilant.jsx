@@ -15,13 +15,13 @@ export default function BandeauDefilant({ items = [], vitesse = 30, sens = 'gauc
         <Box key={i} sx={{ display: 'inline-flex', alignItems: 'center' }}>
           <Typography component="span" sx={{
             color: '#1FAF72', fontFamily: "'JetBrains Mono',monospace",
-            fontWeight: 700, fontSize: '0.78rem', px: 1,
+            fontWeight: 700, fontSize: { xs: '0.72rem', md: '0.78rem' }, px: 1,
           }}>
             $
           </Typography>
           <Typography component="span" sx={{
             color: 'rgba(255,255,255,.88)', fontFamily: "'JetBrains Mono',monospace",
-            fontWeight: 500, fontSize: '0.78rem', letterSpacing: '0.02em',
+            fontWeight: 500, fontSize: { xs: '0.72rem', md: '0.78rem' }, letterSpacing: '0.02em',
           }}>
             {it}
           </Typography>
