@@ -46,7 +46,7 @@ export default function QuiSommesNous() {
           transition={{ duration: 0.38, ease: [0.22, 1, 0.36, 1] }}
         >
           <Box sx={{ mb: 6 }}>
-            <Typography variant="overline" sx={{ color: '#1FAF72', fontWeight: 800, letterSpacing: '0.15em', textTransform: 'uppercase', mb: 1.5, display: 'inline-block', borderBottom: '3px solid #1FAF72', paddingBottom: 4 }}>
+            <Typography variant="overline" sx={{ color: '#1FAF72', fontWeight: 800, letterSpacing: '0.15em', textTransform: 'uppercase', mb: 1.5, display: 'inline-block', borderBottom: '3px solid #1FAF72', paddingBottom: 0.5 }}>
               Identité
             </Typography>
             <Typography component="h2" sx={{ fontFamily: "'Orbitron', sans-serif", fontWeight: 700, fontSize: { xs: '1.75rem', md: '2.5rem' }, lineHeight: 1.2, color: '#111827', mb: 2 }}>
@@ -132,7 +132,7 @@ export default function QuiSommesNous() {
           transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
         >
           <Box sx={{ mb: 4 }}>
-            <Typography variant="overline" sx={{ color: '#1FAF72', fontWeight: 800, letterSpacing: '0.15em', textTransform: 'uppercase', mb: 1.5, display: 'inline-block', borderBottom: '3px solid #1FAF72', paddingBottom: 4 }}>
+            <Typography variant="overline" sx={{ color: '#1FAF72', fontWeight: 800, letterSpacing: '0.15em', textTransform: 'uppercase', mb: 1.5, display: 'inline-block', borderBottom: '3px solid #1FAF72', paddingBottom: 0.5 }}>
               Nos piliers
             </Typography>
           </Box>
@@ -282,7 +282,7 @@ function SquelettePresentation() {
   return (
     <Box sx={{ py: 8 }}>
       <Container>
-        <Typography variant="overline" sx={{ color: '#1FAF72', fontWeight: 800, letterSpacing: '0.15em', textTransform: 'uppercase', mb: 1.5, display: 'inline-block', borderBottom: '3px solid #1FAF72', paddingBottom: 4 }}>
+        <Typography variant="overline" sx={{ color: '#1FAF72', fontWeight: 800, letterSpacing: '0.15em', textTransform: 'uppercase', mb: 1.5, display: 'inline-block', borderBottom: '3px solid #1FAF72', paddingBottom: 0.5 }}>
           Identité
         </Typography>
         <Typography component="h2" sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 700, fontSize: { xs: '1.75rem', md: '2.5rem' }, color: '#111827', mb: 4 }}>

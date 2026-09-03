@@ -172,7 +172,7 @@ export default function Cellules() {
                       <Box>
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8 }}>
                           <IcMembres taille={13} couleur={actuelle.couleur} />
-                          <Typography sx={{ color: actuelle.couleur, fontWeight: 800, fontSize: '0.7rem', letterSpacing: '0.16em', textTransform: 'uppercase' }}>
+                          <Typography sx={{ color: actuelle.couleurFonce ?? actuelle.couleur, fontWeight: 800, fontSize: '0.7rem', letterSpacing: '0.16em', textTransform: 'uppercase' }}>
                             {actuelle.membres} membres actifs
                           </Typography>
                         </Box>

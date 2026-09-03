@@ -354,7 +354,7 @@ export default function Adhesion() {
                                 <Typography variant="body2" color="textSecondary" sx={{ lineHeight: 1.7 }}>
                                   Je certifie que les informations fournies sont exactes et m&apos;engage à respecter
                                   la charte du club et les décisions du Bureau.
-                                  <Box component="a" href="#documentation" sx={{ color: '#1FAF72', textDecoration: 'underline', cursor: 'pointer', ml: 0.5 }}>
+                                  <Box component="a" href="#documentation" sx={{ color: '#0E7A50', textDecoration: 'underline', cursor: 'pointer', ml: 0.5, fontWeight: 700, '&:hover': { color: '#0F5B3A' } }}>
                                     Consulter la charte →
                                   </Box>
                                 </Typography>

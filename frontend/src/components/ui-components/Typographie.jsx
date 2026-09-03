@@ -59,6 +59,8 @@ export function MotFort({ children, couleur = '#1FAF72' }) {
 
 /** Petit label de section avec trait animé (plus raffiné que l'overline simple). */
 export function LabelLigne({ children, couleur = '#1FAF72' }) {
+  // Le trait garde la couleur vive ; le TEXTE passe en version foncée pour la lisibilité
+  const couleurTexte = couleur === '#1FAF72' ? '#0E7A50' : couleur
   return (
     <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 1.2, mb: 1.5 }}>
       <motion.span
@@ -68,7 +70,7 @@ export function LabelLigne({ children, couleur = '#1FAF72' }) {
         transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
         style={{ width: 26, height: 2.5, borderRadius: 2, background: couleur, transformOrigin: 'left' }}
       />
-      <Typography sx={{ color: couleur, fontWeight: 800, fontSize: '0.72rem', letterSpacing: '0.2em', textTransform: 'uppercase' }}>
+      <Typography sx={{ color: couleurTexte, fontWeight: 800, fontSize: '0.72rem', letterSpacing: '0.2em', textTransform: 'uppercase' }}>
         {children}
       </Typography>
     </Box>

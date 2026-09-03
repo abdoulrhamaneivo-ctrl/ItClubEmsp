@@ -189,7 +189,7 @@ export default function TachesNotion() {
                   <td style={{ padding: '12px 20px', fontWeight: 600, color: '#0D1B2A', fontSize: '0.92rem' }}>
                     {t.tache || '—'}
                     {t.statut === 'Terminé' && (
-                      <TaskAltIcon sx={{ fontSize: 15, ml: 1, verticalAlign: '-2px', color: '#0E9F6E' }} />
+                      <TaskAltIcon sx={{ fontSize: 15, ml: 1, verticalAlign: '-2px', color: '#0B7A4B' }} />
                     )}
                   </td>
                   <td style={{ padding: '12px 20px' }}>

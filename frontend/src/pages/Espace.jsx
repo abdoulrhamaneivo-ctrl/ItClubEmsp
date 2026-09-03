@@ -157,7 +157,7 @@ export default function Espace() {
                 <Typography sx={{ fontWeight: 800, color: '#111827', fontSize: '0.95rem', display: 'flex', alignItems: 'center', gap: 1 }}>
                   <IcCommunication taille={17} couleur="#0F5B3A" /> Notifications
                 </Typography>
-                <Chip label="3 nouvelles" size="small" sx={{ bgcolor: '#E4F8EF', color: '#0E9F6E', fontWeight: 800, fontSize: '0.64rem', height: 22 }} />
+                <Chip label="3 nouvelles" size="small" sx={{ bgcolor: '#E4F8EF', color: '#0B7A4B', fontWeight: 800, fontSize: '0.64rem', height: 22 }} />
               </Box>
               {[
                 { id: 1, titre: 'Ta place au Hackathon est en liste d’attente', date: 'il y a 2h', couleur: '#2563EB' },
