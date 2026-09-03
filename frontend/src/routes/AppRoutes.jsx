@@ -1,3 +1,4 @@
+import { lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { ThemeProvider, CssBaseline } from '@mui/material'
 import theme from '../theme'
@@ -14,11 +15,11 @@ import Cellules from '../components/cellules/Cellules'
 import Activites from '../components/activites/Activites'
 import Actualites from '../components/actualites/Actualites'
 import Documentation from '../components/documentation/Documentation'
-import Login from '../pages/Login'
-import Espace from '../pages/Espace'
+const Login = lazy(() => import('../pages/Login'))
+const Espace = lazy(() => import('../pages/Espace'))
 import RequireAuth from '../pages/RequireAuth'
-import Galerie from '../pages/Galerie'
-import BackofficeLayout from '../pages/backoffice/BackofficeLayout'
+const Galerie = lazy(() => import('../pages/Galerie'))
+const BackofficeLayout = lazy(() => import('../pages/backoffice/BackofficeLayout'))
 
 function Vitrine() {
   return (
@@ -54,6 +55,7 @@ function Vitrine() {
 export default function AppRoutes() {
   return (
     <BrowserRouter>
+      <Suspense fallback={null}>
       <Routes>
         <Route path="/" element={<Vitrine />} />
         <Route path="/galerie" element={<><Navbar /><Galerie /></>} />
@@ -75,6 +77,7 @@ export default function AppRoutes() {
           }
         />
       </Routes>
+          </Suspense>
     </BrowserRouter>
   )
 }
