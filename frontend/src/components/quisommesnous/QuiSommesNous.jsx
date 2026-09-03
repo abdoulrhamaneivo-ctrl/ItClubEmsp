@@ -66,7 +66,7 @@ export default function QuiSommesNous() {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '0px' }}
+          viewport={{ once: true, margin: '-60px' }}
           transition={{ duration: 0.38, ease: [0.22, 1, 0.36, 1] }}
         >
           <Box sx={{
@@ -108,7 +108,7 @@ export default function QuiSommesNous() {
           style={{ y: yContainer }}
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
-          viewport={{ once: true, margin: '0px' }}
+          viewport={{ once: true, margin: '-60px' }}
           transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
         >
           <Box sx={{ mb: 8 }}>
@@ -128,7 +128,7 @@ export default function QuiSommesNous() {
           style={{ y: yContainer }}
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
-          viewport={{ once: true, margin: '0px' }}
+          viewport={{ once: true, margin: '-60px' }}
           transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
         >
           <Box sx={{ mb: 4 }}>
@@ -146,7 +146,7 @@ export default function QuiSommesNous() {
                 key={p.numero}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '0px' }}
+                viewport={{ once: true, margin: '-60px' }}
                 transition={{ duration: 0.32, delay: i * 0.0355, ease: [0.22, 1, 0.36, 1] }}
               >
                 <Box
@@ -187,7 +187,7 @@ export default function QuiSommesNous() {
           style={{ y: yContainer }}
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
-          viewport={{ once: true, margin: '0px' }}
+          viewport={{ once: true, margin: '-60px' }}
           transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
         >
           <Box
@@ -234,7 +234,7 @@ export default function QuiSommesNous() {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '0px' }}
+          viewport={{ once: true, margin: '-60px' }}
           transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
         >
           <Box sx={{

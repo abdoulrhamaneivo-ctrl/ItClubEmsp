@@ -36,7 +36,7 @@ export default function Actualites() {
               key={n.id}
               initial={{ opacity: 0, y: 22 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '0px' }}
+              viewport={{ once: true, margin: '-60px' }}
               transition={{ duration: 0.35, delay: Math.min(i * 0.05, 0.3), ease: [0.22, 1, 0.36, 1] }}
               style={{ height: '100%' }}
             >

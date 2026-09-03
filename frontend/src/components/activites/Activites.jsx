@@ -56,7 +56,7 @@ export default function Activites() {
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '0px' }}
+          viewport={{ once: true, margin: '-60px' }}
           transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
         >
           {/* ── Timeline journal — ligne neutre fine ──────────────── */}
@@ -68,7 +68,7 @@ export default function Activites() {
                 key={mois}
                 initial={{ opacity: 0, y: 18 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '0px' }}
+                viewport={{ once: true, margin: '-60px' }}
                 transition={{ duration: 0.35, delay: mIdx * 0.06, ease: [0.22, 1, 0.36, 1] }}
               >
                 {/* En-tête du mois */}
@@ -102,7 +102,7 @@ export default function Activites() {
                         key={a.id}
                         initial={{ opacity: 0, y: 16 }}
                         whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true, margin: '0px' }}
+                        viewport={{ once: true, margin: '-60px' }}
                         transition={{ duration: 0.32, delay: (mIdx + aIdx) * 0.04, ease: [0.22, 1, 0.36, 1] }}
                       >
                         <Box
@@ -195,7 +195,7 @@ export default function Activites() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '0px' }}
+          viewport={{ once: true, margin: '-60px' }}
           transition={{ duration: 0.3, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
         >
           <Box sx={{ mt: 8, textAlign: 'center' }}>

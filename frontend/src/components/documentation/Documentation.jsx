@@ -1,56 +1,41 @@
 import { useMemo, useState } from 'react'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import Box from '@mui/material/Box'
 import Container from '@mui/material/Container'
 import Typography from '@mui/material/Typography'
 import Chip from '@mui/material/Chip'
-import Button from '@mui/material/Button'
-import FondPropre from '../ui-components/FondPropre'
-import { BandeauAccent } from '../ui-components/FondPropre'
+import Collapse from '@mui/material/Collapse'
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
+import FondPropre, { BandeauAccent } from '../ui-components/FondPropre'
 import TitreSection from '../ui-components/TitreSection'
 import { IcDocument, IcCube, IcMembres } from '../ui-components/IconesClub'
 import { useContenu } from '../../lib/contenu'
 
 /**
- * Documentation — regroupée par familles (tout savoir en un coup d'œil).
- * Structure par lecture : Charte & Règles → Vie du club → Archives.
- * Chaque ligne : icône, titre, description lisible, format, ouvrir.
+ * Documentation — layout COLONNES compactes + accordéon par famille :
+ * grille 2-3 colonnes de familles repliables (ouverte par défaut pour
+ * les fondamentaux), lignes aérées, « Ouvrir » au hover. Le contenu
+ * vient du magasin dynamique (back-office « Actualités & contenu »).
  */
 
-// Familles logiques — l'ordre = l'ordre de lecture du visiteur
 const FAMILLES = [
-  {
-    id: 'fondamentaux',
-    titre: 'Les fondamentaux',
-    sousTitre: 'Ce qui régit le club — à lire en premier',
-    ids: ['charte', 'reglement', 'statuts', 'statutsCI'],
-  },
-  {
-    id: 'organisation',
-    titre: 'Vie du club',
-    sousTitre: 'Qui fait quoi, qui est membre',
-    ids: ['missions', 'membres'],
-  },
-  {
-    id: 'archives',
-    titre: 'Archives des réunions',
-    sousTitre: 'Les comptes-rendus officiels',
-    ids: ['pv1', 'pv7mai'],
-  },
+  { id: 'fondamentaux', titre: 'Les fondamentaux', sousTitre: 'À lire en premier', ids: ['charte', 'reglement', 'statuts'], couleur: '#1FAF72', Icone: IcDocument, ouverteDefaut: true },
+  { id: 'vie', titre: 'Vie du club', sousTitre: 'Organisation & membres', ids: ['missions', 'membres'], couleur: '#2563EB', Icone: IcCube, ouverteDefaut: true },
+  { id: 'archives', titre: 'Archives', sousTitre: 'Comptes rendus de réunions', ids: ['pv1', 'pv2'], couleur: '#7B61FF', Icone: IcMembres, ouverteDefaut: false },
 ]
 
-const iconesFamille = {
-  fondamentaux: IcDocument,
-  organisation: IcCube,
-  archives: IcMembres,
-}
-
 export default function Documentation() {
-  const familleActive = useState(null)
+  const docs = useContenu('documents')
+  const [etatFamilles, setEtatFamilles] = useState(() =>
+    Object.fromEntries(FAMILLES.map((f) => [f.id, f.ouverteDefaut])),
+  )
 
-  const documents = useContenu('documents')
+  const parId = useMemo(() => Object.fromEntries(docs.map((d) => [d.id, d])), [docs])
 
-  const parId = Object.fromEntries(documents.map((d) => [d.id, d]))
+  const basculer = (id) =>
+    setEtatFamilles((e) => ({ ...e, [id]: !e[id] }))
+
+  const totalDocs = docs.length
 
   return (
     <Box id="documentation" sx={{ py: { xs: 6, md: 8 }, position: 'relative', overflow: 'hidden' }}>
@@ -61,116 +46,150 @@ export default function Documentation() {
         <TitreSection
           badge="Ressources"
           titre="Documentation & Règles"
-          sousTitre="Charte, règlement, statuts, procès-verbaux. Tout est classé par famille — lis-les dans l'ordre, ils se complètent."
+          sousTitre={`${totalDocs} documents classés par famille — déploie ce dont tu as besoin.`}
           couleur="#1FAF72"
         />
 
-        <Box sx={{ display: 'grid', gap: 4 }}>
+        {/* ═══ GRILLE COLONNES de familles ═══ */}
+        <Box sx={{ display: 'grid', gap: 2.5, gridTemplateColumns: { xs: '1fr', md: 'repeat(2, 1fr)' } }}>
           {FAMILLES.map((fam, fIdx) => {
-            const Icone = iconesFamille[fam.id]
-            const docs = fam.ids.map((id) => parId[id]).filter(Boolean)
+            const Icone = fam.Icone
+            const docsFamille = fam.ids.map((id) => parId[id]).filter(Boolean)
+            const ouverte = etatFamilles[fam.id] ?? false
             return (
               <motion.div
                 key={fam.id}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 18 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '0px' }}
-                transition={{ delay: fIdx * 0.07, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                viewport={{ once: true, margin: '-60px' }}
+                transition={{ delay: fIdx * 0.06, duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+                style={{ gridColumn: fam.id === 'fondamentaux' ? undefined : undefined }}
               >
-                {/* En-tête de famille */}
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.8, mb: 2 }}>
-                  <Box sx={{
-                    width: 42, height: 42, borderRadius: '12px', bgcolor: '#fff',
-                    border: '1px solid #E8ECEA', display: 'grid', placeItems: 'center',
-                    boxShadow: '0 2px 8px rgba(13,27,42,.05)',
-                  }}>
-                    <Icone taille={20} couleur="#0F5B3A" />
-                  </Box>
-                  <Box>
-                    <Typography sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 800, fontSize: '1.05rem', color: '#111827' }}>
-                      {fam.titre}
-                    </Typography>
-                    <Typography variant="caption" sx={{ color: '#5A6B63', fontWeight: 600 }}>
-                      {fam.sousTitre}
-                    </Typography>
-                  </Box>
-                </Box>
-
-                {/* Lignes de documents */}
-                <Box sx={{ bgcolor: '#fff', borderRadius: '16px', border: '1px solid #E8ECEA', overflow: 'hidden', boxShadow: '0 4px 14px rgba(13,27,42,.05)' }}>
-                  {docs.map((doc, i) => (
-                    <Box
-                      key={doc.id}
-                      component="a"
-                      href={`/documents/${doc.fichier}`}
-                      target="_blank"
-                      rel="noopener"
-                      sx={{
-                        display: 'flex', alignItems: 'center', gap: 2.2,
-                        px: { xs: 2.2, md: 3 }, py: 2.2,
-                        borderTop: i === 0 ? 'none' : '1px solid #EDF2EF',
-                        textDecoration: 'none',
-                        transition: 'background 180ms ease',
-                        '&:hover': { bgcolor: '#EDF7F1' },
-                      }}
-                    >
-                      {/* Icône fichier */}
-                      <Box sx={{
-                        width: 44, height: 44, borderRadius: '12px', flexShrink: 0,
-                        bgcolor: `${doc.couleur}12`, border: `1px solid ${doc.couleur}30`,
-                        display: 'grid', placeItems: 'center',
-                      }}>
-                        <IcDocument taille={21} couleur={doc.couleur} />
-                      </Box>
-
-                      {/* Texte — lisible, structuré */}
-                      <Box sx={{ flex: 1, minWidth: 0 }}>
-                        <Typography sx={{ fontWeight: 800, color: '#111827', fontSize: '0.95rem', lineHeight: 1.35 }}>
-                          {doc.titre}
-                        </Typography>
-                        <Typography variant="body2" sx={{ color: '#5A6B63', lineHeight: 1.6, mt: 0.3 }}>
-                          {doc.description}
-                        </Typography>
-                      </Box>
-
-                      {/* Format + action */}
-                      <Box sx={{ flexShrink: 0, display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                        <Chip
-                          label={doc.fichier.toLowerCase().endsWith('.pdf') ? 'PDF' : 'DOCX'}
-                          size="small"
-                          sx={{ bgcolor: '#F5F7F6', color: '#4B5563', fontWeight: 800, fontSize: '0.64rem', height: 22 }}
-                        />
-                        <Box sx={{
-                          display: { xs: 'none', sm: 'inline-flex' }, alignItems: 'center', gap: 0.5,
-                          color: doc.couleur, fontWeight: 800, fontSize: '0.82rem',
-                        }}>
-                          Ouvrir →
-                        </Box>
-                      </Box>
+                {/* Carte famille (accordéon) */}
+                <Box sx={{
+                  bgcolor: '#fff', borderRadius: '16px',
+                  border: `1px solid ${ouverte ? fam.couleur + '40' : '#E8ECEA'}`,
+                  boxShadow: ouverte ? `0 8px 24px ${fam.couleur}12` : '0 4px 14px rgba(13,27,42,.05)',
+                  overflow: 'hidden',
+                  transition: 'border-color 200ms ease, box-shadow 200ms ease',
+                  height: '100%', display: 'flex', flexDirection: 'column',
+                }}>
+                  {/* En-tête cliquable */}
+                  <Box
+                    component="button"
+                    onClick={() => basculer(fam.id)}
+                    aria-expanded={ouverte}
+                    sx={{
+                      display: 'flex', alignItems: 'center', gap: 1.6, width: '100%',
+                      px: { xs: 2, md: 2.6 }, py: 2, textAlign: 'left', cursor: 'pointer',
+                      bgcolor: 'transparent', border: 'none', fontFamily: 'inherit',
+                      transition: 'background 160ms ease',
+                      '&:hover': { bgcolor: '#F6FBF9' },
+                    }}
+                  >
+                    <Box sx={{
+                      width: 42, height: 42, borderRadius: '12px', flexShrink: 0,
+                      bgcolor: `${fam.couleur}12`, border: `1px solid ${fam.couleur}30`,
+                      display: 'grid', placeItems: 'center',
+                    }}>
+                      <Icone taille={20} couleur={fam.couleur === '#1FAF72' ? '#0E7A50' : fam.couleur} />
                     </Box>
-                  ))}
+                    <Box sx={{ flex: 1, minWidth: 0 }}>
+                      <Typography sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 800, fontSize: '0.98rem', color: '#111827', lineHeight: 1.3 }}>
+                        {fam.titre}
+                      </Typography>
+                      <Typography variant="caption" sx={{ color: '#5A6B63', fontWeight: 600, fontSize: '0.7rem' }}>
+                        {fam.sousTitre} · {docsFamille.length} doc{docsFamille.length > 1 ? 's' : ''}
+                      </Typography>
+                    </Box>
+                    <motion.span
+                      animate={{ rotate: ouverte ? 180 : 0 }}
+                      transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+                      style={{ display: 'grid', placeItems: 'center', width: 30, height: 30, borderRadius: '10px', bgcolor: ouverte ? fam.couleur + '14' : 'transparent' }}
+                    >
+                      <ExpandMoreIcon sx={{ fontSize: 20, color: ouverte ? '#0E7A50' : '#9CA3AF' }} />
+                    </motion.span>
+                  </Box>
+
+                  {/* Contenu déroulant */}
+                  <Collapse in={ouverte} timeout={260} unmountOnExit>
+                    <Box sx={{ px: { xs: 1.2, md: 1.4 }, pb: 1.4 }}>
+                      {docsFamille.map((doc, i) => (
+                        <Box
+                          key={doc.id}
+                          component="a"
+                          href={`/documents/${doc.fichier}`}
+                          target="_blank"
+                          rel="noopener"
+                          sx={{
+                            display: 'flex', alignItems: 'center', gap: 1.6,
+                            px: 1.4, py: 1.5, mt: i === 0 ? 0.4 : 0,
+                            borderRadius: '12px',
+                            textDecoration: 'none',
+                            transition: 'background 150ms ease',
+                            '&:hover': { bgcolor: '#EDF7F1' },
+                            '&:hover .doc-ouvrir': { opacity: 1, transform: 'translateX(0)' },
+                          }}
+                        >
+                          <Box sx={{
+                            width: 38, height: 38, borderRadius: '10px', flexShrink: 0,
+                            bgcolor: `${doc.couleur}12`, border: `1px solid ${doc.couleur}30`,
+                            display: 'grid', placeItems: 'center',
+                          }}>
+                            <IcDocument taille={18} couleur={doc.couleur === '#F5A623' ? '#B45309' : doc.couleur} />
+                          </Box>
+                          <Box sx={{ flex: 1, minWidth: 0 }}>
+                            <Typography sx={{ fontWeight: 800, color: '#111827', fontSize: '0.86rem', lineHeight: 1.35 }}>
+                              {doc.titre}
+                            </Typography>
+                            <Typography variant="caption" sx={{ color: '#5A6B63', fontWeight: 600, fontSize: '0.72rem', display: 'block', lineHeight: 1.5 }}>
+                              {doc.description}
+                            </Typography>
+                          </Box>
+                          <Chip
+                            label={doc.format ?? 'PDF'} size="small"
+                            sx={{
+                              bgcolor: `${doc.couleur}14`, color: doc.couleur === '#F5A623' ? '#B45309' : doc.couleur,
+                              fontWeight: 800, fontSize: '0.6rem', flexShrink: 0, height: 22,
+                            }}
+                          />
+                          <Box className="doc-ouvrir" sx={{
+                            display: { xs: 'none', md: 'block' }, flexShrink: 0,
+                            opacity: 0, transform: 'translateX(-4px)',
+                            transition: 'opacity 160ms ease, transform 160ms ease',
+                          }}>
+                            <Typography sx={{ color: '#0E7A50', fontWeight: 800, fontSize: '0.72rem' }}>
+                              Ouvrir →
+                            </Typography>
+                          </Box>
+                        </Box>
+                      ))}
+                    </Box>
+                  </Collapse>
                 </Box>
               </motion.div>
             )
           })}
         </Box>
 
-        {/* Note de lecture */}
+        {/* Guide de lecture — compact */}
         <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true, margin: '0px' }}
-          transition={{ delay: 0.2, duration: 0.4 }}
+          initial={{ opacity: 0, y: 14 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-60px' }}
+          transition={{ duration: 0.3 }}
         >
           <Box sx={{
-            mt: 5, p: 2.5, borderRadius: '14px', bgcolor: '#F6FBF9', border: '1px solid #E3EEE8',
-            display: 'flex', gap: 1.5, alignItems: 'flex-start', maxWidth: 720, mx: 'auto',
+            mt: 3.5, px: { xs: 2.4, md: 3 }, py: 2,
+            bgcolor: 'rgba(15,91,58,.06)', borderRadius: '14px',
+            border: '1px solid rgba(15,91,58,.14)',
+            display: 'flex', alignItems: 'center', gap: 1.8, flexWrap: 'wrap',
           }}>
-            <IcDocument taille={18} couleur="#0F5B3A" />
-            <Typography variant="body2" sx={{ color: '#5A6B63', lineHeight: 1.7 }}>
-              <b style={{ color: '#0F5B3A' }}>Par où commencer ?</b> Lis la <b>Charte</b> puis le
-              <b> Règlement</b> — ils expliquent l'esprit et les règles du club. Les <b>Statuts</b>
-              détaillent le cadre officiel, et les <b>PV</b> racontent ce qui s'est déjà dit en réunion.
+            <Typography sx={{ fontWeight: 800, color: '#0F5B3A', fontSize: '0.84rem' }}>
+              Par où commencer ?
+            </Typography>
+            <Typography variant="body2" sx={{ color: '#4B5563', lineHeight: 1.7, flex: 1, minWidth: 220 }}>
+              <strong>Charte</strong> → <strong>Règlement</strong> → <strong>Statuts</strong>, puis les archives pour voir comment le club avance.
             </Typography>
           </Box>
         </motion.div>
