@@ -31,3 +31,7 @@ docs.zip
 # Caches
 .cache/
 .vite/
+
+# Templates d'origine (référence locale uniquement)
+mint-template/
+template pour le front/
