@@ -441,6 +441,129 @@ def classement(request):
     } for u in joueurs])
 
 
+# ── Dashboard global P1/P2 + Admin (doc 01) ─────────────────────
+CODES_DASHBOARD = ['P1', 'P2', 'ADMIN']
+CODES_PASSATION = ['P1', 'ADMIN']
+
+
+@api_view(['GET'])
+@permission_classes([permissions.IsAuthenticated])
+def dashboard(request):
+    """GET /api/v1/dashboard/ — chiffres clés du club (P1/P2/staff)."""
+    if not a_role(request.user, CODES_DASHBOARD):
+        return Response({'detail': 'Réservé à la direction (P1/P2).'}, status=403)
+    from django.db.models import Count, Sum
+    from apps.events.models import Inscription, Presence
+    from apps.governance.models import Projet, Opportunite
+    users = User.objects.filter(is_active=True)
+    parts = {c['statut']: c['n'] for c in
+             Candidature.objects.values('statut').annotate(n=Count('id'))}
+    cellules = Cellule.objects.annotate(n=Count('membres')).order_by('-n')
+    return Response({
+        'membres': users.count(),
+        'points_distribues': users.aggregate(s=Sum('points'))['s'] or 0,
+        'candidatures': {
+            'en_attente': parts.get('en_attente', 0),
+            'validee': parts.get('validee', 0),
+            'refusee': parts.get('refusee', 0),
+        },
+        'evenements': {
+            'total': Evenement.objects.count(),
+            'inscrits_confirmes': Inscription.objects.filter(liste_attente=False).count(),
+            'en_attente': Inscription.objects.filter(liste_attente=True).count(),
+            'presents': Presence.objects.count(),
+        },
+        'projets': {c['statut']: c['n'] for c in
+                    Projet.objects.values('statut').annotate(n=Count('id'))},
+        'opportunites': {c['statut']: c['n'] for c in
+                         Opportunite.objects.values('statut').annotate(n=Count('id'))},
+        'top_cellules': [{'nom': c.nom, 'membres': c.n} for c in cellules[:4]],
+    })
+
+
+@api_view(['GET'])
+@permission_classes([permissions.IsAuthenticated])
+def admin_utilisateurs(request):
+    """GET /api/v1/admin/utilisateurs — annuaire complet (ADMIN/staff)."""
+    u = request.user
+    if not (u.is_staff or a_role(u, ['ADMIN'])):
+        return Response({'detail': 'Réservé à l’administrateur.'}, status=403)
+    lignes = User.objects.all().order_by('-date_joined')[:200]
+    return Response([{
+        'id': x.id,
+        'nom': x.get_full_name() or x.username,
+        'email': x.email,
+        'points': x.points,
+        'niveau': niveau_de(x.points),
+        'roles': [r.code for r in x.roles.all()],
+        'is_active': x.is_active,
+    } for x in lignes])
+
+
+@api_view(['PATCH'])
+@permission_classes([permissions.IsAuthenticated])
+def admin_utilisateur_maj(request, pk):
+    """PATCH /api/v1/admin/utilisateurs/{id} {is_active} (ADMIN/staff)."""
+    u = request.user
+    if not (u.is_staff or a_role(u, ['ADMIN'])):
+        return Response({'detail': 'Réservé à l’administrateur.'}, status=403)
+    try:
+        cible = User.objects.get(pk=pk)
+    except User.DoesNotExist:
+        return Response({'detail': 'Introuvable.'}, status=404)
+    if cible.pk == u.pk and request.data.get('is_active') is False:
+        return Response({'detail': 'On ne se désactive pas soi-même.'}, status=400)
+    if 'is_active' in request.data:
+        cible.is_active = bool(request.data['is_active'])
+        cible.save(update_fields=['is_active'])
+    return Response({'id': cible.id, 'is_active': cible.is_active})
+
+
+@api_view(['GET'])
+@permission_classes([permissions.IsAuthenticated])
+def admin_roles(request):
+    """GET /api/v1/admin/roles — les 10 postes + titulaires (P1/ADMIN/staff)."""
+    u = request.user
+    if not (u.is_staff or a_role(u, CODES_PASSATION)):
+        return Response({'detail': 'Réservé à la direction.'}, status=403)
+    roles = Role.objects.filter(
+        code__in=['P1', 'P2', 'P3', 'P4', 'P5', 'P6', 'P7', 'P8', 'P9', 'P10']
+    ).select_related('titulaire').order_by('code')
+    return Response([{
+        'code': r.code,
+        'poste': r.get_code_display(),
+        'titulaire': (r.titulaire.get_full_name() or r.titulaire.username)
+        if r.titulaire else None,
+        'titulaire_email': r.titulaire.email if r.titulaire else None,
+    } for r in roles])
+
+
+@api_view(['PATCH'])
+@permission_classes([permissions.IsAuthenticated])
+def admin_role_passation(request, code):
+    """PATCH /api/v1/admin/roles/{code} {email} — passation (P1/ADMIN/staff)."""
+    u = request.user
+    if not (u.is_staff or a_role(u, CODES_PASSATION)):
+        return Response({'detail': 'Réservé à la direction.'}, status=403)
+    try:
+        role = Role.objects.get(code=code)
+    except Role.DoesNotExist:
+        return Response({'detail': 'Poste introuvable.'}, status=404)
+    email = (request.data.get('email') or '').strip().lower()
+    if not email:
+        role.titulaire = None
+        role.save(update_fields=['titulaire'])
+        return Response({'code': role.code, 'titulaire': None})
+    try:
+        nouveau = User.objects.get(email__iexact=email, is_active=True)
+    except User.DoesNotExist:
+        return Response({'detail': 'Aucun membre actif avec cet email.'}, status=400)
+    role.titulaire = nouveau
+    role.save(update_fields=['titulaire'])
+    return Response({'code': role.code,
+                     'titulaire': nouveau.get_full_name() or nouveau.username})
+
+
 # ── Espace membre : /me/* (doc 04 §5 accounts) ────────────────
 @api_view(['GET', 'PATCH'])
 @permission_classes([permissions.IsAuthenticated])

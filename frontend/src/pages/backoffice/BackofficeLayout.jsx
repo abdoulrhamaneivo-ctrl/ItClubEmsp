@@ -20,6 +20,15 @@ import RegistreMembres from './RegistreMembres'
 import ComptesRendus from './ComptesRendus'
 import Presences from './Presences'
 import Calendrier from './Calendrier'
+import Annonces from './Annonces'
+import Dashboard from './Dashboard'
+import StatsAdhesion from './StatsAdhesion'
+import Ateliers from './Ateliers'
+import Projets from './Projets'
+import Opportunites from './Opportunites'
+import CellulesAdmin from './CellulesAdmin'
+import Communication from './Communication'
+import Admin from './Admin'
 
 /**
  * Back-office — EXPERIENCE, pas un panneau d'admin :
@@ -276,10 +285,19 @@ export default function BackofficeLayout() {
                   element={
                     m.path === 'taches-notion' ? <TachesNotion /> :
                     m.path === 'formulaire' ? <EditeurFormulaire /> :
+                    m.path === 'annonces' ? <Annonces /> :
+                    m.path === 'dashboard' ? <Dashboard /> :
+                    m.path === 'projets-suivi' ? <Projets /> :
+                    m.path === 'cellules' ? <CellulesAdmin /> :
+                    m.path === 'communication' ? <Communication /> :
+                    m.path === 'opportunites' ? <Opportunites /> :
+                    m.path === 'admin' ? <Admin /> :
                     m.path === 'contenu' ? <GestionContenu /> :
                     m.path === 'registre-membres' ? <RegistreMembres /> :
                     m.path === 'comptes-rendus' ? <ComptesRendus /> :
                     m.path === 'evenements' ? <Presences /> :
+                    m.path === 'adhesion' ? <StatsAdhesion /> :
+                    m.path === 'ateliers' ? <Ateliers /> :
                     m.path === 'calendrier' ? <Calendrier /> :
                     <PlaceholderModule module={m} />
                   } />

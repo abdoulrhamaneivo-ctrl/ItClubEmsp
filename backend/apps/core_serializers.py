@@ -28,14 +28,48 @@ class CelluleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cellule
         fields = ['id', 'nom', 'slug', 'description', 'programme', 'couleur',
-                  'couleurFonce', 'icone', 'membres', 'ordre']
+                  'couleurFonce', 'icone', 'membres', 'ordre',
+                  'chef_nom', 'chef_email']
         read_only_fields = ['id']
 
     membres = serializers.SerializerMethodField()
     couleurFonce = serializers.CharField(source='couleur_fonce')
+    chef_nom = serializers.SerializerMethodField()
+    chef_email = serializers.CharField(write_only=True, required=False, allow_blank=True)
 
     def get_membres(self, obj):
         return obj.membres.count()
+
+    def get_chef_nom(self, obj):
+        c = getattr(obj, 'chef', None)
+        if not c:
+            return None
+        try:
+            return c.get_full_name() or c.username
+        except Exception:
+            return None
+
+    def validate_chef_email(self, value):
+        value = (value or '').strip().lower()
+        if not value:
+            return ''
+        from django.contrib.auth import get_user_model
+        User = get_user_model()
+        if not User.objects.filter(email__iexact=value).exists():
+            raise serializers.ValidationError('Aucun compte avec cet email.')
+        return value
+
+    def update(self, instance, validated_data):
+        email = validated_data.pop('chef_email', None)
+        if email is not None:
+            from django.contrib.auth import get_user_model
+            User = get_user_model()
+            instance.chef = User.objects.filter(email__iexact=email).first() if email else None
+        return super().update(instance, validated_data)
+
+    def create(self, validated_data):
+        validated_data.pop('chef_email', None)
+        return super().create(validated_data)
 
 
 class BureauSerializer(serializers.ModelSerializer):
@@ -219,6 +253,50 @@ class CandidatureSerializer(serializers.ModelSerializer):
         model = Candidature
         fields = ['id', 'donnees', 'cellules_souhaitees', 'statut', 'cree_le']
         read_only_fields = ['id', 'statut', 'cree_le']
+
+
+class ProjetSerializer(serializers.ModelSerializer):
+    statut_label = serializers.CharField(source='get_statut_display', read_only=True)
+    responsable_nom = serializers.SerializerMethodField()
+    cellule_nom = serializers.CharField(source='cellule.nom', read_only=True, default=None)
+
+    class Meta:
+        from apps.governance.models import Projet as _P
+        model = _P
+        fields = ['id', 'nom', 'description', 'statut', 'statut_label',
+                  'responsable', 'responsable_nom', 'cellule', 'cellule_nom',
+                  'lien', 'cree_le', 'maj_le']
+        read_only_fields = ['id', 'cree_le', 'maj_le']
+
+    def get_responsable_nom(self, obj):
+        r = getattr(obj, 'responsable', None)
+        if not r:
+            return None
+        try:
+            return r.get_full_name() or r.username
+        except Exception:
+            return None
+
+
+class OpportuniteSerializer(serializers.ModelSerializer):
+    type_label = serializers.CharField(source='get_type_display', read_only=True)
+    statut_label = serializers.CharField(source='get_statut_display', read_only=True)
+
+    class Meta:
+        from apps.governance.models import Opportunite as _O
+        model = _O
+        fields = ['id', 'titre', 'type', 'type_label', 'statut', 'statut_label',
+                  'date_limite', 'lien', 'contact_nom', 'contact_email',
+                  'notes', 'cree_le', 'maj_le']
+        read_only_fields = ['id', 'cree_le', 'maj_le']
+
+
+class ParametreSerializer(serializers.ModelSerializer):
+    class Meta:
+        from apps.governance.models import Parametre as _Pa
+        model = _Pa
+        fields = ['cle', 'valeur', 'modifie_le']
+        read_only_fields = ['modifie_le']
 
 
 class InscriptionMembreSerializer(serializers.ModelSerializer):

@@ -364,6 +364,140 @@ export const api = {
     const data = await fetchJson('/api/v1/classement/')
     return data ?? []
   },
+
+  // Dashboard direction (P1/P2)
+  async getDashboard() {
+    const data = await fetchJson('/api/v1/dashboard/')
+    return data ?? null
+  },
+
+  // Projets (P2/P7) — CRUD, écriture Bureau
+  async getProjets() {
+    const data = await fetchJson('/api/v1/projets/')
+    return data ?? []
+  },
+  async sauverProjet({ id, nom, description, statut, lien }) {
+    if (USE_MOCK) {
+      await new Promise(r => setTimeout(r, 500))
+      return { id: id ?? Date.now(), nom, statut }
+    }
+    return postJson(id ? `/api/v1/projets/${id}/` : '/api/v1/projets/', { nom, description, statut, lien }, id ? 'PATCH' : 'POST')
+  },
+  async supprimerProjet(id) {
+    if (USE_MOCK) {
+      await new Promise(r => setTimeout(r, 300))
+      return { success: true }
+    }
+    const res = await fetch(`${BASE_URL}/api/v1/projets/${id}/`, {
+      method: 'DELETE', headers: authHeaders(), credentials: 'include',
+    })
+    if (!res.ok) throw new Error(`API ${res.status}`)
+    invaliderCacheMetier()
+    return { success: true }
+  },
+
+  // Opportunités (P8) — CRUD + carnet de contacts
+  async getOpportunites() {
+    const data = await fetchJson('/api/v1/opportunites/')
+    return data ?? []
+  },
+  async sauverOpportunite(o) {
+    if (USE_MOCK) {
+      await new Promise(r => setTimeout(r, 500))
+      return { id: o.id ?? Date.now(), ...o }
+    }
+    const { id, ...corps } = o
+    return postJson(id ? `/api/v1/opportunites/${id}/` : '/api/v1/opportunites/', corps, id ? 'PATCH' : 'POST')
+  },
+  async supprimerOpportunite(id) {
+    if (USE_MOCK) {
+      await new Promise(r => setTimeout(r, 300))
+      return { success: true }
+    }
+    const res = await fetch(`${BASE_URL}/api/v1/opportunites/${id}/`, {
+      method: 'DELETE', headers: authHeaders(), credentials: 'include',
+    })
+    if (!res.ok) throw new Error(`API ${res.status}`)
+    invaliderCacheMetier()
+    return { success: true }
+  },
+
+  // Paramètres club (P5) : réseaux sociaux, bannière…
+  async getParametres() {
+    const data = await fetchJson('/api/v1/parametres/')
+    return data ?? []
+  },
+  async sauverParametre(cle, valeur) {
+    if (USE_MOCK) {
+      await new Promise(r => setTimeout(r, 300))
+      return { cle, valeur }
+    }
+    // Upsert : POST crée ou remplace (jamais de 404 au premier enregistrement)
+    return postJson('/api/v1/parametres/', { cle, valeur })
+  },
+
+  // Admin : annuaire + passation
+  async getAdminUsers() {
+    const data = await fetchJson('/api/v1/admin/utilisateurs/')
+    return data ?? []
+  },
+  async majAdminUser(id, patch) {
+    if (USE_MOCK) return { id, ...patch }
+    return postJson(`/api/v1/admin/utilisateurs/${id}/`, patch, 'PATCH')
+  },
+  async getAdminRoles() {
+    const data = await fetchJson('/api/v1/admin/roles/')
+    return data ?? []
+  },
+  async passationRole(code, email) {
+    if (USE_MOCK) {
+      await new Promise(r => setTimeout(r, 400))
+      return { code, titulaire: email }
+    }
+    return postJson(`/api/v1/admin/roles/${code}/`, { email }, 'PATCH')
+  },
+
+  // Annonces = actualités (P1/P5/chef) : audience tous ou cellule
+  async publierAnnonce({ titre, extrait, tag_cellule }) {
+    if (USE_MOCK) {
+      await new Promise(r => setTimeout(r, 600))
+      return { id: Date.now(), titre }
+    }
+    return postJson('/api/v1/actualites/', { titre, extrait, tag_cellule })
+  },
+
+  // Ateliers = événements type=atelier (P10) : création anti-conflit serveur
+  async creerAtelier({ titre, description, date, lieu, places }) {
+    if (USE_MOCK) {
+      await new Promise(r => setTimeout(r, 600))
+      return { id: Date.now(), titre }
+    }
+    return postJson('/api/v1/evenements/', { titre, description, type: 'atelier', date, lieu, places })
+  },
+  // Cellules (P4) — création, modification, chef par email
+  async sauverCellule({ id, slug, nom, description, couleur, chef_email }) {
+    if (USE_MOCK) {
+      await new Promise(r => setTimeout(r, 500))
+      return { id: id ?? Date.now(), nom }
+    }
+    const corps = { nom, description, couleur }
+    if (chef_email !== undefined) corps.chef_email = chef_email
+    if (id) return postJson(`/api/v1/cellules/${id}/`, corps, 'PATCH')
+    return postJson('/api/v1/cellules/', { slug, ...corps })
+  },
+  async supprimerCellule(id) {
+    if (USE_MOCK) {
+      await new Promise(r => setTimeout(r, 300))
+      return { success: true }
+    }
+    const res = await fetch(`${BASE_URL}/api/v1/cellules/${id}/`, {
+      method: 'DELETE', headers: authHeaders(), credentials: 'include',
+    })
+    if (!res.ok) throw new Error(`API ${res.status}`)
+    invaliderCacheMetier()
+    return { success: true }
+  },
+
   // Registre membres — candidatures (Bureau P1/P3/P4)
   async getCandidatures() {
     const data = await fetchJson('/api/v1/candidatures/')

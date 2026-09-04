@@ -10,11 +10,13 @@ from apps.views_emails import (
     convocation, tester_email, me, mes_inscriptions, mes_cellules,
     marquer_presence, liste_presences, export_presences_csv, qr_presence,
     classement, calendrier_ics, evenement_ics,
+    dashboard, admin_utilisateurs, admin_utilisateur_maj,
+    admin_roles, admin_role_passation,
 )
 from apps.views_core import (
     CelluleViewSet, BureauViewSet, ActualiteViewSet,
     DocumentViewSet, MediaViewSet, EvenementViewSet, register_candidature,
-    presentation, qr_adhesion,
+    presentation, qr_adhesion, ProjetViewSet, OpportuniteViewSet, ParametreViewSet,
 )
 
 router = DefaultRouter()
@@ -24,6 +26,9 @@ router.register('actualites', ActualiteViewSet)
 router.register('documents', DocumentViewSet)
 router.register('galerie', MediaViewSet)
 router.register('evenements', EvenementViewSet)
+router.register('projets', ProjetViewSet)
+router.register('opportunites', OpportuniteViewSet)
+router.register('parametres', ParametreViewSet)
 router.register('candidatures', CandidatureViewSet, basename='candidature')
 router.register('notifications', NotificationViewSet, basename='notification')
 
@@ -48,6 +53,11 @@ urlpatterns = [
     path('api/v1/me/inscriptions', mes_inscriptions),
     path('api/v1/me/cellules', mes_cellules),
     path('api/v1/reunions/convocation', convocation),
+    path('api/v1/dashboard/', dashboard),
+    path('api/v1/admin/utilisateurs/', admin_utilisateurs),
+    path('api/v1/admin/utilisateurs/<int:pk>/', admin_utilisateur_maj),
+    path('api/v1/admin/roles/', admin_roles),
+    path('api/v1/admin/roles/<str:code>/', admin_role_passation),
     path('api/v1/emails/test', tester_email),
     path('api/schema', SpectacularAPIView.as_view(), name='schema'),
     path('api/docs', SpectacularSwaggerView.as_view(url_name='schema')),

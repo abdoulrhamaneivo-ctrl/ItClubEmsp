@@ -10,12 +10,13 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from django.contrib.auth import get_user_model
 
 from apps.accounts.models import Role, Cellule, Candidature
-from apps.governance.models import ObjectifPoste
+from apps.governance.models import ObjectifPoste, Projet, Opportunite, Parametre
 from apps.comms.models import Actualite, Document, Media
 from apps.events.models import Evenement
 from apps.core_serializers import (
     CelluleSerializer, BureauSerializer, ActualiteSerializer,
     DocumentSerializer, MediaSerializer, EvenementSerializer, CandidatureSerializer,
+    ProjetSerializer, OpportuniteSerializer, ParametreSerializer,
 )
 
 User = get_user_model()
@@ -189,6 +190,37 @@ class ActualiteViewSet(PublicReadOrStaffWrite):
         except Exception as exc:
             import logging
             logging.getLogger(__name__).warning('Emails annonce ignorés: %s', exc)
+
+
+class ProjetViewSet(PublicReadOrStaffWrite):
+    """Suivi des projets techniques (P2/P7) — lecture publique, écriture Bureau."""
+    queryset = Projet.objects.select_related('responsable', 'cellule').all()
+    serializer_class = ProjetSerializer
+    filterset_fields = ['statut', 'cellule']
+
+
+class OpportuniteViewSet(PublicReadOrStaffWrite):
+    """Veille + carnet de contacts (P8) — lecture publique, écriture Bureau."""
+    queryset = Opportunite.objects.all()
+    serializer_class = OpportuniteSerializer
+    filterset_fields = ['type', 'statut']
+
+
+class ParametreViewSet(PublicReadOrStaffWrite):
+    """Réglages club (P5) : réseaux sociaux, bannière… lecture publique."""
+    queryset = Parametre.objects.all()
+    serializer_class = ParametreSerializer
+    pagination_class = None
+
+    def create(self, request, *args, **kwargs):
+        # Upsert par clé : le premier enregistrement crée, les suivants modifient
+        from rest_framework.response import Response as _R
+        cle = (request.data.get('cle') or '').strip()
+        if not cle:
+            return _R({'detail': 'Clé requise.'}, status=400)
+        obj, _ = Parametre.objects.update_or_create(
+            cle=cle, defaults={'valeur': request.data.get('valeur', '')})
+        return _R(ParametreSerializer(obj).data, status=200)
 
 
 class DocumentViewSet(PublicReadOrStaffWrite):
