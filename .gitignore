@@ -35,3 +35,9 @@ docs.zip
 # Templates d'origine (référence locale uniquement)
 mint-template/
 template pour le front/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+*.sqlite3
