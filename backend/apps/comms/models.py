@@ -88,6 +88,43 @@ class MessageForum(models.Model):
         indexes = [models.Index(fields=['sujet', 'modere'])]
 
 
+class Sondage(models.Model):
+    """Sondage (bonus doc 00, P4 recensement) : simple ou choix multiples."""
+    titre = models.CharField(max_length=140)
+    description = models.TextField(blank=True)
+    auteur = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True,
+                               related_name='sondages')
+    cellule = models.ForeignKey('accounts.Cellule', on_delete=models.CASCADE,
+                                null=True, blank=True, related_name='sondages')
+    choix_multiple = models.BooleanField(default=False)
+    clos = models.BooleanField(default=False)
+    cree_le = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-cree_le']
+        indexes = [models.Index(fields=['cellule'])]
+
+    def __str__(self):
+        return self.titre
+
+
+class OptionSondage(models.Model):
+    sondage = models.ForeignKey(Sondage, on_delete=models.CASCADE, related_name='options')
+    texte = models.CharField(max_length=120)
+
+    class Meta:
+        ordering = ['id']
+
+
+class Vote(models.Model):
+    option = models.ForeignKey(OptionSondage, on_delete=models.CASCADE, related_name='votes')
+    membre = models.ForeignKey(User, on_delete=models.CASCADE, related_name='votes_sondages')
+
+    class Meta:
+        unique_together = ('option', 'membre')
+        indexes = [models.Index(fields=['option'])]
+
+
 class Document(models.Model):
     """Document officiel classé par famille (front : Documentation)."""
     FAMILLES = [('fondamentaux', 'Fondamentaux'), ('vie', 'Vie du club'), ('archives', 'Archives')]

@@ -11,13 +11,13 @@ from django.contrib.auth import get_user_model
 
 from apps.accounts.models import Role, Cellule, Candidature
 from apps.governance.models import ObjectifPoste, Projet, Opportunite, Parametre
-from apps.comms.models import Actualite, Document, Media, Sujet, MessageForum
+from apps.comms.models import Actualite, Document, Media, Sujet, MessageForum, Sondage, OptionSondage, Vote
 from apps.events.models import Evenement
 from apps.core_serializers import (
     CelluleSerializer, BureauSerializer, ActualiteSerializer,
     DocumentSerializer, MediaSerializer, EvenementSerializer, CandidatureSerializer,
     ProjetSerializer, OpportuniteSerializer, ParametreSerializer,
-    SujetSerializer, MessageForumSerializer,
+    SujetSerializer, MessageForumSerializer, SondageSerializer,
 )
 
 User = get_user_model()
@@ -316,6 +316,78 @@ class MediaViewSet(PublicReadOrStaffWrite):
     queryset = Media.objects.all()
     serializer_class = MediaSerializer
     filterset_fields = ['type', 'evenement', 'tag_cellule']
+
+
+class SondageViewSet(viewsets.ModelViewSet):
+    """Sondages membres (bonus doc 00) : création ouverte, clôture auteur/modo."""
+    queryset = Sondage.objects.select_related('auteur', 'cellule').all()
+    serializer_class = SondageSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    filterset_fields = ['cellule', 'clos']
+
+    def get_queryset(self):
+        from django.db.models import Prefetch
+        return super().get_queryset().prefetch_related(
+            Prefetch('options', queryset=OptionSondage.objects.prefetch_related('votes')),
+        )
+
+    def perform_create(self, serializer):
+        options = self.request.data.get('options') or []
+        if isinstance(options, str):
+            options = [o.strip() for o in options.split('\n') if o.strip()]
+        options = [str(o).strip() for o in options if str(o).strip()][:10]
+        if len(options) < 2:
+            from rest_framework.exceptions import ValidationError
+            raise ValidationError({'options': '2 options minimum.'})
+        sondage = serializer.save(auteur=self.request.user)
+        for texte in options:
+            OptionSondage.objects.create(sondage=sondage, texte=texte[:120])
+
+    def perform_update(self, serializer):
+        inst = self.get_object()
+        data = serializer.validated_data
+        # Clore / rouvrir = auteur ou modo ; le reste = auteur seul
+        if 'clos' in data and data['clos'] != inst.clos:
+            if inst.auteur_id != self.request.user.id and not _est_modo(self.request.user):
+                from rest_framework.exceptions import PermissionDenied
+                raise PermissionDenied('Seul l’auteur clôt son sondage.')
+        elif inst.auteur_id != self.request.user.id and not _est_modo(self.request.user):
+            from rest_framework.exceptions import PermissionDenied
+            raise PermissionDenied('Seul l’auteur modifie son sondage.')
+        serializer.save()
+
+    def perform_destroy(self, instance):
+        if instance.auteur_id != self.request.user.id and not _est_modo(self.request.user):
+            from rest_framework.exceptions import PermissionDenied
+            raise PermissionDenied('Seul l’auteur supprime son sondage.')
+        instance.delete()
+
+    @action(detail=True, methods=['post'],
+            permission_classes=[permissions.IsAuthenticated])
+    def voter(self, request, pk=None):
+        """POST /sondages/{id}/voter {option} — toggle si multiple, sinon remplace."""
+        sondage = self.get_object()
+        if sondage.clos:
+            return Response({'detail': 'Sondage clôturé.'}, status=400)
+        try:
+            option = OptionSondage.objects.get(pk=request.data.get('option'), sondage=sondage)
+        except (OptionSondage.DoesNotExist, TypeError, ValueError):
+            return Response({'detail': 'Option introuvable.'}, status=400)
+        existant = Vote.objects.filter(option=option, membre=request.user).first()
+        if existant:
+            existant.delete()
+            statut = 'retire'
+        else:
+            if not sondage.choix_multiple:
+                Vote.objects.filter(option__sondage=sondage, membre=request.user).delete()
+            Vote.objects.create(option=option, membre=request.user)
+            statut = 'vote'
+        # Recharge sans cache prefetch (sinon compteurs périmés dans la réponse)
+        from apps.comms.models import Sondage as _S
+        frais = _S.objects.prefetch_related('options__votes').select_related(
+            'auteur', 'cellule').get(pk=sondage.pk)
+        data = SondageSerializer(frais, context={'request': request}).data
+        return Response({'statut': statut, 'sondage': data})
 
 
 class EvenementViewSet(PublicReadOrStaffWrite):

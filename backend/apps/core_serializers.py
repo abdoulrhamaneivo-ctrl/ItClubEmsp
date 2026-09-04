@@ -379,6 +379,75 @@ class MessageForumSerializer(serializers.ModelSerializer):
             return 'Ancien membre'
 
 
+class SondageSerializer(serializers.ModelSerializer):
+    """Sondage + options avec compteurs + mes votes (doc 00 bonus)."""
+    auteur_nom = serializers.SerializerMethodField()
+    options = serializers.SerializerMethodField()
+    mes_votes = serializers.SerializerMethodField()
+    total_votes = serializers.SerializerMethodField()
+    cellule_nom = serializers.SerializerMethodField()
+
+    class Meta:
+        from apps.comms.models import Sondage as _So
+        model = _So
+        fields = ['id', 'titre', 'description', 'auteur_nom', 'cellule',
+                  'cellule_nom', 'choix_multiple', 'clos',
+                  'options', 'mes_votes', 'total_votes', 'cree_le']
+        read_only_fields = ['id', 'cree_le']
+
+    def _votes_par_option(self, obj):
+        try:
+            opts = list(obj.options.all())
+        except Exception:
+            from apps.comms.models import OptionSondage
+            opts = list(OptionSondage.objects.filter(sondage=obj))
+        comptes = {}
+        for o in opts:
+            try:
+                comptes[o.id] = o.votes.count()
+            except Exception:
+                comptes[o.id] = 0
+        return opts, comptes
+
+    def get_auteur_nom(self, obj):
+        a = getattr(obj, 'auteur', None)
+        if not a:
+            return 'Ancien membre'
+        try:
+            return a.get_full_name() or a.username
+        except Exception:
+            return 'Ancien membre'
+
+    def get_cellule_nom(self, obj):
+        try:
+            return obj.cellule.nom if obj.cellule_id else None
+        except Exception:
+            return None
+
+    def get_options(self, obj):
+        opts, comptes = self._votes_par_option(obj)
+        return [{'id': o.id, 'texte': o.texte, 'votes': comptes.get(o.id, 0)} for o in opts]
+
+    def get_mes_votes(self, obj):
+        req = (self.context or {}).get('request')
+        u = getattr(req, 'user', None)
+        if not (u and u.is_authenticated):
+            return []
+        opts, _ = self._votes_par_option(obj)
+        miennes = []
+        for o in opts:
+            try:
+                if o.votes.filter(membre_id=u.id).exists():
+                    miennes.append(o.id)
+            except Exception:
+                pass
+        return miennes
+
+    def get_total_votes(self, obj):
+        from apps.comms.models import Vote
+        return Vote.objects.filter(option__sondage=obj).count()
+
+
 class InscriptionMembreSerializer(serializers.ModelSerializer):
     """Inscription vue par le membre : événement embarqué (Espace)."""
     evenement = EvenementSerializer(read_only=True)

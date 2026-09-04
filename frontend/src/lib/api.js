@@ -524,6 +524,20 @@ export const api = {
     invaliderCacheMetier()
     return { success: true }
   },
+  // Sondages (membres) : liste, création, vote, clôture
+  async getSondages() {
+    const data = await fetchJson('/api/v1/sondages/')
+    return data ?? []
+  },
+  async creerSondage({ titre, description, options, choix_multiple, cellule }) {
+    return postJson('/api/v1/sondages/', { titre, description, options, choix_multiple, cellule })
+  },
+  async majSondage(id, patch) {
+    return postJson(`/api/v1/sondages/${id}/`, patch, 'PATCH')
+  },
+  async voter(sondageId, optionId) {
+    return postJson(`/api/v1/sondages/${sondageId}/voter/`, { option: optionId })
+  },
   // Registre membres — candidatures (Bureau P1/P3/P4)
   async getCandidatures() {
     const data = await fetchJson('/api/v1/candidatures/')

@@ -24,6 +24,7 @@ const liens = [
   { label: 'Documentation', cible: 'documentation' },
   { label: 'Galerie', cible: '/galerie', route: true },
   { label: 'Forum', cible: '/forum', route: true, membres: true },
+  { label: 'Sondages', cible: '/sondages', route: true, membres: true },
 ]
 
 export default function Navbar() {

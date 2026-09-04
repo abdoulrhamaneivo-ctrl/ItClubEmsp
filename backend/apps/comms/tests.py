@@ -146,3 +146,65 @@ class ForumTests(TestCase):
         self.assertTrue(MessageForum.objects.get(pk=mid).modere)
         liste = self.client.get(f"/api/v1/forum/messages/?sujet={s['id']}").json()
         self.assertEqual(len(liste['results']), 0)
+
+
+class SondagesTests(TestCase):
+    client_class = APIClient
+
+    def setUp(self):
+        self.m1 = membre('s1@x.com')
+        self.m2 = membre('s2@x.com')
+
+    def test_anonyme_401_et_minimum_2_options(self):
+        self.assertEqual(self.client.get('/api/v1/sondages/').status_code, 401)
+        self.client.force_authenticate(self.m1)
+        r = self.client.post('/api/v1/sondages/', {'titre': 'X', 'options': ['A']},
+                             format='json')
+        self.assertEqual(r.status_code, 400)
+
+    def test_vote_unique_remplace(self):
+        self.client.force_authenticate(self.m1)
+        s = self.client.post('/api/v1/sondages/',
+                             {'titre': 'Langage ?', 'options': ['Py', 'JS']},
+                             format='json').json()
+        o1, o2 = s['options'][0]['id'], s['options'][1]['id']
+        self.client.post(f"/api/v1/sondages/{s['id']}/voter/", {'option': o1}, format='json')
+        r = self.client.post(f"/api/v1/sondages/{s['id']}/voter/",
+                             {'option': o2}, format='json').json()
+        comptes = {o['texte']: o['votes'] for o in r['sondage']['options']}
+        self.assertEqual(comptes, {'Py': 0, 'JS': 1})
+        self.assertEqual(r['sondage']['mes_votes'], [o2])
+        self.assertEqual(r['sondage']['total_votes'], 1)
+
+    def test_choix_multiple_toggle(self):
+        self.client.force_authenticate(self.m1)
+        s = self.client.post('/api/v1/sondages/',
+                             {'titre': 'Skills ?', 'choix_multiple': True,
+                              'options': ['A', 'B', 'C']}, format='json').json()
+        ids = [o['id'] for o in s['options']]
+        self.client.post(f"/api/v1/sondages/{s['id']}/voter/",
+                         {'option': ids[0]}, format='json')
+        r = self.client.post(f"/api/v1/sondages/{s['id']}/voter/",
+                             {'option': ids[1]}, format='json').json()
+        self.assertEqual(sorted(r['sondage']['mes_votes']), sorted(ids[:2]))
+        # re-clic = retrait
+        r = self.client.post(f"/api/v1/sondages/{s['id']}/voter/",
+                             {'option': ids[0]}, format='json').json()
+        self.assertEqual(r['statut'], 'retire')
+        self.assertEqual(r['sondage']['mes_votes'], [ids[1]])
+
+    def test_clos_bloque_et_auteur_seul(self):
+        self.client.force_authenticate(self.m1)
+        s = self.client.post('/api/v1/sondages/',
+                             {'titre': 'Fermé ?', 'options': ['A', 'B']},
+                             format='json').json()
+        # m2 ne peut pas clore
+        self.client.force_authenticate(self.m2)
+        r = self.client.patch(f"/api/v1/sondages/{s['id']}/", {'clos': True}, format='json')
+        self.assertEqual(r.status_code, 403)
+        # auteur clôt → vote bloqué
+        self.client.force_authenticate(self.m1)
+        self.client.patch(f"/api/v1/sondages/{s['id']}/", {'clos': True}, format='json')
+        r = self.client.post(f"/api/v1/sondages/{s['id']}/voter/",
+                             {'option': s['options'][0]['id']}, format='json')
+        self.assertEqual(r.status_code, 400)
