@@ -86,17 +86,54 @@ class ActualiteSerializer(serializers.ModelSerializer):
     tag_cellule_couleur = serializers.CharField(source='tag_cellule.couleur', read_only=True, default=None)
     auteur_nom = serializers.SerializerMethodField()
     auteur_initiale = serializers.SerializerMethodField()
+    reactions = serializers.SerializerMethodField()
+    ma_reaction = serializers.SerializerMethodField()
+    commentaires_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Actualite
         fields = ['id', 'titre', 'extrait', 'image', 'tag_cellule', 'tag_cellule_nom',
-                  'tag_cellule_couleur', 'auteur_nom', 'auteur_initiale', 'date']
+                  'tag_cellule_couleur', 'auteur_nom', 'auteur_initiale',
+                  'reactions', 'ma_reaction', 'commentaires_count', 'date']
 
     def get_auteur_nom(self, obj):
         return obj.auteur.get_full_name() if obj.auteur else 'Le Bureau'
 
     def get_auteur_initiale(self, obj):
         return (obj.auteur.get_full_name() or 'B')[0] if obj.auteur else 'B'
+
+    EMOJIS_REACTIONS = ['👍', '❤️', '🔥']
+
+    def _reactions_liste(self, obj):
+        # Préfetchées par le viewset (zéro requête) ; fallback sinon
+        try:
+            return list(obj.reactions.all())
+        except Exception:
+            return []
+
+    def get_reactions(self, obj):
+        comptes = {e: 0 for e in self.EMOJIS_REACTIONS}
+        for r in self._reactions_liste(obj):
+            if r.emoji in comptes:
+                comptes[r.emoji] += 1
+        return comptes
+
+    def get_ma_reaction(self, obj):
+        req = (self.context or {}).get('request')
+        u = getattr(req, 'user', None)
+        if not (u and u.is_authenticated):
+            return None
+        for r in self._reactions_liste(obj):
+            if r.membre_id == u.id:
+                return r.emoji
+        return None
+
+    def get_commentaires_count(self, obj):
+        try:
+            return sum(1 for c in obj.commentaires.all() if not c.masque)
+        except Exception:
+            from apps.comms.models import Commentaire
+            return Commentaire.objects.filter(actualite=obj, masque=False).count()
 
 
 class DocumentSerializer(serializers.ModelSerializer):

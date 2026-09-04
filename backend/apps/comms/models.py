@@ -23,6 +23,33 @@ class Actualite(models.Model):
         return self.titre
 
 
+class Reaction(models.Model):
+    """Réaction emoji sur une actualité (doc 03 §3). Re-clic = retrait."""
+    actualite = models.ForeignKey(Actualite, on_delete=models.CASCADE, related_name='reactions')
+    membre = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reactions')
+    emoji = models.CharField(max_length=8)
+
+    class Meta:
+        unique_together = ('actualite', 'membre', 'emoji')
+        indexes = [models.Index(fields=['actualite'])]
+
+
+class Commentaire(models.Model):
+    """Commentaire (RG-C2 : modération par masquage, jamais supprimé en dur)."""
+    actualite = models.ForeignKey(Actualite, on_delete=models.CASCADE, related_name='commentaires')
+    auteur = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True,
+                               related_name='commentaires')
+    contenu = models.TextField(max_length=1000)
+    reponse_a = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True,
+                                  related_name='reponses')
+    masque = models.BooleanField(default=False)
+    cree_le = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['cree_le']
+        indexes = [models.Index(fields=['actualite', 'masque'])]
+
+
 class Document(models.Model):
     """Document officiel classé par famille (front : Documentation)."""
     FAMILLES = [('fondamentaux', 'Fondamentaux'), ('vie', 'Vie du club'), ('archives', 'Archives')]

@@ -3,7 +3,7 @@ API /api/v1/ — ViewSets alignés sur le contrat docs/04 §5.
 Lecture publique (vitrine), écriture par rôles (étape 2 : matrice doc 01).
 """
 from rest_framework import viewsets, permissions, status
-from rest_framework.decorators import api_view, permission_classes, throttle_classes
+from rest_framework.decorators import api_view, permission_classes, throttle_classes, action
 from rest_framework.response import Response
 from rest_framework.throttling import AnonRateThrottle
 from rest_framework_simplejwt.views import TokenObtainPairView
@@ -72,6 +72,102 @@ class ActualiteViewSet(PublicReadOrStaffWrite):
     queryset = Actualite.objects.select_related('tag_cellule', 'auteur').all()
     serializer_class = ActualiteSerializer
     filterset_fields = ['tag_cellule']
+
+    def get_queryset(self):
+        from django.db.models import Prefetch
+        from apps.comms.models import Commentaire
+        return super().get_queryset().prefetch_related(
+            'reactions',
+            Prefetch('commentaires',
+                     queryset=Commentaire.objects.filter(masque=False).select_related('auteur')),
+        )
+
+    @action(detail=True, methods=['post'],
+            permission_classes=[permissions.IsAuthenticated])
+    def reagir(self, request, pk=None):
+        """POST /actualites/{id}/reagir {emoji} — toggle (re-clic = retrait)."""
+        from apps.comms.models import Reaction
+        from apps.core_serializers import ActualiteSerializer as S
+        actu = self.get_object()
+        emoji = (request.data.get('emoji') or '').strip()
+        if emoji not in S.EMOJIS_REACTIONS:
+            return Response({'detail': f'Emoji parmi {", ".join(S.EMOJIS_REACTIONS)} requis.'},
+                            status=400)
+        existante = Reaction.objects.filter(
+            actualite=actu, membre=request.user, emoji=emoji).first()
+        if existante:
+            existante.delete()
+            statut = 'retiree'
+        else:
+            # Un seul emoji par membre et par actu : remplace l'ancien
+            Reaction.objects.filter(actualite=actu, membre=request.user).delete()
+            Reaction.objects.create(actualite=actu, membre=request.user, emoji=emoji)
+            statut = 'ajoutee'
+        return Response({'statut': statut, **self._compte_reactions(actu, request.user)})
+
+    @action(detail=True, methods=['get', 'post'],
+            permission_classes=[permissions.IsAuthenticatedOrReadOnly])
+    def commentaires(self, request, pk=None):
+        """GET liste (public) / POST {contenu, reponse_a?} (membre)."""
+        from apps.comms.models import Commentaire
+        actu = self.get_object()
+        if request.method == 'GET':
+            qs = actu.commentaires.filter(masque=False).select_related('auteur')
+            return Response([{
+                'id': c.id,
+                'auteur': (c.auteur.get_full_name() or c.auteur.username) if c.auteur else 'Ancien membre',
+                'contenu': c.contenu,
+                'reponse_a': c.reponse_a_id,
+                'cree_le': c.cree_le,
+            } for c in qs])
+        if not request.user.is_authenticated:
+            return Response({'detail': 'Connecte-toi pour commenter.'}, status=401)
+        contenu = (request.data.get('contenu') or '').strip()
+        if not contenu:
+            return Response({'detail': 'Commentaire vide.'}, status=400)
+        if len(contenu) > 1000:
+            return Response({'detail': '1000 caractères maximum.'}, status=400)
+        reponse_a = request.data.get('reponse_a')
+        parent = None
+        if reponse_a:
+            parent = Commentaire.objects.filter(pk=reponse_a, actualite=actu).first()
+            if parent is None:
+                return Response({'detail': 'Commentaire parent introuvable.'}, status=400)
+        c = Commentaire.objects.create(
+            actualite=actu, auteur=request.user, contenu=contenu, reponse_a=parent)
+        return Response({'id': c.id, 'statut': 'publie'}, status=201)
+
+    @action(detail=True, methods=['post'],
+            url_path=r'commentaires/(?P<cid>[^/.]+)/masquer')
+    def masquer_commentaire(self, request, pk=None, cid=None):
+        """POST …/commentaires/{id}/masquer — modération P1/P5 (RG-C2)."""
+        from apps.comms.models import Commentaire
+        from apps.accounts.models import Role
+        u = request.user
+        ok = u.is_authenticated and (
+            u.is_staff or Role.objects.filter(
+                code__in=['P1', 'P5', 'ADMIN'], titulaire=u).exists())
+        if not ok:
+            return Response({'detail': 'Réservé à la modération (P1/P5).'}, status=403)
+        c = Commentaire.objects.filter(pk=cid, actualite_id=pk).first()
+        if c is None:
+            return Response({'detail': 'Introuvable.'}, status=404)
+        c.masque = True
+        c.save(update_fields=['masque'])
+        return Response({'statut': 'masque'})
+
+    @staticmethod
+    def _compte_reactions(actu, user):
+        from apps.comms.models import Reaction
+        from apps.core_serializers import ActualiteSerializer as S
+        comptes = {e: 0 for e in S.EMOJIS_REACTIONS}
+        mienne = None
+        for r in Reaction.objects.filter(actualite=actu):
+            if r.emoji in comptes:
+                comptes[r.emoji] += 1
+            if user.is_authenticated and r.membre_id == user.id:
+                mienne = r.emoji
+        return {'reactions': comptes, 'ma_reaction': mienne}
 
     def perform_create(self, serializer):
         actu = serializer.save()

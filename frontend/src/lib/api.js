@@ -340,6 +340,25 @@ export const api = {
     return this.telechargerFichier(`/api/v1/evenements/${evenementId}/qr-presence`, `qr-presence-${evenementId}.png`)
   },
 
+  // Réactions + commentaires (actus) — login requis pour écrire
+  async reagir(actualiteId, emoji) {
+    if (USE_MOCK) {
+      await new Promise(r => setTimeout(r, 300))
+      return { statut: 'ajoutee', reactions: { '👍': 1, '❤️': 0, '🔥': 0 }, ma_reaction: emoji }
+    }
+    return postJson(`/api/v1/actualites/${actualiteId}/reagir/`, { emoji })
+  },
+  async getCommentaires(actualiteId) {
+    const data = await fetchJson(`/api/v1/actualites/${actualiteId}/commentaires/`)
+    return data ?? []
+  },
+  async posterCommentaire(actualiteId, contenu, reponse_a = null) {
+    if (USE_MOCK) {
+      await new Promise(r => setTimeout(r, 400))
+      return { id: Date.now(), statut: 'publie' }
+    }
+    return postJson(`/api/v1/actualites/${actualiteId}/commentaires/`, { contenu, reponse_a })
+  },
   // Registre membres — candidatures (Bureau P1/P3/P4)
   async getCandidatures() {
     const data = await fetchJson('/api/v1/candidatures/')

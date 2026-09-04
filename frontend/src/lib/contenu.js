@@ -151,6 +151,9 @@ function adapterActu(a, slugParId) {
     date: (a.date ?? '').slice(0, 10),
     couleur: a.tag_cellule_couleur ?? '#1FAF72',
     image: a.image ?? null,
+    reactions: a.reactions ?? { '👍': 0, '❤️': 0, '🔥': 0 },
+    ma_reaction: a.ma_reaction ?? null,
+    commentaires_count: a.commentaires_count ?? 0,
   }
 }
 
