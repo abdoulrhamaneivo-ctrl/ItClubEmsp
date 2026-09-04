@@ -222,13 +222,16 @@ export default function Espace() {
   const [inscApi, setInscApi] = useState(null)
   const [cellulesApi, setCellulesApi] = useState(null)
   const [points, setPoints] = useState(null)
+  const [niveau, setNiveau] = useState(null)
+  const [classement, setClassement] = useState([])
 
   useEffect(() => {
     let stop = false
     api.getNotifications().then((d) => { if (!stop) setNotifsApi(d) }).catch(() => {})
     api.getMesInscriptions().then((d) => { if (!stop) setInscApi(d) }).catch(() => {})
     api.getMesCellules().then((d) => { if (!stop) setCellulesApi(d) }).catch(() => {})
-    api.getMe().then((me) => { if (!stop && me) setPoints(me.points ?? 0) }).catch(() => {})
+    api.getMe().then((me) => { if (!stop && me) { setPoints(me.points ?? 0); setNiveau(me.niveau ?? null) } }).catch(() => {})
+    api.getClassement().then((d) => { if (!stop) setClassement((d ?? []).slice(0, 5)) }).catch(() => {})
     return () => { stop = true }
   }, [])
 
@@ -608,6 +611,13 @@ export default function Espace() {
                     <Typography variant="caption" sx={{ color: '#4B5563', fontWeight: 600, fontSize: '0.74rem', textTransform: 'capitalize' }}>
                       {new Date(insc.date).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })} · {insc.lieu}
                     </Typography>
+                    {insc.evenementId && import.meta.env.VITE_API_URL && (
+                      <Typography component="a" variant="caption"
+                        href={`${import.meta.env.VITE_API_URL}/api/v1/evenements/${insc.evenementId}.ics`}
+                        sx={{ color: '#0E7A50', fontWeight: 800, fontSize: '0.74rem', textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}>
+                        · Agenda (.ics)
+                      </Typography>
+                    )}
                   </Box>
                 </Box>
                 <Chip label={insc.statut} size="small" sx={{
@@ -755,7 +765,7 @@ export default function Espace() {
               {[
                 ['Nom', user.nom || '—'],
                 ['Email', user.email || 'prenom.nom@emsp.int'],
-                ['Points de participation', points === null ? '—' : `${points} pts`],
+                ['Points de participation', points === null ? '—' : `${points} pts${niveau ? ` · ${niveau}` : ''}`],
               ].map(([label, valeur]) => (
                 <Box key={label} sx={{ display: 'flex', justifyContent: 'space-between', gap: 2, py: 1.4, borderBottom: '1px solid #EEF2F0' }}>
                   <Typography variant="body2" sx={{ color: '#5A6B63', fontWeight: 600 }}>{label}</Typography>
@@ -765,6 +775,30 @@ export default function Espace() {
               <Typography variant="caption" sx={{ display: 'block', mt: 2, color: '#5A6B63', lineHeight: 1.7 }}>
                 Pour corriger une information, contacte la Secrétaire Générale — les données viennent de l'annuaire du club.
               </Typography>
+              {classement.length > 0 && (
+                <Box sx={{ mt: 2, pt: 2, borderTop: '1px solid #EEF2F0' }}>
+                  <Typography sx={{ fontWeight: 800, color: '#111827', fontSize: '0.86rem', mb: 1 }}>
+                    Top membres du club
+                  </Typography>
+                  {classement.map((j, i) => (
+                    <Box key={`${j.nom}-${i}`} sx={{ display: 'flex', alignItems: 'center', gap: 1.2, py: 0.6 }}>
+                      <Typography sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 800, fontSize: '0.8rem', color: i === 0 ? '#B45309' : '#6B7280', width: 22 }}>
+                        {i + 1}
+                      </Typography>
+                      <Typography variant="body2" sx={{ flex: 1, color: '#111827', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        {j.nom}
+                      </Typography>
+                      <Chip label={j.niveau} size="small" sx={{ bgcolor: '#EDE9FE', color: '#5B21B6', fontWeight: 700, fontSize: '0.62rem', height: 20 }} />
+                      <Typography variant="caption" sx={{ color: '#0B7A4B', fontWeight: 800 }}>
+                        {j.points} pts
+                      </Typography>
+                    </Box>
+                  ))}
+                  <Typography variant="caption" sx={{ display: 'block', mt: 1, color: '#5A6B63' }}>
+                    Bienvenue +10 · présence +5 · Niveaux : Actif (5), Pilier (20), Légende (50).
+                  </Typography>
+                </Box>
+              )}
             </Box>
             <PreferencesNotifications />
 

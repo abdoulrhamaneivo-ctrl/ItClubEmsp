@@ -9,6 +9,7 @@ from apps.views_emails import (
     CandidatureViewSet, NotificationViewSet, inscrire, desinscrire,
     convocation, tester_email, me, mes_inscriptions, mes_cellules,
     marquer_presence, liste_presences, export_presences_csv, qr_presence,
+    classement, calendrier_ics, evenement_ics,
 )
 from apps.views_core import (
     CelluleViewSet, BureauViewSet, ActualiteViewSet,
@@ -27,6 +28,10 @@ router.register('candidatures', CandidatureViewSet, basename='candidature')
 router.register('notifications', NotificationViewSet, basename='notification')
 
 urlpatterns = [
+    # Routes avec extension AVANT le router (sinon DRF les lit comme suffixe de format)
+    path('api/v1/evenements/<int:pk>.ics', evenement_ics),
+    path('api/v1/evenements/<int:pk>/export-presences.csv', export_presences_csv),
+    path('api/v1/calendrier.ics', calendrier_ics),
     path('api/v1/', include(router.urls)),
     path('api/v1/auth/register-candidature', register_candidature),
     path('api/v1/adhesion/qr', qr_adhesion),
@@ -37,9 +42,9 @@ urlpatterns = [
     path('api/v1/evenements/<int:pk>/desinscrire', desinscrire),
     path('api/v1/evenements/<int:pk>/presence', marquer_presence),
     path('api/v1/evenements/<int:pk>/presence/', liste_presences),
-    path('api/v1/evenements/<int:pk>/export-presences.csv', export_presences_csv),
     path('api/v1/evenements/<int:pk>/qr-presence', qr_presence),
     path('api/v1/me/', me),
+    path('api/v1/classement/', classement),
     path('api/v1/me/inscriptions', mes_inscriptions),
     path('api/v1/me/cellules', mes_cellules),
     path('api/v1/reunions/convocation', convocation),

@@ -29,6 +29,22 @@ CODES_DECISION = ['P1', 'P3', 'P4', 'ADMIN']
 CODES_CONVOCATION = ['P1', 'P3', 'ADMIN']
 CODES_PRESENCE = ['P1', 'P6', 'ADMIN']
 POINTS_PRESENCE = 5
+POINTS_BIENVENUE = 10
+
+# Niveaux calculés (pas de modèle : seuils stables doc 00 bonus)
+NIVEAUX = [
+    (50, 'Légende du club'),
+    (20, 'Pilier'),
+    (5, 'Actif'),
+    (0, 'Nouveau'),
+]
+
+
+def niveau_de(points):
+    for seuil, label in NIVEAUX:
+        if (points or 0) >= seuil:
+            return label
+    return 'Nouveau'
 
 
 def a_role(user, codes):
@@ -92,6 +108,11 @@ class CandidatureViewSet(viewsets.ReadOnlyModelViewSet):
                 user.save()
             for cell in cand.cellules_souhaitees.all():
                 MembreCellule.objects.get_or_create(cellule=cell, membre=user)
+            if created:
+                # Bonus de bienvenue gamification (+10, une seule fois)
+                from django.db.models import F as _F
+                User.objects.filter(pk=user.pk).update(points=_F('points') + POINTS_BIENVENUE)
+                user.refresh_from_db()
             cand.statut = 'validee'
             cand.traitee_par = request.user
             cand.save(update_fields=['statut', 'traitee_par'])
@@ -329,6 +350,95 @@ def qr_presence(request, pk):
     buf = io.BytesIO()
     img.save(buf, format='PNG')
     return HttpResponse(buf.getvalue(), content_type='image/png')
+
+
+# ── Calendrier : conflits + iCal (doc 00 #6, RG-E1) ─────────────
+def _fin_ou_defaut(debut, fin):
+    from datetime import timedelta
+    return fin or (debut + timedelta(hours=2))
+
+
+def conflits_evenement(debut, fin, lieu, exclure_pk=None):
+    """Conflits = même lieu + horaires qui se chevauchent (RG-E1)."""
+    lieu = (lieu or '').strip()
+    if not lieu:
+        return []
+    qs = Evenement.objects.exclude(pk=exclure_pk).filter(lieu__iexact=lieu)
+    fin = _fin_ou_defaut(debut, fin)
+    trouves = []
+    for e in qs:
+        e_fin = _fin_ou_defaut(e.date_debut, e.date_fin)
+        if e.date_debut < fin and e_fin > debut:
+            trouves.append({'id': e.id, 'titre': e.titre,
+                            'date': e.date_debut, 'lieu': e.lieu})
+    return trouves
+
+
+def _ics_date(dt):
+    from datetime import timezone as _dt_tz
+    from django.utils import timezone as _tz
+    dt = dt if dt.tzinfo else _tz.make_aware(dt)
+    return dt.astimezone(_dt_tz.utc).strftime('%Y%m%dT%H%M%SZ')
+
+
+def _ics_evenement(e):
+    from django.utils import timezone as _tz
+    lignes = ['BEGIN:VEVENT', f'UID:evt-{e.pk}@itclub.emsp',
+              f'DTSTAMP:{_ics_date(_tz.now())}',
+              f'DTSTART:{_ics_date(e.date_debut)}',
+              f'DTEND:{_ics_date(_fin_ou_defaut(e.date_debut, e.date_fin))}',
+              f'SUMMARY:{e.titre}',
+              f'LOCATION:{e.lieu or ""}']
+    if e.description:
+        desc = e.description.replace('\n', '\\n').replace(',', '\\,')[:500]
+        lignes.append(f'DESCRIPTION:{desc}')
+    lignes.append('END:VEVENT')
+    return '\r\n'.join(lignes)
+
+
+def _reponse_ics(nom_fichier, evenements):
+    from django.http import HttpResponse
+    corps = '\r\n'.join(['BEGIN:VCALENDAR', 'VERSION:2.0',
+                         'PRODID:-//IT-CLUB EMSP//Calendrier//FR',
+                         'X-WR-CALNAME:IT-CLUB EMSP',
+                         *[_ics_evenement(e) for e in evenements],
+                         'END:VCALENDAR', ''])
+    resp = HttpResponse(corps, content_type='text/calendar; charset=utf-8')
+    resp['Content-Disposition'] = f'attachment; filename="{nom_fichier}"'
+    return resp
+
+
+@api_view(['GET'])
+@permission_classes([permissions.AllowAny])
+def calendrier_ics(request):
+    """GET /api/v1/calendrier.ics — à abonner dans Google Agenda / Apple."""
+    from django.utils import timezone
+    evts = Evenement.objects.filter(date_debut__gte=timezone.now()).order_by('date_debut')[:100]
+    return _reponse_ics('itclub-emsp.ics', evts)
+
+
+@api_view(['GET'])
+@permission_classes([permissions.AllowAny])
+def evenement_ics(request, pk):
+    """GET /api/v1/evenements/{id}.ics — un seul événement."""
+    try:
+        evt = Evenement.objects.get(pk=pk)
+    except Evenement.DoesNotExist:
+        return Response({'detail': 'Événement introuvable.'}, status=404)
+    return _reponse_ics(f'evenement-{pk}.ics', [evt])
+
+
+# ── Classement gamification (public, top 20, doc 00 bonus) ────
+@api_view(['GET'])
+@permission_classes([permissions.AllowAny])
+def classement(request):
+    """GET /api/v1/classement/ — [{nom, points, niveau}], points > 0."""
+    joueurs = User.objects.filter(is_active=True, points__gt=0).order_by('-points')[:20]
+    return Response([{
+        'nom': u.get_full_name() or u.username,
+        'points': u.points,
+        'niveau': niveau_de(u.points),
+    } for u in joueurs])
 
 
 # ── Espace membre : /me/* (doc 04 §5 accounts) ────────────────

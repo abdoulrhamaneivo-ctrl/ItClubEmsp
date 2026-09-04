@@ -104,3 +104,39 @@ class EspaceMembreTests(TestCase):
 
     def test_me_anonyme_401(self):
         self.assertEqual(self.client.get('/api/v1/me/').status_code, 401)
+
+
+class GamificationTests(TestCase):
+    client_class = APIClient
+
+    def test_bonus_bienvenue_et_classement(self):
+        from apps.views_emails import niveau_de
+        self.assertEqual(niveau_de(0), 'Nouveau')
+        self.assertEqual(niveau_de(5), 'Actif')
+        self.assertEqual(niveau_de(20), 'Pilier')
+        self.assertEqual(niveau_de(50), 'Légende du club')
+        # classement public, sans login
+        r = self.client.get('/api/v1/classement/')
+        self.assertEqual(r.status_code, 200)
+
+    def test_validation_offre_plus10(self):
+        from apps.accounts.models import Candidature
+        sg = membre('sg2@x.com')
+        donner_role(sg, 'P3')
+        self.client.post('/api/v1/auth/register-candidature',
+                         {'donnees': {'prenom': 'Bonus', 'nom': 'Test', 'email': 'bonus@x.com'},
+                          'cellules_souhaitees': []}, format='json')
+        c = Candidature.objects.get()
+        self.client.force_authenticate(sg)
+        self.client.post(f'/api/v1/candidatures/{c.id}/valider/')
+        from django.contrib.auth import get_user_model
+        u = get_user_model().objects.get(email='bonus@x.com')
+        self.assertEqual(u.points, 10)
+        r = self.client.get('/api/v1/classement/').json()
+        self.assertTrue(any('Bonus' in (e.get('nom') or '') for e in r))
+        # /me/ expose points + niveau
+        self.client.force_authenticate(u)
+        me = self.client.get('/api/v1/me/').json()
+        self.assertEqual(me['points'], 10)
+        self.assertEqual(me['niveau'], 'Actif')
+        u.delete()

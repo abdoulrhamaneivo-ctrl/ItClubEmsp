@@ -149,3 +149,56 @@ class PresenceTests(TestCase):
         self.assertEqual(
             self.client.post(f'/api/v1/evenements/{self.e.id}/presence',
                              {'code': '123456'}).status_code, 401)
+
+
+class CalendrierTests(TestCase):
+    client_class = APIClient
+
+    def setUp(self):
+        self.orga = membre('cal@x.com')
+        from apps.accounts.models import Role
+        Role.objects.update_or_create(code='P6', defaults={'titulaire': self.orga})
+        self.client.force_authenticate(self.orga)
+        # Référence : 12/10/2026 15h-17h, Salle info 2 (base vide en test)
+        from django.utils import timezone
+        from datetime import datetime
+        self.base = Evenement.objects.create(
+            titre='Atelier ref', type='atelier',
+            date_debut=timezone.make_aware(datetime(2026, 10, 12, 15, 0)),
+            date_fin=timezone.make_aware(datetime(2026, 10, 12, 17, 0)),
+            lieu='Salle info 2', places=10, couleur='#2563EB', icone='ampoule')
+
+    def test_conflit_meme_salle_refuse(self):
+        payload = {'titre': 'Doublon', 'type': 'atelier', 'date': '2026-10-12T15:30:00Z',
+                   'lieu': 'Salle info 2'}
+        r = self.client.post('/api/v1/evenements/', payload, format='json')
+        self.assertEqual(r.status_code, 400)
+        self.assertIn('conflit', r.json())
+
+    def test_autre_salle_meme_heure_ok(self):
+        payload = {'titre': 'Ailleurs', 'type': 'atelier', 'date': '2026-10-12T15:30:00Z',
+                   'lieu': 'Salle info 9'}
+        r = self.client.post('/api/v1/evenements/', payload, format='json')
+        self.assertEqual(r.status_code, 201)
+        r.json()['id'] and Evenement.objects.filter(pk=r.json()['id']).delete()
+
+    def test_meme_salle_horaire_different_ok(self):
+        payload = {'titre': 'Plus tard', 'type': 'atelier', 'date': '2026-10-12T18:30:00Z',
+                   'lieu': 'Salle info 2'}
+        r = self.client.post('/api/v1/evenements/', payload, format='json')
+        self.assertEqual(r.status_code, 201)
+        Evenement.objects.filter(pk=r.json()['id']).delete()
+
+    def test_ics_global_et_unitaire(self):
+        r = self.client.get('/api/v1/calendrier.ics')
+        self.assertEqual(r.status_code, 200)
+        self.assertIn('text/calendar', r['Content-Type'])
+        contenu = r.content.decode('utf-8')
+        self.assertIn('BEGIN:VCALENDAR', contenu)
+        self.assertIn('BEGIN:VEVENT', contenu)
+        e = self.base
+        r = self.client.get(f'/api/v1/evenements/{e.pk}.ics')
+        self.assertEqual(r.status_code, 200)
+        self.assertIn(f'UID:evt-{e.pk}@itclub.emsp', r.content.decode('utf-8'))
+        r = self.client.get('/api/v1/evenements/99999.ics')
+        self.assertEqual(r.status_code, 404)

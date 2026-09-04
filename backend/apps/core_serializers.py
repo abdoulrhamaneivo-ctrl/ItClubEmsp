@@ -236,13 +236,18 @@ class ProfilSerializer(serializers.ModelSerializer):
     """Profil membre (GET/PATCH /me) — doc 04 §5 accounts."""
     nom = serializers.SerializerMethodField()
     roles = serializers.SerializerMethodField()
+    niveau = serializers.SerializerMethodField()
 
     class Meta:
         from django.contrib.auth import get_user_model as _gum
         model = _gum()
         fields = ['id', 'nom', 'email', 'photo', 'promotion', 'telephone',
-                  'notif_prefs', 'points', 'roles']
-        read_only_fields = ['id', 'nom', 'email', 'photo', 'points', 'roles']
+                  'notif_prefs', 'points', 'niveau', 'roles']
+        read_only_fields = ['id', 'nom', 'email', 'photo', 'points', 'niveau', 'roles']
+
+    def get_niveau(self, obj):
+        from apps.views_emails import niveau_de
+        return niveau_de(getattr(obj, 'points', 0))
 
     def get_nom(self, obj):
         return obj.get_full_name() or obj.username

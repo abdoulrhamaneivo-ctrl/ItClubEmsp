@@ -208,6 +208,39 @@ class EvenementViewSet(PublicReadOrStaffWrite):
     serializer_class = EvenementSerializer
     filterset_fields = ['type']
 
+    def perform_create(self, serializer):
+        # RG-E1 : refuse la double réservation de salle (même lieu + chevauchement)
+        from apps.views_emails import conflits_evenement
+        data = serializer.validated_data
+        conflits = conflits_evenement(
+            data['date_debut'], data.get('date_fin'),
+            data.get('lieu', ''), exclure_pk=None)
+        if conflits:
+            from rest_framework.exceptions import ValidationError
+            raise ValidationError({
+                'conflit': f"Salle déjà prise : {conflits[0]['titre']} "
+                           f"({conflits[0]['date'].strftime('%d/%m %Hh%M')}).",
+                'conflits': conflits,
+            })
+        serializer.save()
+
+    def perform_update(self, serializer):
+        from apps.views_emails import conflits_evenement
+        inst = self.get_object()
+        data = serializer.validated_data
+        conflits = conflits_evenement(
+            data.get('date_debut', inst.date_debut),
+            data.get('date_fin', inst.date_fin),
+            data.get('lieu', inst.lieu), exclure_pk=inst.pk)
+        if conflits:
+            from rest_framework.exceptions import ValidationError
+            raise ValidationError({
+                'conflit': f"Salle déjà prise : {conflits[0]['titre']} "
+                           f"({conflits[0]['date'].strftime('%d/%m %Hh%M')}).",
+                'conflits': conflits,
+            })
+        serializer.save()
+
     def get_queryset(self):
         from django.utils import timezone
         from django.db.models import Count, Q

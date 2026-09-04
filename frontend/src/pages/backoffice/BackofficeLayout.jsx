@@ -19,6 +19,7 @@ import GestionContenu from './GestionContenu'
 import RegistreMembres from './RegistreMembres'
 import ComptesRendus from './ComptesRendus'
 import Presences from './Presences'
+import Calendrier from './Calendrier'
 
 /**
  * Back-office — EXPERIENCE, pas un panneau d'admin :
@@ -279,6 +280,7 @@ export default function BackofficeLayout() {
                     m.path === 'registre-membres' ? <RegistreMembres /> :
                     m.path === 'comptes-rendus' ? <ComptesRendus /> :
                     m.path === 'evenements' ? <Presences /> :
+                    m.path === 'calendrier' ? <Calendrier /> :
                     <PlaceholderModule module={m} />
                   } />
               ))}

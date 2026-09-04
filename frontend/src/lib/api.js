@@ -359,6 +359,11 @@ export const api = {
     }
     return postJson(`/api/v1/actualites/${actualiteId}/commentaires/`, { contenu, reponse_a })
   },
+  // Gamification : classement public
+  async getClassement() {
+    const data = await fetchJson('/api/v1/classement/')
+    return data ?? []
+  },
   // Registre membres — candidatures (Bureau P1/P3/P4)
   async getCandidatures() {
     const data = await fetchJson('/api/v1/candidatures/')
