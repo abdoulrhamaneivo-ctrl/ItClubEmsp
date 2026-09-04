@@ -10,7 +10,8 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from django.contrib.auth import get_user_model
 
 from apps.accounts.models import Role, Cellule, Candidature
-from apps.governance.models import ObjectifPoste, Projet, Opportunite, Parametre, CompteRendu
+from apps.governance.models import (ObjectifPoste, Projet, Opportunite, Parametre,
+                                    CompteRendu, RessourceVeille, VoteVeille)
 from apps.comms.models import Actualite, Document, Media, Sujet, MessageForum, Sondage, OptionSondage, Vote
 from apps.events.models import Evenement
 from apps.core_serializers import (
@@ -18,7 +19,7 @@ from apps.core_serializers import (
     DocumentSerializer, MediaSerializer, EvenementSerializer, CandidatureSerializer,
     ProjetSerializer, OpportuniteSerializer, ParametreSerializer,
     SujetSerializer, MessageForumSerializer, SondageSerializer,
-    CompteRenduSerializer,
+    CompteRenduSerializer, OpportuniteSerializer, VeilleSerializer,
 )
 
 User = get_user_model()
@@ -306,6 +307,48 @@ class CompteRenduViewSet(viewsets.ModelViewSet):
             'publie': set(),
         }
         return nouveau in graphe.get(actuel, set())
+
+
+class VeilleViewSet(viewsets.ModelViewSet):
+    """Veille technologique (P7, doc 02 D8) : partage + upvotes membres."""
+    queryset = RessourceVeille.objects.select_related('partage_par').all()
+    serializer_class = VeilleSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    filterset_fields = ['theme']
+
+    def get_queryset(self):
+        from django.db.models import Count
+        return super().get_queryset().annotate(
+            _votes=Count('votes', distinct=True),
+        )
+
+    def perform_create(self, serializer):
+        # Lien = URL http(s) valide (validation modèle) ; auteur = membre
+        serializer.save(partage_par=self.request.user)
+
+    def perform_destroy(self, instance):
+        if instance.partage_par_id != self.request.user.id and not _est_modo(self.request.user):
+            from rest_framework.exceptions import PermissionDenied
+            raise PermissionDenied('Seul l’auteur supprime son partage.')
+        instance.delete()
+
+    @action(detail=True, methods=['post'],
+            permission_classes=[permissions.IsAuthenticated])
+    def voter(self, request, pk=None):
+        """POST /veille/{id}/voter — toggle upvote."""
+        from django.db.models import Count
+        ressource = self.get_object()
+        existant = VoteVeille.objects.filter(ressource=ressource, membre=request.user).first()
+        if existant:
+            existant.delete()
+            statut = 'retire'
+        else:
+            VoteVeille.objects.create(ressource=ressource, membre=request.user)
+            statut = 'vote'
+        frais = RessourceVeille.objects.annotate(
+            _votes=Count('votes', distinct=True)).get(pk=ressource.pk)
+        data = VeilleSerializer(frais, context={'request': request}).data
+        return Response({'statut': statut, 'ressource': data})
 
 
 class DocumentViewSet(PublicReadOrStaffWrite):

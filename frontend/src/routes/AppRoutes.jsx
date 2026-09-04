@@ -25,6 +25,7 @@ import RequireAuth from '../pages/RequireAuth'
 const Galerie = lazy(() => import('../pages/Galerie'))
 const Forum = lazy(() => import('../pages/Forum'))
 const Sondages = lazy(() => import('../pages/Sondages'))
+const Veille = lazy(() => import('../pages/Veille'))
 const BackofficeLayout = lazy(() => import('../pages/backoffice/BackofficeLayout'))
 
 function Vitrine() {
@@ -118,6 +119,7 @@ function ScrollToTop() {
       '/galerie': 'Galerie — IT-CLUB EMSP',
       '/forum': 'Forum — IT-CLUB EMSP',
       '/sondages': 'Sondages — IT-CLUB EMSP',
+      '/veille': 'Veille techno — IT-CLUB EMSP',
       '/login': 'Connexion — IT-CLUB EMSP',
       '/espace': 'Mon espace — IT-CLUB EMSP',
       '/backoffice': 'Back-office — IT-CLUB EMSP',
@@ -149,6 +151,14 @@ export default function AppRoutes() {
           element={
             <RequireAuth>
               <><Navbar /><Sondages /></>
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/veille"
+          element={
+            <RequireAuth>
+              <><Navbar /><Veille /></>
             </RequireAuth>
           }
         />

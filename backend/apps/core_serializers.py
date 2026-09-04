@@ -321,16 +321,65 @@ class ProjetSerializer(serializers.ModelSerializer):
 
 
 class OpportuniteSerializer(serializers.ModelSerializer):
+    responsable_nom = serializers.SerializerMethodField()
     type_label = serializers.CharField(source='get_type_display', read_only=True)
     statut_label = serializers.CharField(source='get_statut_display', read_only=True)
 
     class Meta:
-        from apps.governance.models import Opportunite as _O
-        model = _O
+        from apps.governance.models import Opportunite as _Op
+        model = _Op
         fields = ['id', 'titre', 'type', 'type_label', 'statut', 'statut_label',
-                  'date_limite', 'lien', 'contact_nom', 'contact_email',
-                  'notes', 'cree_le', 'maj_le']
+                  'date_limite', 'lien', 'contact_nom', 'contact_email', 'notes',
+                  'responsable_nom', 'cree_le']
         read_only_fields = ['id', 'cree_le', 'maj_le']
+
+    def _nom(self, user):
+        if not user:
+            return None
+        try:
+            return user.get_full_name() or user.username
+        except Exception:
+            return None
+
+    def get_responsable_nom(self, obj):
+        return self._nom(getattr(obj, 'responsable', None))
+
+
+class VeilleSerializer(serializers.ModelSerializer):
+    """Ressource de veille : + votes, mon vote, auteur (doc 02 D8)."""
+    votes_count = serializers.SerializerMethodField()
+    jai_vote = serializers.SerializerMethodField()
+    auteur = serializers.SerializerMethodField()
+    theme_label = serializers.CharField(source='get_theme_display', read_only=True)
+
+    class Meta:
+        from apps.governance.models import RessourceVeille as _RV
+        model = _RV
+        fields = ['id', 'titre', 'lien', 'theme', 'theme_label', 'resume',
+                  'votes_count', 'jai_vote', 'auteur', 'cree_le']
+        read_only_fields = ['id', 'cree_le']
+
+    def get_votes_count(self, obj):
+        votes = getattr(obj, '_votes', None)
+        return votes if votes is not None else obj.votes.count()
+
+    def get_jai_vote(self, obj):
+        req = (self.context or {}).get('request')
+        u = getattr(req, 'user', None)
+        if not (u and u.is_authenticated):
+            return False
+        if getattr(obj, '_mes_votes', None) is not None:
+            return u.id in obj._mes_votes
+        return obj.votes.filter(membre_id=u.id).exists()
+
+    def get_auteur(self, obj):
+        a = getattr(obj, 'partage_par', None)
+        if not a:
+            return 'Ancien membre'
+        try:
+            return a.get_full_name() or a.username
+        except Exception:
+            return 'Ancien membre'
 
 
 class ParametreSerializer(serializers.ModelSerializer):

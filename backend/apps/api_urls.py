@@ -19,6 +19,7 @@ from apps.views_core import (
     DocumentViewSet, MediaViewSet, EvenementViewSet, register_candidature,
     presentation, qr_adhesion, ProjetViewSet, OpportuniteViewSet, ParametreViewSet,
     SujetViewSet, MessageForumViewSet, SondageViewSet, CompteRenduViewSet,
+    VeilleViewSet,
 )
 
 router = DefaultRouter()
@@ -35,6 +36,7 @@ router.register('forum/sujets', SujetViewSet, basename='sujet')
 router.register('forum/messages', MessageForumViewSet, basename='message')
 router.register('sondages', SondageViewSet, basename='sondage')
 router.register('comptes-rendus', CompteRenduViewSet, basename='compterendu')
+router.register('veille', VeilleViewSet, basename='veille')
 router.register('candidatures', CandidatureViewSet, basename='candidature')
 router.register('notifications', NotificationViewSet, basename='notification')
 

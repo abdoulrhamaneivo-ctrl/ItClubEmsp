@@ -187,3 +187,46 @@ class ComptesRendusTests(TestCase):
         self.assertEqual(self.client.get('/api/v1/comptes-rendus/').status_code, 401)
         self.client.force_authenticate(self.simple)
         self.assertEqual(self.client.get('/api/v1/comptes-rendus/').status_code, 200)
+
+
+class VeilleTests(TestCase):
+    client_class = APIClient
+
+    def setUp(self):
+        self.m1 = membre('v1@x.com')
+        self.m2 = membre('v2@x.com')
+
+    def auth(self, u):
+        self.client.force_authenticate(u)
+
+    def test_anonyme_401(self):
+        self.assertEqual(self.client.get('/api/v1/veille/').status_code, 401)
+
+    def test_partage_vote_toggle(self):
+        self.auth(self.m1)
+        r = self.client.post('/api/v1/veille/',
+                             {'titre': 'Nouveau GPU', 'lien': 'https://ex.com/a',
+                              'theme': 'ia', 'resume': 'Analyse'}, format='json')
+        self.assertEqual(r.status_code, 201)
+        rid = r.json()['id']
+        self.assertEqual(r.json()['auteur'], self.m1.get_full_name() or self.m1.username)
+        # lien invalide refusé
+        r = self.client.post('/api/v1/veille/', {'titre': 'X', 'lien': 'pas-un-lien'},
+                             format='json')
+        self.assertEqual(r.status_code, 400)
+        # vote + toggle
+        self.auth(self.m2)
+        r = self.client.post(f'/api/v1/veille/{rid}/voter/').json()
+        self.assertEqual((r['statut'], r['ressource']['votes_count']), ('vote', 1))
+        r = self.client.post(f'/api/v1/veille/{rid}/voter/').json()
+        self.assertEqual((r['statut'], r['ressource']['votes_count']), ('retire', 0))
+        # double vote impossible (unique)
+        self.client.post(f'/api/v1/veille/{rid}/voter/')
+        from apps.governance.models import VoteVeille
+        self.assertEqual(VoteVeille.objects.filter(ressource_id=rid).count(), 1)
+        # suppression par un autre membre refusée
+        r = self.client.delete(f'/api/v1/veille/{rid}/')
+        self.assertEqual(r.status_code, 403)
+        # auteur supprime
+        self.auth(self.m1)
+        self.assertEqual(self.client.delete(f'/api/v1/veille/{rid}/').status_code, 204)

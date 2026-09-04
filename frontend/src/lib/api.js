@@ -595,6 +595,26 @@ export const api = {
     return postJson(`/api/v1/evenements/${evenementId}/bilan/`, patch, 'PATCH')
   },
 
+  // Veille techno (membres) : partage + upvote toggle
+  async getVeille() {
+    const data = await fetchJson('/api/v1/veille/')
+    return data ?? []
+  },
+  async creerVeille({ titre, lien, theme, resume }) {
+    return postJson('/api/v1/veille/', { titre, lien, theme, resume })
+  },
+  async voterVeille(veilleId) {
+    return postJson(`/api/v1/veille/${veilleId}/voter/`, {})
+  },
+  async supprimerVeille(id) {
+    const res = await fetch(`${BASE_URL}/api/v1/veille/${id}/`, {
+      method: 'DELETE', headers: authHeaders(), credentials: 'include',
+    })
+    if (!res.ok) throw new Error(`API ${res.status}`)
+    invaliderCacheMetier()
+    return { success: true }
+  },
+
   // Registre membres — candidatures (Bureau P1/P3/P4)
   async getCandidatures() {
     const data = await fetchJson('/api/v1/candidatures/')

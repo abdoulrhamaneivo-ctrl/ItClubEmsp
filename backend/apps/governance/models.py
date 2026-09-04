@@ -60,6 +60,36 @@ class Opportunite(models.Model):
         return self.titre
 
 
+class RessourceVeille(models.Model):
+    """Veille technologique interne (P7, doc 02 D8) : lien partagé votable."""
+    THEMES = [('ia', 'IA & Data'), ('web', 'Web & Mobile'), ('cyber', 'Cybersécurité'),
+              ('cloud', 'Cloud & DevOps'), ('autre', 'Autre')]
+    titre = models.CharField(max_length=200)
+    lien = models.URLField('Lien')
+    theme = models.CharField(max_length=12, choices=THEMES, default='autre')
+    resume = models.TextField('Résumé', max_length=600, blank=True)
+    partage_par = models.ForeignKey('accounts.User', on_delete=models.SET_NULL,
+                                    null=True, blank=True, related_name='veilles')
+    cree_le = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-cree_le']
+        indexes = [models.Index(fields=['theme'])]
+
+    def __str__(self):
+        return self.titre
+
+
+class VoteVeille(models.Model):
+    """Upvote d'une ressource de veille — 1 par membre, toggle."""
+    ressource = models.ForeignKey(RessourceVeille, on_delete=models.CASCADE, related_name='votes')
+    membre = models.ForeignKey('accounts.User', on_delete=models.CASCADE, related_name='votes_veille')
+
+    class Meta:
+        unique_together = ('ressource', 'membre')
+        indexes = [models.Index(fields=['ressource'])]
+
+
 class Parametre(models.Model):
     """Réglage affichable/modifiable : réseaux sociaux, bannière… (P5)."""
     cle = models.SlugField('Clé', primary_key=True, max_length=60)
