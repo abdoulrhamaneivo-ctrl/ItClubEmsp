@@ -16,6 +16,7 @@ import { modulesPour, iconeModule } from '../../data/backoffice'
 import TachesNotion from './TachesNotion'
 import EditeurFormulaire from './EditeurFormulaire'
 import GestionContenu from './GestionContenu'
+import RegistreMembres from './RegistreMembres'
 
 /**
  * Back-office — EXPERIENCE, pas un panneau d'admin :
@@ -273,6 +274,7 @@ export default function BackofficeLayout() {
                     m.path === 'taches-notion' ? <TachesNotion /> :
                     m.path === 'formulaire' ? <EditeurFormulaire /> :
                     m.path === 'contenu' ? <GestionContenu /> :
+                    m.path === 'registre-membres' ? <RegistreMembres /> :
                     <PlaceholderModule module={m} />
                   } />
               ))}

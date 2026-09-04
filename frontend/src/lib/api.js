@@ -213,6 +213,29 @@ export const api = {
     return res.json()
   },
 
+  // Registre membres — candidatures (Bureau P1/P3/P4)
+  async getCandidatures() {
+    const data = await fetchJson('/api/v1/candidatures/')
+    return data ?? [
+      { id: 101, donnees: { prenom: 'Awa', nom: 'Diallo', email: 'awa.diallo@emsp.int', filiere: 'Digitalisation, 2e année', motivation: 'Je veux apprendre React et aider sur la plateforme.' }, cellules_souhaitees: [1], statut: 'en_attente', cree_le: new Date().toISOString() },
+      { id: 102, donnees: { prenom: 'Yao', nom: 'Kouassi', email: 'yao.kouassi@emsp.int', filiere: 'Réseaux, 1re année' }, cellules_souhaitees: [3], statut: 'en_attente', cree_le: new Date().toISOString() },
+    ]
+  },
+  async validerCandidature(id) {
+    if (USE_MOCK) {
+      await new Promise(r => setTimeout(r, 600))
+      return { id, statut: 'validee' }
+    }
+    return postJson(`/api/v1/candidatures/${id}/valider/`, {})
+  },
+  async refuserCandidature(id) {
+    if (USE_MOCK) {
+      await new Promise(r => setTimeout(r, 600))
+      return { id, statut: 'refusee' }
+    }
+    return postJson(`/api/v1/candidatures/${id}/refuser/`, {})
+  },
+
   // Utilitaire : bascule mock/prod
   isMockMode() { return USE_MOCK },
 }
