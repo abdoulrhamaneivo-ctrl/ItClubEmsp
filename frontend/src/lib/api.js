@@ -236,6 +236,15 @@ export const api = {
     return postJson(`/api/v1/candidatures/${id}/refuser/`, {})
   },
 
+  // Convocations SG (P1/P3) — rappel H-48h géré par la commande périodique
+  async envoyerConvocation({ titre, emails, tous_membres, date_str, lieu, ordre_du_jour }) {
+    if (USE_MOCK) {
+      await new Promise(r => setTimeout(r, 800))
+      return { envoyes: tous_membres ? 11 : emails.length, ignores: [] }
+    }
+    return postJson('/api/v1/reunions/convocation', { titre, emails, tous_membres, date_str, lieu, ordre_du_jour })
+  },
+
   // Utilitaire : bascule mock/prod
   isMockMode() { return USE_MOCK },
 }

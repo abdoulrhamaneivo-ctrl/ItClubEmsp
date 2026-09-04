@@ -91,7 +91,9 @@ def send_email(to, subject, template, context=None, notif_type=None,
         RESEND_API,
         data=json.dumps(payload).encode('utf-8'),
         headers={'Authorization': f'Bearer {settings.RESEND_API_KEY}',
-                 'Content-Type': 'application/json'},
+                 'Content-Type': 'application/json',
+                 # Sans UA navigateur, le WAF (Cloudflare 1010) bloque Python-urllib
+                 'User-Agent': 'IT-CLUB-EMSP/1.0 (+https://emsp.int)'},
         method='POST',
     )
     try:
