@@ -1,4 +1,10 @@
-# 09 — Emails transactionnels (Resend) + base Neon
+# 09 — Emails transactionnels (Brevo) + base Neon
+
+> **04/09/2026 : Resend → Brevo.** Le WAF Cloudflare de Resend coupait le TLS
+> depuis le réseau de l'EMSP (handshake timeout, jamais résolu). Brevo : 300
+> mails/jour gratuits, `api.brevo.com` joignable, pas de blocage. Le code est
+> passé à `apps/emails.py` (headers `api-key`, payload `sender/to/htmlContent`).
+> Clé : `BREVO_API_KEY` (xkeysib-…), expéditeur : `BREVO_FROM`.
 
 ## 1. Vue d'ensemble
 
@@ -12,22 +18,22 @@
 
 ## 2. Mise en route Resend (5 min)
 
-1. [resend.com](https://resend.com) → compte → **API Keys** → clé existante déjà en place.
+1. [brevo.com](https://app.brevo.com) → compte → **SMTP & API** → générer la clé API (xkeysib-…).
 2. **Sans domaine vérifié** (état actuel) :
-   - `RESEND_FROM=IT-CLUB EMSP <onboarding@resend.dev>`
-   - destinataires autorisés : `delivered@resend.dev` (simulé) + l'email du compte.
-   - toute autre adresse → `422 Invalid 'to' field` (vérifié le 04/09/2026).
+   - `BREVO_FROM = l'email du compte Brevo` (expéditeur validé dans Brevo)
+   - destinataires : tout le monde (Brevo ne limite pas tant que l'expéditeur est validé).
+   - Brevo sans expéditeur validé → 401/400 ; valider un expéditeur ou un domaine dans Senders.
 3. **Pour envoyer aux vrais membres** (obligatoire en prod) :
-   - Resend → **Domains** → Add Domain (`emsp.club`, `itclub-emsp.org`…) → ajouter les DNS SPF/DKIM chez le registrar → statut Verified.
-   - puis `RESEND_FROM=IT-CLUB EMSP <noreply@ton-domaine-vérifié>`.
+   - Brevo → **Senders, Domains & Dedicated IPs** → Senders (valider un email) OU Domains (vérifier le domaine, DKIM/DMARC chez le registrar) → statut Validé.
+   - puis `BREVO_FROM=club@ton-domaine`.
 4. Rotation de clé si elle a fuité (collée dans un chat, commitée…) : Resend → API Keys → Delete + Create.
 
 ## 3. Variables d'environnement
 
 | Variable | Local (`backend/.env`, voir `.env.example`) | Render |
 |---|---|---|
-| `RESEND_API_KEY` | lue depuis `~/.hermes/.env` en dev | **Environment → Add** (secret, jamais dans `render.yaml`) |
-| `RESEND_FROM` | `IT-CLUB EMSP <onboarding@resend.dev>` | `IT-CLUB EMSP <noreply@ton-domaine>` après vérif |
+| `BREVO_API_KEY` | lue depuis `~/.hermes/.env` en dev | **Environment → Add** (secret, jamais dans `render.yaml`) |
+| `BREVO_FROM` | email du compte Brevo | `club@ton-domaine` après vérification |
 | `FRONTEND_URL` | `https://it-club-emsp.vercel.app` | idem |
 | `DATABASE_URL` | URL poolée Neon `…-pooler.…?sslmode=require` | idem (secret Render) |
 | `DB_CONN_MAX_AGE` | `0` (pooler Neon) | `0` |
@@ -91,6 +97,6 @@ Aussi : `EvenementSerializer` expose `date_fin`, et les compteurs
 
 ## 8. Limites connues
 
-- Sans domaine vérifié : envoi test uniquement (`delivered@resend.dev`, email du compte).
+- Sans expéditeur validé : Brevo refuse l'envoi (valider un Senders d'abord).
 - Uploads Render free : éphémères (S3/Cloudinary plus tard — modèles déjà prêts).
 - `perform_create` Annonce boucle sur les membres : OK à l'échelle du club (< 500), passer en tâche de fond au-delà.

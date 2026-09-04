@@ -1,7 +1,9 @@
-"""Envoi d'emails transactionnels via Resend (doc 02 D10, doc 04 §7).
+"""Envoi d'emails transactionnels via Brevo (doc 02 D10, doc 04 §7).
 
-- Transport : API REST Resend en stdlib (urllib), sans dépendance ajoutée.
-- Clé lue depuis RESEND_API_KEY (jamais dans le repo).
+- Transport : API REST Brevo (api.brevo.com) en stdlib (urllib), sans dépendance.
+  Brevo remplace Resend (04/09/2026) : gratuit 300 mails/jour, IP joignable
+  depuis ce réseau (Resend/Cloudflare coupait le TLS depuis l'EMSP).
+- Clé lue depuis BREVO_API_KEY (jamais dans le repo). Resend ignoré.
 - Sans clé : log-only, les vues restent fonctionnelles (fail-open).
 - Chaque envoi (ou tentative) est tracé en Notification (audit + in-app).
 - Les préférences du profil (User.notif_prefs) sont respectées par type.
@@ -17,7 +19,7 @@ from django.utils.html import strip_tags
 
 logger = logging.getLogger(__name__)
 
-RESEND_API = 'https://api.resend.com/emails'
+BREVO_API = 'https://api.brevo.com/v3/smtp/email'
 
 
 class EmailError(Exception):
@@ -54,11 +56,11 @@ def _tracer(type_notif, titre, message, email, user=None, objet_id='', envoye=Tr
 
 def send_email(to, subject, template, context=None, notif_type=None,
                user=None, objet_id='', reply_to=None):
-    """Envoie un template. Retourne un dict (id Resend, skipped ou error).
+    """Envoie un template via Brevo. Retourne un dict (messageId, skipped ou error).
 
     - prefs refusées → {'skipped': 'prefs'} (tracé, envoye=False)
     - pas de clé → {'skipped': 'no-key'} (tracé, envoye=False)
-    - erreur Resend → lève EmailError (la vue décide : fail-open recommandé)
+    - erreur Brevo → lève EmailError (la vue décide : fail-open recommandé)
     """
     context = {'frontend_url': settings.FRONTEND_URL, **(context or {})}
     to = (to or '').strip()
@@ -71,33 +73,37 @@ def send_email(to, subject, template, context=None, notif_type=None,
 
     html = render_to_string(f'emails/{template}', context)
     text = strip_tags(html)
+    cle = settings.BREVO_API_KEY
     trace = _tracer(notif_type, subject, text[:500], to, user, objet_id,
-                    envoye=bool(settings.RESEND_API_KEY))
+                    envoye=bool(cle))
 
-    if not settings.RESEND_API_KEY:
-        logger.warning('RESEND_API_KEY absente — email log-only vers %s (%s)', to, subject)
+    if not cle:
+        logger.warning('BREVO_API_KEY absente — email log-only vers %s (%s)', to, subject)
         return {'skipped': 'no-key'}
 
+    # Contrat Brevo : expéditeur structuré {name, email}
+    m = settings.BREVO_FROM
+    expediteur = {'email': m, 'name': 'IT-CLUB EMSP'}
     payload = {
-        'from': settings.RESEND_FROM,
-        'to': [to],
+        'sender': expediteur,
+        'to': [{'email': to}],
         'subject': subject,
-        'html': html,
-        'text': text,
+        'htmlContent': html,
+        'textContent': text,
     }
     if reply_to:
-        payload['reply_to'] = reply_to
+        payload['replyTo'] = {'email': reply_to}
     req = urllib.request.Request(
-        RESEND_API,
+        BREVO_API,
         data=json.dumps(payload).encode('utf-8'),
-        headers={'Authorization': f'Bearer {settings.RESEND_API_KEY}',
+        headers={'api-key': cle,
                  'Content-Type': 'application/json',
-                 # Sans UA navigateur, le WAF (Cloudflare 1010) bloque Python-urllib
+                 'accept': 'application/json',
                  'User-Agent': 'IT-CLUB-EMSP/1.0 (+https://emsp.int)'},
         method='POST',
     )
     try:
-        with urllib.request.urlopen(req, timeout=12) as resp:
+        with urllib.request.urlopen(req, timeout=15) as resp:
             data = json.loads(resp.read().decode('utf-8'))
     except urllib.error.HTTPError as exc:
         detail = exc.read().decode('utf-8', 'replace')[:300]
@@ -107,7 +113,7 @@ def send_email(to, subject, template, context=None, notif_type=None,
                 trace.save(update_fields=['envoye'])
             except Exception:
                 pass
-        raise EmailError(f'Resend {exc.code}: {detail}')
+        raise EmailError(f'Brevo {exc.code}: {detail}')
     except Exception as exc:
         if trace is not None:
             try:
@@ -115,19 +121,19 @@ def send_email(to, subject, template, context=None, notif_type=None,
                 trace.save(update_fields=['envoye'])
             except Exception:
                 pass
-        raise EmailError(f'réseau Resend: {exc}')
-    resend_id = data.get('id', '')
-    # met à jour la trace avec l'id Resend
+        raise EmailError(f'réseau Brevo: {exc}')
+    brevo_id = data.get('messageId', '')
+    # met à jour la trace avec l'id Brevo (colonne resend_id réutilisée)
     try:
         n = _notif_model().objects.filter(
             destinataire_email=to, titre=subject[:140]).order_by('-cree_le').first()
         if n is not None:
-            n.resend_id = resend_id
+            n.resend_id = brevo_id
             n.save(update_fields=['resend_id'])
     except Exception as exc:
-        logger.warning('Trace Resend non mise à jour: %s', exc)
-    logger.info('Email envoyé à %s via Resend (%s)', to, resend_id)
-    return {'id': resend_id}
+        logger.warning('Trace Brevo non mise à jour: %s', exc)
+    logger.info('Email envoyé à %s via Brevo (%s)', to, brevo_id)
+    return {'id': brevo_id}
 
 
 # ── Extraction depuis le formulaire dynamique (donnees JSON) ──

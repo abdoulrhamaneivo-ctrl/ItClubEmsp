@@ -24,11 +24,11 @@ services:
         sync: false
       - key: DB_CONN_MAX_AGE
         value: "0"
-      # Emails Resend (doc 09) : clé en secret Render, jamais ici.
-      - key: RESEND_API_KEY
+      # Emails Brevo (doc 09) : clé en secret Render, jamais ici.
+      - key: BREVO_API_KEY
         sync: false
-      - key: RESEND_FROM
-        value: IT-CLUB EMSP <onboarding@resend.dev>
+      - key: BREVO_FROM
+        value: onboarding@resend.dev
       - key: FRONTEND_URL
         value: https://it-club-emsp.vercel.app
 
@@ -48,9 +48,9 @@ services:
         generateValue: true
       - key: DATABASE_URL
         sync: false
-      - key: RESEND_API_KEY
+      - key: BREVO_API_KEY
         sync: false
-      - key: RESEND_FROM
-        value: IT-CLUB EMSP <onboarding@resend.dev>
+      - key: BREVO_FROM
+        value: onboarding@resend.dev
       - key: FRONTEND_URL
         value: https://it-club-emsp.vercel.app

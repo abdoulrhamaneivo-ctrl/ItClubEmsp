@@ -104,12 +104,11 @@ MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# ── Emails transactionnels via Resend (doc 02 D10, doc 04 §7) ──
-# Secrets uniquement via l'environnement (jamais dans le repo).
-# Sans RESEND_API_KEY : les envois sont journalisés et ignorés (log-only),
-# les vues restent fonctionnelles (fail-open).
-RESEND_API_KEY = os.environ.get('RESEND_API_KEY', '')
-RESEND_FROM = os.environ.get('RESEND_FROM', 'IT-CLUB EMSP <onboarding@resend.dev>')
+# ── Emails (Brevo — remplace Resend le 04/09/2026) ──────────────
+# Sans BREVO_API_KEY : les envois sont journalisés et ignorés (log-only),
+# les vues restent fonctionnelles. Clé jamais dans le repo.
+BREVO_API_KEY = os.environ.get('BREVO_API_KEY', '')
+BREVO_FROM = os.environ.get('BREVO_FROM', 'onboarding@resend.dev')
 FRONTEND_URL = os.environ.get('FRONTEND_URL', 'https://it-club-emsp.vercel.app').rstrip('/')
 
 # ── DRF ──────────────────────────────────────────────────────
