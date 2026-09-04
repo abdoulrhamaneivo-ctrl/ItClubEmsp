@@ -10,6 +10,8 @@ import { BandeauAccent } from '../ui-components/FondPropre'
 import TitreSection from '../ui-components/TitreSection'
 import { IcCalendrier, IcRocket, IcMembres, IcLieu, IcFormation, IcTrophee } from '../ui-components/IconesClub'
 import { useActivites } from '../../hooks/useApi'
+import { api } from '../../lib/api'
+import { useAuth } from '../../stores/auth'
 
 /**
  * Activités à venir — Timeline « journal » : pas de liseré coloré générique.
@@ -25,6 +27,29 @@ const iconesType = {
 
 export default function Activites() {
   const { data: activites, loading, error } = useActivites({ upcoming: true, limit: 10 })
+  const user = useAuth((s) => s.user)
+  // Inscriptions : état par événement { [id]: 'confirme' | 'attente:2' | 'erreur' | 'envoi' }
+  const [inscriptions, setInscriptions] = useState({})
+
+  const reserver = async (a) => {
+    if (!user) { window.location.href = '/login'; return }
+    if (inscriptions[a.id]) return
+    setInscriptions((e) => ({ ...e, [a.id]: 'envoi' }))
+    try {
+      const res = await api.inscrireEvenement(a.id)
+      setInscriptions((e) => ({
+        ...e,
+        [a.id]: res.statut === 'liste-attente' ? `attente:${res.position ?? '?'}` : (res.statut ?? 'confirme'),
+      }))
+    } catch {
+      setInscriptions((e) => ({ ...e, [a.id]: 'erreur' }))
+      setTimeout(() => setInscriptions((e) => {
+        const copie = { ...e }
+        delete copie[a.id]
+        return copie
+      }), 2500)
+    }
+  }
 
   if (loading) return <SqueletteActivites />
   if (error) return <ErreurChargement message={error} />
@@ -172,14 +197,41 @@ export default function Activites() {
                             <Typography variant="body2" color="textSecondary" sx={{ lineHeight: 1.65, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                               {a.description}
                             </Typography>
+                            {/* CTA mobile — même inscription, pleine largeur */}
+                            <Button
+                              variant={inscriptions[a.id] && inscriptions[a.id] !== 'erreur' ? 'contained' : 'outlined'}
+                              size="small" fullWidth onClick={() => reserver(a)}
+                              disabled={inscriptions[a.id] === 'envoi' || (inscriptions[a.id] && inscriptions[a.id] !== 'erreur' && inscriptions[a.id] !== 'deja-inscrit')}
+                              sx={{ mt: 1.2, fontWeight: 700, display: { xs: 'inline-flex', md: 'none' },
+                                ...(!(inscriptions[a.id] && inscriptions[a.id] !== 'erreur') && { borderColor: '#D1D5DB', color: '#374151' }),
+                                ...(inscriptions[a.id] === 'confirme' && { bgcolor: '#1FAF72', '&:hover': { bgcolor: '#179963' } }),
+                              }}
+                            >
+                              {inscriptions[a.id] === 'envoi' ? 'Envoi…' :
+                               inscriptions[a.id] === 'erreur' ? 'Réessayer' :
+                               inscriptions[a.id] === 'confirme' ? 'Inscrit ✓' :
+                               String(inscriptions[a.id] ?? '').startsWith('attente') ? `En attente (n°${String(inscriptions[a.id]).split(':')[1]})` :
+                               user ? "S'inscrire" : 'Se connecter pour réserver'}
+                            </Button>
                           </Box>
 
-                          {/* CTA discret */}
+                          {/* CTA discret — inscription réelle (login requis) */}
                           <Button
-                            variant="outlined" size="small" href="#adhesion"
-                            sx={{ alignSelf: 'center', borderColor: '#D1D5DB', color: '#374151', fontWeight: 700, flexShrink: 0, display: { xs: 'none', md: 'inline-flex' } }}
+                            variant={inscriptions[a.id] && inscriptions[a.id] !== 'erreur' ? 'contained' : 'outlined'}
+                            size="small" onClick={() => reserver(a)}
+                            disabled={inscriptions[a.id] === 'envoi' || (inscriptions[a.id] && inscriptions[a.id] !== 'erreur' && inscriptions[a.id] !== 'deja-inscrit')}
+                            sx={{ alignSelf: 'center', fontWeight: 700, flexShrink: 0, display: { xs: 'none', md: 'inline-flex' },
+                              ...(!(inscriptions[a.id] && inscriptions[a.id] !== 'erreur') && { borderColor: '#D1D5DB', color: '#374151' }),
+                              ...(String(inscriptions[a.id] ?? '').startsWith('attente') && { bgcolor: '#F5A623', '&:hover': { bgcolor: '#D97706' } }),
+                              ...(inscriptions[a.id] === 'confirme' && { bgcolor: '#1FAF72', '&:hover': { bgcolor: '#179963' } }),
+                            }}
                           >
-                            S'inscrire
+                            {inscriptions[a.id] === 'envoi' ? 'Envoi…' :
+                             inscriptions[a.id] === 'erreur' ? 'Réessayer' :
+                             inscriptions[a.id] === 'confirme' ? 'Inscrit ✓' :
+                             String(inscriptions[a.id] ?? '').startsWith('attente') ? `En attente (n°${String(inscriptions[a.id]).split(':')[1]})` :
+                             inscriptions[a.id] === 'deja-inscrit' ? 'Déjà inscrit' :
+                             user ? "S'inscrire" : "Se connecter pour s'inscrire"}
                           </Button>
                         </Box>
                       </motion.div>

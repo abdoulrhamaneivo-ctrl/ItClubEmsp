@@ -17,6 +17,7 @@ import LogoutIcon from '@mui/icons-material/Logout'
 import NotificationsIcon from '@mui/icons-material/Notifications'
 import CloseIcon from '@mui/icons-material/Close'
 import { useAuth, hasRole } from '../stores/auth'
+import { api } from '../lib/api'
 import FondGlobalDonnees from '../components/ui-components/FondGlobalDonnees'
 import { IcMembres, IcCube, IcCalendrier, IcDocument, IcPhoto, IcTrophee, IcCommunication, iconePoste } from '../components/ui-components/IconesClub'
 
@@ -215,6 +216,51 @@ export default function Espace() {
   const logout = useAuth((s) => s.logout)
   const [palette, setPalette] = useState(false)
   const [sectionActive, setSectionActive] = useState('accueil')
+  // Données réelles (API) — null = en chargement/mock, [] = vide réel
+  const [notifsApi, setNotifsApi] = useState(null)
+  const [inscApi, setInscApi] = useState(null)
+  const [cellulesApi, setCellulesApi] = useState(null)
+
+  useEffect(() => {
+    let stop = false
+    api.getNotifications().then((d) => { if (!stop) setNotifsApi(d) }).catch(() => {})
+    api.getMesInscriptions().then((d) => { if (!stop) setInscApi(d) }).catch(() => {})
+    api.getMesCellules().then((d) => { if (!stop) setCellulesApi(d) }).catch(() => {})
+    return () => { stop = true }
+  }, [])
+
+  const marquerLue = (id) => {
+    setNotifsApi((ns) => (ns ?? []).map((n) => (n.id === id ? { ...n, lu: true } : n)))
+    api.marquerNotificationsLues([id]).catch(() => {})
+  }
+
+  const COULEURS_NOTIF = { annonce: '#1FAF72', inscription: '#2563EB', rappel: '#F5A623', convocation: '#7B61FF', satisfaction: '#0EA5E9', recap: '#64748B', promotion: '#F97316', candidature: '#0E7A50' }
+  const notifs = notifsApi === null ? null : notifsApi.map((n) => ({
+    id: n.id,
+    titre: n.titre,
+    date: n.cree_le ? new Date(n.cree_le).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' }) : '',
+    couleur: COULEURS_NOTIF[n.type] ?? '#6B7280',
+    lu: !!n.lu,
+  }))
+
+  const inscriptions = inscApi === null ? null : inscApi.map((i) => ({
+    id: i.id,
+    titre: i.evenement?.titre ?? 'Événement',
+    date: i.evenement?.date ?? '',
+    lieu: i.evenement?.lieu ?? '',
+    couleur: i.evenement?.couleur ?? '#2563EB',
+    statut: i.liste_attente ? 'En liste d’attente' : 'Confirmé',
+  }))
+
+  const celluleApi = (cellulesApi && cellulesApi.length > 0) ? cellulesApi[0] : null
+  const cellule = celluleApi ? {
+    nom: celluleApi.nom,
+    couleur: celluleApi.couleur ?? '#1FAF72',
+    couleurFonce: celluleApi.couleurFonce ?? '#0E7A50',
+    role: 'Membre actif',
+    description: celluleApi.description ?? '',
+    membres: celluleApi.membres ?? 0,
+  } : null
 
   const refs = {
     accueil: useRef(null), notifications: useRef(null),
@@ -472,32 +518,38 @@ export default function Espace() {
 
         {/* ═══ NOTIFICATIONS ════════════════════════════════════ */}
         <Section refE={refs.notifications} id="notifications" titre="notifications" sousTitre="Ce que tu as manqué" icone={<NotificationsIcon sx={{ fontSize: 18 }} />}>
-          {([
-            { id: 1, titre: 'Ta place au Hackathon est en liste d’attente', date: 'il y a 2h', couleur: '#2563EB' },
-            { id: 2, titre: 'Session Cellule Web — vendredi 15h, salle info 2', date: 'il y a 1j', couleur: '#1FAF72' },
-            { id: 3, titre: 'Le PV du 7 mai est disponible dans la Documentation', date: 'il y a 3j', couleur: '#F5A623' },
-          ]).map((n, i) => (
-            <Box key={n.id} sx={{
+          {(notifs ?? [
+            { id: 1, titre: 'Ta place au Hackathon est en liste d’attente', date: 'il y a 2h', couleur: '#2563EB', lu: false },
+            { id: 2, titre: 'Session Cellule Web — vendredi 15h, salle info 2', date: 'il y a 1j', couleur: '#1FAF72', lu: false },
+            { id: 3, titre: 'Le PV du 7 mai est disponible dans la Documentation', date: 'il y a 3j', couleur: '#F5A623', lu: true },
+          ]).map((n, i, arr) => (
+            <Box key={n.id} onClick={() => { if (notifsApi !== null && !n.lu) marquerLue(n.id) }} sx={{
               display: 'flex', gap: 1.8, px: 2.6, py: 2.1,
-              borderBottom: i < 2 ? '1px solid #F0F4F2' : 'none',
+              borderBottom: i < arr.length - 1 ? '1px solid #F0F4F2' : 'none',
               transition: 'background 160ms ease',
-              '&:hover': { bgcolor: '#F6FBF9' }, cursor: 'pointer',
+              '&:hover': { bgcolor: '#F6FBF9' }, cursor: notifsApi !== null ? 'pointer' : 'default',
+              ...(n.lu && { opacity: 0.62 }),
             }}>
               <Box sx={{
                 width: 8, height: 8, borderRadius: '50%', bgcolor: n.couleur, mt: 1, flexShrink: 0,
-                ...(i === 0 && { boxShadow: `0 0 0 4px ${n.couleur}22` }),
+                ...(i === 0 && !n.lu && { boxShadow: `0 0 0 4px ${n.couleur}22` }),
               }} />
               <Box sx={{ flex: 1, minWidth: 0 }}>
-                <Typography sx={{ fontWeight: 700, color: '#111827', fontSize: '0.88rem', lineHeight: 1.5 }}>{n.titre}</Typography>
+                <Typography sx={{ fontWeight: n.lu ? 600 : 700, color: '#111827', fontSize: '0.88rem', lineHeight: 1.5 }}>{n.titre}</Typography>
                 <Typography variant="caption" sx={{ color: '#5A6B63', fontWeight: 600, fontSize: '0.68rem' }}>{n.date}</Typography>
               </Box>
             </Box>
           ))}
+          {notifs !== null && notifs.length === 0 && (
+            <Typography sx={{ px: 2.6, py: 3, color: '#5A6B63', fontSize: '0.88rem' }}>
+              Rien pour le moment — les annonces, rappels et promotions arrivent ici.
+            </Typography>
+          )}
         </Section>
 
         {/* ═══ INSCRIPTIONS ═════════════════════════════════════ */}
         <Section refE={refs.inscriptions} id="inscriptions" titre="mes-inscriptions" sousTitre="Où tu es attendu" icone={<IcCalendrier taille={17} couleur="#0F5B3A" />}>
-          {MES_INSCRIPTIONS.map((insc, i) => (
+          {(inscriptions ?? MES_INSCRIPTIONS).map((insc, i) => (
             <motion.div key={insc.id}
               initial={{ opacity: 0, y: 14 }} whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '0px' }}
@@ -537,6 +589,16 @@ export default function Espace() {
               </Box>
             </motion.div>
           ))}
+          {inscriptions !== null && inscriptions.length === 0 && (
+            <Box sx={{ textAlign: 'center', py: 3 }}>
+              <Typography sx={{ color: '#5A6B63', fontSize: '0.9rem', mb: 1.5 }}>
+                Aucune inscription pour le moment.
+              </Typography>
+              <Button variant="contained" href="/#activites" sx={{ bgcolor: '#1FAF72', '&:hover': { bgcolor: '#179963' }, fontWeight: 800, borderRadius: 9999 }}>
+                Découvrir les activités
+              </Button>
+            </Box>
+          )}
         </Section>
 
         {/* ═══ MA CELLULE ════════════════════════════════════════ */}
@@ -544,35 +606,38 @@ export default function Espace() {
           <Box sx={{ display: 'grid', gap: 3, gridTemplateColumns: { xs: '1fr', md: '1.2fr 1fr' }, alignItems: 'start' }}>
             <Box sx={{
               p: { xs: 2.8, md: 3.2 }, bgcolor: '#fff', borderRadius: '18px',
-              border: `1.5px solid ${MA_CELLULE.couleur}45`,
-              boxShadow: `0 12px 30px ${MA_CELLULE.couleur}1E`,
+              border: `1.5px solid ${(cellule ?? MA_CELLULE).couleur}45`,
+              boxShadow: `0 12px 30px ${(cellule ?? MA_CELLULE).couleur}1E`,
             }}>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
                 <Box sx={{
                   width: 56, height: 56, borderRadius: '16px',
-                  background: `linear-gradient(135deg,${MA_CELLULE.couleur},${MA_CELLULE.couleur}CC 60%,#0D1B2A)`,
+                  background: `linear-gradient(135deg,${(cellule ?? MA_CELLULE).couleur},${(cellule ?? MA_CELLULE).couleur}CC 60%,#0D1B2A)`,
                   display: 'grid', placeItems: 'center',
-                  boxShadow: `0 8px 20px ${MA_CELLULE.couleur}44`,
+                  boxShadow: `0 8px 20px ${(cellule ?? MA_CELLULE).couleur}44`,
                 }}>
                   <IcCube taille={28} couleur="#fff" />
                 </Box>
                 <Box>
-                  <Typography sx={{ color: MA_CELLULE.couleurFonce, fontWeight: 800, fontSize: '0.68rem', letterSpacing: '0.14em', textTransform: 'uppercase' }}>
-                    {MA_CELLULE.role}
+                  <Typography sx={{ color: (cellule ?? MA_CELLULE).couleurFonce, fontWeight: 800, fontSize: '0.68rem', letterSpacing: '0.14em', textTransform: 'uppercase' }}>
+                    {(cellule ?? MA_CELLULE).role ?? 'Membre actif'}
                   </Typography>
                   <Typography sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 800, fontSize: '1.25rem', color: '#111827' }}>
-                    {MA_CELLULE.nom}
+                    {(cellule ?? MA_CELLULE).nom}
                   </Typography>
                 </Box>
               </Box>
               <Divider sx={{ my: 2 }} />
               <Typography sx={{ fontWeight: 800, color: '#111827', fontSize: '0.9rem', mb: 1.5 }}>
-                Prochaines sessions
+                {cellule ? `À propos — ${cellule.membres} membres` : 'Prochaines sessions'}
               </Typography>
               <Box sx={{ display: 'grid', gap: 1.2 }}>
-                {MA_CELLULE.prochainesSessions.map((s, i) => (
+                {(cellule
+                  ? [{ date: `${cellule.membres} membres actifs`, sujet: cellule.description }]
+                  : MA_CELLULE.prochainesSessions
+                ).map((s, i) => (
                   <Box key={i} sx={{ display: 'flex', gap: 1.4, alignItems: 'flex-start', p: 1.6, bgcolor: '#F6FBF9', borderRadius: '12px', border: '1px solid #E3EEE8' }}>
-                    <IcCalendrier taille={15} couleur={MA_CELLULE.couleurFonce} />
+                    <IcCalendrier taille={15} couleur={(cellule ?? MA_CELLULE).couleurFonce} />
                     <Box>
                       <Typography sx={{ fontWeight: 800, color: '#0F5B3A', fontSize: '0.78rem' }}>{s.date}</Typography>
                       <Typography variant="body2" sx={{ color: '#5A6B63', lineHeight: 1.6 }}>{s.sujet}</Typography>

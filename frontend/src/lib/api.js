@@ -88,7 +88,7 @@ export function setToken(token) {
 }
 
 // POST générique — mock d'auth en dev (le back Django livrera /auth/token)
-async function postJson(endpoint, payload) {
+async function postJson(endpoint, payload, method = 'POST') {
   if (USE_MOCK) {
     await new Promise(r => setTimeout(r, 600))
     if (endpoint === '/api/v1/auth/token') {
@@ -100,7 +100,7 @@ async function postJson(endpoint, payload) {
     return { success: true, message: 'OK (mock)' }
   }
   const res = await fetch(`${BASE_URL}${endpoint}`, {
-    method: 'POST',
+    method,
     headers: authHeaders({ 'Content-Type': 'application/json' }),
     credentials: 'include',
     body: JSON.stringify(payload),
@@ -158,6 +158,53 @@ export const api = {
   // Auth (mock en dev : renvoie le Président avec tous les accès)
   async post(endpoint, payload) {
     return postJson(endpoint, payload)
+  },
+
+  // Espace membre — endpoints réels (Authorization via authHeaders)
+  async getMe() {
+    const data = await fetchJson('/api/v1/me/')
+    return data ?? null
+  },
+  async patchMe(patch) {
+    if (USE_MOCK) return { success: true, message: 'OK (mock)' }
+    return postJson('/api/v1/me/', patch, 'PATCH')
+  },
+  async getMesInscriptions() {
+    // null en mock → l'Espace garde ses démos ; [] = vide réel
+    const data = await fetchJson('/api/v1/me/inscriptions')
+    return data ?? null
+  },
+  async getMesCellules() {
+    const data = await fetchJson('/api/v1/me/cellules')
+    return data ?? null
+  },
+  async getNotifications() {
+    const data = await fetchJson('/api/v1/notifications/')
+    return data ?? null
+  },
+  async marquerNotificationsLues(ids) {
+    if (USE_MOCK) return { marquees_lues: 0 }
+    return postJson('/api/v1/notifications/lire/', ids ? { ids } : {})
+  },
+  async inscrireEvenement(id) {
+    if (USE_MOCK) {
+      await new Promise(r => setTimeout(r, 600))
+      return { statut: 'confirme' }
+    }
+    return postJson(`/api/v1/evenements/${id}/inscrire`, {})
+  },
+  async desinscrireEvenement(id) {
+    if (USE_MOCK) {
+      await new Promise(r => setTimeout(r, 600))
+      return { statut: 'desinscrit' }
+    }
+    const res = await fetch(`${BASE_URL}/api/v1/evenements/${id}/desinscrire`, {
+      method: 'DELETE',
+      headers: authHeaders(),
+      credentials: 'include',
+    })
+    if (!res.ok) throw new Error(`API ${res.status}`)
+    return res.json()
   },
 
   // Utilitaire : bascule mock/prod

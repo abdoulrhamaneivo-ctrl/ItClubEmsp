@@ -16,7 +16,7 @@ from rest_framework.decorators import api_view, permission_classes, action
 from rest_framework.response import Response
 from rest_framework import serializers as drf_serializers
 
-from apps.accounts.models import Role, Candidature, MembreCellule
+from apps.accounts.models import Role, Cellule, Candidature, MembreCellule
 from apps.events.models import Evenement, Inscription
 from apps.notifications.models import Notification
 from apps import emails as mail
@@ -213,6 +213,41 @@ def tester_email(request):
         return Response({'ok': True, 'resend': res})
     except Exception as exc:
         return Response({'ok': False, 'erreur': str(exc)[:300]}, status=502)
+
+
+# ── Espace membre : /me/* (doc 04 §5 accounts) ────────────────
+@api_view(['GET', 'PATCH'])
+@permission_classes([permissions.IsAuthenticated])
+def me(request):
+    """Profil du membre connecté + préférences notifications (PATCH partiel)."""
+    from apps.core_serializers import ProfilSerializer
+    if request.method == 'PATCH':
+        allowed = {'promotion', 'telephone', 'notif_prefs'}
+        data = {k: v for k, v in request.data.items() if k in allowed}
+        if 'notif_prefs' in data and not isinstance(data['notif_prefs'], dict):
+            return Response({'detail': 'notif_prefs doit être un objet.'}, status=400)
+        for k, v in data.items():
+            setattr(request.user, k, v)
+        request.user.save(update_fields=[k for k in data] or None)
+    return Response(ProfilSerializer(request.user).data)
+
+
+@api_view(['GET'])
+@permission_classes([permissions.IsAuthenticated])
+def mes_inscriptions(request):
+    """Inscriptions du membre (confirmées + attente) — Espace."""
+    from apps.core_serializers import InscriptionMembreSerializer
+    qs = Inscription.objects.filter(membre=request.user).select_related('evenement')
+    return Response(InscriptionMembreSerializer(qs, many=True).data)
+
+
+@api_view(['GET'])
+@permission_classes([permissions.IsAuthenticated])
+def mes_cellules(request):
+    """Cellules du membre — Espace."""
+    from apps.core_serializers import CelluleSerializer
+    qs = Cellule.objects.filter(membres__membre=request.user).distinct()
+    return Response(CelluleSerializer(qs, many=True).data)
 
 
 # ── Notifications in-app ─────────────────────────────────────

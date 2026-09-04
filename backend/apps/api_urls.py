@@ -7,7 +7,7 @@ from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 from apps.auth_views import TokenAvecUserView
 from apps.views_emails import (
     CandidatureViewSet, NotificationViewSet, inscrire, desinscrire,
-    convocation, tester_email,
+    convocation, tester_email, me, mes_inscriptions, mes_cellules,
 )
 from apps.views_core import (
     CelluleViewSet, BureauViewSet, ActualiteViewSet,
@@ -33,6 +33,9 @@ urlpatterns = [
     path('api/v1/auth/token/refresh', TokenRefreshView.as_view()),
     path('api/v1/evenements/<int:pk>/inscrire', inscrire),
     path('api/v1/evenements/<int:pk>/desinscrire', desinscrire),
+    path('api/v1/me/', me),
+    path('api/v1/me/inscriptions', mes_inscriptions),
+    path('api/v1/me/cellules', mes_cellules),
     path('api/v1/reunions/convocation', convocation),
     path('api/v1/emails/test', tester_email),
     path('api/schema', SpectacularAPIView.as_view(), name='schema'),

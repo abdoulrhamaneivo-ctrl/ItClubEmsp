@@ -151,3 +151,39 @@ class CandidatureSerializer(serializers.ModelSerializer):
         model = Candidature
         fields = ['id', 'donnees', 'cellules_souhaitees', 'statut', 'cree_le']
         read_only_fields = ['id', 'statut', 'cree_le']
+
+
+class InscriptionMembreSerializer(serializers.ModelSerializer):
+    """Inscription vue par le membre : événement embarqué (Espace)."""
+    evenement = EvenementSerializer(read_only=True)
+
+    class Meta:
+        from apps.events.models import Inscription as I
+        model = I
+        fields = ['id', 'evenement', 'liste_attente', 'confirme', 'cree_le']
+        read_only_fields = fields
+
+
+class ProfilSerializer(serializers.ModelSerializer):
+    """Profil membre (GET/PATCH /me) — doc 04 §5 accounts."""
+    nom = serializers.SerializerMethodField()
+    roles = serializers.SerializerMethodField()
+
+    class Meta:
+        from django.contrib.auth import get_user_model as _gum
+        model = _gum()
+        fields = ['id', 'nom', 'email', 'photo', 'promotion', 'telephone',
+                  'notif_prefs', 'roles']
+        read_only_fields = ['id', 'nom', 'email', 'photo', 'roles']
+
+    def get_nom(self, obj):
+        return obj.get_full_name() or obj.username
+
+    def get_roles(self, obj):
+        codes = [{'code': r.code} for r in obj.roles.all()]
+        try:
+            if obj.cellules_dirigees.exists() and not any(r['code'] == 'CHEF_CELLULE' for r in codes):
+                codes.append({'code': 'CHEF_CELLULE'})
+        except Exception:
+            pass
+        return codes or [{'code': 'MEMBRE'}]
