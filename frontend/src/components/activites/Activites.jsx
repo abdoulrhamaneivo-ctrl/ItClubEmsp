@@ -95,7 +95,7 @@ export default function Activites() {
                 {/* Cartes du mois */}
                 <Box sx={{ ml: { xs: 0, md: 4 }, display: 'flex', flexDirection: 'column', gap: 2.5 }}>
                   {grouped[mois].map((a, aIdx) => {
-                    const IconeType = iconesType[a.type] ?? IcCalendrier
+                    const IconeType = iconesType[a.type_label ?? a.type] ?? iconesType[a.type] ?? IcCalendrier
                     const d = new Date(a.date)
                     return (
                       <motion.div
@@ -150,7 +150,7 @@ export default function Activites() {
                           {/* Contenu */}
                           <Box sx={{ flex: 1, minWidth: 0 }}>
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 0.8, flexWrap: 'wrap' }}>
-                              <Chip label={a.type} size="small" sx={{ bgcolor: '#F5F7F6', color: '#4B5563', fontWeight: 800, fontSize: '0.66rem', height: 22 }} />
+                              <Chip label={a.type_label ?? a.type} size="small" sx={{ bgcolor: '#F5F7F6', color: '#4B5563', fontWeight: 800, fontSize: '0.66rem', height: 22 }} />
                               <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.6 }}>
                                 <IcLieu taille={13} couleur="#6B7280" />
                                 <Typography variant="caption" sx={{ color: '#374151', fontWeight: 600, fontSize: '0.78rem' }}>

@@ -85,6 +85,26 @@ class EvenementViewSet(PublicReadOrStaffWrite):
     serializer_class = EvenementSerializer
     filterset_fields = ['type']
 
+    def get_queryset(self):
+        from django.utils import timezone
+        qs = super().get_queryset()
+        a_venir = self.request.query_params.get('a_venir') or self.request.query_params.get('upcoming')
+        if str(a_venir).lower() in ('1', 'true'):
+            qs = qs.filter(date_debut__gte=timezone.now())
+        return qs
+
+    def list(self, request, *args, **kwargs):
+        resp = super().list(request, *args, **kwargs)
+        # ?limit=N — le front demande les N prochains (sans casser la pagination DRF sinon)
+        try:
+            limit = int(request.query_params.get('limit', 0))
+        except (TypeError, ValueError):
+            limit = 0
+        if limit > 0 and isinstance(resp.data, dict) and isinstance(resp.data.get('results'), list):
+            resp.data['results'] = resp.data['results'][:limit]
+            resp.data['count'] = len(resp.data['results'])
+        return resp
+
 
 # ── Public (throttle anti-spam doc 04 §8) ───────────────────
 class PublicWriteThrottle(AnonRateThrottle):
@@ -95,13 +115,30 @@ class PublicWriteThrottle(AnonRateThrottle):
 @permission_classes([permissions.AllowAny])
 @throttle_classes([PublicWriteThrottle])
 def register_candidature(request):
-    """POST /api/v1/auth/register-candidature — le formulaire d'adhésion."""
-    serializer = CandidatureSerializer(data=request.data)
+    """POST /api/v1/auth/register-candidature — le formulaire d'adhésion.
+
+    Accepte le format canonique {donnees: {...}, cellules_souhaitees: [ids|slugs]}
+    ET le format plat historique du front {email, nom, ..., cellules: [slugs]}.
+    """
+    data = dict(request.data)
+    donnees = data.get('donnees')
+    if not isinstance(donnees, dict):
+        # Format plat : tout sauf les clés réservées devient donnees
+        reserves = {'cellules_souhaitees', 'cellules', 'donnees'}
+        donnees = {k: v for k, v in data.items() if k not in reserves}
+    cellules_refs = (data.get('cellules_souhaitees')
+                     or data.get('cellules') or [])
+    if isinstance(cellules_refs, str):
+        cellules_refs = [cellules_refs]
+    serializer = CandidatureSerializer(
+        data={'donnees': donnees, 'cellules_souhaitees': []})
     if serializer.is_valid():
         candidature = serializer.save()
-        cellules = request.data.get('cellules_souhaitees', [])
-        if cellules:
-            candidature.cellules_souhaitees.set(Cellule.objects.filter(id__in=cellules))
+        if cellules_refs:
+            refs = [str(r) for r in cellules_refs]
+            cellules = Cellule.objects.filter(id__in=[r for r in refs if r.isdigit()]) \
+                | Cellule.objects.filter(slug__in=[r for r in refs if not r.isdigit()])
+            candidature.cellules_souhaitees.set(cellules.distinct())
         # Email de confirmation (fail-open : la candidature reste créée)
         try:
             from apps import emails as mail
@@ -114,3 +151,31 @@ def register_candidature(request):
             status=status.HTTP_201_CREATED,
         )
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+@permission_classes([permissions.AllowAny])
+def presentation(request):
+    """GET /api/v1/presentation/ — vitrine « Qui sommes-nous » + stats live."""
+    from django.contrib.auth import get_user_model
+    User = get_user_model()
+    piliers = [
+        {'numero': '01', 'titre': 'Apprendre en codant vrai',
+         'texte': "Pas de sujets abstraits : cette plateforme, les outils du club, les projets — c'est de la vraie techno construite ensemble."},
+        {'numero': '02', 'titre': "Se retrouver et s'entraider",
+         'texte': "Ateliers, sessions de code, entraide entre cellules : personne n'avance seul, les aînés tirent les nouveaux vers le haut."},
+        {'numero': '03', 'titre': 'Ouvrir les horizons',
+         'texte': "Hackathons, conférences, sorties, partenariats : le club connecte l'école au monde tech qui l'entoure."},
+    ]
+    return Response({
+        'titre': 'Le IT-CLUB EMSP',
+        'intro': "Le IT-CLUB est le club informatique de l'École Multinationale des Postes (EMSP). "
+                 "Un espace ouvert à tous les étudiants qui veulent apprendre, coder, partager et "
+                 "construire ensemble — sans prérequis, sans sélection.",
+        'priorites': piliers,
+        'stats': {
+            'membres': User.objects.filter(is_active=True).count(),
+            'cellules': Cellule.objects.count(),
+            'evenements': Evenement.objects.count(),
+        },
+    })

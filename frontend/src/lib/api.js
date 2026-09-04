@@ -58,9 +58,19 @@ const mocks = {
 }
 
 // Helpers HTTP
+function authHeaders(extra = {}) {
+  // JWT stocké au login (stores/auth.js) → exigé par les endpoints protégés
+  // (candidatures, inscriptions, notifications). Absent = anonyme.
+  const token = localStorage.getItem('access_token')
+  return token ? { ...extra, Authorization: `Bearer ${token}` } : extra
+}
+
 async function fetchJson(endpoint) {
   if (USE_MOCK) return null
-  const res = await fetch(`${BASE_URL}${endpoint}`, { credentials: 'include' })
+  const res = await fetch(`${BASE_URL}${endpoint}`, {
+    headers: authHeaders(),
+    credentials: 'include',
+  })
   if (!res.ok) throw new Error(`API ${res.status}`)
   const json = await res.json()
   // DRF pagination : { count, results } → on renvoie la liste directement
@@ -81,7 +91,7 @@ export function setToken(token) {
 async function postJson(endpoint, payload) {
   if (USE_MOCK) {
     await new Promise(r => setTimeout(r, 600))
-    if (endpoint === '/auth/token') {
+    if (endpoint === '/api/v1/auth/token') {
       return {
         access: 'mock-token-dev',
         user: { nom: 'IVO ABDOUL RHAMANE NESTOR', roles: [{ code: 'P1' }, { code: 'ADMIN' }] },
@@ -91,7 +101,7 @@ async function postJson(endpoint, payload) {
   }
   const res = await fetch(`${BASE_URL}${endpoint}`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: authHeaders({ 'Content-Type': 'application/json' }),
     credentials: 'include',
     body: JSON.stringify(payload),
   })
@@ -113,10 +123,10 @@ export const api = {
     return data ?? mocks.cellules
   },
 
-  // Activités
+  // Activités — backend : /evenements/ (a_venir + limit supportés)
   async getActivites({ upcoming = true, limit = 10 } = {}) {
-    const params = new URLSearchParams({ upcoming: String(upcoming), limit: String(limit) })
-    const data = await fetchJson(`/api/v1/activites/?${params}`)
+    const params = new URLSearchParams({ a_venir: upcoming ? '1' : '0', limit: String(limit) })
+    const data = await fetchJson(`/api/v1/evenements/?${params}`)
     return data ?? mocks.activites
   },
 
@@ -132,13 +142,17 @@ export const api = {
     return data ?? mocks.presentation
   },
 
-  // Adhésion
+  // Adhésion — contrat backend : { donnees: {...}, cellules_souhaitees: [slugs|ids] }
   async postAdhesion(payload) {
     if (USE_MOCK) {
       await new Promise(r => setTimeout(r, 800))
       return { success: true, message: 'Candidature enregistrée (mock)' }
     }
-    return postJson('/auth/register-candidature', payload)
+    const { cellules, ...donnees } = payload ?? {}
+    return postJson('/api/v1/auth/register-candidature', {
+      donnees,
+      cellules_souhaitees: cellules ?? [],
+    })
   },
 
   // Auth (mock en dev : renvoie le Président avec tous les accès)

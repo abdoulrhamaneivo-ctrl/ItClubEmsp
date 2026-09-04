@@ -9,7 +9,7 @@ import { api as apiService, setToken } from '../lib/api'
 export const useAuth = create((set) => ({
   user: JSON.parse(localStorage.getItem('user') ?? 'null'),
   login: async (email, motDePasse) => {
-    const data = await apiService.post('/auth/token', { email, password: motDePasse })
+    const data = await apiService.post('/api/v1/auth/token', { email, password: motDePasse })
     setToken(data.access)
     localStorage.setItem('user', JSON.stringify(data.user))
     set({ user: data.user })

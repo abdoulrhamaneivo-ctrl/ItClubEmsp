@@ -25,8 +25,8 @@ from apps.core_serializers import CandidatureSerializer
 logger = logging.getLogger(__name__)
 User = get_user_model()
 
-CODES_DECISION = ['P1', 'P3', 'P4']
-CODES_CONVOCATION = ['P1', 'P3']
+CODES_DECISION = ['P1', 'P3', 'P4', 'ADMIN']
+CODES_CONVOCATION = ['P1', 'P3', 'ADMIN']
 
 
 def a_role(user, codes):
@@ -56,7 +56,7 @@ class CandidatureViewSet(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
         qs = super().get_queryset()
-        if a_role(self.request.user, ['P1', 'P3', 'P4']):
+        if a_role(self.request.user, ['P1', 'P3', 'P4', 'ADMIN']):
             return qs
         return qs.none()
 
@@ -68,19 +68,24 @@ class CandidatureViewSet(viewsets.ReadOnlyModelViewSet):
         cand = self.get_object()
         if cand.statut == 'validee':
             return Response({'detail': 'Déjà validée.'}, status=400)
-        email = mail.email_de_candidature(cand)
+        email = (mail.email_de_candidature(cand) or '').strip().lower()
         if not email:
             return Response({'detail': 'Aucun email dans la candidature.'}, status=400)
         nom = mail.nom_de_candidature(cand)
         parts = nom.split()
+        base_username = (email.split('@')[0].replace('.', '_')[:140] or f'membre{cand.pk}')
         with transaction.atomic():
             user, created = User.objects.get_or_create(
-                email=email,
-                defaults={'username': email.split('@')[0].replace('.', '_')[:150] or f'membre{cand.pk}',
+                email__iexact=email,
+                defaults={'email': email,
+                          'username': base_username,
                           'first_name': parts[0] if parts else '',
                           'last_name': ' '.join(parts[1:])},
             )
             if created:
+                # Collision de username possible (même préfixe) → suffixe unique
+                if User.objects.filter(username=user.username).exclude(pk=user.pk).exists():
+                    user.username = f'{base_username}_{cand.pk}'[:150]
                 user.set_unusable_password()
                 user.save()
             for cell in cand.cellules_souhaitees.all():
@@ -111,29 +116,33 @@ class CandidatureViewSet(viewsets.ReadOnlyModelViewSet):
 @permission_classes([permissions.IsAuthenticated])
 def inscrire(request, pk):
     """POST /api/v1/evenements/{id}/inscrire — confirme ou met en attente."""
-    try:
-        evt = Evenement.objects.get(pk=pk)
-    except Evenement.DoesNotExist:
-        return Response({'detail': 'Événement introuvable.'}, status=404)
-    membre = request.user
-    insc, created = Inscription.objects.get_or_create(evenement=evt, membre=membre)
-    if not created and not insc.liste_attente:
-        return Response({'statut': 'deja-inscrit'})
-    confirmes = Inscription.objects.filter(evenement=evt, liste_attente=False).count()
-    complet = evt.places > 0 and confirmes >= evt.places
-    if complet:
-        insc.liste_attente = True
+    from django.db import transaction as _tx
+    with _tx.atomic():
+        try:
+            evt = Evenement.objects.select_for_update().get(pk=pk)
+        except Evenement.DoesNotExist:
+            return Response({'detail': 'Événement introuvable.'}, status=404)
+        membre = request.user
+        insc, created = Inscription.objects.get_or_create(evenement=evt, membre=membre)
+        if not created and not insc.liste_attente:
+            return Response({'statut': 'deja-inscrit'})
+        # La ligne créée (liste_attente=False par défaut) ne doit pas se compter elle-même
+        confirmes = Inscription.objects.filter(
+            evenement=evt, liste_attente=False).exclude(pk=insc.pk).count()
+        complet = evt.places > 0 and confirmes >= evt.places
+        if complet:
+            insc.liste_attente = True
+            insc.save(update_fields=['liste_attente'])
+            position = Inscription.objects.filter(
+                evenement=evt, liste_attente=True, cree_le__lte=insc.cree_le).count()
+            envoi = _fail_open('liste-attente', mail.send_liste_attente, insc, position)
+            return Response({'statut': 'liste-attente', 'position': position, 'email': envoi},
+                            status=201 if created else 200)
+        insc.liste_attente = False
         insc.save(update_fields=['liste_attente'])
-        position = Inscription.objects.filter(
-            evenement=evt, liste_attente=True, cree_le__lte=insc.cree_le).count()
-        envoi = _fail_open('liste-attente', mail.send_liste_attente, insc, position)
-        return Response({'statut': 'liste-attente', 'position': position, 'email': envoi},
+        envoi = _fail_open('confirmation', mail.send_inscription_confirmee, insc)
+        return Response({'statut': 'confirme', 'email': envoi},
                         status=201 if created else 200)
-    insc.liste_attente = False
-    insc.save(update_fields=['liste_attente'])
-    envoi = _fail_open('confirmation', mail.send_inscription_confirmee, insc)
-    return Response({'statut': 'confirme', 'email': envoi},
-                    status=201 if created else 200)
 
 
 @api_view(['DELETE'])
@@ -223,8 +232,8 @@ class NotificationViewSet(viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
         from apps.notifications.models import Notification as N
         u = self.request.user
-        return N.objects.filter(destinataire=u) | N.objects.filter(
-            destinataire__isnull=True, destinataire_email=u.email)
+        return (N.objects.filter(destinataire=u) | N.objects.filter(
+            destinataire__isnull=True, destinataire_email=u.email)).distinct()
 
     @action(detail=False, methods=['post'])
     def lire(self, request):

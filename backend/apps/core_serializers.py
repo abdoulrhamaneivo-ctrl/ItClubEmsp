@@ -125,12 +125,13 @@ class MediaSerializer(serializers.ModelSerializer):
 
 class EvenementSerializer(serializers.ModelSerializer):
     date = serializers.DateTimeField(source='date_debut')
+    type_label = serializers.CharField(source='get_type_display', read_only=True)
     places_disponibles = serializers.SerializerMethodField()
     inscrits_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Evenement
-        fields = ['id', 'titre', 'description', 'type', 'couleur', 'date', 'date_fin', 'lieu',
+        fields = ['id', 'titre', 'description', 'type', 'type_label', 'couleur', 'date', 'date_fin', 'lieu',
                   'places', 'places_disponibles', 'inscrits_count', 'icone']
 
     def get_inscrits_count(self, obj):
