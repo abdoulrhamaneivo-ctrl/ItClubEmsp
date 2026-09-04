@@ -18,9 +18,36 @@ services:
       # (Environment → DATABASE_URL, secret — jamais dans ce fichier).
       - key: DATABASE_URL
         sync: false
+      # Connexion DIRECTE (sans "-pooler") : migrations du build.
+      # Optionnelle mais recommandée — sinon migrate passe par le pooler.
+      - key: NEON_DIRECT_URL
+        sync: false
       - key: DB_CONN_MAX_AGE
         value: "0"
       # Emails Resend (doc 09) : clé en secret Render, jamais ici.
+      - key: RESEND_API_KEY
+        sync: false
+      - key: RESEND_FROM
+        value: IT-CLUB EMSP <onboarding@resend.dev>
+      - key: FRONTEND_URL
+        value: https://it-club-emsp.vercel.app
+
+  # Emails automatiques : rappels J-1/H-2h, satisfaction, récap dimanche.
+  # 6h UTC = 6h à Abidjan (UTC+0 toute l'année).
+  - type: cron
+    name: itclub-emsp-emails
+    runtime: python
+    rootDir: backend
+    schedule: "0 6 * * *"
+    buildCommand: pip install -r requirements.txt
+    startCommand: python manage.py emails_periodiques --settings config.settings_prod
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11.16"
+      - key: DJANGO_SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        sync: false
       - key: RESEND_API_KEY
         sync: false
       - key: RESEND_FROM
