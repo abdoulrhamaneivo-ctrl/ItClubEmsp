@@ -221,12 +221,14 @@ export default function Espace() {
   const [notifsApi, setNotifsApi] = useState(null)
   const [inscApi, setInscApi] = useState(null)
   const [cellulesApi, setCellulesApi] = useState(null)
+  const [points, setPoints] = useState(null)
 
   useEffect(() => {
     let stop = false
     api.getNotifications().then((d) => { if (!stop) setNotifsApi(d) }).catch(() => {})
     api.getMesInscriptions().then((d) => { if (!stop) setInscApi(d) }).catch(() => {})
     api.getMesCellules().then((d) => { if (!stop) setCellulesApi(d) }).catch(() => {})
+    api.getMe().then((me) => { if (!stop && me) setPoints(me.points ?? 0) }).catch(() => {})
     return () => { stop = true }
   }, [])
 
@@ -246,12 +248,38 @@ export default function Espace() {
 
   const inscriptions = inscApi === null ? null : inscApi.map((i) => ({
     id: i.id,
+    evenementId: i.evenement?.id ?? null,
     titre: i.evenement?.titre ?? 'Événement',
     date: i.evenement?.date ?? '',
     lieu: i.evenement?.lieu ?? '',
     couleur: i.evenement?.couleur ?? '#2563EB',
     statut: i.liste_attente ? 'En liste d’attente' : 'Confirmé',
   }))
+
+  // Présence : code saisi par inscription { [inscriptionId]: '...' }, états { [id]: 'present' | 'erreur' | 'envoi' }
+  const [codesPresence, setCodesPresence] = useState({})
+  const [etatsPresence, setEtatsPresence] = useState({})
+
+  const marquerPresent = async (insc) => {
+    const code = (codesPresence[insc.id] ?? '').trim()
+    if (code.length !== 6 || !insc.evenementId) return
+    setEtatsPresence((e) => ({ ...e, [insc.id]: 'envoi' }))
+    try {
+      const res = await api.marquerPresence(insc.evenementId, code)
+      if (res.statut === 'present' || res.statut === 'deja-present') {
+        setEtatsPresence((e) => ({ ...e, [insc.id]: `present:${res.points ?? ''}` }))
+      } else {
+        setEtatsPresence((e) => ({ ...e, [insc.id]: 'erreur' }))
+      }
+    } catch {
+      setEtatsPresence((e) => ({ ...e, [insc.id]: 'erreur' }))
+      setTimeout(() => setEtatsPresence((e) => {
+        const copie = { ...e }
+        delete copie[insc.id]
+        return copie
+      }), 3000)
+    }
+  }
 
   const celluleApi = (cellulesApi && cellulesApi.length > 0) ? cellulesApi[0] : null
   const cellule = celluleApi ? {
@@ -588,6 +616,46 @@ export default function Espace() {
                   fontWeight: 800, fontSize: '0.66rem', flexShrink: 0,
                 }} />
               </Box>
+              {/* Émargement : code à 6 chiffres affiché le jour J (+5 pts) */}
+              {insc.statut === 'Confirmé' && insc.evenementId && (
+                <Box sx={{
+                  display: 'flex', alignItems: 'center', gap: 1.2, mt: -0.6, mb: 1.4, ml: { xs: 0, md: 9 },
+                  px: 2, py: 1.2, bgcolor: '#F6FBF9', borderRadius: '12px', border: '1px dashed #BFD8CC',
+                }}>
+                  {String(etatsPresence[insc.id] ?? '').startsWith('present') ? (
+                    <Typography sx={{ fontWeight: 800, color: '#0B7A4B', fontSize: '0.82rem' }}>
+                      Présent ✓ {etatsPresence[insc.id].split(':')[1] ? `· ${etatsPresence[insc.id].split(':')[1]} pts` : ''}
+                    </Typography>
+                  ) : (
+                    <>
+                      <Typography variant="caption" sx={{ color: '#5A6B63', fontWeight: 700, flexShrink: 0 }}>
+                        J'y étais — code :
+                      </Typography>
+                      <InputBase
+                        value={codesPresence[insc.id] ?? ''}
+                        onChange={(e) => setCodesPresence((c) => ({ ...c, [insc.id]: e.target.value.replace(/\D/g, '').slice(0, 6) }))}
+                        placeholder="——————"
+                        inputProps={{ inputMode: 'numeric', maxLength: 6, 'aria-label': 'Code de présence à 6 chiffres' }}
+                        sx={{
+                          width: 92, bgcolor: '#fff', borderRadius: '8px', border: '1px solid #D1D5DB',
+                          px: 1.2, py: 0.4, fontFamily: "'Orbitron',sans-serif", fontWeight: 800,
+                          letterSpacing: '0.2em', fontSize: '0.85rem', textAlign: 'center',
+                        }}
+                      />
+                      <Button size="small" variant="contained" onClick={() => marquerPresent(insc)}
+                        disabled={(codesPresence[insc.id] ?? '').length !== 6 || etatsPresence[insc.id] === 'envoi'}
+                        sx={{ bgcolor: '#1FAF72', '&:hover': { bgcolor: '#179963' }, fontWeight: 800, borderRadius: '8px', minWidth: 0, px: 1.6 }}>
+                        {etatsPresence[insc.id] === 'envoi' ? '…' : 'OK'}
+                      </Button>
+                      {etatsPresence[insc.id] === 'erreur' && (
+                        <Typography variant="caption" sx={{ color: '#B42318', fontWeight: 700 }}>
+                          Code incorrect
+                        </Typography>
+                      )}
+                    </>
+                  )}
+                </Box>
+              )}
             </motion.div>
           ))}
           {inscriptions !== null && inscriptions.length === 0 && (
@@ -687,6 +755,7 @@ export default function Espace() {
               {[
                 ['Nom', user.nom || '—'],
                 ['Email', user.email || 'prenom.nom@emsp.int'],
+                ['Points de participation', points === null ? '—' : `${points} pts`],
               ].map(([label, valeur]) => (
                 <Box key={label} sx={{ display: 'flex', justifyContent: 'space-between', gap: 2, py: 1.4, borderBottom: '1px solid #EEF2F0' }}>
                   <Typography variant="body2" sx={{ color: '#5A6B63', fontWeight: 600 }}>{label}</Typography>

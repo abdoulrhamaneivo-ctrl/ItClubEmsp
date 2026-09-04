@@ -27,6 +27,8 @@ User = get_user_model()
 
 CODES_DECISION = ['P1', 'P3', 'P4', 'ADMIN']
 CODES_CONVOCATION = ['P1', 'P3', 'ADMIN']
+CODES_PRESENCE = ['P1', 'P6', 'ADMIN']
+POINTS_PRESENCE = 5
 
 
 def a_role(user, codes):
@@ -213,6 +215,120 @@ def tester_email(request):
         return Response({'ok': True, 'resend': res})
     except Exception as exc:
         return Response({'ok': False, 'erreur': str(exc)[:300]}, status=502)
+
+
+# ── Présences : émargement + points (doc 02 D5, gamification) ────
+@api_view(['POST'])
+@permission_classes([permissions.IsAuthenticated])
+def marquer_presence(request, pk):
+    """POST /api/v1/evenements/{id}/presence — {code} (membre) ou {email} (orga Bureau)."""
+    from apps.events.models import Presence
+    from django.db.models import F
+    try:
+        evt = Evenement.objects.get(pk=pk)
+    except Evenement.DoesNotExist:
+        return Response({'detail': 'Événement introuvable.'}, status=404)
+
+    email_orga = (request.data.get('email') or '').strip().lower()
+    if email_orga:
+        # Émargement manuel par l'orga (pas de code requis)
+        if not a_role(request.user, CODES_PRESENCE):
+            return Response({'detail': 'Réservé aux organisateurs (P1/P6).'}, status=403)
+        try:
+            cible = User.objects.get(email__iexact=email_orga)
+        except User.DoesNotExist:
+            return Response({'detail': 'Membre introuvable.'}, status=404)
+        marque_par = request.user
+    else:
+        cible = request.user
+        marque_par = None
+        code = (request.data.get('code') or '').strip()
+        if not evt.code_presence or code != evt.code_presence:
+            return Response({'detail': 'Code incorrect.'}, status=400)
+
+    _, cree = Presence.objects.get_or_create(
+        evenement=evt, membre=cible, defaults={'marque_par': marque_par})
+    if not cree:
+        return Response({'statut': 'deja-present', 'points': cible.points})
+    # +5 pts une seule fois (incrément atomique)
+    User.objects.filter(pk=cible.pk).update(points=F('points') + POINTS_PRESENCE)
+    cible.refresh_from_db()
+    return Response({'statut': 'present', 'points': cible.points, 'gagnes': POINTS_PRESENCE})
+
+
+@api_view(['GET'])
+@permission_classes([permissions.IsAuthenticated])
+def liste_presences(request, pk):
+    """GET /api/v1/evenements/{id}/presence — feuille d'émargement (orga)."""
+    from apps.events.models import Presence
+    if not a_role(request.user, CODES_PRESENCE):
+        return Response({'detail': 'Réservé aux organisateurs (P1/P6).'}, status=403)
+    try:
+        evt = Evenement.objects.get(pk=pk)
+    except Evenement.DoesNotExist:
+        return Response({'detail': 'Événement introuvable.'}, status=404)
+    lignes = Presence.objects.filter(evenement=evt).select_related('membre', 'marque_par')
+    return Response({
+        'evenement': evt.titre,
+        'code': evt.code_presence,
+        'presents': [{
+            'email': p.membre.email,
+            'nom': p.membre.get_full_name() or p.membre.username,
+            'marque_le': p.marque_le,
+            'par_orga': p.marque_par is not None,
+        } for p in lignes],
+    })
+
+
+@api_view(['GET'])
+@permission_classes([permissions.IsAuthenticated])
+def export_presences_csv(request, pk):
+    """GET /api/v1/evenements/{id}/export-presences.csv — export Excel (orga)."""
+    import csv
+    from io import StringIO
+    from django.http import HttpResponse
+    from apps.events.models import Presence
+    if not a_role(request.user, CODES_PRESENCE):
+        return Response({'detail': 'Réservé aux organisateurs (P1/P6).'}, status=403)
+    try:
+        evt = Evenement.objects.get(pk=pk)
+    except Evenement.DoesNotExist:
+        return Response({'detail': 'Événement introuvable.'}, status=404)
+    buf = StringIO()
+    buf.write('﻿')  # BOM : Excel ouvre en UTF-8
+    w = csv.writer(buf, delimiter=';')
+    w.writerow(['nom', 'email', 'marque_le', 'par_orga'])
+    for p in Presence.objects.filter(evenement=evt).select_related('membre', 'marque_par'):
+        w.writerow([p.membre.get_full_name() or p.membre.username, p.membre.email,
+                    p.marque_le.strftime('%d/%m/%Y %H:%M'), 'oui' if p.marque_par else 'non'])
+    resp = HttpResponse(buf.getvalue(), content_type='text/csv; charset=utf-8')
+    resp['Content-Disposition'] = f'attachment; filename="presences-evenement-{pk}.csv"'
+    return resp
+
+
+@api_view(['GET'])
+@permission_classes([permissions.IsAuthenticated])
+def qr_presence(request, pk):
+    """GET /api/v1/evenements/{id}/qr-presence — QR du code (orga, vidéoprojecteur)."""
+    from django.http import HttpResponse
+    import io
+    try:
+        import qrcode
+    except ImportError:
+        from django.http import JsonResponse
+        return JsonResponse({'detail': 'Librairie qrcode manquante.'}, status=501)
+    if not a_role(request.user, CODES_PRESENCE):
+        from django.http import JsonResponse
+        return JsonResponse({'detail': 'Réservé aux organisateurs (P1/P6).'}, status=403)
+    try:
+        evt = Evenement.objects.get(pk=pk)
+    except Evenement.DoesNotExist:
+        from django.http import JsonResponse
+        return JsonResponse({'detail': 'Événement introuvable.'}, status=404)
+    img = qrcode.make(f'ITCLUB-PRESENCE:{evt.pk}:{evt.code_presence}', box_size=10, border=2)
+    buf = io.BytesIO()
+    img.save(buf, format='PNG')
+    return HttpResponse(buf.getvalue(), content_type='image/png')
 
 
 # ── Espace membre : /me/* (doc 04 §5 accounts) ────────────────

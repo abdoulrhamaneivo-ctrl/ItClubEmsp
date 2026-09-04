@@ -18,6 +18,7 @@ import EditeurFormulaire from './EditeurFormulaire'
 import GestionContenu from './GestionContenu'
 import RegistreMembres from './RegistreMembres'
 import ComptesRendus from './ComptesRendus'
+import Presences from './Presences'
 
 /**
  * Back-office — EXPERIENCE, pas un panneau d'admin :
@@ -277,6 +278,7 @@ export default function BackofficeLayout() {
                     m.path === 'contenu' ? <GestionContenu /> :
                     m.path === 'registre-membres' ? <RegistreMembres /> :
                     m.path === 'comptes-rendus' ? <ComptesRendus /> :
+                    m.path === 'evenements' ? <Presences /> :
                     <PlaceholderModule module={m} />
                   } />
               ))}

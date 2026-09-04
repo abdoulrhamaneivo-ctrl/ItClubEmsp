@@ -301,6 +301,45 @@ export const api = {
     return res.json()
   },
 
+  // Présence : émargement via code à 6 chiffres (+5 pts)
+  async marquerPresence(evenementId, code) {
+    if (USE_MOCK) {
+      await new Promise(r => setTimeout(r, 600))
+      return { statut: 'present', points: 5, gagnes: 5 }
+    }
+    return postJson(`/api/v1/evenements/${evenementId}/presence`, { code })
+  },
+  async emargerMembre(evenementId, email) {
+    if (USE_MOCK) {
+      await new Promise(r => setTimeout(r, 400))
+      return { statut: 'present', points: 5, gagnes: 5 }
+    }
+    return postJson(`/api/v1/evenements/${evenementId}/presence`, { email })
+  },
+  async getPresences(evenementId) {
+    const data = await fetchJson(`/api/v1/evenements/${evenementId}/presence/`)
+    return data ?? { evenement: '', code: '', presents: [] }
+  },
+  // Téléchargement authentifié (blob) : CSV orga + QR présence
+  async telechargerFichier(url, nomFichier) {
+    const res = await fetch(`${BASE_URL}${url}`, { headers: authHeaders(), credentials: 'include' })
+    if (!res.ok) throw new Error(`API ${res.status}`)
+    const blob = await res.blob()
+    const lien = document.createElement('a')
+    lien.href = URL.createObjectURL(blob)
+    lien.download = nomFichier
+    document.body.appendChild(lien)
+    lien.click()
+    lien.remove()
+    setTimeout(() => URL.revokeObjectURL(lien.href), 5000)
+  },
+  async telechargerCSVPresences(evenementId) {
+    return this.telechargerFichier(`/api/v1/evenements/${evenementId}/export-presences.csv`, `presences-evenement-${evenementId}.csv`)
+  },
+  async telechargerQRPresence(evenementId) {
+    return this.telechargerFichier(`/api/v1/evenements/${evenementId}/qr-presence`, `qr-presence-${evenementId}.png`)
+  },
+
   // Registre membres — candidatures (Bureau P1/P3/P4)
   async getCandidatures() {
     const data = await fetchJson('/api/v1/candidatures/')

@@ -35,6 +35,7 @@ class User(AbstractUser):
         default=dict, blank=True,
         help_text='{"rappel": true, "recap": false…} — absent = accepté.',
     )
+    points = models.IntegerField('Points de participation (gamification)', default=0)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']

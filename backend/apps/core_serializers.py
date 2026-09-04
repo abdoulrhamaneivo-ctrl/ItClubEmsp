@@ -132,11 +132,14 @@ class EvenementSerializer(serializers.ModelSerializer):
     type_label = serializers.CharField(source='get_type_display', read_only=True)
     places_disponibles = serializers.SerializerMethodField()
     inscrits_count = serializers.SerializerMethodField()
+    code_presence = serializers.SerializerMethodField()
+    presents_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Evenement
         fields = ['id', 'titre', 'description', 'type', 'type_label', 'couleur', 'date', 'date_fin', 'lieu',
-                  'places', 'places_disponibles', 'inscrits_count', 'icone']
+                  'places', 'places_disponibles', 'inscrits_count', 'presents_count',
+                  'code_presence', 'icone']
 
     def get_inscrits_count(self, obj):
         # Confirmés uniquement (annoté en 1 requête ; fallback si absent)
@@ -150,6 +153,27 @@ class EvenementSerializer(serializers.ModelSerializer):
         confirmes = obj._confirmes if hasattr(obj, '_confirmes') else \
             obj.inscrits.filter(inscription__liste_attente=False).count()
         return max(0, obj.places - confirmes)
+
+    def get_presents_count(self, obj):
+        if hasattr(obj, '_presents'):
+            return obj._presents
+        return obj.presences.count()
+
+    def get_code_presence(self, obj):
+        # Code réservé aux organisateurs (P1/P6/staff) — jamais public
+        req = (self.context or {}).get('request')
+        u = getattr(req, 'user', None)
+        if not (u and u.is_authenticated):
+            return None
+        if getattr(u, 'is_staff', False):
+            return obj.code_presence or None
+        try:
+            from apps.accounts.models import Role
+            if Role.objects.filter(code__in=['P1', 'P6', 'ADMIN'], titulaire=u).exists():
+                return obj.code_presence or None
+        except Exception:
+            pass
+        return None
 
 
 class CandidatureSerializer(serializers.ModelSerializer):
@@ -180,8 +204,8 @@ class ProfilSerializer(serializers.ModelSerializer):
         from django.contrib.auth import get_user_model as _gum
         model = _gum()
         fields = ['id', 'nom', 'email', 'photo', 'promotion', 'telephone',
-                  'notif_prefs', 'roles']
-        read_only_fields = ['id', 'nom', 'email', 'photo', 'roles']
+                  'notif_prefs', 'points', 'roles']
+        read_only_fields = ['id', 'nom', 'email', 'photo', 'points', 'roles']
 
     def get_nom(self, obj):
         return obj.get_full_name() or obj.username

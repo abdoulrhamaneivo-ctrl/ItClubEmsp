@@ -8,6 +8,7 @@ from apps.auth_views import TokenAvecUserView
 from apps.views_emails import (
     CandidatureViewSet, NotificationViewSet, inscrire, desinscrire,
     convocation, tester_email, me, mes_inscriptions, mes_cellules,
+    marquer_presence, liste_presences, export_presences_csv, qr_presence,
 )
 from apps.views_core import (
     CelluleViewSet, BureauViewSet, ActualiteViewSet,
@@ -34,6 +35,10 @@ urlpatterns = [
     path('api/v1/auth/token/refresh', TokenRefreshView.as_view()),
     path('api/v1/evenements/<int:pk>/inscrire', inscrire),
     path('api/v1/evenements/<int:pk>/desinscrire', desinscrire),
+    path('api/v1/evenements/<int:pk>/presence', marquer_presence),
+    path('api/v1/evenements/<int:pk>/presence/', liste_presences),
+    path('api/v1/evenements/<int:pk>/export-presences.csv', export_presences_csv),
+    path('api/v1/evenements/<int:pk>/qr-presence', qr_presence),
     path('api/v1/me/', me),
     path('api/v1/me/inscriptions', mes_inscriptions),
     path('api/v1/me/cellules', mes_cellules),

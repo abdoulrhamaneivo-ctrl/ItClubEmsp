@@ -118,6 +118,7 @@ class EvenementViewSet(PublicReadOrStaffWrite):
         qs = super().get_queryset().annotate(
             # Confirmés en UNE requête (évite 2N requêtes des compteurs)
             _confirmes=Count('inscrits', filter=Q(inscription__liste_attente=False)),
+            _presents=Count('presences', distinct=True),
         )
         a_venir = self.request.query_params.get('a_venir') or self.request.query_params.get('upcoming')
         if str(a_venir).lower() in ('1', 'true'):

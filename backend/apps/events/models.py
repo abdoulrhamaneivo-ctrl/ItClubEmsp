@@ -19,10 +19,21 @@ class Evenement(models.Model):
     places = models.PositiveIntegerField('Places (0 = illimité)', default=0)
     icone = models.CharField('Id icône front', max_length=30, default='ampoule')
     inscrits = models.ManyToManyField(User, through='Inscription', related_name='evenements_inscrits', blank=True)
+    code_presence = models.CharField(
+        'Code de présence (6 chiffres, feuille émargement doc 02 D5)',
+        max_length=6, blank=True, default='',
+        help_text='Généré automatiquement ; affiché au vidéoprojecteur le jour J.',
+    )
 
     class Meta:
         ordering = ['date_debut']
         indexes = [models.Index(fields=['date_debut'])]  # tri + filtre a_venir
+
+    def save(self, *args, **kwargs):
+        if not self.code_presence:
+            import secrets
+            self.code_presence = f'{secrets.randbelow(900000) + 100000}'
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.titre
@@ -38,3 +49,18 @@ class Inscription(models.Model):
     class Meta:
         unique_together = ('evenement', 'membre')
         indexes = [models.Index(fields=['evenement', 'liste_attente'])]  # compteurs + promotion
+
+
+class Presence(models.Model):
+    """Émargement : qui était vraiment là (doc 02 D5)."""
+    evenement = models.ForeignKey(Evenement, on_delete=models.CASCADE, related_name='presences')
+    membre = models.ForeignKey(User, on_delete=models.CASCADE, related_name='presences')
+    marque_le = models.DateTimeField(auto_now_add=True)
+    marque_par = models.ForeignKey(
+        User, on_delete=models.SET_NULL, null=True, blank=True,
+        related_name='+', help_text='Orga ayant émargé (null = auto via code).',
+    )
+
+    class Meta:
+        unique_together = ('evenement', 'membre')
+        indexes = [models.Index(fields=['evenement'])]

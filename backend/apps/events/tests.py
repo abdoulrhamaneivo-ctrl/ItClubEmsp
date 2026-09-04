@@ -81,3 +81,71 @@ class InscriptionTests(TestCase):
         r = self.client.get(f'/api/v1/evenements/{self.e.id}/').json()
         self.assertEqual(r['inscrits_count'], 2)
         self.assertEqual(r['places_disponibles'], 0)
+
+
+class PresenceTests(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.e = evt(places=10)
+        self.m = membre('p@x.com')
+        self.orga = membre('orga@x.com')
+        from apps.accounts.models import Role
+        Role.objects.update_or_create(code='P6', defaults={'titulaire': self.orga})
+
+    def auth(self, u):
+        self.client.force_authenticate(u)
+
+    def test_code_genere_6_chiffres(self):
+        self.assertRegex(self.e.code_presence, r'^\d{6}$')
+
+    def test_code_cache_public_visible_orga(self):
+        r = self.client.get(f'/api/v1/evenements/{self.e.id}/').json()
+        self.assertIsNone(r['code_presence'])
+        self.auth(self.orga)
+        r = self.client.get(f'/api/v1/evenements/{self.e.id}/').json()
+        self.assertEqual(r['code_presence'], self.e.code_presence)
+
+    def test_mauvais_code_400_sans_points(self):
+        self.auth(self.m)
+        r = self.client.post(f'/api/v1/evenements/{self.e.id}/presence', {'code': '000000'})
+        self.assertEqual(r.status_code, 400)
+        self.m.refresh_from_db()
+        self.assertEqual(self.m.points, 0)
+
+    def test_bon_code_present_plus5_et_idempotent(self):
+        self.auth(self.m)
+        url = f'/api/v1/evenements/{self.e.id}/presence'
+        r = self.client.post(url, {'code': self.e.code_presence}).json()
+        self.assertEqual(r['statut'], 'present')
+        self.assertEqual(r['gagnes'], 5)
+        r = self.client.post(url, {'code': self.e.code_presence}).json()
+        self.assertEqual(r['statut'], 'deja-present')
+        self.m.refresh_from_db()
+        self.assertEqual(self.m.points, 5)  # une seule fois
+
+    def test_orga_emarge_sans_code_outsider_403(self):
+        self.auth(self.m)
+        r = self.client.post(
+            f'/api/v1/evenements/{self.e.id}/presence', {'email': 'p@x.com'})
+        self.assertEqual(r.status_code, 403)
+        self.auth(self.orga)
+        r = self.client.post(
+            f'/api/v1/evenements/{self.e.id}/presence', {'email': 'p@x.com'}).json()
+        self.assertEqual(r['statut'], 'present')
+
+    def test_csv_et_qr_200(self):
+        self.auth(self.m)
+        self.client.post(f'/api/v1/evenements/{self.e.id}/presence',
+                         {'code': self.e.code_presence})
+        self.auth(self.orga)
+        r = self.client.get(f'/api/v1/evenements/{self.e.id}/export-presences.csv')
+        self.assertEqual(r.status_code, 200)
+        self.assertIn('p@x.com', r.content.decode('utf-8'))
+        r = self.client.get(f'/api/v1/evenements/{self.e.id}/qr-presence')
+        self.assertEqual(r.status_code, 200)
+        self.assertEqual(r['Content-Type'], 'image/png')
+
+    def test_anonyme_401(self):
+        self.assertEqual(
+            self.client.post(f'/api/v1/evenements/{self.e.id}/presence',
+                             {'code': '123456'}).status_code, 401)
