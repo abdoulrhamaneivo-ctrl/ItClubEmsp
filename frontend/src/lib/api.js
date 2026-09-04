@@ -65,17 +65,36 @@ function authHeaders(extra = {}) {
   return token ? { ...extra, Authorization: `Bearer ${token}` } : extra
 }
 
+// Cache court (60s) + déduplication des appels en vol : la vitrine monte
+// 6+ sections qui fetchent, et Naviguer↔retour ne doit pas tout recharger.
+const _cache = new Map()
+const _envol = new Map()
+const CACHE_MS = 60_000
+
 async function fetchJson(endpoint) {
   if (USE_MOCK) return null
-  const res = await fetch(`${BASE_URL}${endpoint}`, {
-    headers: authHeaders(),
-    credentials: 'include',
-  })
-  if (!res.ok) throw new Error(`API ${res.status}`)
-  const json = await res.json()
-  // DRF pagination : { count, results } → on renvoie la liste directement
-  if (json && Array.isArray(json.results)) return json.results
-  return json
+  const now = Date.now()
+  const hit = _cache.get(endpoint)
+  if (hit && now - hit.t < CACHE_MS) return hit.d
+  if (_envol.has(endpoint)) return _envol.get(endpoint)
+  const p = (async () => {
+    try {
+      const res = await fetch(`${BASE_URL}${endpoint}`, {
+        headers: authHeaders(),
+        credentials: 'include',
+      })
+      if (!res.ok) throw new Error(`API ${res.status}`)
+      const json = await res.json()
+      // DRF pagination : { count, results } → on renvoie la liste directement
+      const data = (json && Array.isArray(json.results)) ? json.results : json
+      _cache.set(endpoint, { t: Date.now(), d: data })
+      return data
+    } finally {
+      _envol.delete(endpoint)
+    }
+  })()
+  _envol.set(endpoint, p)
+  return p
 }
 
 // Token management
@@ -106,6 +125,13 @@ async function postJson(endpoint, payload, method = 'POST') {
     body: JSON.stringify(payload),
   })
   if (!res.ok) throw new Error(`API ${res.status}`)
+  // Écriture réussie → invalide le cache des lectures liées
+  for (const cle of [..._cache.keys()]) {
+    if (cle.startsWith('/api/v1/evenements') || cle.startsWith('/api/v1/me/') ||
+        cle.startsWith('/api/v1/notifications') || cle.startsWith('/api/v1/candidatures')) {
+      _cache.delete(cle)
+    }
+  }
   return res.json()
 }
 

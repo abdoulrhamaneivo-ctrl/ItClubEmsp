@@ -57,11 +57,15 @@ class BureauSerializer(serializers.ModelSerializer):
         return obj.titulaire.photo.url if obj.titulaire and obj.titulaire.photo else None
 
     def get_mission(self, obj):
-        o = ObjectifPoste.objects.filter(role_code=obj.code).first()
+        o = (self.context.get('objectifs') or {}).get(obj.code)
+        if o is None:
+            o = ObjectifPoste.objects.filter(role_code=obj.code).first()
         return o.mission if o else ''
 
     def get_objectif(self, obj):
-        o = ObjectifPoste.objects.filter(role_code=obj.code).first()
+        o = (self.context.get('objectifs') or {}).get(obj.code)
+        if o is None:
+            o = ObjectifPoste.objects.filter(role_code=obj.code).first()
         return o.objectif if o else ''
 
     def get_couleur(self, obj):
@@ -135,13 +139,16 @@ class EvenementSerializer(serializers.ModelSerializer):
                   'places', 'places_disponibles', 'inscrits_count', 'icone']
 
     def get_inscrits_count(self, obj):
-        # Confirmés uniquement (la liste d'attente n'occupe pas de place)
+        # Confirmés uniquement (annoté en 1 requête ; fallback si absent)
+        if hasattr(obj, '_confirmes'):
+            return obj._confirmes
         return obj.inscrits.filter(inscription__liste_attente=False).count()
 
     def get_places_disponibles(self, obj):
         if obj.places == 0:
             return None
-        confirmes = obj.inscrits.filter(inscription__liste_attente=False).count()
+        confirmes = obj._confirmes if hasattr(obj, '_confirmes') else \
+            obj.inscrits.filter(inscription__liste_attente=False).count()
         return max(0, obj.places - confirmes)
 
 

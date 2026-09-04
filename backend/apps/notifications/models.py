@@ -32,6 +32,7 @@ class Notification(models.Model):
 
     class Meta:
         ordering = ['-cree_le']
+        indexes = [models.Index(fields=['type', 'objet_id'])]  # anti-doublons commande périodique
 
     def __str__(self):
         return f'[{self.type}] {self.titre} → {self.destinataire_email or self.destinataire}'

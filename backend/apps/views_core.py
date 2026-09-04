@@ -35,10 +35,16 @@ class CelluleViewSet(PublicReadOrStaffWrite):
 
 class BureauViewSet(viewsets.ReadOnlyModelViewSet):
     """Le Bureau : les 10 postes avec titulaires + missions."""
-    queryset = Role.objects.filter(code__in=['P1', 'P2', 'P3', 'P4', 'P5', 'P6', 'P7', 'P8', 'P9', 'P10'])
+    queryset = Role.objects.filter(code__in=['P1', 'P2', 'P3', 'P4', 'P5', 'P6', 'P7', 'P8', 'P9', 'P10']).select_related('titulaire')
     serializer_class = BureauSerializer
     permission_classes = [permissions.AllowAny]
     pagination_class = None
+
+    def get_serializer_context(self):
+        # Missions + objectifs en UNE requête (évite 2N requêtes du serializer)
+        ctx = super().get_serializer_context()
+        ctx['objectifs'] = {o.role_code: o for o in ObjectifPoste.objects.all()}
+        return ctx
 
 
 class ActualiteViewSet(PublicReadOrStaffWrite):
@@ -87,7 +93,11 @@ class EvenementViewSet(PublicReadOrStaffWrite):
 
     def get_queryset(self):
         from django.utils import timezone
-        qs = super().get_queryset()
+        from django.db.models import Count, Q
+        qs = super().get_queryset().annotate(
+            # Confirmés en UNE requête (évite 2N requêtes des compteurs)
+            _confirmes=Count('inscrits', filter=Q(inscription__liste_attente=False)),
+        )
         a_venir = self.request.query_params.get('a_venir') or self.request.query_params.get('upcoming')
         if str(a_venir).lower() in ('1', 'true'):
             qs = qs.filter(date_debut__gte=timezone.now())

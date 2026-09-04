@@ -98,6 +98,7 @@ class Candidature(models.Model):
     class Meta:
         ordering = ['-cree_le']
         verbose_name = 'candidature'
+        indexes = [models.Index(fields=['statut'])]  # RG-A1 : scan des en_attente
 
     def __str__(self):
         return f'Candidature #{self.pk} ({self.statut})'

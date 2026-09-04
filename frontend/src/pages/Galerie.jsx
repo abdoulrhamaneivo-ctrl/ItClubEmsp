@@ -136,7 +136,7 @@ export default function Galerie() {
                   '&:hover': { borderColor: '#C9D4CF', boxShadow: '0 10px 26px rgba(13,27,42,.1)' },
                 }}>
                   {m.image ? (
-                    <Box component="img" src={m.image} alt={m.titre} sx={{ width: '100%', minHeight: 180, objectFit: 'cover', display: 'block' }} />
+                    <Box component="img" src={m.image} alt={m.titre} loading="lazy" decoding="async" sx={{ width: '100%', minHeight: 180, objectFit: 'cover', display: 'block' }} />
                   ) : (
                     <Box sx={{
                       height: m.type === 'video' ? 210 : 170 + (parseInt(m.id?.slice(-1), 10) || m.id % 3) * 34,

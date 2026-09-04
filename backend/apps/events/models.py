@@ -22,6 +22,7 @@ class Evenement(models.Model):
 
     class Meta:
         ordering = ['date_debut']
+        indexes = [models.Index(fields=['date_debut'])]  # tri + filtre a_venir
 
     def __str__(self):
         return self.titre
@@ -36,3 +37,4 @@ class Inscription(models.Model):
 
     class Meta:
         unique_together = ('evenement', 'membre')
+        indexes = [models.Index(fields=['evenement', 'liste_attente'])]  # compteurs + promotion
