@@ -299,6 +299,35 @@ class ParametreSerializer(serializers.ModelSerializer):
         read_only_fields = ['modifie_le']
 
 
+class CompteRenduSerializer(serializers.ModelSerializer):
+    """CR : auteur + validateur + libellé statut (doc 01 P3)."""
+    auteur_nom = serializers.SerializerMethodField()
+    valide_par_nom = serializers.SerializerMethodField()
+    statut_label = serializers.CharField(source='get_statut_display', read_only=True)
+
+    class Meta:
+        from apps.governance.models import CompteRendu as _CR
+        model = _CR
+        fields = ['id', 'titre', 'reunion_date', 'lieu', 'ordre_du_jour',
+                  'contenu', 'statut', 'statut_label',
+                  'auteur_nom', 'valide_par_nom', 'publie_le', 'maj_le']
+        read_only_fields = ['id', 'publie_le', 'maj_le']
+
+    def _nom(self, user):
+        if not user:
+            return None
+        try:
+            return user.get_full_name() or user.username
+        except Exception:
+            return None
+
+    def get_auteur_nom(self, obj):
+        return self._nom(getattr(obj, 'auteur', None)) or 'Ancien membre'
+
+    def get_valide_par_nom(self, obj):
+        return self._nom(getattr(obj, 'valide_par', None))
+
+
 class SujetSerializer(serializers.ModelSerializer):
     """Sujet du forum : auteur + compteurs + dernier message (doc 03 §4)."""
     auteur_nom = serializers.SerializerMethodField()

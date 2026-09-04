@@ -134,3 +134,56 @@ class DashboardAdminTests(TestCase):
         r = self.client.patch(f'/api/v1/cellules/{cell.pk}/',
                               {'chef_email': 'inconnu@x.com'}, format='json')
         self.assertEqual(r.status_code, 400)
+
+
+class ComptesRendusTests(TestCase):
+    client_class = APIClient
+
+    def setUp(self):
+        self.sg = membre('sgcr@x.com')
+        Role.objects.update_or_create(code='P3', defaults={'titulaire': self.sg})
+        self.p1 = membre('p1cr@x.com')
+        Role.objects.update_or_create(code='P1', defaults={'titulaire': self.p1})
+        self.simple = membre('simpcr@x.com')
+
+    def test_cycle_complet(self):
+        # simple ne rédige pas
+        self.client.force_authenticate(self.simple)
+        r = self.client.post('/api/v1/comptes-rendus/',
+                             {'titre': 'X', 'reunion_date': '2026-09-01',
+                              'contenu': 'y'}, format='json')
+        self.assertEqual(r.status_code, 403)
+        # SG rédige : publie direct refusé, brouillon forcé
+        self.client.force_authenticate(self.sg)
+        r = self.client.post('/api/v1/comptes-rendus/',
+                             {'titre': 'CR', 'reunion_date': '2026-09-01',
+                              'contenu': 'Décisions', 'statut': 'publie'},
+                             format='json')
+        self.assertEqual(r.status_code, 400)
+        r = self.client.post('/api/v1/comptes-rendus/',
+                             {'titre': 'CR', 'reunion_date': '2026-09-01',
+                              'contenu': 'Décisions'}, format='json').json()
+        self.assertEqual(r['statut'], 'brouillon')
+        cid = r['id']
+        # publication directe interdite
+        r = self.client.patch(f'/api/v1/comptes-rendus/{cid}/',
+                              {'statut': 'publie'}, format='json')
+        self.assertEqual(r.status_code, 400)
+        # soumission puis publication P1
+        r = self.client.patch(f'/api/v1/comptes-rendus/{cid}/',
+                              {'statut': 'en_validation'}, format='json')
+        self.assertEqual(r.json()['statut'], 'en_validation')
+        self.client.force_authenticate(self.p1)
+        r = self.client.patch(f'/api/v1/comptes-rendus/{cid}/',
+                              {'statut': 'publie'}, format='json').json()
+        self.assertEqual(r['statut'], 'publie')
+        self.assertIsNotNone(r['valide_par_nom'])
+        # publié = figé (retour brouillon interdit)
+        r = self.client.patch(f'/api/v1/comptes-rendus/{cid}/',
+                              {'statut': 'brouillon'}, format='json')
+        self.assertEqual(r.status_code, 400)
+
+    def test_lecture_membres_anonyme_non(self):
+        self.assertEqual(self.client.get('/api/v1/comptes-rendus/').status_code, 401)
+        self.client.force_authenticate(self.simple)
+        self.assertEqual(self.client.get('/api/v1/comptes-rendus/').status_code, 200)

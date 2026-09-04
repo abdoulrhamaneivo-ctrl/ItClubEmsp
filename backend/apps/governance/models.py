@@ -70,3 +70,28 @@ class Parametre(models.Model):
         return self.cle
 
 
+class CompteRendu(models.Model):
+    """CR de réunion (doc 01 P3) : brouillon → en validation → publié."""
+    STATUTS = [('brouillon', 'Brouillon'), ('en_validation', 'En validation'),
+               ('publie', 'Publié')]
+    titre = models.CharField(max_length=140)
+    reunion_date = models.DateField('Date de la réunion')
+    lieu = models.CharField(max_length=140, blank=True)
+    ordre_du_jour = models.TextField('Ordre du jour', blank=True)
+    contenu = models.TextField('Contenu')
+    statut = models.CharField(max_length=14, choices=STATUTS, default='brouillon')
+    auteur = models.ForeignKey('accounts.User', on_delete=models.SET_NULL,
+                               null=True, blank=True, related_name='crs_rediges')
+    valide_par = models.ForeignKey('accounts.User', on_delete=models.SET_NULL,
+                                   null=True, blank=True, related_name='crs_valides')
+    publie_le = models.DateTimeField(null=True, blank=True)
+    cree_le = models.DateTimeField(auto_now_add=True)
+    maj_le = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-reunion_date', '-maj_le']
+
+    def __str__(self):
+        return self.titre
+
+

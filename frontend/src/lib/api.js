@@ -538,6 +538,37 @@ export const api = {
   async voter(sondageId, optionId) {
     return postJson(`/api/v1/sondages/${sondageId}/voter/`, { option: optionId })
   },
+  // Comptes rendus (P3/P1) : brouillon → validation → publié
+  async getComptesRendus() {
+    const data = await fetchJson('/api/v1/comptes-rendus/')
+    return data ?? []
+  },
+  async creerCR({ titre, reunion_date, lieu, ordre_du_jour, contenu }) {
+    if (USE_MOCK) {
+      await new Promise(r => setTimeout(r, 500))
+      return { id: Date.now(), titre, statut: 'brouillon' }
+    }
+    return postJson('/api/v1/comptes-rendus/', { titre, reunion_date, lieu, ordre_du_jour, contenu })
+  },
+  async majCR(id, patch) {
+    if (USE_MOCK) {
+      await new Promise(r => setTimeout(r, 400))
+      return { id, ...patch }
+    }
+    return postJson(`/api/v1/comptes-rendus/${id}/`, patch, 'PATCH')
+  },
+  async supprimerCR(id) {
+    if (USE_MOCK) {
+      await new Promise(r => setTimeout(r, 300))
+      return { success: true }
+    }
+    const res = await fetch(`${BASE_URL}/api/v1/comptes-rendus/${id}/`, {
+      method: 'DELETE', headers: authHeaders(), credentials: 'include',
+    })
+    if (!res.ok) throw new Error(`API ${res.status}`)
+    invaliderCacheMetier()
+    return { success: true }
+  },
   // Registre membres — candidatures (Bureau P1/P3/P4)
   async getCandidatures() {
     const data = await fetchJson('/api/v1/candidatures/')

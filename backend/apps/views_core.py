@@ -10,7 +10,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from django.contrib.auth import get_user_model
 
 from apps.accounts.models import Role, Cellule, Candidature
-from apps.governance.models import ObjectifPoste, Projet, Opportunite, Parametre
+from apps.governance.models import ObjectifPoste, Projet, Opportunite, Parametre, CompteRendu
 from apps.comms.models import Actualite, Document, Media, Sujet, MessageForum, Sondage, OptionSondage, Vote
 from apps.events.models import Evenement
 from apps.core_serializers import (
@@ -18,6 +18,7 @@ from apps.core_serializers import (
     DocumentSerializer, MediaSerializer, EvenementSerializer, CandidatureSerializer,
     ProjetSerializer, OpportuniteSerializer, ParametreSerializer,
     SujetSerializer, MessageForumSerializer, SondageSerializer,
+    CompteRenduSerializer,
 )
 
 User = get_user_model()
@@ -32,6 +33,19 @@ def _est_modo(user):
     try:
         return Role.objects.filter(
             code__in=['P1', 'P5', 'ADMIN'], titulaire=user).exists()
+    except Exception:
+        return False
+
+
+def _peut_rediger(user):
+    """Rédaction CR : SG (P3), Président (P1), ADMIN ou staff."""
+    if not (user and user.is_authenticated):
+        return False
+    if getattr(user, 'is_staff', False):
+        return True
+    try:
+        return Role.objects.filter(
+            code__in=['P1', 'P3', 'ADMIN'], titulaire=user).exists()
     except Exception:
         return False
 
@@ -235,6 +249,63 @@ class ParametreViewSet(PublicReadOrStaffWrite):
         obj, _ = Parametre.objects.update_or_create(
             cle=cle, defaults={'valeur': request.data.get('valeur', '')})
         return _R(ParametreSerializer(obj).data, status=200)
+
+
+class CompteRenduViewSet(viewsets.ModelViewSet):
+    """CR de réunion : brouillon → en validation → publié (doc 01 P3).
+
+    Lecture = membres connectés (interne). Rédaction = P3/P1/ADMIN/staff.
+    Seul le passage en_validation → publie requiert P1/P3/ADMIN/staff ;
+    un brouillon ne se publie jamais directement (relecture obligatoire).
+    """
+    queryset = CompteRendu.objects.select_related('auteur', 'valide_par').all()
+    serializer_class = CompteRenduSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    filterset_fields = ['statut']
+
+    def perform_create(self, serializer):
+        if not _peut_rediger(self.request.user):
+            from rest_framework.exceptions import PermissionDenied
+            raise PermissionDenied('Rédaction réservée (P3/P1).')
+        data = serializer.validated_data
+        if data.get('statut') == 'publie':
+            from rest_framework.exceptions import ValidationError
+            raise ValidationError({'statut': 'Un CR se valide avant publication.'})
+        serializer.save(auteur=self.request.user, statut='brouillon')
+
+    def perform_update(self, serializer):
+        inst = self.get_object()
+        if not _peut_rediger(self.request.user):
+            from rest_framework.exceptions import PermissionDenied
+            raise PermissionDenied('Rédaction réservée (P3/P1).')
+        nouveau = serializer.validated_data.get('statut', inst.statut)
+        if nouveau != inst.statut and not self._transition_ok(inst.statut, nouveau):
+            from rest_framework.exceptions import ValidationError
+            raise ValidationError(
+                {'statut': f'Transition {inst.statut} → {nouveau} interdite.'})
+        if nouveau == 'publie':
+            from django.utils import timezone
+            serializer.save(valide_par=self.request.user, publie_le=timezone.now())
+        else:
+            serializer.save()
+
+    def perform_destroy(self, instance):
+        if instance.statut == 'publie' and not _est_modo(self.request.user):
+            from rest_framework.exceptions import PermissionDenied
+            raise PermissionDenied('Un CR publié ne se supprime pas (P1/P5).')
+        if not _peut_rediger(self.request.user):
+            from rest_framework.exceptions import PermissionDenied
+            raise PermissionDenied('Rédaction réservée (P3/P1).')
+        instance.delete()
+
+    @staticmethod
+    def _transition_ok(actuel, nouveau):
+        graphe = {
+            'brouillon': {'en_validation'},
+            'en_validation': {'brouillon', 'publie'},
+            'publie': set(),
+        }
+        return nouveau in graphe.get(actuel, set())
 
 
 class DocumentViewSet(PublicReadOrStaffWrite):

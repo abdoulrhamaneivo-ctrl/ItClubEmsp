@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import Button from '@mui/material/Button'
@@ -10,6 +10,7 @@ import Chip from '@mui/material/Chip'
 import CircularProgress from '@mui/material/CircularProgress'
 import Switch from '@mui/material/Switch'
 import SendIcon from '@mui/icons-material/Send'
+import AddIcon from '@mui/icons-material/Add'
 import { api } from '../../lib/api'
 
 /**
@@ -17,6 +18,7 @@ import { api } from '../../lib/api'
  * Onglet Convoquer : formulaire → POST /reunions/convocation
  * (tous les membres OU liste d'emails). Rappel H-48h auto via cron.
  * Onglet Envoyées : historique des convocations (traces Notification).
+ * Onglet Comptes rendus : rédaction → validation → publication.
  */
 
 const champSx = {
@@ -84,7 +86,7 @@ export default function ComptesRendus() {
             </Typography>
           </Box>
           <Box sx={{ display: 'flex', gap: 1 }}>
-            {['Convoquer', `Envoyées${envoyees.length > 0 ? ` (${envoyees.length})` : ''}`].map((label, i) => (
+            {['Convoquer', `Envoyées${envoyees.length > 0 ? ` (${envoyees.length})` : ''}`, 'Comptes rendus'].map((label, i) => (
               <Chip key={label} label={label} onClick={() => setOnglet(i)}
                 sx={{
                   fontWeight: 800, cursor: 'pointer',
@@ -165,6 +167,172 @@ export default function ComptesRendus() {
           ))}
         </Box>
       )}
+
+      {onglet === 2 && <OngletCR notify={notify} />}
+    </Box>
+  )
+}
+
+/* ── Comptes rendus : brouillon → validation → publié ───────── */
+const COULEUR_CR = { brouillon: '#6B7280', en_validation: '#B45309', publie: '#0B7A4B' }
+const LABEL_CR = { brouillon: 'Brouillon', en_validation: 'En validation', publie: 'Publié' }
+
+function OngletCR({ notify }) {
+  const [formOuvert, setFormOuvert] = useState(false)
+  const [envoi, setEnvoi] = useState(false)
+  const [ouvert, setOuvert] = useState(null)
+  const [form, setForm] = useState({ id: null, titre: '', reunion_date: '', lieu: '', ordre_du_jour: '', contenu: '' })
+  const client = useQueryClient()
+
+  const { data: crs = [], isLoading } = useQuery({
+    queryKey: ['comptes-rendus'], queryFn: () => api.getComptesRendus(),
+  })
+
+  const set = (k, v) => setForm((f) => ({ ...f, [k]: v }))
+  const reset = () => { setForm({ id: null, titre: '', reunion_date: '', lieu: '', ordre_du_jour: '', contenu: '' }); setFormOuvert(false) }
+
+  const enregistrer = async () => {
+    if (!form.titre.trim() || !form.reunion_date || !form.contenu.trim() || envoi) {
+      if (!form.titre.trim() || !form.reunion_date || !form.contenu.trim()) notify('error', 'Titre, date et contenu sont requis.')
+      return
+    }
+    setEnvoi(true)
+    try {
+      if (form.id) {
+        await api.majCR(form.id, { titre: form.titre.trim(), reunion_date: form.reunion_date, lieu: form.lieu.trim(), ordre_du_jour: form.ordre_du_jour.trim(), contenu: form.contenu.trim() })
+        notify('success', 'Brouillon mis à jour.')
+      } else {
+        await api.creerCR({ titre: form.titre.trim(), reunion_date: form.reunion_date, lieu: form.lieu.trim(), ordre_du_jour: form.ordre_du_jour.trim(), contenu: form.contenu.trim() })
+        notify('success', 'Brouillon créé — soumets-le pour validation.')
+      }
+      client.invalidateQueries({ queryKey: ['comptes-rendus'] })
+      reset()
+    } catch (e) {
+      notify('error', e.message ?? 'Enregistrement impossible')
+    } finally {
+      setEnvoi(false)
+    }
+  }
+
+  const transition = async (cr, statut, okMsg) => {
+    try {
+      await api.majCR(cr.id, { statut })
+      client.invalidateQueries({ queryKey: ['comptes-rendus'] })
+      notify('success', okMsg)
+    } catch (e) {
+      notify('error', e.message ?? 'Transition impossible')
+    }
+  }
+
+  const supprimer = async (id) => {
+    try {
+      await api.supprimerCR(id)
+      client.invalidateQueries({ queryKey: ['comptes-rendus'] })
+      notify('info', 'Compte rendu supprimé.')
+    } catch (e) {
+      notify('error', e.message ?? 'Suppression impossible')
+    }
+  }
+
+  return (
+    <Box>
+      <Button variant="contained" startIcon={<AddIcon />} onClick={() => { reset(); setFormOuvert(true) }}
+        sx={{ bgcolor: '#1FAF72', '&:hover': { bgcolor: '#179963' }, fontWeight: 800, borderRadius: '12px', mb: 2 }}>
+        Rédiger un compte rendu
+      </Button>
+
+      {formOuvert && (
+        <Box sx={{ bgcolor: '#fff', borderRadius: '18px', border: '1px solid #1FAF7245', p: { xs: 2.4, md: 3 }, display: 'grid', gap: 2, mb: 2 }}>
+          <TextField label="Titre *" value={form.titre} onChange={(e) => set('titre', e.target.value)} fullWidth sx={champSx} />
+          <Box sx={{ display: 'grid', gap: 2, gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' } }}>
+            <TextField type="date" label="Date de la réunion *" value={form.reunion_date} onChange={(e) => set('reunion_date', e.target.value)} fullWidth sx={champSx} InputLabelProps={{ shrink: true }} />
+            <TextField label="Lieu" value={form.lieu} onChange={(e) => set('lieu', e.target.value)} fullWidth sx={champSx} />
+          </Box>
+          <TextField label="Ordre du jour" value={form.ordre_du_jour} onChange={(e) => set('ordre_du_jour', e.target.value)} multiline rows={2} fullWidth sx={champSx} />
+          <TextField label="Contenu *" value={form.contenu} onChange={(e) => set('contenu', e.target.value)} multiline rows={6} fullWidth sx={champSx} placeholder="Décisions, actions, responsables…" />
+          <Box sx={{ display: 'flex', gap: 1.5, justifyContent: 'flex-end' }}>
+            <Button onClick={reset} sx={{ color: '#5A6B63', fontWeight: 700 }}>Annuler</Button>
+            <Button variant="contained" onClick={enregistrer} disabled={envoi}
+              sx={{ bgcolor: '#1FAF72', '&:hover': { bgcolor: '#179963' }, fontWeight: 800, borderRadius: '12px' }}>
+              {envoi ? 'Envoi…' : 'Enregistrer'}
+            </Button>
+          </Box>
+        </Box>
+      )}
+
+      {isLoading && <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}><CircularProgress sx={{ color: '#1FAF72' }} /></Box>}
+      <Box sx={{ display: 'grid', gap: 1.2 }}>
+        {crs.map((cr) => {
+          const estOuvert = ouvert === cr.id
+          return (
+            <Box key={cr.id} sx={{ bgcolor: '#fff', borderRadius: '14px', border: '1px solid #E8ECEA', overflow: 'hidden' }}>
+              <Box onClick={() => setOuvert(estOuvert ? null : cr.id)}
+                sx={{ display: 'flex', gap: 1.5, alignItems: 'center', px: 2.2, py: 1.6, cursor: 'pointer', '&:hover': { bgcolor: '#F6FBF9' } }}>
+                <Box sx={{ flex: 1, minWidth: 0 }}>
+                  <Typography sx={{ fontWeight: 800, color: '#111827', fontSize: '0.9rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {cr.titre}
+                  </Typography>
+                  <Typography variant="caption" sx={{ color: '#5A6B63' }}>
+                    Réunion du {(cr.reunion_date ?? '').slice(0, 10).split('-').reverse().join('/')} · {cr.auteur_nom ?? ''}
+                    {cr.valide_par_nom && ` · validé par ${cr.valide_par_nom}`}
+                  </Typography>
+                </Box>
+                <Chip label={LABEL_CR[cr.statut] ?? cr.statut} size="small"
+                  sx={{ bgcolor: `${COULEUR_CR[cr.statut] ?? '#6B7280'}14`, color: COULEUR_CR[cr.statut] ?? '#6B7280', fontWeight: 800, flexShrink: 0 }} />
+              </Box>
+              {estOuvert && (
+                <Box sx={{ px: 2.2, pb: 2, pt: 0.5, borderTop: '1px solid #EEF2F0' }}>
+                  {cr.ordre_du_jour && (
+                    <Typography variant="body2" sx={{ color: '#374151', fontSize: '0.84rem', mb: 1, whiteSpace: 'pre-wrap' }}>
+                      <strong>Ordre du jour —</strong> {cr.ordre_du_jour}
+                    </Typography>
+                  )}
+                  <Typography variant="body2" sx={{ color: '#111827', fontSize: '0.88rem', lineHeight: 1.7, whiteSpace: 'pre-wrap' }}>
+                    {cr.contenu}
+                  </Typography>
+                  <Box sx={{ display: 'flex', gap: 1, mt: 1.6, flexWrap: 'wrap' }}>
+                    {cr.statut === 'brouillon' && (
+                      <>
+                        <Button size="small" variant="contained" onClick={() => transition(cr, 'en_validation', 'Soumis pour validation.')}
+                          sx={{ bgcolor: '#F5A623', '&:hover': { bgcolor: '#D97706' }, fontWeight: 800, borderRadius: '10px' }}>
+                          Soumettre
+                        </Button>
+                        <Button size="small" variant="outlined" onClick={() => { setForm({ id: cr.id, titre: cr.titre, reunion_date: (cr.reunion_date ?? '').slice(0, 10), lieu: cr.lieu ?? '', ordre_du_jour: cr.ordre_du_jour ?? '', contenu: cr.contenu }); setFormOuvert(true) }}
+                          sx={{ borderColor: '#D1D5DB', color: '#374151', fontWeight: 700 }}>
+                          Modifier
+                        </Button>
+                        <Button size="small" onClick={() => supprimer(cr.id)} sx={{ color: '#B42318', fontWeight: 700 }}>
+                          Supprimer
+                        </Button>
+                      </>
+                    )}
+                    {cr.statut === 'en_validation' && (
+                      <>
+                        <Button size="small" variant="contained" onClick={() => transition(cr, 'publie', 'Publié — visible des membres.')}
+                          sx={{ bgcolor: '#1FAF72', '&:hover': { bgcolor: '#179963' }, fontWeight: 800, borderRadius: '10px' }}>
+                          Valider & publier
+                        </Button>
+                        <Button size="small" variant="outlined" onClick={() => transition(cr, 'brouillon', 'Renvoyé en brouillon.')}
+                          sx={{ borderColor: '#D1D5DB', color: '#374151', fontWeight: 700 }}>
+                          Renvoyer
+                        </Button>
+                      </>
+                    )}
+                    {cr.statut === 'publie' && (
+                      <Typography variant="caption" sx={{ color: '#0B7A4B', fontWeight: 700 }}>
+                        Publié — lisible par les membres dans la Documentation.
+                      </Typography>
+                    )}
+                  </Box>
+                </Box>
+              )}
+            </Box>
+          )
+        })}
+        {!isLoading && crs.length === 0 && (
+          <Typography sx={{ color: '#5A6B63', fontSize: '0.88rem' }}>Aucun compte rendu pour le moment.</Typography>
+        )}
+      </Box>
     </Box>
   )
 }

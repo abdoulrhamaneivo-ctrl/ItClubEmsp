@@ -11,6 +11,9 @@ import { BandeauAccent } from '../ui-components/FondPropre'
 import TitreSection from '../ui-components/TitreSection'
 import { IcDocument, IcCube, IcMembres } from '../ui-components/IconesClub'
 import { useContenu } from '../../lib/contenu'
+import { useQuery } from '@tanstack/react-query'
+import { api } from '../../lib/api'
+import { useAuth } from '../../stores/auth'
 
 /**
  * Documentation — layout COLONNES compactes + accordéon par famille :
@@ -27,6 +30,15 @@ const FAMILLES = [
 
 export default function Documentation() {
   const docs = useContenu('documents')
+  const user = useAuth((s) => s.user)
+  // CR publiés : interne, visible des seuls membres connectés
+  const { data: crs = [] } = useQuery({
+    queryKey: ['comptes-rendus', 'publies'],
+    queryFn: () => api.getComptesRendus(),
+    enabled: !!user && !api.isMockMode(),
+  })
+  const publies = crs.filter((c) => c.statut === 'publie')
+  const [crOuvert, setCrOuvert] = useState(null)
   const [etatFamilles, setEtatFamilles] = useState(() =>
     Object.fromEntries(FAMILLES.map((f) => [f.id, f.ouverteDefaut])),
   )
@@ -172,6 +184,55 @@ export default function Documentation() {
             )
           })}
         </Box>
+
+        {/* ═══ Comptes rendus publiés (membres connectés) ═══ */}
+        {user && !api.isMockMode() && publies.length > 0 && (
+          <Box sx={{ mt: 3 }}>
+            <Typography sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 800, fontSize: '1rem', color: '#111827', mb: 1.2 }}>
+              Comptes rendus de réunions
+              <Typography component="span" variant="caption" sx={{ color: '#5A6B63', fontWeight: 600, ml: 1 }}>
+                {publies.length} publié{publies.length > 1 ? 's' : ''} · réservé aux membres
+              </Typography>
+            </Typography>
+            <Box sx={{ display: 'grid', gap: 1.2 }}>
+              {publies.map((cr) => {
+                const ouvert = crOuvert === cr.id
+                return (
+                  <Box key={cr.id} sx={{ bgcolor: '#fff', borderRadius: '14px', border: '1px solid #E8ECEA', overflow: 'hidden' }}>
+                    <Box onClick={() => setCrOuvert(ouvert ? null : cr.id)}
+                      sx={{ display: 'flex', gap: 1.4, alignItems: 'center', px: 2.2, py: 1.5, cursor: 'pointer', '&:hover': { bgcolor: '#F6FBF9' } }}>
+                      <Box sx={{ width: 38, height: 38, borderRadius: '10px', flexShrink: 0, bgcolor: '#7B61FF12', border: '1px solid #7B61FF30', display: 'grid', placeItems: 'center' }}>
+                        <IcMembres taille={18} couleur="#7B61FF" />
+                      </Box>
+                      <Box sx={{ flex: 1, minWidth: 0 }}>
+                        <Typography sx={{ fontWeight: 800, color: '#111827', fontSize: '0.86rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                          {cr.titre}
+                        </Typography>
+                        <Typography variant="caption" sx={{ color: '#5A6B63' }}>
+                          Réunion du {(cr.reunion_date ?? '').slice(0, 10).split('-').reverse().join('/')}
+                          {cr.valide_par_nom && ` · validé par ${cr.valide_par_nom}`}
+                        </Typography>
+                      </Box>
+                      <ExpandMoreIcon sx={{ fontSize: 20, color: '#9CA3AF', transform: ouvert ? 'rotate(180deg)' : 'none', transition: 'transform 200ms' }} />
+                    </Box>
+                    <Collapse in={ouvert} timeout={240} unmountOnExit>
+                      <Box sx={{ px: 2.2, pb: 2, pt: 0.5, borderTop: '1px solid #EEF2F0' }}>
+                        {cr.ordre_du_jour && (
+                          <Typography variant="body2" sx={{ color: '#374151', fontSize: '0.82rem', mb: 1, whiteSpace: 'pre-wrap' }}>
+                            <strong>Ordre du jour —</strong> {cr.ordre_du_jour}
+                          </Typography>
+                        )}
+                        <Typography variant="body2" sx={{ color: '#111827', fontSize: '0.86rem', lineHeight: 1.7, whiteSpace: 'pre-wrap' }}>
+                          {cr.contenu}
+                        </Typography>
+                      </Box>
+                    </Collapse>
+                  </Box>
+                )
+              })}
+            </Box>
+          </Box>
+        )}
 
         {/* Guide de lecture — compact */}
         <motion.div
