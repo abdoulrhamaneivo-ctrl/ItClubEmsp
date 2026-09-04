@@ -34,6 +34,7 @@ LOCAL_APPS = [
     'apps.events',
     'apps.resources',
     'apps.governance',
+    'apps.notifications',
 ]
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
@@ -68,10 +69,13 @@ TEMPLATES = [
 WSGI_APPLICATION = 'config.wsgi.application'
 
 # ── DB : PostgreSQL si DATABASE_URL fournie, sinon SQLite (dev) ──
+# Neon : utilise l'URL poolée (…-pooler.…?sslmode=require) et mets
+# DB_CONN_MAX_AGE=0 (le pooler gère déjà les connexions persistantes).
 DATABASE_URL = os.environ.get('DATABASE_URL')
+DB_CONN_MAX_AGE = int(os.environ.get('DB_CONN_MAX_AGE', '600'))
 if DATABASE_URL:
     import dj_database_url  # ajouté au moment du déploiement
-    DATABASES = {'default': dj_database_url.parse(DATABASE_URL, conn_max_age=600)}
+    DATABASES = {'default': dj_database_url.parse(DATABASE_URL, conn_max_age=DB_CONN_MAX_AGE)}
 else:
     DATABASES = {
         'default': {
@@ -99,6 +103,14 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# ── Emails transactionnels via Resend (doc 02 D10, doc 04 §7) ──
+# Secrets uniquement via l'environnement (jamais dans le repo).
+# Sans RESEND_API_KEY : les envois sont journalisés et ignorés (log-only),
+# les vues restent fonctionnelles (fail-open).
+RESEND_API_KEY = os.environ.get('RESEND_API_KEY', '')
+RESEND_FROM = os.environ.get('RESEND_FROM', 'IT-CLUB EMSP <onboarding@resend.dev>')
+FRONTEND_URL = os.environ.get('FRONTEND_URL', 'https://it-club-emsp.vercel.app').rstrip('/')
 
 # ── DRF ──────────────────────────────────────────────────────
 REST_FRAMEWORK = {

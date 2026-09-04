@@ -1,0 +1,6 @@
+{% extends "emails/base.html" %}
+{% block contenu %}
+<h2 style="color:#0D1B2A;margin:0 0 12px;">Liste d’attente — position {{ position }}</h2>
+<p style="color:#374151;line-height:1.7;">{{ nom }}, <strong>{{ evt.titre }}</strong> est complet : tu es en liste d’attente (position {{ position }}).</p>
+<p style="color:#374151;line-height:1.7;">Bonne nouvelle : dès qu’une place se libère, le premier de la liste est promu automatiquement et prévenu par email. Surveille ta boîte.</p>
+{% endblock %}

@@ -1,0 +1,6 @@
+{% extends "emails/base.html" %}
+{% block contenu %}
+<h2 style="color:#0D1B2A;margin:0 0 12px;">Bienvenue dans le club, {{ nom }} ! 🎉</h2>
+<p style="color:#374151;line-height:1.7;">Ta candidature est <strong style="color:#0E7A50;">validée</strong>. Ton compte membre est créé{% if cellules %} — tu rejoins : <strong>{{ cellules }}</strong>{% endif %}.</p>
+<p style="color:#374151;line-height:1.7;">Prochaines étapes : connecte-toi à ton espace, rejoins ta cellule et inscris-toi à la prochaine activité. Présente-toi au prochain atelier, on t’attend.</p>
+{% endblock %}

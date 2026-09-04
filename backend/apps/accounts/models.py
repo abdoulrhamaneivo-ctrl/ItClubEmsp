@@ -30,6 +30,11 @@ class User(AbstractUser):
     photo = models.ImageField('Photo', upload_to='photos/membres/', blank=True, null=True)
     promotion = models.CharField('Promotion', max_length=20, blank=True)
     telephone = models.CharField('Téléphone', max_length=20, blank=True)
+    notif_prefs = models.JSONField(
+        'Préférences notifications (doc 02 D10)',
+        default=dict, blank=True,
+        help_text='{"rappel": true, "recap": false…} — absent = accepté.',
+    )
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']

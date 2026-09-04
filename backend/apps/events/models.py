@@ -14,6 +14,7 @@ class Evenement(models.Model):
     type = models.CharField(max_length=12, choices=TYPES, default='atelier')
     couleur = models.CharField(max_length=9, default='#2563EB')
     date_debut = models.DateTimeField()
+    date_fin = models.DateTimeField('Fin (satisfaction envoyée 1h après)', null=True, blank=True)
     lieu = models.CharField(max_length=140, blank=True)
     places = models.PositiveIntegerField('Places (0 = illimité)', default=0)
     icone = models.CharField('Id icône front', max_length=30, default='ampoule')

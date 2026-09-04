@@ -1,0 +1,11 @@
+{% extends "emails/base.html" %}
+{% block contenu %}
+<h2 style="color:#0D1B2A;margin:0 0 12px;">{% if rappel %}Rappel H-48h{% else %}Convocation{% endif %} — {{ titre }}</h2>
+<p style="color:#374151;line-height:1.7;">{{ nom }}, tu es {% if rappel %}rappelé{% else %}convoqué{% endif %} à la réunion :</p>
+<p style="background:#F6FBF9;border:1px solid #E3EEE8;border-radius:10px;padding:14px 18px;color:#0D1B2A;">
+<strong>{{ titre }}</strong><br>
+<span style="color:#5A6B63;">{{ date_str }}{% if lieu %} · {{ lieu }}{% endif %}</span>
+{% if ordre_du_jour %}<br><br><span style="color:#374151;">Ordre du jour : {{ ordre_du_jour }}</span>{% endif %}
+</p>
+<p style="color:#374151;line-height:1.7;">Présence obligatoire pour les membres du Bureau (exigence SG). En cas d’empêchement, préviens la Secrétaire Générale.</p>
+{% endblock %}

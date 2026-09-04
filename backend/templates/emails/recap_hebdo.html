@@ -1,0 +1,13 @@
+{% extends "emails/base.html" %}
+{% block contenu %}
+<h2 style="color:#0D1B2A;margin:0 0 12px;">Ta semaine au club 📅</h2>
+<p style="color:#374151;line-height:1.7;">{{ nom }}, voici ce qui t’attend dans les 7 prochains jours :</p>
+{% for e in evenements %}
+<p style="background:#F6FBF9;border:1px solid #E3EEE8;border-radius:10px;padding:12px 16px;color:#0D1B2A;margin:10px 0;">
+<strong>{{ e.titre }}</strong><br>
+<span style="color:#5A6B63;font-size:13px;">{{ e.date_debut|date:"l d F à H:i" }}{% if e.lieu %} · {{ e.lieu }}{% endif %}</span>
+</p>
+{% empty %}
+<p style="color:#374151;">Semaine calme — profite-en pour avancer ton projet de cellule.</p>
+{% endfor %}
+{% endblock %}

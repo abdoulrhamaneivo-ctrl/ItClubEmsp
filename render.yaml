@@ -14,13 +14,16 @@ services:
         value: https://it-club-emsp.vercel.app
       - key: PYTHON_VERSION
         value: "3.11.16"
+      # Base Neon (doc 09 §4) : coller l'URL poolée dans le dashboard Render
+      # (Environment → DATABASE_URL, secret — jamais dans ce fichier).
       - key: DATABASE_URL
-        fromDatabase:
-          name: itclub-emsp-db
-          property: connectionString
-
-databases:
-  - name: itclub-emsp-db
-    plan: free
-    databaseName: itclubemsp
-    user: itclub
+        sync: false
+      - key: DB_CONN_MAX_AGE
+        value: "0"
+      # Emails Resend (doc 09) : clé en secret Render, jamais ici.
+      - key: RESEND_API_KEY
+        sync: false
+      - key: RESEND_FROM
+        value: IT-CLUB EMSP <onboarding@resend.dev>
+      - key: FRONTEND_URL
+        value: https://it-club-emsp.vercel.app

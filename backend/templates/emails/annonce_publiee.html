@@ -1,0 +1,6 @@
+{% extends "emails/base.html" %}
+{% block contenu %}
+<h2 style="color:#0D1B2A;margin:0 0 12px;">{{ actu.titre }}</h2>
+<p style="color:#374151;line-height:1.7;">Bonjour {{ nom }}, le Bureau vient de publier :</p>
+<p style="background:#F6FBF9;border:1px solid #E3EEE8;border-radius:10px;padding:14px 18px;color:#374151;line-height:1.7;">{{ actu.extrait|default:"Voir le détail sur le site du club." }}</p>
+{% endblock %}

@@ -1,0 +1,6 @@
+{% extends "emails/base.html" %}
+{% block contenu %}
+<h2 style="color:#0D1B2A;margin:0 0 12px;">Candidature bien reçue, {{ nom }} !</h2>
+<p style="color:#374151;line-height:1.7;">Merci pour ton envie de rejoindre le club. Ta candidature{% if cellules %} ({{ cellules }}){% endif %} est <strong>en attente de validation</strong> par le Bureau.</p>
+<p style="color:#374151;line-height:1.7;">Réponse sous <strong>48h</strong> par email. En attendant, explore le site : cellules, activités à venir et documentation.</p>
+{% endblock %}

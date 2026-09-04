@@ -130,16 +130,18 @@ class EvenementSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Evenement
-        fields = ['id', 'titre', 'description', 'type', 'couleur', 'date', 'lieu',
+        fields = ['id', 'titre', 'description', 'type', 'couleur', 'date', 'date_fin', 'lieu',
                   'places', 'places_disponibles', 'inscrits_count', 'icone']
 
     def get_inscrits_count(self, obj):
-        return obj.inscrits.count()
+        # Confirmés uniquement (la liste d'attente n'occupe pas de place)
+        return obj.inscrits.filter(inscription__liste_attente=False).count()
 
     def get_places_disponibles(self, obj):
         if obj.places == 0:
             return None
-        return max(0, obj.places - obj.inscrits.count())
+        confirmes = obj.inscrits.filter(inscription__liste_attente=False).count()
+        return max(0, obj.places - confirmes)
 
 
 class CandidatureSerializer(serializers.ModelSerializer):

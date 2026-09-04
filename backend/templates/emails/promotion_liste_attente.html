@@ -1,0 +1,9 @@
+{% extends "emails/base.html" %}
+{% block contenu %}
+<h2 style="color:#0D1B2A;margin:0 0 12px;">Une place s’est libérée ! 🎟️</h2>
+<p style="color:#374151;line-height:1.7;">{{ nom }}, tu passes de la liste d’attente aux <strong style="color:#0E7A50;">inscrits</strong> pour :</p>
+<p style="background:#F6FBF9;border:1px solid #E3EEE8;border-radius:10px;padding:14px 18px;color:#0D1B2A;">
+<strong>{{ evt.titre }}</strong><br>
+<span style="color:#5A6B63;">{{ evt.date_debut|date:"l d F Y à H:i" }}{% if evt.lieu %} · {{ evt.lieu }}{% endif %}</span>
+</p>
+{% endblock %}

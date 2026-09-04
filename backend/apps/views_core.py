@@ -46,6 +46,27 @@ class ActualiteViewSet(PublicReadOrStaffWrite):
     serializer_class = ActualiteSerializer
     filterset_fields = ['tag_cellule']
 
+    def perform_create(self, serializer):
+        actu = serializer.save()
+        # Notification email selon audience (doc 02 D3) — fail-open
+        try:
+            from apps import emails as mail
+            if actu.tag_cellule:
+                destinataires = User.objects.filter(
+                    cellules__cellule=actu.tag_cellule).distinct()
+            else:
+                destinataires = User.objects.filter(is_active=True).exclude(email='')
+            for m in destinataires:
+                if not m.email:
+                    continue
+                try:
+                    mail.send_annonce(m.email, m.get_full_name() or m.username, actu, user=m)
+                except Exception:
+                    continue
+        except Exception as exc:
+            import logging
+            logging.getLogger(__name__).warning('Emails annonce ignorés: %s', exc)
+
 
 class DocumentViewSet(PublicReadOrStaffWrite):
     queryset = Document.objects.all()
@@ -81,6 +102,13 @@ def register_candidature(request):
         cellules = request.data.get('cellules_souhaitees', [])
         if cellules:
             candidature.cellules_souhaitees.set(Cellule.objects.filter(id__in=cellules))
+        # Email de confirmation (fail-open : la candidature reste créée)
+        try:
+            from apps import emails as mail
+            mail.send_candidature_recue(candidature)
+        except Exception as exc:
+            import logging
+            logging.getLogger(__name__).warning('Email candidature ignoré: %s', exc)
         return Response(
             {'id': candidature.id, 'message': 'Candidature reçue — réponse sous 48h.'},
             status=status.HTTP_201_CREATED,
