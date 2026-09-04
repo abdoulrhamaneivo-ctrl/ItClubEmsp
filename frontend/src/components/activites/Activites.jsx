@@ -182,11 +182,22 @@ export default function Activites() {
                                   {a.lieu}
                                 </Typography>
                               </Box>
-                              {a.places && (
+                              {a.places ? (
+                                <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.6 }}>
+                                  <IcMembres taille={13} couleur={a.places_disponibles === 0 ? '#B45309' : '#6B7280'} />
+                                  <Typography variant="caption" sx={{ color: a.places_disponibles === 0 ? '#B45309' : '#374151', fontWeight: 700, fontSize: '0.78rem' }}>
+                                    {a.places_disponibles === undefined || a.places_disponibles === null
+                                      ? `${a.places} places`
+                                      : a.places_disponibles === 0
+                                        ? 'Complet — liste d’attente'
+                                        : `${a.places_disponibles} place${a.places_disponibles > 1 ? 's' : ''} restante${a.places_disponibles > 1 ? 's' : ''}`}
+                                  </Typography>
+                                </Box>
+                              ) : (
                                 <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.6 }}>
                                   <IcMembres taille={13} couleur="#6B7280" />
                                   <Typography variant="caption" sx={{ color: '#374151', fontWeight: 600, fontSize: '0.78rem' }}>
-                                    {a.places} places
+                                    Places illimitées
                                   </Typography>
                                 </Box>
                               )}

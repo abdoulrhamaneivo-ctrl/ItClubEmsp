@@ -126,6 +126,21 @@ def register_candidature(request):
         # Format plat : tout sauf les clés réservées devient donnees
         reserves = {'cellules_souhaitees', 'cellules', 'donnees'}
         donnees = {k: v for k, v in data.items() if k not in reserves}
+    # RG-A1 (doc 02 D2) : un email = une seule candidature active
+    from apps import emails as _mail
+    email_test = ''
+    for k in ('email', 'e-mail', 'courriel', 'mail', 'adresse_email'):
+        v = donnees.get(k)
+        if isinstance(v, str) and v.strip():
+            email_test = v.strip().lower()
+            break
+    if email_test:
+        for c in Candidature.objects.filter(statut='en_attente'):
+            if _mail.email_de_candidature(c).strip().lower() == email_test:
+                return Response(
+                    {'detail': 'Une candidature est déjà en cours pour cet email.'},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
     cellules_refs = (data.get('cellules_souhaitees')
                      or data.get('cellules') or [])
     if isinstance(cellules_refs, str):
@@ -151,6 +166,26 @@ def register_candidature(request):
             status=status.HTTP_201_CREATED,
         )
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+@permission_classes([permissions.AllowAny])
+def qr_adhesion(request):
+    """GET /api/v1/adhesion/qr?source=web — QR du formulaire (RG-A2, PNG)."""
+    from django.conf import settings as _s
+    from django.http import HttpResponse
+    import io
+    try:
+        import qrcode
+    except ImportError:
+        from django.http import JsonResponse
+        return JsonResponse({'detail': 'Librairie qrcode manquante.'}, status=501)
+    source = request.query_params.get('source', 'web')
+    url = f'{_s.FRONTEND_URL}/#adhesion?source={source}'
+    img = qrcode.make(url, box_size=10, border=2)
+    buf = io.BytesIO()
+    img.save(buf, format='PNG')
+    return HttpResponse(buf.getvalue(), content_type='image/png')
 
 
 @api_view(['GET'])

@@ -12,7 +12,7 @@ from apps.views_emails import (
 from apps.views_core import (
     CelluleViewSet, BureauViewSet, ActualiteViewSet,
     DocumentViewSet, MediaViewSet, EvenementViewSet, register_candidature,
-    presentation,
+    presentation, qr_adhesion,
 )
 
 router = DefaultRouter()
@@ -28,6 +28,7 @@ router.register('notifications', NotificationViewSet, basename='notification')
 urlpatterns = [
     path('api/v1/', include(router.urls)),
     path('api/v1/auth/register-candidature', register_candidature),
+    path('api/v1/adhesion/qr', qr_adhesion),
     path('api/v1/presentation/', presentation),
     path('api/v1/auth/token', TokenAvecUserView.as_view()),
     path('api/v1/auth/token/refresh', TokenRefreshView.as_view()),

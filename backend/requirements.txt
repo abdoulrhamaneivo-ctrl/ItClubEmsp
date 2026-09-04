@@ -10,3 +10,4 @@ whitenoise
 gunicorn
 psycopg[binary]
 Pillow
+qrcode[pil]

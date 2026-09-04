@@ -414,6 +414,28 @@ export default function Adhesion() {
 }
 
 /* ── Écran de succès avec confettis ─────────────────────────── */
+function QrAdhesion() {
+  // QR réel (API) — masqué en mode mock (pas de backend)
+  const base = import.meta.env.VITE_API_URL
+  if (!base) return null
+  const src = `${base}/api/v1/adhesion/qr?source=web`
+  return (
+    <Box sx={{ mt: 3 }}>
+      <Typography sx={{ fontWeight: 800, color: '#0F5B3A', fontSize: '0.85rem', mb: 1.5 }}>
+        Fais passer le mot — scanne pour adhérer
+      </Typography>
+      <Box component="img" src={src} alt="QR code du formulaire d'adhésion"
+        sx={{ width: 150, height: 150, borderRadius: '14px', border: '1px solid #E3EEE8', bgcolor: '#fff', p: 1 }} />
+      <Box sx={{ mt: 1 }}>
+        <Typography component="a" href={src} download="qr-adhesion-itclub.png"
+          sx={{ color: '#0E7A50', fontWeight: 700, fontSize: '0.82rem' }}>
+          Télécharger le QR (campagne campus)
+        </Typography>
+      </Box>
+    </Box>
+  )
+}
+
 function EcranSucces({ prenom }) {
   const confettis = Array.from({ length: 14 }, (_, i) => ({
     x: (i - 7) * 34, r: 360 * (i % 2 ? 1 : -1), c: ['#1FAF72', '#F5A623', '#2563EB', '#7B61FF'][i % 4],
@@ -444,6 +466,7 @@ function EcranSucces({ prenom }) {
           Ta candidature est enregistrée. Tu recevras un e-mail dès sa validation
           par le Bureau — et ton QR code d&apos;accès membre.
         </Typography>
+        <QrAdhesion />
       </Box>
     </motion.div>
   )

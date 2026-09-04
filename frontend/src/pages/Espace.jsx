@@ -9,6 +9,7 @@ import Avatar from '@mui/material/Avatar'
 import Divider from '@mui/material/Divider'
 import IconButton from '@mui/material/IconButton'
 import Tooltip from '@mui/material/Tooltip'
+import Switch from '@mui/material/Switch'
 import InputBase from '@mui/material/InputBase'
 import HomeIcon from '@mui/icons-material/Home'
 import SearchIcon from '@mui/icons-material/Search'
@@ -696,6 +697,7 @@ export default function Espace() {
                 Pour corriger une information, contacte la Secrétaire Générale — les données viennent de l'annuaire du club.
               </Typography>
             </Box>
+            <PreferencesNotifications />
 
             <Box sx={{ p: { xs: 2.8, md: 3.2 }, bgcolor: '#fff', borderRadius: '18px', border: '1px solid #E8ECEA' }}>
               <Typography sx={{ fontWeight: 800, color: '#111827', fontSize: '1rem', mb: 2 }}>
@@ -756,6 +758,63 @@ export default function Espace() {
           </Typography>
         </Box>
       </motion.div>
+    </Box>
+  )
+}
+
+/* ── Préférences notifications (doc 02 D10 : opt-out granulaire) ── */
+function PreferencesNotifications() {
+  const [prefs, setPrefs] = useState(null)
+  const [sauve, setSauve] = useState('')
+
+  useEffect(() => {
+    let stop = false
+    api.getMe().then((me) => { if (!stop && me) setPrefs(me.notif_prefs ?? {}) }).catch(() => {})
+    return () => { stop = true }
+  }, [])
+
+  const basculer = async (cle) => {
+    const nouvelles = { ...(prefs ?? {}), [cle]: !(prefs?.[cle] ?? true) }
+    setPrefs(nouvelles)
+    setSauve('')
+    try {
+      await api.patchMe({ notif_prefs: nouvelles })
+      setSauve('Préférences enregistrées ✓')
+    } catch {
+      setSauve('Hors-ligne — réessaie plus tard')
+    }
+  }
+
+  const LIGNES = [
+    ['annonce', 'Annonces du Bureau', 'Publications officielles et actualités'],
+    ['inscription', 'Mes inscriptions', 'Confirmations, liste d’attente, promotions'],
+    ['rappel', 'Rappels J-1 / H-2h', 'Avant chaque activité où tu es inscrit'],
+    ['recap', 'Récap du dimanche', 'La semaine à venir, chaque dimanche 18h'],
+  ]
+
+  return (
+    <Box sx={{ p: { xs: 2.8, md: 3.2 }, bgcolor: '#fff', borderRadius: '18px', border: '1px solid #E8ECEA', gridColumn: { md: '1 / -1' } }}>
+      <Typography sx={{ fontWeight: 800, color: '#111827', fontSize: '1rem', mb: 0.5 }}>
+        Notifications par email
+      </Typography>
+      <Typography variant="caption" sx={{ color: '#5A6B63', display: 'block', mb: 1.5 }}>
+        {prefs === null ? 'Chargement…' : 'Choisis ce que tu veux recevoir — le reste reste visible ici.'}
+      </Typography>
+      {LIGNES.map(([cle, titre, aide]) => (
+        <Box key={cle} sx={{ display: 'flex', alignItems: 'center', gap: 2, py: 1.2, borderBottom: '1px solid #EEF2F0' }}>
+          <Box sx={{ flex: 1 }}>
+            <Typography sx={{ fontWeight: 700, color: '#111827', fontSize: '0.86rem' }}>{titre}</Typography>
+            <Typography variant="caption" sx={{ color: '#5A6B63' }}>{aide}</Typography>
+          </Box>
+          <Switch checked={prefs?.[cle] ?? true} onChange={() => basculer(cle)} disabled={prefs === null}
+            sx={{ '& .MuiSwitch-switchBase.Mui-checked': { color: '#1FAF72' }, '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': { bgcolor: '#1FAF72' } }} />
+        </Box>
+      ))}
+      {sauve && (
+        <Typography variant="caption" sx={{ display: 'block', mt: 1.5, color: sauve.startsWith('Hors') ? '#B45309' : '#0E7A50', fontWeight: 700 }}>
+          {sauve}
+        </Typography>
+      )}
     </Box>
   )
 }
