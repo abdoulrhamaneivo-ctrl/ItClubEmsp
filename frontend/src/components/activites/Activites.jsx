@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import { motion } from 'framer-motion'
 import Box from '@mui/material/Box'
 import Container from '@mui/material/Container'
@@ -271,8 +272,69 @@ export default function Activites() {
             </Button>
           </Box>
         </motion.div>
+
+        <BilansPasses />
       </Container>
     </Box>
+  )
+}
+
+/* ── Bilans & notes des événements passés (public) ──────────── */
+function BilansPasses() {
+  const { data: passes = [] } = useQuery({
+    queryKey: ['evenements', 'passes'],
+    queryFn: () => api.getEvenementsPasses(6),
+  })
+  const visibles = passes.filter((e) => e.bilan || (e.note_moyenne && e.nb_retours > 0))
+  if (visibles.length === 0) return null
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 18 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '-60px' }}
+      transition={{ duration: 0.3 }}
+    >
+      <Box sx={{ mt: 7 }}>
+        <Typography sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 800, fontSize: '1.05rem', color: '#111827', mb: 2 }}>
+          Après coup — les bilans
+        </Typography>
+        <Box sx={{ display: 'grid', gap: 2, gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' } }}>
+          {visibles.map((e) => (
+            <Box key={e.id} sx={{
+              bgcolor: '#fff', borderRadius: '16px', border: '1px solid #E8ECEA',
+              p: 2.6, borderLeft: `4px solid ${e.couleur ?? '#2563EB'}`,
+            }}>
+              <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', flexWrap: 'wrap', mb: 0.8 }}>
+                <Typography sx={{ fontWeight: 800, color: '#111827', fontSize: '0.92rem', flex: 1, minWidth: 150 }}>
+                  {e.titre}
+                </Typography>
+                {e.note_moyenne && (
+                  <Chip label={`★ ${e.note_moyenne}/5 · ${e.nb_retours} avis`} size="small"
+                    sx={{ bgcolor: '#FFF6E0', color: '#B45309', fontWeight: 800, height: 24 }} />
+                )}
+              </Box>
+              {e.bilan && (
+                <>
+                  <Typography variant="body2" sx={{ color: '#374151', lineHeight: 1.7, fontSize: '0.86rem' }}>
+                    {e.bilan.texte}
+                  </Typography>
+                  {e.bilan.points_forts && (
+                    <Typography variant="caption" sx={{ display: 'block', mt: 1, color: '#0B7A4B', fontWeight: 700 }}>
+                      Points forts : {e.bilan.points_forts}
+                    </Typography>
+                  )}
+                  {e.bilan.points_ameliorer && (
+                    <Typography variant="caption" sx={{ display: 'block', mt: 0.4, color: '#B45309', fontWeight: 700 }}>
+                      À améliorer : {e.bilan.points_ameliorer}
+                    </Typography>
+                  )}
+                </>
+              )}
+            </Box>
+          ))}
+        </Box>
+      </Box>
+    </motion.div>
   )
 }
 

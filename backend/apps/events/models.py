@@ -64,3 +64,31 @@ class Presence(models.Model):
     class Meta:
         unique_together = ('evenement', 'membre')
         indexes = [models.Index(fields=['evenement'])]
+
+
+class Retour(models.Model):
+    """Retour post-activité (doc 02 D5) : note 1-5 + avis libre, 1 par membre."""
+    evenement = models.ForeignKey(Evenement, on_delete=models.CASCADE, related_name='retours')
+    membre = models.ForeignKey(User, on_delete=models.CASCADE, related_name='retours')
+    note = models.PositiveSmallIntegerField('Note 1-5')
+    avis = models.TextField('Avis libre', max_length=1000, blank=True)
+    cree_le = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('evenement', 'membre')
+        ordering = ['-cree_le']
+        indexes = [models.Index(fields=['evenement'])]
+
+
+class Bilan(models.Model):
+    """Bilan écrit de l'événement (P6) — affiché public après publication."""
+    evenement = models.OneToOneField(Evenement, on_delete=models.CASCADE, related_name='bilan')
+    texte = models.TextField('Bilan')
+    points_forts = models.TextField('Points forts', blank=True)
+    points_ameliorer = models.TextField('À améliorer', blank=True)
+    publie = models.BooleanField(default=False)
+    cree_le = models.DateTimeField(auto_now_add=True)
+    maj_le = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f'Bilan — {self.evenement.titre}'

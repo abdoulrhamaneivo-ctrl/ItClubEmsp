@@ -29,6 +29,7 @@ import Opportunites from './Opportunites'
 import CellulesAdmin from './CellulesAdmin'
 import Communication from './Communication'
 import Admin from './Admin'
+import Bilans from './Bilans'
 
 /**
  * Back-office — EXPERIENCE, pas un panneau d'admin :
@@ -296,6 +297,7 @@ export default function BackofficeLayout() {
                     m.path === 'registre-membres' ? <RegistreMembres /> :
                     m.path === 'comptes-rendus' ? <ComptesRendus /> :
                     m.path === 'evenements' ? <Presences /> :
+                    m.path === 'bilans' ? <Bilans /> :
                     m.path === 'adhesion' ? <StatsAdhesion /> :
                     m.path === 'ateliers' ? <Ateliers /> :
                     m.path === 'calendrier' ? <Calendrier /> :

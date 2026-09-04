@@ -564,6 +564,100 @@ def admin_role_passation(request, code):
                      'titulaire': nouveau.get_full_name() or nouveau.username})
 
 
+# ── Retours & bilan post-activité (doc 02 D5, P6) ────────────────
+@api_view(['POST'])
+@permission_classes([permissions.IsAuthenticated])
+def donner_retour(request, pk):
+    """POST /evenements/{id}/retour {note, avis} — 1 par membre, modifiable."""
+    from apps.events.models import Retour
+    from django.db import IntegrityError
+    from django.db.models import Avg, Count
+    try:
+        evt = Evenement.objects.get(pk=pk)
+    except Evenement.DoesNotExist:
+        return Response({'detail': 'Événement introuvable.'}, status=404)
+    try:
+        note = int(request.data.get('note'))
+    except (TypeError, ValueError):
+        return Response({'detail': 'Note 1-5 requise.'}, status=400)
+    if not 1 <= note <= 5:
+        return Response({'detail': 'Note entre 1 et 5.'}, status=400)
+    avis = (request.data.get('avis') or '').strip()[:1000]
+    retour, cree = Retour.objects.update_or_create(
+        evenement=evt, membre=request.user,
+        defaults={'note': note, 'avis': avis})
+    # Recharge frais pour la moyenne exacte
+    from django.db.models import Avg
+    agg = Retour.objects.filter(evenement=evt).aggregate(moyenne=Avg('note'), n=Count('id'))
+    return Response({'statut': 'modifie' if not cree else 'enregistre',
+                     'note_moyenne': round(agg['moyenne'], 1), 'nb_retours': agg['n']})
+
+
+@api_view(['GET'])
+@permission_classes([permissions.IsAuthenticated])
+def retours_liste(request, pk):
+    """GET /evenements/{id}/retours — avis membres (organisateur P1/P6)."""
+    from apps.events.models import Retour
+    if not a_role(request.user, CODES_PRESENCE):
+        return Response({'detail': 'Réservé aux organisateurs (P1/P6).'}, status=403)
+    try:
+        evt = Evenement.objects.get(pk=pk)
+    except Evenement.DoesNotExist:
+        return Response({'detail': 'Événement introuvable.'}, status=404)
+    from django.db.models import Avg, Count
+    agg = Retour.objects.filter(evenement=evt).aggregate(moyenne=Avg('note'), n=Count('id'))
+    lignes = Retour.objects.filter(evenement=evt).select_related('membre')
+    return Response({
+        'evenement': evt.titre,
+        'note_moyenne': round(agg['moyenne'], 1) if agg['moyenne'] else None,
+        'nb_retours': agg['n'],
+        'avis': [{
+            'nom': r.membre.get_full_name() or r.membre.username,
+            'note': r.note, 'avis': r.avis, 'cree_le': r.cree_le,
+        } for r in lignes],
+    })
+
+
+@api_view(['GET', 'PATCH'])
+@permission_classes([permissions.IsAuthenticated])
+def bilan_evenement(request, pk):
+    """GET/PATCH /evenements/{id}/bilan — brouillon orga, publie → vitrine."""
+    from apps.events.models import Bilan
+    from django.utils import timezone
+    try:
+        evt = Evenement.objects.get(pk=pk)
+    except Evenement.DoesNotExist:
+        return Response({'detail': 'Événement introuvable.'}, status=404)
+    if request.method == 'GET':
+        if not a_role(request.user, CODES_PRESENCE):
+            return Response({'detail': 'Réservé aux organisateurs (P1/P6).'}, status=403)
+        bilan = getattr(evt, 'bilan', None)
+        return Response({'evenement': evt.titre,
+                         'bilan': None if bilan is None else {
+                             'texte': bilan.texte, 'points_forts': bilan.points_forts,
+                             'points_ameliorer': bilan.points_ameliorer,
+                             'publie': bilan.publie}})
+    if not a_role(request.user, CODES_PRESENCE):
+        return Response({'detail': 'Réservé aux organisateurs (P1/P6).'}, status=403)
+    bilan, _ = Bilan.objects.get_or_create(evenement=evt)
+    if 'texte' in request.data:
+        texte = (request.data.get('texte') or '').strip()
+        if not texte:
+            return Response({'detail': 'Le bilan ne peut pas être vide.'}, status=400)
+        bilan.texte = texte
+    for champ in ('points_forts', 'points_ameliorer'):
+        if champ in request.data:
+            setattr(bilan, champ, (request.data.get(champ) or '').strip())
+    if 'publie' in request.data:
+        bilan.publie = bool(request.data['publie'])
+        if bilan.publie and not bilan.texte.strip():
+            return Response({'detail': 'Rédige le bilan avant de publier.'}, status=400)
+    bilan.save()
+    return Response({'statut': 'publie' if bilan.publie else 'brouillon',
+                     'texte': bilan.texte, 'points_forts': bilan.points_forts,
+                     'points_ameliorer': bilan.points_ameliorer})
+
+
 # ── Espace membre : /me/* (doc 04 §5 accounts) ────────────────
 @api_view(['GET', 'PATCH'])
 @permission_classes([permissions.IsAuthenticated])

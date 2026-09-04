@@ -12,6 +12,7 @@ from apps.views_emails import (
     classement, calendrier_ics, evenement_ics,
     dashboard, admin_utilisateurs, admin_utilisateur_maj,
     admin_roles, admin_role_passation,
+    donner_retour, retours_liste, bilan_evenement,
 )
 from apps.views_core import (
     CelluleViewSet, BureauViewSet, ActualiteViewSet,
@@ -52,6 +53,9 @@ urlpatterns = [
     path('api/v1/evenements/<int:pk>/desinscrire', desinscrire),
     path('api/v1/evenements/<int:pk>/presence', marquer_presence),
     path('api/v1/evenements/<int:pk>/presence/', liste_presences),
+    path('api/v1/evenements/<int:pk>/retour', donner_retour),
+    path('api/v1/evenements/<int:pk>/retours/', retours_liste),
+    path('api/v1/evenements/<int:pk>/bilan/', bilan_evenement),
     path('api/v1/evenements/<int:pk>/qr-presence', qr_presence),
     path('api/v1/me/', me),
     path('api/v1/classement/', classement),

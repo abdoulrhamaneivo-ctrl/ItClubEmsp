@@ -20,6 +20,7 @@ export const modulesBackoffice = [
   { path: 'cellules', label: 'Cellules', roles: ['P4'], desc: 'Créer les cellules, nommer les chefs.', Icone: Users2 },
   { path: 'communication', label: 'Communication', roles: ['P5'], desc: 'Affiches, galerie, calendrier éditorial, réseaux sociaux.', Icone: Share2 },
   { path: 'evenements', label: 'Événements', roles: ['P6'], desc: 'Fiches, checklists, places, retours, bilans.', Icone: CalendarClock },
+  { path: 'bilans', label: 'Retours & bilans', roles: ['P6'], desc: 'Avis des membres après l\'activité, bilan publié sur la vitrine.', Icone: CalendarClock },
   { path: 'adhesion', label: 'Adhésion & QR code', roles: ['P7'], desc: 'Formulaire, QR code téléchargeable, statistiques.', Icone: QrCode },
   { path: 'contenu', label: 'Actualités & contenu', roles: ['P1', 'P3', 'P5', 'ADMIN'], desc: 'Publier des actualités (avec image + tag cellule), gérer les documents et la galerie.', Icone: Newspaper },
   { path: 'formulaire', label: 'Éditer le formulaire', roles: ['P1', 'P7', 'P3', 'ADMIN'], desc: 'Ajouter, supprimer, modifier les champs du formulaire d’adhésion et les rendre obligatoires ou non.', Icone: ClipboardPen },

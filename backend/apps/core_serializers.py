@@ -205,12 +205,17 @@ class EvenementSerializer(serializers.ModelSerializer):
     inscrits_count = serializers.SerializerMethodField()
     code_presence = serializers.SerializerMethodField()
     presents_count = serializers.SerializerMethodField()
+    note_moyenne = serializers.SerializerMethodField()
+    nb_retours = serializers.SerializerMethodField()
+    mon_retour = serializers.SerializerMethodField()
+    bilan = serializers.SerializerMethodField()
 
     class Meta:
         model = Evenement
         fields = ['id', 'titre', 'description', 'type', 'type_label', 'couleur', 'date', 'date_fin', 'lieu',
                   'places', 'places_disponibles', 'inscrits_count', 'presents_count',
-                  'code_presence', 'icone']
+                  'code_presence', 'note_moyenne', 'nb_retours', 'mon_retour',
+                  'bilan', 'icone']
 
     def get_inscrits_count(self, obj):
         # Confirmés uniquement (annoté en 1 requête ; fallback si absent)
@@ -245,6 +250,43 @@ class EvenementSerializer(serializers.ModelSerializer):
         except Exception:
             pass
         return None
+
+    def get_note_moyenne(self, obj):
+        # Moyenne des retours (annotée si liste ; fallback sinon)
+        retours = getattr(obj, '_retours', None)
+        if retours is None:
+            retours = list(obj.retours.all())
+        if not retours:
+            return None
+        return round(sum(r.note for r in retours) / len(retours), 1)
+
+    def get_nb_retours(self, obj):
+        retours = getattr(obj, '_retours', None)
+        if retours is not None:
+            return len(retours)
+        return obj.retours.count()
+
+    def get_mon_retour(self, obj):
+        req = (self.context or {}).get('request')
+        u = getattr(req, 'user', None)
+        if not (u and u.is_authenticated):
+            return None
+        retours = getattr(obj, '_retours', None)
+        liste = retours if retours is not None else obj.retours.all()
+        for r in liste:
+            if r.membre_id == u.id:
+                return {'note': r.note, 'avis': r.avis}
+        return None
+
+    def get_bilan(self, obj):
+        try:
+            bilan = obj.bilan  # OneToOne — requête par objet, listes courtes
+        except Exception:
+            return None
+        if bilan is None or not bilan.publie:
+            return None
+        return {'texte': bilan.texte, 'points_forts': bilan.points_forts,
+                'points_ameliorer': bilan.points_ameliorer}
 
 
 class CandidatureSerializer(serializers.ModelSerializer):

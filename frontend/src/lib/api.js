@@ -170,6 +170,11 @@ export const api = {
     const data = await fetchJson(`/api/v1/evenements/?${params}`)
     return data ?? mocks.activites
   },
+  // Événements passés (avec note + bilan pour la vitrine)
+  async getEvenementsPasses(limit = 6) {
+    const data = await fetchJson(`/api/v1/evenements/?a_venir=0&limit=${limit}`)
+    return data ?? []
+  },
 
   // Actualités
   async getActualites({ limit = 6 } = {}) {
@@ -569,6 +574,27 @@ export const api = {
     invaliderCacheMetier()
     return { success: true }
   },
+  // Retours post-activité : donner/modifier son avis
+  async donnerRetour(evenementId, note, avis = '') {
+    if (USE_MOCK) {
+      await new Promise(r => setTimeout(r, 500))
+      return { statut: 'enregistre', note_moyenne: note, nb_retours: 1 }
+    }
+    return postJson(`/api/v1/evenements/${evenementId}/retour`, { note, avis })
+  },
+  async getRetours(evenementId) {
+    const data = await fetchJson(`/api/v1/evenements/${evenementId}/retours/`)
+    return data ?? { evenement: '', note_moyenne: null, nb_retours: 0, avis: [] }
+  },
+  // Bilan (orga) : brouillon + publication
+  async getBilan(evenementId) {
+    const data = await fetchJson(`/api/v1/evenements/${evenementId}/bilan/`)
+    return data ?? { evenement: '', bilan: null }
+  },
+  async majBilan(evenementId, patch) {
+    return postJson(`/api/v1/evenements/${evenementId}/bilan/`, patch, 'PATCH')
+  },
+
   // Registre membres — candidatures (Bureau P1/P3/P4)
   async getCandidatures() {
     const data = await fetchJson('/api/v1/candidatures/')

@@ -202,3 +202,62 @@ class CalendrierTests(TestCase):
         self.assertIn(f'UID:evt-{e.pk}@itclub.emsp', r.content.decode('utf-8'))
         r = self.client.get('/api/v1/evenements/99999.ics')
         self.assertEqual(r.status_code, 404)
+
+
+class RetoursBilanTests(TestCase):
+    client_class = APIClient
+
+    def setUp(self):
+        self.e = evt(places=10)
+        self.m = membre('rb@x.com')
+        self.m2 = membre('rb2@x.com')
+        self.orga = membre('orgarb@x.com')
+        from apps.accounts.models import Role
+        Role.objects.update_or_create(code='P6', defaults={'titulaire': self.orga})
+
+    def auth(self, u):
+        self.client.force_authenticate(u)
+
+    def test_note_valide_et_moyenne(self):
+        self.auth(self.m)
+        r = self.client.post(f'/api/v1/evenements/{self.e.id}/retour', {'note': 6}, format='json')
+        self.assertEqual(r.status_code, 400)
+        r = self.client.post(f'/api/v1/evenements/{self.e.id}/retour', {'note': 4, 'avis': 'Très bien'}, format='json')
+        self.assertEqual(r.status_code, 200)
+        self.auth(self.m2)
+        self.client.post(f'/api/v1/evenements/{self.e.id}/retour', {'note': 2}, format='json')
+        r = self.client.get(f'/api/v1/evenements/{self.e.id}/').json()
+        self.assertEqual(r['note_moyenne'], 3.0)
+        self.assertEqual(r['nb_retours'], 2)
+        self.assertEqual(r['mon_retour']['note'], 2)
+
+    def test_modifiable_une_ligne(self):
+        self.auth(self.m)
+        self.client.post(f'/api/v1/evenements/{self.e.id}/retour', {'note': 3}, format='json')
+        self.client.post(f'/api/v1/evenements/{self.e.id}/retour', {'note': 5, 'avis': 'Génial'}, format='json')
+        from apps.events.models import Retour
+        self.assertEqual(Retour.objects.filter(membre=self.m).count(), 1)
+        self.assertEqual(Retour.objects.get(membre=self.m).note, 5)
+
+    def test_retours_reserves_orga(self):
+        self.auth(self.m)
+        self.assertEqual(self.client.get(f'/api/v1/evenements/{self.e.id}/retours/').status_code, 403)
+        self.auth(self.orga)
+        r = self.client.get(f'/api/v1/evenements/{self.e.id}/retours/')
+        self.assertEqual(r.status_code, 200)
+
+    def test_bilan_publication_et_vitrine(self):
+        self.auth(self.orga)
+        r = self.client.patch(f'/api/v1/evenements/{self.e.id}/bilan/', {'publie': True}, format='json')
+        self.assertEqual(r.status_code, 400)  # vide
+        r = self.client.patch(f'/api/v1/evenements/{self.e.id}/bilan/',
+                              {'texte': 'Bilan du hackathon', 'points_forts': 'Ambiance',
+                               'publie': True}, format='json')
+        self.assertEqual(r.json()['statut'], 'publie')
+        # visible publiquement sur l'événement
+        r = self.client.get(f'/api/v1/evenements/{self.e.id}/').json()
+        self.assertEqual(r['bilan']['texte'], 'Bilan du hackathon')
+        # non publié = invisible
+        self.client.patch(f'/api/v1/evenements/{self.e.id}/bilan/', {'publie': False}, format='json')
+        r = self.client.get(f'/api/v1/evenements/{self.e.id}/').json()
+        self.assertIsNone(r['bilan'])

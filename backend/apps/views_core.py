@@ -501,12 +501,14 @@ class EvenementViewSet(PublicReadOrStaffWrite):
 
     def get_queryset(self):
         from django.utils import timezone
-        from django.db.models import Count, Q
+        from django.db.models import Count, Q, Prefetch
+        from apps.events.models import Retour
         qs = super().get_queryset().annotate(
             # Confirmés en UNE requête (évite 2N requêtes des compteurs)
             _confirmes=Count('inscrits', filter=Q(inscription__liste_attente=False)),
             _presents=Count('presences', distinct=True),
-        )
+        ).prefetch_related(Prefetch('retours', queryset=Retour.objects.only(
+            'evenement_id', 'membre_id', 'note')))
         a_venir = self.request.query_params.get('a_venir') or self.request.query_params.get('upcoming')
         if str(a_venir).lower() in ('1', 'true'):
             qs = qs.filter(date_debut__gte=timezone.now())
