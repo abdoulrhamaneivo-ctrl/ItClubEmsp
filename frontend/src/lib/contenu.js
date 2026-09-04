@@ -4,6 +4,8 @@
  * Les pages publiques s'abonnent (useContenu) et se re-render à chaque modif back-office.
  */
 import { useEffect, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { api } from './api'
 
 const CLES = {
   actualites: 'club_actualites',
@@ -102,16 +104,92 @@ export function supprimerMedia(id) {
   ecrire(CLES.medias, getMedias().filter((x) => x.id !== id))
 }
 
-/** Hook : données réactives — re-render à chaque modification back-office. */
+/** Hook : données réactives — re-render à chaque modification back-office.
+ * Mode réel (VITE_API_URL) : lit l'API Django (adaptée au format local) ;
+ * sinon : localStorage comme avant. Les pages publiques ne changent pas. */
 export function useContenu(type) {
+  const REEL = !api.isMockMode()
   const lireActuel = () => type === 'actualites' ? getActualites() : type === 'documents' ? getDocuments() : getMedias()
-  const [data, setData] = useState(lireActuel)
+  const [local, setLocal] = useState(lireActuel)
   useEffect(() => {
-    setData(lireActuel())
-    return subscribe(() => setData(lireActuel()))
+    setLocal(lireActuel())
+    return subscribe(() => setLocal(lireActuel()))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [type])
-  return data
+
+  const { data: cellules = [] } = useQuery({
+    queryKey: ['cellules'], queryFn: () => api.getCellules(), enabled: REEL,
+  })
+  const slugParId = {}
+  for (const c of cellules) {
+    if (c.id != null) slugParId[c.id] = c.slug ?? String(c.id)
+  }
+  const fetchReel = type === 'actualites'
+    ? () => api.getActualitesBrutes()
+    : type === 'documents' ? () => api.getDocuments() : () => api.getMedias()
+  const { data: reels } = useQuery({
+    queryKey: [type === 'medias' ? 'galerie' : type, 'gestion'],
+    queryFn: fetchReel, enabled: REEL,
+  })
+
+  if (!REEL || !reels) return local
+  if (type === 'actualites') return reels.map((a) => adapterActu(a, slugParId))
+  if (type === 'documents') return reels.map(adapterDoc)
+  return reels.map((m) => adapterMedia(m, slugParId))
+}
+
+/* ── Adaptateurs API → format local (pages publiques inchangées) ── */
+
+function adapterActu(a, slugParId) {
+  return {
+    id: a.id,
+    titre: a.titre,
+    extrait: a.extrait ?? '',
+    auteur: a.auteur_nom ?? 'Le Bureau',
+    tag: a.tag_cellule_nom ? `Cellule ${a.tag_cellule_nom}` : 'Annonce officielle',
+    cellule: a.tag_cellule != null ? (slugParId[a.tag_cellule] ?? 'general') : 'general',
+    date: (a.date ?? '').slice(0, 10),
+    couleur: a.tag_cellule_couleur ?? '#1FAF72',
+    image: a.image ?? null,
+  }
+}
+
+const FAMILLE_VERS_LOCAL = { fondamentaux: 'fondamentaux', vie: 'organisation', archives: 'archives' }
+
+function adapterDoc(d) {
+  const nom = (d.fichier ?? '').split('/').pop()
+  return {
+    id: d.slug, slug: d.slug,
+    titre: d.titre,
+    description: d.description ?? '',
+    famille: FAMILLE_VERS_LOCAL[d.famille_id] ?? 'fondamentaux',
+    couleur: d.couleur ?? '#1FAF72',
+    fichier: nom, fichierUrl: d.fichier ?? null,
+    format: d.format ?? 'FICHIER',
+  }
+}
+
+function adapterMedia(m, slugParId) {
+  return {
+    id: m.id,
+    type: m.type ?? 'photo',
+    evenement: m.evenement || 'atelier',
+    cellule: m.tag_cellule != null ? (slugParId[m.tag_cellule] ?? 'general') : 'general',
+    date: (m.date ?? '').slice(0, 10),
+    titre: m.titre,
+    legende: m.legende ?? '',
+    youtube: m.youtube_id ?? '',
+    iconeId: m.icone ?? 'trophee',
+    couleur: '#1FAF72',
+    image: m.image ?? null,
+  }
+}
+
+/** Génère un slug unique pour un nouveau document (clé primaire backend). */
+export function slugifier(titre) {
+  const base = (titre ?? '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 40) || 'document'
+  return `${base}-${Date.now().toString(36)}`
 }
 
 /** Lecture d'un fichier image → dataURL (max ~1.8 Mo, compressé si besoin). */

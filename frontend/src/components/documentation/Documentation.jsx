@@ -119,7 +119,7 @@ export default function Documentation() {
                         <Box
                           key={doc.id}
                           component="a"
-                          href={`/documents/${doc.fichier}`}
+                          href={doc.fichierUrl ?? `/documents/${doc.fichier}`}
                           target="_blank"
                           rel="noopener"
                           sx={{

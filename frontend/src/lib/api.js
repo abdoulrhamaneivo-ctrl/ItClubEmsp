@@ -90,6 +90,42 @@ export function setToken(token) {
   }
 }
 
+// POST/PATCH multipart (FormData : fichiers réels, pas de Content-Type manuel)
+async function postForm(endpoint, formData, method = 'POST') {
+  if (USE_MOCK) {
+    await new Promise(r => setTimeout(r, 600))
+    return { success: true, message: 'OK (mock)' }
+  }
+  const res = await fetch(`${BASE_URL}${endpoint}`, {
+    method,
+    headers: authHeaders(),
+    credentials: 'include',
+    body: formData,
+  })
+  if (!res.ok) {
+    let detail = ''
+    try { detail = JSON.stringify(await res.json()).slice(0, 200) } catch { /* ignore */ }
+    throw new Error(`API ${res.status}${detail ? ` — ${detail}` : ''}`)
+  }
+  invaliderCacheMetier()
+  return res.status === 204 ? null : res.json()
+}
+
+async function supprimerRessource(endpoint) {
+  if (USE_MOCK) {
+    await new Promise(r => setTimeout(r, 400))
+    return { success: true }
+  }
+  const res = await fetch(`${BASE_URL}${endpoint}`, {
+    method: 'DELETE',
+    headers: authHeaders(),
+    credentials: 'include',
+  })
+  if (!res.ok) throw new Error(`API ${res.status}`)
+  invaliderCacheMetier()
+  return { success: true }
+}
+
 // POST générique — mock d'auth en dev (le back Django livrera /auth/token)
 async function postJson(endpoint, payload, method = 'POST') {
   if (USE_MOCK) {
@@ -139,6 +175,58 @@ export const api = {
   async getActualites({ limit = 6 } = {}) {
     const data = await fetchJson(`/api/v1/actualites/?limit=${limit}`)
     return data ?? mocks.actualites
+  },
+  // Version brute (null en mock) — pour lib/contenu qui gère le fallback local
+  async getActualitesBrutes() {
+    return fetchJson('/api/v1/actualites/')
+  },
+  async getDocuments() {
+    return fetchJson('/api/v1/documents/')
+  },
+  async getMedias() {
+    return fetchJson('/api/v1/galerie/')
+  },
+
+  // Publication multipart (fichiers réels) — crée ou modifie (id/slug fourni)
+  async publierActualite({ id, titre, extrait, imageFile, tag_cellule }) {
+    const fd = new FormData()
+    fd.append('titre', titre)
+    fd.append('extrait', extrait ?? '')
+    if (tag_cellule) fd.append('tag_cellule', tag_cellule)
+    if (imageFile) fd.append('image', imageFile)
+    return postForm(id ? `/api/v1/actualites/${id}/` : '/api/v1/actualites/', fd, id ? 'PATCH' : 'POST')
+  },
+  async supprimerActualite(id) {
+    return supprimerRessource(`/api/v1/actualites/${id}/`)
+  },
+  async publierDocument({ slug, titre, description, fichierFile, famille, couleur }) {
+    const fd = new FormData()
+    if (slug) fd.append('slug', slug)
+    fd.append('titre', titre)
+    fd.append('description', description ?? '')
+    fd.append('famille_id', famille ?? 'fondamentaux')
+    if (couleur) fd.append('couleur', couleur)
+    if (fichierFile) fd.append('fichier', fichierFile)
+    // slug existant → PATCH, sinon POST (le slug est la clé primaire)
+    return postForm(slug ? `/api/v1/documents/${slug}/` : '/api/v1/documents/', fd, slug ? 'PATCH' : 'POST')
+  },
+  async supprimerDocument(slug) {
+    return supprimerRessource(`/api/v1/documents/${slug}/`)
+  },
+  async publierMedia({ id, titre, legende, type, imageFile, youtube_id, evenement, tag_cellule, icone }) {
+    const fd = new FormData()
+    fd.append('titre', titre)
+    fd.append('legende', legende ?? '')
+    fd.append('type', type ?? 'photo')
+    if (youtube_id) fd.append('youtube_id', youtube_id)
+    if (evenement) fd.append('evenement', evenement)
+    if (tag_cellule) fd.append('tag_cellule', tag_cellule)
+    if (icone) fd.append('icone', icone)
+    if (imageFile) fd.append('image', imageFile)
+    return postForm(id ? `/api/v1/galerie/${id}/` : '/api/v1/galerie/', fd, id ? 'PATCH' : 'POST')
+  },
+  async supprimerMedia(id) {
+    return supprimerRessource(`/api/v1/galerie/${id}/`)
   },
 
   // Présentation (qui sommes-nous)

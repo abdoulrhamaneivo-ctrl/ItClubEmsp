@@ -21,9 +21,30 @@ from apps.core_serializers import (
 User = get_user_model()
 
 
+class BureauWritePermission(permissions.BasePermission):
+    """Lecture publique ; écriture réservée au Bureau (doc 01 : rôles P1-P10,
+    CHEF_CELLULE, ADMIN) ou staff Django."""
+
+    CODES_BUREAU = ['P1', 'P2', 'P3', 'P4', 'P5', 'P6', 'P7', 'P8', 'P9', 'P10',
+                    'CHEF_CELLULE', 'ADMIN']
+
+    def has_permission(self, request, view):
+        if request.method in permissions.SAFE_METHODS:
+            return True
+        u = request.user
+        if not (u and u.is_authenticated):
+            return False
+        if u.is_staff:
+            return True
+        try:
+            return bool(u.roles.filter(code__in=self.CODES_BUREAU).exists())
+        except Exception:
+            return False
+
+
 class PublicReadOrStaffWrite(viewsets.ModelViewSet):
-    """Lecture ouverte à tous, écriture réservée au staff (étape 2 : rôles doc 01)."""
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    """Lecture ouverte à tous, écriture réservée au Bureau (doc 01)."""
+    permission_classes = [BureauWritePermission]
 
 
 # ── Vitrine ─────────────────────────────────────────────────

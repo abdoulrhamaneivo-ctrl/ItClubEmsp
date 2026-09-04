@@ -19,6 +19,7 @@ export const queryClient = new QueryClient({
 /** Après une écriture (inscription, candidature…) : rafraîchit les lectures liées. */
 export function invaliderCacheMetier() {
   queryClient.invalidateQueries({ predicate: (q) =>
-    q.queryKey[0] === 'evenements' || q.queryKey[0] === 'espace' ||
-    q.queryKey[0] === 'notifications' || q.queryKey[0] === 'candidatures' })
+    ['evenements', 'espace', 'notifications', 'candidatures',
+     'actualites', 'documents', 'galerie', 'presentation',
+     'bureau', 'cellules'].includes(q.queryKey[0]) })
 }
