@@ -59,7 +59,7 @@ export default function Login() {
         </motion.svg>
         <Box sx={{ position: 'relative', p: 8 }}>
           <motion.div initial={{ opacity: 0, y: 26 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.38 }}>
-            <Box component="img" src="/logo-itclub.jpg" alt="Logo IT-CLUB EMSP" sx={{ width: 74, height: 74, borderRadius: 3, border: '2px solid #1FAF72', mb: 3 }} />
+            <Box component="img" src="/logo-itclub.webp" alt="Logo IT-CLUB EMSP" sx={{ width: 74, height: 74, borderRadius: 3, border: '2px solid #1FAF72', mb: 3 }} />
             <Typography sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 800, fontSize: '1.9rem', color: '#fff' }}>
               IT-CLUB <span style={{ color: '#9AFBD7' }}>EMSP</span>
             </Typography>
@@ -79,7 +79,7 @@ export default function Login() {
           style={{ width: 'min(400px, 100%)' }}
         >
           <Box sx={{ display: { xs: 'flex', md: 'none' }, justifyContent: 'center', mb: 3 }}>
-            <Box component="img" src="/logo-itclub.jpg" alt="Logo" sx={{ width: 64, height: 64, borderRadius: 3, border: '2px solid #1FAF72' }} />
+            <Box component="img" src="/logo-itclub.webp" alt="Logo" sx={{ width: 64, height: 64, borderRadius: 3, border: '2px solid #1FAF72' }} />
           </Box>
 
           <Typography sx={{ fontFamily: "'JetBrains Mono',monospace", color: '#0E7A50', fontWeight: 700, fontSize: '0.78rem', mb: 0.8 }}>

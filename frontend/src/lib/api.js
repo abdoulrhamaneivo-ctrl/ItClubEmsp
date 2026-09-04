@@ -7,6 +7,8 @@
 const BASE_URL = import.meta.env.VITE_API_URL ?? ''
 const USE_MOCK = !BASE_URL  // VITE_API_URL défini → API réelle (même en dev)
 
+import { invaliderCacheMetier } from './queryClient'
+
 // Mocks locaux (fallback) — structure identique aux réponses Django attendues
 const mocks = {
   bureau: [
@@ -22,10 +24,10 @@ const mocks = {
     { id: 10, poste: 'Responsable des Relations Extérieures', nom: 'À désigner', mission: 'Liaison administration, autres clubs.', objectif: 'Reconnaissance officielle', ordre: 10, couleur: '#F5A623' },
   ],
   cellules: [
-    { id: 'web', nom: 'Cellule Web', icone: 'web', couleur: '#1FAF72', couleurFonce: '#0E7A50', membres: 14, description: 'Développement front & back : React, Django, déploiement. Le club construit ses propres outils ici.', programme: "Ce que tu y apprendras :\n• React + Vite, Material UI\n• Python / Django / API REST\n• Git, déploiement cloud\n\nProjet phare : cette plateforme !", image: '/photos/web.jpg' },
-    { id: 'ia', nom: 'Cellule IA', icone: 'ia', couleur: '#2563EB', couleurFonce: '#1D4ED8', membres: 9, description: "Intelligence artificielle et données : modèles, ateliers Python, projets d'agents.", programme: "Ce que tu y apprendras :\n• Bases de Python data\n• LLMs, prompts, agents IA\n• Mini-projets encadrés\n\nProjet phare : assistant IA du club.", image: '/photos/ia.jpg' },
-    { id: 'cyber', nom: 'Cellule Cybersécurité', icone: 'cyber', couleur: '#0F5B3A', couleurFonce: '#0F5B3A', membres: 11, description: "Sécurité offensive & défensive : CTF, bonnes pratiques, sensibilisation de l'école.", programme: "Ce que tu y apprendras :\n• Bases Linux & réseaux\n• Challenges CTF débutants\n• Sécurité au quotidien\n\nÉvénement : 1er CTF interne EMSP.", image: '/photos/cyber.jpg' },
-    { id: 'design', nom: 'Cellule Design', icone: 'design', couleur: '#7B61FF', couleurFonce: '#5B3FD6', membres: 7, description: 'UI/UX, identité visuelle, montage vidéo — tout ce qui rend le club visible.', programme: "Ce que tu y apprendras :\n• Figma & design system\n• Montage vidéo (bannières du club)\n• Charte graphique\n\nProjet : habillage vidéo des événements.", image: '/photos/design.jpg' },
+    { id: 'web', nom: 'Cellule Web', icone: 'web', couleur: '#1FAF72', couleurFonce: '#0E7A50', membres: 14, description: 'Développement front & back : React, Django, déploiement. Le club construit ses propres outils ici.', programme: "Ce que tu y apprendras :\n• React + Vite, Material UI\n• Python / Django / API REST\n• Git, déploiement cloud\n\nProjet phare : cette plateforme !", image: '/photos/web.webp' },
+    { id: 'ia', nom: 'Cellule IA', icone: 'ia', couleur: '#2563EB', couleurFonce: '#1D4ED8', membres: 9, description: "Intelligence artificielle et données : modèles, ateliers Python, projets d'agents.", programme: "Ce que tu y apprendras :\n• Bases de Python data\n• LLMs, prompts, agents IA\n• Mini-projets encadrés\n\nProjet phare : assistant IA du club.", image: '/photos/ia.webp' },
+    { id: 'cyber', nom: 'Cellule Cybersécurité', icone: 'cyber', couleur: '#0F5B3A', couleurFonce: '#0F5B3A', membres: 11, description: "Sécurité offensive & défensive : CTF, bonnes pratiques, sensibilisation de l'école.", programme: "Ce que tu y apprendras :\n• Bases Linux & réseaux\n• Challenges CTF débutants\n• Sécurité au quotidien\n\nÉvénement : 1er CTF interne EMSP.", image: '/photos/cyber.webp' },
+    { id: 'design', nom: 'Cellule Design', icone: 'design', couleur: '#7B61FF', couleurFonce: '#5B3FD6', membres: 7, description: 'UI/UX, identité visuelle, montage vidéo — tout ce qui rend le club visible.', programme: "Ce que tu y apprendras :\n• Figma & design system\n• Montage vidéo (bannières du club)\n• Charte graphique\n\nProjet : habillage vidéo des événements.", image: '/photos/design.webp' },
   ],
   activites: [
     { id: 1, titre: 'Atelier Git & GitHub', type: 'Atelier', date: '2026-09-15', lieu: 'Salle Info EMSP', places: 30, couleur: '#1FAF72', description: 'Apprends à versionner tes projets comme un pro. Branches, merges, PRs, conflits résolus.' },
@@ -49,10 +51,10 @@ const mocks = {
       { numero: '03', titre: 'Ouvrir les horizons', texte: "On va chercher ce qui se fait ailleurs — hackathons, conférences, modèles IA, CTF — et on ramène le meilleur sur le campus. Pas par vanité, mais pour que chacun voie ce qui est possible. Le club, c'est aussi pour voir plus loin et ne pas se limiter à la routine." },
     ],
     galerie: [
-      { src: '/photos/galerie-1.jpg', legende: 'Sortie culturelle — Grand-Bassam' },
-      { src: '/photos/galerie-2.jpg', legende: 'Vibeathon CI — 1er prix' },
-      { src: '/photos/galerie-3.jpg', legende: 'Atelier entre membres' },
-      { src: '/photos/galerie-4.jpg', legende: 'Session de travail du club' },
+      { src: '/photos/galerie-1.webp', legende: 'Sortie culturelle — Grand-Bassam' },
+      { src: '/photos/galerie-2.webp', legende: 'Vibeathon CI — 1er prix' },
+      { src: '/photos/galerie-3.webp', legende: 'Atelier entre membres' },
+      { src: '/photos/galerie-4.webp', legende: 'Session de travail du club' },
     ]
   }
 }
@@ -65,36 +67,18 @@ function authHeaders(extra = {}) {
   return token ? { ...extra, Authorization: `Bearer ${token}` } : extra
 }
 
-// Cache court (60s) + déduplication des appels en vol : la vitrine monte
-// 6+ sections qui fetchent, et Naviguer↔retour ne doit pas tout recharger.
-const _cache = new Map()
-const _envol = new Map()
-const CACHE_MS = 60_000
-
+// GET simple — le cache/dédup est géré par React Query (lib/queryClient.js,
+// staleTime 60s). Ici : juste fetch + dépliage pagination DRF.
 async function fetchJson(endpoint) {
   if (USE_MOCK) return null
-  const now = Date.now()
-  const hit = _cache.get(endpoint)
-  if (hit && now - hit.t < CACHE_MS) return hit.d
-  if (_envol.has(endpoint)) return _envol.get(endpoint)
-  const p = (async () => {
-    try {
-      const res = await fetch(`${BASE_URL}${endpoint}`, {
-        headers: authHeaders(),
-        credentials: 'include',
-      })
-      if (!res.ok) throw new Error(`API ${res.status}`)
-      const json = await res.json()
-      // DRF pagination : { count, results } → on renvoie la liste directement
-      const data = (json && Array.isArray(json.results)) ? json.results : json
-      _cache.set(endpoint, { t: Date.now(), d: data })
-      return data
-    } finally {
-      _envol.delete(endpoint)
-    }
-  })()
-  _envol.set(endpoint, p)
-  return p
+  const res = await fetch(`${BASE_URL}${endpoint}`, {
+    headers: authHeaders(),
+    credentials: 'include',
+  })
+  if (!res.ok) throw new Error(`API ${res.status}`)
+  const json = await res.json()
+  // DRF pagination : { count, results } → on renvoie la liste directement
+  return (json && Array.isArray(json.results)) ? json.results : json
 }
 
 // Token management
@@ -125,13 +109,8 @@ async function postJson(endpoint, payload, method = 'POST') {
     body: JSON.stringify(payload),
   })
   if (!res.ok) throw new Error(`API ${res.status}`)
-  // Écriture réussie → invalide le cache des lectures liées
-  for (const cle of [..._cache.keys()]) {
-    if (cle.startsWith('/api/v1/evenements') || cle.startsWith('/api/v1/me/') ||
-        cle.startsWith('/api/v1/notifications') || cle.startsWith('/api/v1/candidatures')) {
-      _cache.delete(cle)
-    }
-  }
+  // Écriture réussie → React Query rafraîchit les lectures liées
+  invaliderCacheMetier()
   return res.json()
 }
 
@@ -230,6 +209,7 @@ export const api = {
       credentials: 'include',
     })
     if (!res.ok) throw new Error(`API ${res.status}`)
+    invaliderCacheMetier()
     return res.json()
   },
 

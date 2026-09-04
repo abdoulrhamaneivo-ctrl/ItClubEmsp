@@ -56,7 +56,7 @@ export default function Navbar() {
         >
           <Box
             component="img"
-            src="/logo-itclub.jpg"
+            src="/logo-itclub.webp"
             alt="Logo IT-CLUB EMSP"
             sx={{ width: 42, height: 42, borderRadius: 2, objectFit: 'cover', border: '2px solid #1FAF72' }}
           />

@@ -359,7 +359,7 @@ export default function Espace() {
           boxShadow: '0 10px 30px rgba(0,0,0,.35)',
         }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.4, minWidth: 0 }}>
-            <Box component="img" src="/logo-itclub.jpg" alt="" sx={{ width: 30, height: 30, borderRadius: 1, objectFit: 'cover' }} />
+            <Box component="img" src="/logo-itclub.webp" alt="" sx={{ width: 30, height: 30, borderRadius: 1, objectFit: 'cover' }} />
             <Typography noWrap sx={{ color: '#fff', fontWeight: 800, fontSize: { xs: '0.78rem', md: '0.9rem' }, fontFamily: "'Orbitron',sans-serif" }}>
               EMSP<span style={{ color: '#1FAF72' }}>://</span>
               <span style={{ color: '#9AFBD7', fontFamily: "'JetBrains Mono',monospace", fontWeight: 600, fontSize: '0.8rem' }}>espace</span>

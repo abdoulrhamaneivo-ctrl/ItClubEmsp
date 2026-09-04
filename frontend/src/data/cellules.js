@@ -1,7 +1,7 @@
-const webImg = '/photos/web.jpg'
-const iaImg = '/photos/ia.jpg'
-const cyberImg = '/photos/cyber.jpg'
-const designImg = '/photos/design.jpg'
+const webImg = '/photos/web.webp'
+const iaImg = '/photos/ia.webp'
+const cyberImg = '/photos/cyber.webp'
+const designImg = '/photos/design.webp'
 
 /** Les 4 cellules du club — avec leurs vraies photos (hackathon Vibeathon CI, etc.). */
 export const cellules = [

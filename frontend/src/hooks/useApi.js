@@ -1,47 +1,44 @@
-import { useState, useEffect } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import { api } from '../lib/api'
 
 /**
- * Hook générique pour données API avec fallback mock + loading/error.
+ * Hooks données — même contrat qu'avant { data, loading, error, refetch },
+ * mais servis par React Query : cache 60s, déduplication des appels
+ * simultanés, refetch intelligent. Aucun composant n'a changé.
  */
-export function useApi(fetchFn, deps = []) {
-  const [data, setData] = useState(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
-
-  useEffect(() => {
-    let cancelled = false
-    setLoading(true)
-    setError(null)
-    fetchFn()
-      .then(d => { if (!cancelled) setData(d) })
-      .catch(e => { if (!cancelled) setError(e.message) })
-      .finally(() => { if (!cancelled) setLoading(false) })
-    return () => { cancelled = true }
-  }, deps)
-
-  return { data, loading, error, refetch: () => { setLoading(true); fetchFn().then(d => setData(d)).catch(e => setError(e.message)).finally(() => setLoading(false)) } }
+function requete(cle, fn) {
+  const { data = null, isLoading, isError, error, refetch } = useQuery({
+    queryKey: cle,
+    queryFn: fn,
+  })
+  return {
+    data,
+    loading: isLoading,
+    error: isError ? (error?.message ?? 'Erreur de chargement') : null,
+    refetch: () => { refetch() },
+  }
 }
 
-/**
- * Hooks spécialisés
- */
+export function useApi(fetchFn, deps = []) {
+  return requete(['custom', ...deps.map(String)], fetchFn)
+}
+
 export function useBureau() {
-  return useApi(() => api.getBureau(), [])
+  return requete(['bureau'], () => api.getBureau())
 }
 
 export function useCellules() {
-  return useApi(() => api.getCellules(), [])
+  return requete(['cellules'], () => api.getCellules())
 }
 
 export function useActivites(params = {}) {
-  return useApi(() => api.getActivites(params), [JSON.stringify(params)])
+  return requete(['evenements', params], () => api.getActivites(params))
 }
 
 export function useActualites(params = {}) {
-  return useApi(() => api.getActualites(params), [JSON.stringify(params)])
+  return requete(['actualites', params], () => api.getActualites(params))
 }
 
 export function usePresentation() {
-  return useApi(() => api.getPresentation(), [])
+  return requete(['presentation'], () => api.getPresentation())
 }
