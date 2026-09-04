@@ -8,7 +8,7 @@ export const cellules = [
   {
     id: 'web',
     nom: 'Cellule Web',
-    icone: '💻',
+    icone: 'web',
     couleur: '#1FAF72',
     membres: 14,
     image: webImg,
@@ -18,7 +18,7 @@ export const cellules = [
   {
     id: 'ia',
     nom: 'Cellule IA',
-    icone: '🤖',
+    icone: 'ia',
     couleur: '#2563EB',
     membres: 9,
     image: iaImg,
@@ -28,7 +28,7 @@ export const cellules = [
   {
     id: 'cyber',
     nom: 'Cellule Cybersécurité',
-    icone: '🛡️',
+    icone: 'cyber',
     couleur: '#0F5B3A',
     membres: 11,
     image: cyberImg,
@@ -38,7 +38,7 @@ export const cellules = [
   {
     id: 'design',
     nom: 'Cellule Design',
-    icone: '🎨',
+    icone: 'design',
     couleur: '#7B61FF',
     membres: 7,
     image: designImg,

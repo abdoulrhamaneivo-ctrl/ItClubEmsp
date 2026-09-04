@@ -44,7 +44,7 @@ const SEED_DOCUMENTS = [
   { id: 'statuts', titre: 'Statuts de l’association', description: 'Le cadre juridique officiel du IT-CLUB EMSP (association loi 1901).', categorie: 'Statuts', famille: 'fondamentaux', couleur: '#0F5B3A', fichier: 'Statuts_IT_CLUB_EMSP.pdf', format: 'PDF' },
   { id: 'statutsCI', titre: 'Statuts CI (corrigé)', description: 'Statuts corrigés pour la Côte d’Ivoire.', categorie: 'Statuts', famille: 'fondamentaux', couleur: '#0F5B3A', fichier: 'Statuts_CI_EMSP_corrige.docx', format: 'DOCX' },
   { id: 'missions', titre: 'Missions du Bureau', description: 'Détail des missions et objectifs de chaque poste du Bureau.', categorie: 'Missions', famille: 'organisation', couleur: '#7B61FF', fichier: 'Missions_Bureau_IT_CLUB_EMSP.docx', format: 'DOCX' },
-  { id: 'membres', titre: 'Liste des membres', description: 'Liste officielle des membres du club.', categorie: 'Membres', famille: 'organisation', couleur: '#10B981', fichier: 'Liste_Membres_IT_CLUB_EMSP.docx.pdf', format: 'PDF' },
+  { id: 'membres', titre: 'Liste des membres', description: 'Liste officielle des membres du club.', categorie: 'Membres', famille: 'organisation', couleur: '#0E7A50', fichier: 'Liste_Membres_IT_CLUB_EMSP.docx.pdf', format: 'PDF' },
   { id: 'pv1', titre: 'Procès-verbal AG 1', description: 'Compte-rendu de la première assemblée générale.', categorie: 'PV', famille: 'archives', couleur: '#F5A623', fichier: 'Compte_Rendu_Reunion_1_IT_Club_EMSP.docx.pdf', format: 'PDF' },
   { id: 'pv7mai', titre: 'Procès-verbal du 7 mai 2026', description: 'Compte-rendu de la réunion du 7 mai 2026.', categorie: 'PV', famille: 'archives', couleur: '#F5A623', fichier: 'Compte_rendu_Reunion_7_Mai_2026.pdf', format: 'PDF' },
 ]

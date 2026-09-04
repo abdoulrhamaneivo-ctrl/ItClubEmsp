@@ -68,9 +68,9 @@ export default function TachesNotion() {
   }, [taches])
 
   const libelleSource = {
-    notion: '🟢 Connecté à Notion — données temps réel',
-    cache: '🟠 Hors-ligne — cache local (dernière synchro)',
-    demo: '🔴 Proxy éteint — jeu de démonstration',
+    notion: '● Connecté à Notion — données temps réel',
+    cache: '● Hors-ligne — cache local (dernière synchro)',
+    demo: '● Proxy éteint — jeu de démonstration',
     chargement: '… Connexion à Notion',
   }[source]
 

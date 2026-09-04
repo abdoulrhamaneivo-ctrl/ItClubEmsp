@@ -138,9 +138,9 @@ export default function QuiSommesNous() {
           </Box>
           <Box sx={{ display: 'grid', gap: 3, gridTemplateColumns: { xs: '1fr', md: 'repeat(3,1fr)' } }}>
             {[
-              { numero: '01', titre: 'Apprendre en codant vrai', texte: "Pas de sujets de cours abstraits. Cette plateforme, les outils du club, les projets — c'est de la vraie techno qu'on construit ensemble. C'est la cellule Web qui l'a faite, les autres cellules y participent. On apprend parce qu'on veut produire quelque chose qui marche.", icone: '💻', couleur: '#1FAF72' },
-              { numero: '02', titre: "Se retrouver et s'entraider", texte: "Sur le campus, toutes les bonnes idées et les bugs s'éparpillent dans des groupes WhatsApp. On a créé l'endroit où tout se retrouve : annonces, ateliers, ressources, forum. Si tu bloques, quelqu'un a déjà connu le problème — et il t'aide, ou tu prends, tu aides après.", icone: '🤝', couleur: '#2563EB' },
-              { numero: '03', titre: "Ouvrir les horizons", texte: "On va chercher ce qui se fait ailleurs — hackathons, conférences, modèles IA, CTF — et on ramène le meilleur sur le campus. Pas par vanité, mais pour que chacun voie ce qui est possible. Le club, c'est aussi pour voir plus loin et ne pas se limiter à la routine.", icone: '🌍', couleur: '#F5A623' },
+              { numero: '01', titre: 'Apprendre en codant vrai', texte: "Pas de sujets de cours abstraits. Cette plateforme, les outils du club, les projets — c'est de la vraie techno qu'on construit ensemble. C'est la cellule Web qui l'a faite, les autres cellules y participent. On apprend parce qu'on veut produire quelque chose qui marche.", icone: '', couleur: '#1FAF72' },
+              { numero: '02', titre: "Se retrouver et s'entraider", texte: "Sur le campus, toutes les bonnes idées et les bugs s'éparpillent dans des groupes WhatsApp. On a créé l'endroit où tout se retrouve : annonces, ateliers, ressources, forum. Si tu bloques, quelqu'un a déjà connu le problème — et il t'aide, ou tu prends, tu aides après.", icone: '', couleur: '#2563EB' },
+              { numero: '03', titre: "Ouvrir les horizons", texte: "On va chercher ce qui se fait ailleurs — hackathons, conférences, modèles IA, CTF — et on ramène le meilleur sur le campus. Pas par vanité, mais pour que chacun voie ce qui est possible. Le club, c'est aussi pour voir plus loin et ne pas se limiter à la routine.", icone: '', couleur: '#F5A623' },
             ].map((p, i) => (
               <motion.div
                 key={p.numero}

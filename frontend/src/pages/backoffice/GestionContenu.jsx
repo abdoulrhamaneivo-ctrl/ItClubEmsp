@@ -63,9 +63,9 @@ export default function GestionContenu() {
 
       <Paper elevation={0} sx={{ borderRadius: '16px', border: '1px solid #E3EEE8', mb: 2.5, overflow: 'hidden' }}>
         <Tabs value={onglet} onChange={(_, v) => setOnglet(v)} variant="fullWidth">
-          <Tab label="📰 Actualités" />
-          <Tab label="📄 Documents" />
-          <Tab label="🖼️ Galerie" />
+          <Tab label="Actualités" />
+          <Tab label="Documents" />
+          <Tab label="Galerie" />
         </Tabs>
       </Paper>
 
@@ -92,7 +92,7 @@ function OngletActualites({ notify }) {
   const enregistrer = async () => {
     if (!form.titre.trim() || !form.extrait.trim()) return notify('error', 'Titre et extrait sont requis.')
     sauverActualite(form)
-    notify('success', '✅ Actualité enregistrée — visible sur la vitrine.')
+    notify('success', 'Actualité enregistrée — visible sur la vitrine.')
     setEdition(null)
   }
 
@@ -169,7 +169,7 @@ function OngletDocuments({ notify }) {
   const enregistrer = () => {
     if (!form.titre.trim() || !form.fichier.trim()) return notify('error', 'Titre et nom de fichier sont requis.')
     sauverDocument(form)
-    notify('success', '✅ Document enregistré — la Documentation publique est à jour.')
+    notify('success', 'Document enregistré — la Documentation publique est à jour.')
     setEdition(null)
   }
 
@@ -217,7 +217,7 @@ function OngletGalerie({ notify }) {
     if (!form.titre.trim()) return notify('error', 'Le titre est requis.')
     if (form.type === 'video' && !form.youtube.trim()) return notify('error', 'L’ID YouTube est requis pour une vidéo.')
     sauverMedia(form)
-    notify('success', '✅ Média enregistré — la galerie est à jour.')
+    notify('success', 'Média enregistré — la galerie est à jour.')
     setEdition(null)
   }
 
@@ -294,7 +294,7 @@ function LigneItem({ titre, sousTitre, chip, surImage, onEdit, onDelete }) {
     }}>
       <Box sx={{ flex: 1, minWidth: 0 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
-          {surImage && <Chip label="🖼️ image" size="small" sx={{ bgcolor: '#E7F0FE', color: '#175CD3', fontWeight: 700, height: 20, fontSize: '0.62rem' }} />}
+          {surImage && <Chip label="image" size="small" sx={{ bgcolor: '#E7F0FE', color: '#175CD3', fontWeight: 700, height: 20, fontSize: '0.62rem' }} />}
           <Typography sx={{ fontWeight: 800, color: '#111827', fontSize: '0.92rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
             {titre}
           </Typography>

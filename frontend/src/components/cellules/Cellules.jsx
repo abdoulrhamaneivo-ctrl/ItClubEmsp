@@ -349,7 +349,7 @@ function ModaleCellule({ cellule, onClose }) {
             </Typography>
             <Box sx={{ p: 3, bgcolor: '#F6FBF9', borderRadius: 3, border: '1px solid #E3EEE8' }}>
               <Typography sx={{ fontWeight: 800, color: '#0F5B3A', mb: 1.5, fontSize: '0.9rem' }}>
-                🎓 Ce que tu y apprendras
+                Ce que tu y apprendras
               </Typography>
               {(cellule.programme ?? '').split('\n').filter((l) => l.trim()).map((ligne, j) => (
                 <Typography key={j} variant="body2" sx={{ color: '#374151', lineHeight: 1.8, display: 'flex', gap: 1 }}>

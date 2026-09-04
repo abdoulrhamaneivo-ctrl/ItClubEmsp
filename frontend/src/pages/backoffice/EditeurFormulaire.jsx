@@ -78,7 +78,7 @@ export default function EditeurFormulaire() {
       return
     }
     sauverConfig(champs)
-    setMessage({ t: 'success', m: '✅ Formulaire enregistré — le formulaire public est mis à jour instantanément.' })
+    setMessage({ t: 'success', m: 'Formulaire enregistré — le formulaire public est mis à jour instantanément.' })
     setTimeout(() => setMessage(null), 4000)
   }
 

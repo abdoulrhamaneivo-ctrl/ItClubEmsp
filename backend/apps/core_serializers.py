@@ -97,10 +97,15 @@ class ActualiteSerializer(serializers.ModelSerializer):
 
 class DocumentSerializer(serializers.ModelSerializer):
     famille_id = serializers.CharField(source='famille')
+    format = serializers.SerializerMethodField()
 
     class Meta:
         model = Document
-        fields = ['slug', 'titre', 'description', 'fichier', 'famille_id', 'couleur', 'date']
+        fields = ['slug', 'titre', 'description', 'fichier', 'famille_id', 'couleur', 'format', 'date']
+
+    def get_format(self, obj):
+        nom = (obj.fichier.name or '').lower()
+        return 'PDF' if nom.endswith('.pdf') else 'DOCX' if nom.endswith(('.docx', '.doc')) else 'FICHIER'
 
 
 class MediaSerializer(serializers.ModelSerializer):

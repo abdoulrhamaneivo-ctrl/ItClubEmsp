@@ -23,10 +23,10 @@ import { chargerConfig, validerChamp } from '../../data/formulaireConfig'
  */
 
 const CELLULES = [
-  { id: 'web', nom: 'Cellule Web', couleur: '#1FAF72', icone: '💻', tag: 'React · Django · Déploiement' },
-  { id: 'ia', nom: 'Cellule IA', couleur: '#2563EB', icone: '🤖', tag: 'Python · LLMs · Data' },
-  { id: 'cyber', nom: 'Cellule Cybersécurité', couleur: '#0F5B3A', icone: '🛡️', tag: 'Linux · CTF · Sécurité' },
-  { id: 'design', nom: 'Cellule Design', couleur: '#7B61FF', icone: '🎨', tag: 'Figma · Vidéo · Identité' },
+  { id: 'web', nom: 'Cellule Web', couleur: '#1FAF72', icone: 'web', tag: 'React · Django · Déploiement' },
+  { id: 'ia', nom: 'Cellule IA', couleur: '#2563EB', icone: 'ia', tag: 'Python · LLMs · Data' },
+  { id: 'cyber', nom: 'Cellule Cybersécurité', couleur: '#0F5B3A', icone: 'cyber', tag: 'Linux · CTF · Sécurité' },
+  { id: 'design', nom: 'Cellule Design', couleur: '#7B61FF', icone: 'design', tag: 'Figma · Vidéo · Identité' },
 ]
 
 const ETAPES = [

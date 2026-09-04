@@ -22,10 +22,10 @@ const mocks = {
     { id: 10, poste: 'Responsable des Relations Extérieures', nom: 'À désigner', mission: 'Liaison administration, autres clubs.', objectif: 'Reconnaissance officielle', ordre: 10, couleur: '#F5A623' },
   ],
   cellules: [
-    { id: 'web', nom: 'Cellule Web', icone: '💻', couleur: '#1FAF72', couleurFonce: '#0E7A50', membres: 14, description: 'Développement front & back : React, Django, déploiement. Le club construit ses propres outils ici.', programme: "Ce que tu y apprendras :\n• React + Vite, Material UI\n• Python / Django / API REST\n• Git, déploiement cloud\n\nProjet phare : cette plateforme !", image: '/photos/web.jpg' },
-    { id: 'ia', nom: 'Cellule IA', icone: '🤖', couleur: '#2563EB', couleurFonce: '#1D4ED8', membres: 9, description: "Intelligence artificielle et données : modèles, ateliers Python, projets d'agents.", programme: "Ce que tu y apprendras :\n• Bases de Python data\n• LLMs, prompts, agents IA\n• Mini-projets encadrés\n\nProjet phare : assistant IA du club.", image: '/photos/ia.jpg' },
-    { id: 'cyber', nom: 'Cellule Cybersécurité', icone: '🛡️', couleur: '#0F5B3A', couleurFonce: '#0F5B3A', membres: 11, description: "Sécurité offensive & défensive : CTF, bonnes pratiques, sensibilisation de l'école.", programme: "Ce que tu y apprendras :\n• Bases Linux & réseaux\n• Challenges CTF débutants\n• Sécurité au quotidien\n\nÉvénement : 1er CTF interne EMSP.", image: '/photos/cyber.jpg' },
-    { id: 'design', nom: 'Cellule Design', icone: '🎨', couleur: '#7B61FF', couleurFonce: '#5B3FD6', membres: 7, description: 'UI/UX, identité visuelle, montage vidéo — tout ce qui rend le club visible.', programme: "Ce que tu y apprendras :\n• Figma & design system\n• Montage vidéo (bannières du club)\n• Charte graphique\n\nProjet : habillage vidéo des événements.", image: '/photos/design.jpg' },
+    { id: 'web', nom: 'Cellule Web', icone: 'web', couleur: '#1FAF72', couleurFonce: '#0E7A50', membres: 14, description: 'Développement front & back : React, Django, déploiement. Le club construit ses propres outils ici.', programme: "Ce que tu y apprendras :\n• React + Vite, Material UI\n• Python / Django / API REST\n• Git, déploiement cloud\n\nProjet phare : cette plateforme !", image: '/photos/web.jpg' },
+    { id: 'ia', nom: 'Cellule IA', icone: 'ia', couleur: '#2563EB', couleurFonce: '#1D4ED8', membres: 9, description: "Intelligence artificielle et données : modèles, ateliers Python, projets d'agents.", programme: "Ce que tu y apprendras :\n• Bases de Python data\n• LLMs, prompts, agents IA\n• Mini-projets encadrés\n\nProjet phare : assistant IA du club.", image: '/photos/ia.jpg' },
+    { id: 'cyber', nom: 'Cellule Cybersécurité', icone: 'cyber', couleur: '#0F5B3A', couleurFonce: '#0F5B3A', membres: 11, description: "Sécurité offensive & défensive : CTF, bonnes pratiques, sensibilisation de l'école.", programme: "Ce que tu y apprendras :\n• Bases Linux & réseaux\n• Challenges CTF débutants\n• Sécurité au quotidien\n\nÉvénement : 1er CTF interne EMSP.", image: '/photos/cyber.jpg' },
+    { id: 'design', nom: 'Cellule Design', icone: 'design', couleur: '#7B61FF', couleurFonce: '#5B3FD6', membres: 7, description: 'UI/UX, identité visuelle, montage vidéo — tout ce qui rend le club visible.', programme: "Ce que tu y apprendras :\n• Figma & design system\n• Montage vidéo (bannières du club)\n• Charte graphique\n\nProjet : habillage vidéo des événements.", image: '/photos/design.jpg' },
   ],
   activites: [
     { id: 1, titre: 'Atelier Git & GitHub', type: 'Atelier', date: '2026-09-15', lieu: 'Salle Info EMSP', places: 30, couleur: '#1FAF72', description: 'Apprends à versionner tes projets comme un pro. Branches, merges, PRs, conflits résolus.' },
@@ -50,7 +50,7 @@ const mocks = {
     ],
     galerie: [
       { src: '/photos/galerie-1.jpg', legende: 'Sortie culturelle — Grand-Bassam' },
-      { src: '/photos/galerie-2.jpg', legende: 'Vibeathon CI — 1er prix 🏆' },
+      { src: '/photos/galerie-2.jpg', legende: 'Vibeathon CI — 1er prix' },
       { src: '/photos/galerie-3.jpg', legende: 'Atelier entre membres' },
       { src: '/photos/galerie-4.jpg', legende: 'Session de travail du club' },
     ]
@@ -62,7 +62,10 @@ async function fetchJson(endpoint) {
   if (USE_MOCK) return null
   const res = await fetch(`${BASE_URL}${endpoint}`, { credentials: 'include' })
   if (!res.ok) throw new Error(`API ${res.status}`)
-  return res.json()
+  const json = await res.json()
+  // DRF pagination : { count, results } → on renvoie la liste directement
+  if (json && Array.isArray(json.results)) return json.results
+  return json
 }
 
 // Token management
