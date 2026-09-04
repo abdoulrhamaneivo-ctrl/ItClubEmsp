@@ -50,6 +50,44 @@ class Commentaire(models.Model):
         indexes = [models.Index(fields=['actualite', 'masque'])]
 
 
+class Sujet(models.Model):
+    """Sujet de discussion du forum (doc 03 §4) : général, cellule ou projet."""
+    ESPACES = [('general', 'Général'), ('cellule', 'Cellule'), ('projet', 'Projet')]
+    espace = models.CharField(max_length=10, choices=ESPACES, default='general')
+    cellule = models.ForeignKey('accounts.Cellule', on_delete=models.CASCADE,
+                                null=True, blank=True, related_name='sujets')
+    projet = models.ForeignKey('governance.Projet', on_delete=models.CASCADE,
+                               null=True, blank=True, related_name='sujets')
+    titre = models.CharField(max_length=140)
+    auteur = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True,
+                               related_name='sujets_forum')
+    epingle = models.BooleanField(default=False)
+    verrouille = models.BooleanField(default=False)
+    cree_le = models.DateTimeField(auto_now_add=True)
+    derniere_activite = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-epingle', '-derniere_activite']
+        indexes = [models.Index(fields=['espace', 'cellule', 'projet'])]
+
+    def __str__(self):
+        return self.titre
+
+
+class MessageForum(models.Model):
+    """Message du forum (modération par masquage, comme les commentaires)."""
+    sujet = models.ForeignKey(Sujet, on_delete=models.CASCADE, related_name='messages')
+    auteur = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True,
+                               related_name='messages_forum')
+    contenu = models.TextField(max_length=2000)
+    modere = models.BooleanField(default=False)
+    cree_le = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['cree_le']
+        indexes = [models.Index(fields=['sujet', 'modere'])]
+
+
 class Document(models.Model):
     """Document officiel classé par famille (front : Documentation)."""
     FAMILLES = [('fondamentaux', 'Fondamentaux'), ('vie', 'Vie du club'), ('archives', 'Archives')]

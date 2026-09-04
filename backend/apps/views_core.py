@@ -11,15 +11,29 @@ from django.contrib.auth import get_user_model
 
 from apps.accounts.models import Role, Cellule, Candidature
 from apps.governance.models import ObjectifPoste, Projet, Opportunite, Parametre
-from apps.comms.models import Actualite, Document, Media
+from apps.comms.models import Actualite, Document, Media, Sujet, MessageForum
 from apps.events.models import Evenement
 from apps.core_serializers import (
     CelluleSerializer, BureauSerializer, ActualiteSerializer,
     DocumentSerializer, MediaSerializer, EvenementSerializer, CandidatureSerializer,
     ProjetSerializer, OpportuniteSerializer, ParametreSerializer,
+    SujetSerializer, MessageForumSerializer,
 )
 
 User = get_user_model()
+
+
+def _est_modo(user):
+    """Modération forum : staff ou P1/P5/ADMIN."""
+    if not (user and user.is_authenticated):
+        return False
+    if getattr(user, 'is_staff', False):
+        return True
+    try:
+        return Role.objects.filter(
+            code__in=['P1', 'P5', 'ADMIN'], titulaire=user).exists()
+    except Exception:
+        return False
 
 
 class BureauWritePermission(permissions.BasePermission):
@@ -227,6 +241,75 @@ class DocumentViewSet(PublicReadOrStaffWrite):
     queryset = Document.objects.all()
     serializer_class = DocumentSerializer
     filterset_fields = ['famille']
+
+
+class SujetViewSet(viewsets.ModelViewSet):
+    """Forum : sujets par espace (membres connectés uniquement)."""
+    queryset = Sujet.objects.select_related('auteur', 'cellule', 'projet').all()
+    serializer_class = SujetSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    filterset_fields = ['espace', 'cellule', 'projet']
+
+    def get_queryset(self):
+        from django.db.models import Prefetch
+        return super().get_queryset().prefetch_related(
+            Prefetch('messages',
+                     queryset=MessageForum.objects.filter(modere=False).select_related('auteur')),
+        )
+
+    def perform_create(self, serializer):
+        serializer.save(auteur=self.request.user)
+
+    def perform_update(self, serializer):
+        # Épingler / verrouiller = modération ; le reste = auteur ou modo
+        data = serializer.validated_data
+        if ('epingle' in data or 'verrouille' in data) and not _est_modo(self.request.user):
+            from rest_framework.exceptions import PermissionDenied
+            raise PermissionDenied('Réservé à la modération (P1/P5).')
+        inst = self.get_object()
+        if inst.auteur_id != self.request.user.id and not _est_modo(self.request.user):
+            from rest_framework.exceptions import PermissionDenied
+            raise PermissionDenied('Seul l’auteur modifie son sujet.')
+        serializer.save()
+
+    def perform_destroy(self, instance):
+        if instance.auteur_id != self.request.user.id and not _est_modo(self.request.user):
+            from rest_framework.exceptions import PermissionDenied
+            raise PermissionDenied('Seul l’auteur supprime son sujet.')
+        instance.delete()
+
+
+class MessageForumViewSet(viewsets.ModelViewSet):
+    """Forum : messages (?sujet=). Verrouillé = lecture seule sauf modo."""
+    queryset = MessageForum.objects.select_related('auteur').all()
+    serializer_class = MessageForumSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    filterset_fields = ['sujet']
+    http_method_names = ['get', 'post', 'delete', 'head', 'options']
+
+    def get_queryset(self):
+        # Modérés invisibles (conservés en base pour l'audit)
+        return super().get_queryset().filter(modere=False)
+
+    def perform_create(self, serializer):
+        sujet = serializer.validated_data['sujet']
+        if sujet.verrouille and not _est_modo(self.request.user):
+            from rest_framework.exceptions import PermissionDenied
+            raise PermissionDenied('Sujet verrouillé.')
+        contenu = (serializer.validated_data.get('contenu') or '').strip()
+        if not contenu:
+            from rest_framework.exceptions import ValidationError
+            raise ValidationError({'contenu': 'Message vide.'})
+        msg = serializer.save(auteur=self.request.user, contenu=contenu)
+        Sujet.objects.filter(pk=sujet.pk).update(derniere_activite=msg.cree_le)
+
+    def perform_destroy(self, instance):
+        # Modération par masquage (conservé en base, comme les commentaires)
+        if not _est_modo(self.request.user):
+            from rest_framework.exceptions import PermissionDenied
+            raise PermissionDenied('Réservé à la modération (P1/P5).')
+        instance.modere = True
+        instance.save(update_fields=['modere'])
 
 
 class MediaViewSet(PublicReadOrStaffWrite):

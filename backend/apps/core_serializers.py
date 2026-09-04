@@ -299,6 +299,86 @@ class ParametreSerializer(serializers.ModelSerializer):
         read_only_fields = ['modifie_le']
 
 
+class SujetSerializer(serializers.ModelSerializer):
+    """Sujet du forum : auteur + compteurs + dernier message (doc 03 §4)."""
+    auteur_nom = serializers.SerializerMethodField()
+    messages_count = serializers.SerializerMethodField()
+    dernier_message = serializers.SerializerMethodField()
+    espace_label = serializers.SerializerMethodField()
+
+    class Meta:
+        from apps.comms.models import Sujet as _S
+        model = _S
+        fields = ['id', 'espace', 'espace_label', 'cellule', 'projet',
+                  'titre', 'auteur_nom', 'epingle', 'verrouille',
+                  'messages_count', 'dernier_message', 'cree_le',
+                  'derniere_activite']
+        read_only_fields = ['id', 'cree_le', 'derniere_activite']
+
+    def _non_modere(self, obj):
+        try:
+            return [m for m in obj.messages.all() if not m.modere]
+        except Exception:
+            from apps.comms.models import MessageForum
+            return list(MessageForum.objects.filter(sujet=obj, modere=False))
+
+    def get_auteur_nom(self, obj):
+        a = getattr(obj, 'auteur', None)
+        if not a:
+            return 'Ancien membre'
+        try:
+            return a.get_full_name() or a.username
+        except Exception:
+            return 'Ancien membre'
+
+    def get_messages_count(self, obj):
+        return len(self._non_modere(obj))
+
+    def get_dernier_message(self, obj):
+        msgs = self._non_modere(obj)
+        if not msgs:
+            return None
+        d = msgs[-1]
+        a = getattr(d, 'auteur', None)
+        try:
+            nom = (a.get_full_name() or a.username) if a else 'Ancien membre'
+        except Exception:
+            nom = 'Ancien membre'
+        return {'auteur': nom, 'cree_le': d.cree_le}
+
+    def get_espace_label(self, obj):
+        if obj.espace == 'cellule' and getattr(obj, 'cellule_id', None):
+            try:
+                return obj.cellule.nom
+            except Exception:
+                pass
+        if obj.espace == 'projet' and getattr(obj, 'projet_id', None):
+            try:
+                return obj.projet.nom
+            except Exception:
+                pass
+        return 'Général'
+
+
+class MessageForumSerializer(serializers.ModelSerializer):
+    auteur_nom = serializers.SerializerMethodField()
+
+    class Meta:
+        from apps.comms.models import MessageForum as _M
+        model = _M
+        fields = ['id', 'sujet', 'auteur_nom', 'contenu', 'cree_le']
+        read_only_fields = ['id', 'cree_le']
+
+    def get_auteur_nom(self, obj):
+        a = getattr(obj, 'auteur', None)
+        if not a:
+            return 'Ancien membre'
+        try:
+            return a.get_full_name() or a.username
+        except Exception:
+            return 'Ancien membre'
+
+
 class InscriptionMembreSerializer(serializers.ModelSerializer):
     """Inscription vue par le membre : événement embarqué (Espace)."""
     evenement = EvenementSerializer(read_only=True)

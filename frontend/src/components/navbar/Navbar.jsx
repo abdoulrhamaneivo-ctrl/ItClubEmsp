@@ -23,6 +23,7 @@ const liens = [
   { label: 'Actualités', cible: 'actualites' },
   { label: 'Documentation', cible: 'documentation' },
   { label: 'Galerie', cible: '/galerie', route: true },
+  { label: 'Forum', cible: '/forum', route: true, membres: true },
 ]
 
 export default function Navbar() {
@@ -66,7 +67,7 @@ export default function Navbar() {
         </motion.a>
 
         <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 0.5, alignItems: 'center' }}>
-          {liens.map((l) => (
+          {liens.filter((l) => !l.membres || user).map((l) => (
             <Button key={l.cible} color="inherit"
               href={l.route ? l.cible : (surAccueil ? `#${l.cible}` : `/#${l.cible}`)}
               sx={{
@@ -112,7 +113,7 @@ export default function Navbar() {
 
         <Drawer anchor="right" open={open} onClose={() => setOpen(false)}>
           <List sx={{ width: 240, pt: 2 }} onClick={() => setOpen(false)}>
-            {liens.map((l) => (
+            {liens.filter((l) => !l.membres || user).map((l) => (
               <ListItemButton key={l.cible} component="a" href={l.route ? l.cible : (surAccueil ? `#${l.cible}` : `/#${l.cible}`)} sx={{ borderRadius: 2 }}>
                 {l.label}
               </ListItemButton>

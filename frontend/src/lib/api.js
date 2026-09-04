@@ -498,6 +498,32 @@ export const api = {
     return { success: true }
   },
 
+  // Forum (membres connectés) : sujets + messages + modération
+  async getSujets() {
+    const data = await fetchJson('/api/v1/forum/sujets/')
+    return data ?? []
+  },
+  async creerSujet({ titre, espace, cellule, projet }) {
+    return postJson('/api/v1/forum/sujets/', { titre, espace, cellule, projet })
+  },
+  async majSujet(id, patch) {
+    return postJson(`/api/v1/forum/sujets/${id}/`, patch, 'PATCH')
+  },
+  async getMessages(sujetId) {
+    const data = await fetchJson(`/api/v1/forum/messages/?sujet=${sujetId}`)
+    return data ?? []
+  },
+  async posterMessage(sujetId, contenu) {
+    return postJson('/api/v1/forum/messages/', { sujet: sujetId, contenu })
+  },
+  async modererMessage(id) {
+    const res = await fetch(`${BASE_URL}/api/v1/forum/messages/${id}/`, {
+      method: 'DELETE', headers: authHeaders(), credentials: 'include',
+    })
+    if (!res.ok) throw new Error(`API ${res.status}`)
+    invaliderCacheMetier()
+    return { success: true }
+  },
   // Registre membres — candidatures (Bureau P1/P3/P4)
   async getCandidatures() {
     const data = await fetchJson('/api/v1/candidatures/')

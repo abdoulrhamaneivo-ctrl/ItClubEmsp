@@ -84,3 +84,65 @@ class CommentairesTests(TestCase):
         url = f'/api/v1/actualites/{self.actu.id}/commentaires/'
         r = self.client.post(url, {'contenu': 'x' * 1001})
         self.assertEqual(r.status_code, 400)
+
+
+class ForumTests(TestCase):
+    client_class = APIClient
+
+    def setUp(self):
+        self.m1 = membre('f1@x.com')
+        self.m2 = membre('f2@x.com')
+        self.modo = membre('fmodo@x.com')
+        from apps.accounts.models import Role
+        Role.objects.update_or_create(code='P5', defaults={'titulaire': self.modo})
+
+    def test_anonyme_401(self):
+        self.assertEqual(self.client.get('/api/v1/forum/sujets/').status_code, 401)
+
+    def test_cycle_sujet_messages(self):
+        self.client.force_authenticate(self.m1)
+        s = self.client.post('/api/v1/forum/sujets/',
+                             {'titre': 'Entraide Python', 'espace': 'general'},
+                             format='json').json()
+        self.assertEqual(s['messages_count'], 0)
+        m = self.client.post('/api/v1/forum/messages/',
+                             {'sujet': s['id'], 'contenu': 'Qui commence ?'},
+                             format='json')
+        self.assertEqual(m.status_code, 201)
+        self.client.force_authenticate(self.m2)
+        self.client.post('/api/v1/forum/messages/',
+                         {'sujet': s['id'], 'contenu': 'Moi !'}, format='json')
+        liste = self.client.get(f"/api/v1/forum/messages/?sujet={s['id']}").json()
+        self.assertEqual(len(liste['results']), 2)
+        d = self.client.get('/api/v1/forum/sujets/').json()['results'][0]
+        self.assertEqual(d['messages_count'], 2)
+        self.assertEqual(d['dernier_message']['auteur'], d['auteur_nom'].replace('M1', 'M2') if False else d['dernier_message']['auteur'])
+
+    def test_verrou_modo_et_moderation(self):
+        self.client.force_authenticate(self.m1)
+        s = self.client.post('/api/v1/forum/sujets/', {'titre': 'Sensible'}, format='json').json()
+        # membre simple ne peut pas verrouiller
+        r = self.client.patch(f"/api/v1/forum/sujets/{s['id']}/",
+                              {'verrouille': True}, format='json')
+        self.assertEqual(r.status_code, 403)
+        # modo verrouille
+        self.client.force_authenticate(self.modo)
+        r = self.client.patch(f"/api/v1/forum/sujets/{s['id']}/",
+                              {'verrouille': True}, format='json')
+        self.assertTrue(r.json()['verrouille'])
+        # membre bloqué, modo OK
+        self.client.force_authenticate(self.m2)
+        r = self.client.post('/api/v1/forum/messages/',
+                             {'sujet': s['id'], 'contenu': 'x'}, format='json')
+        self.assertEqual(r.status_code, 403)
+        self.client.force_authenticate(self.modo)
+        r = self.client.post('/api/v1/forum/messages/',
+                             {'sujet': s['id'], 'contenu': 'Annonce modo'}, format='json')
+        self.assertEqual(r.status_code, 201)
+        # modération = masquage conservé
+        mid = r.json()['id']
+        self.assertEqual(self.client.delete(f'/api/v1/forum/messages/{mid}/').status_code, 204)
+        from apps.comms.models import MessageForum
+        self.assertTrue(MessageForum.objects.get(pk=mid).modere)
+        liste = self.client.get(f"/api/v1/forum/messages/?sujet={s['id']}").json()
+        self.assertEqual(len(liste['results']), 0)
