@@ -1,0 +1,12 @@
+# IT-CLUB EMSP — dépendances backend (doc 04 §3, tranches actives)
+django>=5,<6
+djangorestframework
+djangorestframework-simplejwt
+django-filter
+drf-spectacular
+django-cors-headers
+dj-database-url
+whitenoise
+gunicorn
+psycopg[binary]
+Pillow

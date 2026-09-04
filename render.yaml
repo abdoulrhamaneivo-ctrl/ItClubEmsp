@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: itclub-emsp-api
+    runtime: python
+    rootDir: backend
+    buildCommand: ./build.sh
+    startCommand: gunicorn config.wsgi:application --chdir /opt/render/project/src/backend --bind 0.0.0.0:$PORT --workers 2 --settings config.settings_prod
+    envVars:
+      - key: DJANGO_SECRET_KEY
+        generateValue: true
+      - key: DJANGO_ALLOWED_HOSTS
+        value: itclub-emsp-api.onrender.com
+      - key: CORS_ALLOWED_ORIGINS
+        value: https://it-club-emsp.vercel.app
+      - key: PYTHON_VERSION
+        value: "3.11.16"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: itclub-emsp-db
+          property: connectionString
+
+databases:
+  - name: itclub-emsp-db
+    plan: free
+    databaseName: itclubemsp
+    user: itclub
