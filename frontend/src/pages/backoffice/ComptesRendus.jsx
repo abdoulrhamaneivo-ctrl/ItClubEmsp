@@ -13,6 +13,7 @@ import SendIcon from '@mui/icons-material/Send'
 import AddIcon from '@mui/icons-material/Add'
 import { api, urlMedia } from '../../lib/api'
 import { BoutonExport } from './_Commun'
+import DialogueSuppression from './DialogueSuppression'
 
 /**
  * Back-office — Comptes rendus & convocations (SG, P1/P3).
@@ -238,11 +239,17 @@ function OngletCR({ notify }) {
       notify('info', 'Compte rendu supprimé.')
     } catch (e) {
       notify('error', e.message ?? 'Suppression impossible')
+    } finally {
+      setASupprimer(null)
     }
   }
+  const [aSupprimer, setASupprimer] = useState(null)
 
   return (
     <Box>
+      <DialogueSuppression demande={aSupprimer} nom={aSupprimer?.titre}
+        onAnnuler={() => setASupprimer(null)}
+        onConfirmer={async () => { await supprimer(aSupprimer.id) }} />
       <Box sx={{ display: 'flex', gap: 1.5, mb: 2, flexWrap: 'wrap' }}>
         <Button variant="contained" startIcon={<AddIcon />} onClick={() => { reset(); setFormOuvert(true) }}
           sx={{ bgcolor: '#1FAF72', '&:hover': { bgcolor: '#179963' }, fontWeight: 800, borderRadius: '12px' }}>
@@ -336,7 +343,7 @@ function OngletCR({ notify }) {
                           sx={{ borderColor: '#D1D5DB', color: '#374151', fontWeight: 700 }}>
                           Modifier
                         </Button>
-                        <Button size="small" onClick={() => supprimer(cr.id)} sx={{ color: '#B42318', fontWeight: 700 }}>
+                        <Button size="small" onClick={() => setASupprimer(cr)} sx={{ color: '#B42318', fontWeight: 700 }}>
                           Supprimer
                         </Button>
                       </>

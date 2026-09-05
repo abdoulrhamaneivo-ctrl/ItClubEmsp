@@ -8,6 +8,7 @@ import Button from '@mui/material/Button'
 import IconButton from '@mui/material/IconButton'
 import TextField from '@mui/material/TextField'
 import MenuItem from '@mui/material/MenuItem'
+import DialogueSuppression from './DialogueSuppression'
 import Tabs from '@mui/material/Tabs'
 import Tab from '@mui/material/Tab'
 import Alert from '@mui/material/Alert'
@@ -147,6 +148,8 @@ function OngletActualites({ notify, idParSlug }) {
     setForm((f) => ({ ...f, image: res }))
   }
 
+  const [aSupprimer, setASupprimer] = useState(null)
+
   const supprimer = async (id) => {
     if (!REEL) {
       supprimerActualite(id)
@@ -163,6 +166,9 @@ function OngletActualites({ notify, idParSlug }) {
 
   return (
     <Box>
+      <DialogueSuppression demande={aSupprimer} nom={aSupprimer?.titre}
+        onAnnuler={() => setASupprimer(null)}
+        onConfirmer={async () => { await supprimer(aSupprimer.id); setASupprimer(null) }} />
       {!edition ? (
         <>
           <Button variant="contained" startIcon={<AddIcon />} onClick={() => { setForm(initForm()); setEdition('nouveau') }}
@@ -175,7 +181,7 @@ function OngletActualites({ notify, idParSlug }) {
               chip={<Chip label={labelCellule(a.cellule)} size="small" sx={{ bgcolor: '#F0F5F2', color: '#374151', fontWeight: 700, height: 22 }} />}
               surImage={!!a.image}
               onEdit={() => { setForm(initForm(a)); setEdition(a.id) }}
-              onDelete={() => supprimer(a.id)}
+              onDelete={() => setASupprimer(a)}
             />
           ))}
         </>
@@ -263,6 +269,8 @@ function OngletDocuments({ notify }) {
     setForm((f) => ({ ...f, fichierFile: file, fichier: file.name, format: file.name.toLowerCase().endsWith('.pdf') ? 'PDF' : 'DOCX' }))
   }
 
+  const [aSupprimerDoc, setASupprimerDoc] = useState(null)
+
   const supprimer = async (d) => {
     if (!REEL) {
       supprimerDocument(d.id)
@@ -279,6 +287,9 @@ function OngletDocuments({ notify }) {
 
   return (
     <Box>
+      <DialogueSuppression demande={aSupprimerDoc} nom={aSupprimerDoc?.titre}
+        onAnnuler={() => setASupprimerDoc(null)}
+        onConfirmer={async () => { await supprimer(aSupprimerDoc); setASupprimerDoc(null) }} />
       {!edition ? (
         <>
           <Button variant="contained" startIcon={<AddIcon />} onClick={() => { setForm(initForm()); setEdition('nouveau') }}
@@ -290,7 +301,7 @@ function OngletDocuments({ notify }) {
               titre={d.titre} sousTitre={`${d.fichier} · ${d.description}`}
               chip={<Chip label={labelFamille(d.famille)} size="small" sx={{ bgcolor: '#F0F5F2', color: '#374151', fontWeight: 700, height: 22 }} />}
               onEdit={() => { setForm(initForm(d)); setEdition(d.slug ?? d.id) }}
-              onDelete={() => supprimer(d)}
+              onDelete={() => setASupprimerDoc(d)}
             />
           ))}
         </>
@@ -377,6 +388,8 @@ function OngletGalerie({ notify, idParSlug }) {
     setForm((f) => ({ ...f, image: res }))
   }
 
+  const [aSupprimerMedia, setASupprimerMedia] = useState(null)
+
   const supprimer = async (id) => {
     if (!REEL) {
       supprimerMedia(id)
@@ -393,6 +406,9 @@ function OngletGalerie({ notify, idParSlug }) {
 
   return (
     <Box>
+      <DialogueSuppression demande={aSupprimerMedia} nom={aSupprimerMedia?.titre}
+        onAnnuler={() => setASupprimerMedia(null)}
+        onConfirmer={async () => { await supprimer(aSupprimerMedia.id); setASupprimerMedia(null) }} />
       {!edition ? (
         <>
           <Button variant="contained" startIcon={<AddIcon />} onClick={() => { setForm(initForm()); setEdition('nouveau') }}
@@ -405,7 +421,7 @@ function OngletGalerie({ notify, idParSlug }) {
               chip={<Chip label={labelCellule(m.cellule)} size="small" sx={{ bgcolor: '#F0F5F2', color: '#374151', fontWeight: 700, height: 22 }} />}
               surImage={!!m.image}
               onEdit={() => { setForm(initForm(m)); setEdition(m.id) }}
-              onDelete={() => supprimer(m.id)}
+              onDelete={() => setASupprimerMedia(m)}
             />
           ))}
         </>

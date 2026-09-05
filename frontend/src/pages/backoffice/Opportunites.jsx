@@ -12,6 +12,7 @@ import DeleteIcon from '@mui/icons-material/Delete'
 import AddIcon from '@mui/icons-material/Add'
 import { api } from '../../lib/api'
 import { EnteteModule, MessageFlash, useFlash } from './_Commun'
+import DialogueSuppression from './DialogueSuppression'
 
 /**
  * Back-office — Opportunités (P8) : kanban hackathons / conférences /
@@ -90,13 +91,19 @@ export default function Opportunites() {
       notify('info', 'Opportunité supprimée.')
     } catch (e) {
       notify('error', e.message ?? 'Suppression impossible')
+    } finally {
+      setASupprimer(null)
     }
   }
+  const [aSupprimer, setASupprimer] = useState(null)
 
   const liste = opportunites.filter((o) => o.type === onglet)
 
   return (
     <Box sx={{ maxWidth: '100%' }}>
+      <DialogueSuppression demande={aSupprimer} nom={aSupprimer?.titre}
+        onAnnuler={() => setASupprimer(null)}
+        onConfirmer={async () => { await supprimer(aSupprimer.id) }} />
       <EnteteModule
         titre={<>Opportunités <Box component="span" sx={{ color: '#9AFBD7' }}>· veille</Box></>}
         sousTitre="Repérer, suivre, s'inscrire — plus aucune deadline ratée."
@@ -172,7 +179,7 @@ export default function Opportunites() {
               <IconButton size="small" aria-label="Modifier" onClick={() => { setForm({ id: o.id, titre: o.titre, type: o.type, statut: o.statut, date_limite: (o.date_limite ?? '').slice(0, 10), lien: o.lien ?? '', contact_nom: o.contact_nom ?? '', contact_email: o.contact_email ?? '', notes: o.notes ?? '' }); setFormOuvert(true) }} sx={{ color: '#2563EB' }}>
                 <EditIcon fontSize="small" />
               </IconButton>
-              <IconButton size="small" aria-label="Supprimer" onClick={() => supprimer(o.id)} sx={{ color: '#B42318' }}>
+              <IconButton size="small" aria-label="Supprimer" onClick={() => setASupprimer(o)} sx={{ color: '#B42318' }}>
                 <DeleteIcon fontSize="small" />
               </IconButton>
             </Box>

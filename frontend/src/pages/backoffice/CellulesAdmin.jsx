@@ -11,6 +11,7 @@ import DeleteIcon from '@mui/icons-material/Delete'
 import AddIcon from '@mui/icons-material/Add'
 import { api } from '../../lib/api'
 import { EnteteModule, MessageFlash, useFlash, BoutonExport } from './_Commun'
+import DialogueSuppression from './DialogueSuppression'
 
 /**
  * Back-office — Cellules (P4) : créer, modifier, nommer le chef
@@ -77,11 +78,17 @@ export default function CellulesAdmin() {
       notify('info', 'Cellule supprimée.')
     } catch (e) {
       notify('error', e.message ?? 'Suppression impossible')
+    } finally {
+      setASupprimer(null)
     }
   }
+  const [aSupprimer, setASupprimer] = useState(null)
 
   return (
     <Box sx={{ maxWidth: '100%' }}>
+      <DialogueSuppression demande={aSupprimer} nom={aSupprimer?.nom}
+        onAnnuler={() => setASupprimer(null)}
+        onConfirmer={async () => { await supprimer(aSupprimer.id) }} />
       <EnteteModule
         titre={<>Cellules <Box component="span" sx={{ color: '#9AFBD7' }}>· gestion</Box></>}
         sousTitre="Créer, animer, nommer les chefs — en sommeil sous 3 membres."
@@ -139,7 +146,7 @@ export default function CellulesAdmin() {
               {c.slug && (
                 <BoutonExport action={() => api.exporterMembresCellule(c.slug)} label="CSV" notify={notify} variant="contained" />
               )}
-              <IconButton size="small" aria-label="Supprimer" onClick={() => supprimer(c.id)} sx={{ color: '#B42318' }}>
+              <IconButton size="small" aria-label="Supprimer" onClick={() => setASupprimer(c)} sx={{ color: '#B42318' }}>
                 <DeleteIcon fontSize="small" />
               </IconButton>
             </Box>

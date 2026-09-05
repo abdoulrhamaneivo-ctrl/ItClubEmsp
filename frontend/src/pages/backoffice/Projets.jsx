@@ -12,6 +12,7 @@ import DeleteIcon from '@mui/icons-material/Delete'
 import AddIcon from '@mui/icons-material/Add'
 import { api } from '../../lib/api'
 import { EnteteModule, MessageFlash, useFlash } from './_Commun'
+import DialogueSuppression from './DialogueSuppression'
 
 /**
  * Back-office — Suivi projets (P2/P7) : tableau par statut
@@ -65,8 +66,11 @@ export default function Projets() {
       notify('info', 'Projet supprimé.')
     } catch (e) {
       notify('error', e.message ?? 'Suppression impossible')
+    } finally {
+      setASupprimer(null)
     }
   }
+  const [aSupprimer, setASupprimer] = useState(null)
 
   const avancer = async (p) => {
     const ordre = ['idee', 'en_cours', 'termine']
@@ -82,6 +86,9 @@ export default function Projets() {
 
   return (
     <Box sx={{ maxWidth: '100%' }}>
+      <DialogueSuppression demande={aSupprimer} nom={aSupprimer?.nom}
+        onAnnuler={() => setASupprimer(null)}
+        onConfirmer={async () => { await supprimer(aSupprimer.id) }} />
       <EnteteModule
         titre={<>Projets <Box component="span" sx={{ color: '#9AFBD7' }}>· suivi</Box></>}
         sousTitre="Idées, chantiers en cours, livrés — fais avancer d'un clic."
@@ -157,7 +164,7 @@ export default function Projets() {
                     <IconButton size="small" aria-label="Modifier" onClick={() => { setForm({ id: p.id, nom: p.nom, description: p.description ?? '', statut: p.statut, lien: p.lien ?? '' }); setFormOuvert(true) }} sx={{ color: '#2563EB' }}>
                       <EditIcon fontSize="small" />
                     </IconButton>
-                    <IconButton size="small" aria-label="Supprimer" onClick={() => supprimer(p.id)} sx={{ color: '#B42318' }}>
+                    <IconButton size="small" aria-label="Supprimer" onClick={() => setASupprimer(p)} sx={{ color: '#B42318' }}>
                       <DeleteIcon fontSize="small" />
                     </IconButton>
                   </Box>
