@@ -9,6 +9,7 @@ import Typography from '@mui/material/Typography'
 import Alert from '@mui/material/Alert'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import { api } from '../lib/api'
+import ChampMotDePasse from '../components/ui-components/ChampMotDePasse'
 
 /**
  * Invitation membre : définit son mot de passe via le lien reçu par email
@@ -84,9 +85,9 @@ export default function DefinirMotDePasse() {
             </Box>
           ) : (
             <Box component="form" onSubmit={submit} sx={{ display: 'grid', gap: 2 }}>
-              <TextField label="Mot de passe *" type="password" value={mdp}
+              <ChampMotDePasse label="Mot de passe *" value={mdp}
                 onChange={(e) => setMdp(e.target.value)} fullWidth autoComplete="new-password" sx={champSx} />
-              <TextField label="Confirme *" type="password" value={mdp2}
+              <ChampMotDePasse label="Confirme *" value={mdp2}
                 onChange={(e) => setMdp2(e.target.value)} fullWidth autoComplete="new-password" sx={champSx} />
               <Button type="submit" variant="contained" size="large" disabled={envoi || mdp.length < 8}
                 sx={{ bgcolor: '#1FAF72', '&:hover': { bgcolor: '#179963' }, fontWeight: 800, borderRadius: '12px', mt: 1 }}>

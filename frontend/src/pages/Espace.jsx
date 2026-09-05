@@ -19,7 +19,9 @@ import LogoutIcon from '@mui/icons-material/Logout'
 import NotificationsIcon from '@mui/icons-material/Notifications'
 import CloseIcon from '@mui/icons-material/Close'
 import { useAuth, hasRole } from '../stores/auth'
+import { useNavigate } from 'react-router-dom'
 import { api, urlMedia } from '../lib/api'
+import ChampMotDePasse from '../components/ui-components/ChampMotDePasse'
 import FondGlobalDonnees from '../components/ui-components/FondGlobalDonnees'
 import { IcMembres, IcCube, IcCalendrier, IcDocument, IcPhoto, IcTrophee, IcCommunication, iconePoste } from '../components/ui-components/IconesClub'
 
@@ -111,9 +113,18 @@ function Palette({ ouvert, fermer, user, estBureau, scrollTo, logout }) {
     fermer()
     if (!it) return
     if (it.section) setTimeout(() => scrollTo(it.section), 80)
-    else if (it.href) window.location.href = it.href
+    else if (it.href) {
+      // lien d'ancre de la vitrine : naviguer puis scroller
+      if (it.href.startsWith('/#')) {
+        const cible = it.href.slice(2)
+        navigate('/')
+        setTimeout(() => document.getElementById(cible)?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 350)
+      } else {
+        window.location.href = it.href
+      }
+    }
     else if (it.action === 'logout') logout()
-  }, [fermer, scrollTo, logout])
+  }, [fermer, scrollTo, logout, navigate])
 
   // L'item sélectionné reste visible quand on navigue au clavier
   useEffect(() => {
@@ -216,6 +227,14 @@ function Palette({ ouvert, fermer, user, estBureau, scrollTo, logout }) {
 export default function Espace() {
   const user = useAuth((s) => s.user)
   const logout = useAuth((s) => s.logout)
+  const navigate = useNavigate()
+  // Ancres : naviguer vers l'accueil puis scroller jusqu'à la section
+  const allerVers = (cible) => {
+    navigate('/')
+    setTimeout(() => {
+      document.getElementById(cible)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }, 350)
+  }
   const [palette, setPalette] = useState(false)
   const [sectionActive, setSectionActive] = useState('accueil')
   // Données réelles (API) — null = en chargement/mock, [] = vide réel
@@ -676,7 +695,7 @@ export default function Espace() {
               <Typography sx={{ color: '#5A6B63', fontSize: '0.9rem', mb: 1.5 }}>
                 Aucune inscription pour le moment.
               </Typography>
-              <Button variant="contained" href="/#activites" sx={{ bgcolor: '#1FAF72', '&:hover': { bgcolor: '#179963' }, fontWeight: 800, borderRadius: 9999 }}>
+              <Button variant="contained" onClick={() => allerVers('activites')} sx={{ bgcolor: '#1FAF72', '&:hover': { bgcolor: '#179963' }, fontWeight: 800, borderRadius: 9999 }}>
                 Découvrir les activités
               </Button>
             </Box>
@@ -1019,9 +1038,9 @@ function ChangementMotDePasse() {
         Change le mot de passe temporaire reçu à la création du compte.
       </Typography>
       <Box sx={{ display: 'grid', gap: 1.4 }}>
-        <TextField size="small" label="Actuel" type="password" value={ancien}
+        <ChampMotDePasse size="small" label="Actuel" value={ancien}
           onChange={(e) => setAncien(e.target.value)} fullWidth autoComplete="current-password" sx={champSx} />
-        <TextField size="small" label="Nouveau (8 min)" type="password" value={nouveau}
+        <ChampMotDePasse size="small" label="Nouveau (8 min)" value={nouveau}
           onChange={(e) => setNouveau(e.target.value)} fullWidth autoComplete="new-password" sx={champSx} />
         <Button variant="contained" onClick={changer} disabled={envoi || nouveau.length < 8}
           sx={{ bgcolor: '#1FAF72', '&:hover': { bgcolor: '#179963' }, fontWeight: 800, borderRadius: '12px', justifySelf: 'start' }}>

@@ -1,6 +1,6 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import Box from '@mui/material/Box'
 import AppBar from '@mui/material/AppBar'
 import Toolbar from '@mui/material/Toolbar'
@@ -30,10 +30,23 @@ const liens = [
 
 export default function Navbar() {
   const location = useLocation()
+  const navigate = useNavigate()
   const surAccueil = location.pathname === '/'
   const [open, setOpen] = useState(false)
   const scrolled = useScrollTrigger({ disableHysteresis: true, threshold: 80 })
   const user = useAuth((s) => s.user)
+
+  // Ancres : depuis une autre page, naviguer vers / puis scroller après rendu
+  const allerVers = (cible) => {
+    if (surAccueil) {
+      document.getElementById(cible)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    } else {
+      navigate('/')
+      setTimeout(() => {
+        document.getElementById(cible)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      }, 350)
+    }
+  }
 
   return (
     <AppBar
@@ -51,8 +64,9 @@ export default function Navbar() {
     >
       <Toolbar sx={{ justifyContent: 'space-between' }}>
         <motion.a
-          href={surAccueil ? '#club' : '/#club'}
-          style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none', color: 'inherit' }}
+          href="/"
+          onClick={(e) => { e.preventDefault(); navigate('/') }}
+          style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none', color: 'inherit', minWidth: 0 }}
           initial={{ opacity: 0, x: -16 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.32 }}
@@ -61,19 +75,20 @@ export default function Navbar() {
             component="img"
             src="/logo-itclub.webp"
             alt="Logo IT-CLUB EMSP"
-            sx={{ width: 42, height: 42, borderRadius: 2, objectFit: 'cover', border: '2px solid #1FAF72' }}
+            sx={{ width: 42, height: 42, borderRadius: 2, objectFit: 'cover', border: '2px solid #1FAF72', flexShrink: 0 }}
           />
-          <Box sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 800, fontSize: 17 }}>
+          <Box sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 800, fontSize: { xs: 15, lg: 16, xl: 17 }, whiteSpace: 'nowrap' }}>
             IT-CLUB <span style={{ color: scrolled ? '#1FAF72' : '#9AFBD7' }}>EMSP</span>
           </Box>
         </motion.a>
 
-        <Box sx={{ display: { xs: 'none', lg: 'flex' }, gap: 0.5, alignItems: 'center' }}>
+        <Box sx={{ display: { xs: 'none', lg: 'flex' }, gap: 0.25, alignItems: 'center', flexShrink: 1, minWidth: 0 }}>
           {liens.filter((l) => !l.membres || user).map((l) => (
             <Button key={l.cible} color="inherit"
-              href={l.route ? l.cible : (surAccueil ? `#${l.cible}` : `/#${l.cible}`)}
+              onClick={(e) => { e.preventDefault(); l.route ? navigate(l.cible) : allerVers(l.cible) }}
               sx={{
-                position: 'relative', fontWeight: 600, fontSize: '0.9rem',
+                position: 'relative', fontWeight: 600, fontSize: { lg: '0.78rem', xl: '0.9rem' }, px: { lg: 0.75, xl: 1 },
+                whiteSpace: 'nowrap',
                 '&::after': {
                   content: '""', position: 'absolute', bottom: 4, left: '50%',
                   width: 0, height: 2, borderRadius: 2, bgcolor: '#1FAF72',
@@ -88,13 +103,13 @@ export default function Navbar() {
             <Button
               variant="contained"
               href="/adhesion"
-              sx={{ bgcolor: '#1FAF72', color: '#fff', '&:hover': { bgcolor: '#179963', boxShadow: '0 6px 18px rgba(31,175,114,.45)' }, mx: 0.5, transition: 'background 200ms ease, box-shadow 200ms ease' }}
+              sx={{ bgcolor: '#1FAF72', color: '#fff', '&:hover': { bgcolor: '#179963', boxShadow: '0 6px 18px rgba(31,175,114,.45)' }, mx: { lg: 0, xl: 0.5 }, transition: 'background 200ms ease, box-shadow 200ms ease', whiteSpace: 'nowrap', px: { lg: 1.2, xl: 2 } }}
             >
               Rejoindre le club
             </Button>
           )}
           {/* Connexion / Espace selon l'état */}
-          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} sx={{ flexShrink: 0 }}>
             <Button
               href={user ? '/espace' : '/login'}
               startIcon={<LoginIcon />}
@@ -104,6 +119,8 @@ export default function Navbar() {
                 border: '1.5px solid',
                 borderColor: scrolled ? 'rgba(15,91,58,.35)' : 'rgba(154,251,215,.5)',
                 borderRadius: 6,
+                whiteSpace: 'nowrap',
+                px: { lg: 1.2, xl: 1.6 },
               }}
             >
               {user ? 'Mon espace' : 'Connexion'}
@@ -118,7 +135,10 @@ export default function Navbar() {
         <Drawer anchor="right" open={open} onClose={() => setOpen(false)}>
           <List sx={{ width: 240, pt: 2 }} onClick={() => setOpen(false)}>
             {liens.filter((l) => !l.membres || user).map((l) => (
-              <ListItemButton key={l.cible} component="a" href={l.route ? l.cible : (surAccueil ? `#${l.cible}` : `/#${l.cible}`)} sx={{ borderRadius: 2 }}>
+              <ListItemButton key={l.cible} component="a"
+                href={l.route ? l.cible : '#'}
+                onClick={(e) => { if (!l.route) { e.preventDefault(); allerVers(l.cible) } }}
+                sx={{ borderRadius: 2 }}>
                 {l.label}
               </ListItemButton>
             ))}

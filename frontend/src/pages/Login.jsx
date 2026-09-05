@@ -11,6 +11,7 @@ import InputAdornment from '@mui/material/InputAdornment'
 import EmailIcon from '@mui/icons-material/Email'
 import LockIcon from '@mui/icons-material/Lock'
 import { useAuth } from '../stores/auth'
+import ChampMotDePasse from '../components/ui-components/ChampMotDePasse'
 
 /** Connexion membre / Bureau — écran immersif avec panneau de marque. */
 export default function Login() {
@@ -118,8 +119,8 @@ export default function Login() {
               name="email" label="E-mail (@emsp.int)" type="email" required fullWidth autoComplete="email"
               InputProps={{ startAdornment: <InputAdornment position="start"><EmailIcon fontSize="small" sx={{ color: '#1FAF72' }} /></InputAdornment> }}
             />
-            <TextField
-              name="password" label="Mot de passe" type="password" required fullWidth autoComplete="current-password"
+            <ChampMotDePasse
+              name="password" label="Mot de passe" required fullWidth autoComplete="current-password"
               InputProps={{ startAdornment: <InputAdornment position="start"><LockIcon fontSize="small" sx={{ color: '#1FAF72' }} /></InputAdornment> }}
             />
             <motion.div whileHover={{ scale: 1.015 }} whileTap={{ scale: 0.985 }}>
