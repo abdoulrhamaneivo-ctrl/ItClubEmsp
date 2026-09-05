@@ -133,11 +133,10 @@ export default function Adhesion() {
       <BandeauAccent couleur="#F5A623" />
 
       <Container maxWidth="md" sx={{ position: 'relative' }}>
-        {/* ── Titre ─────────────────────────────────────────────── */}
+        {/* ── Titre (apparition immédiate, pas au scroll : visible partout) */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-60px' }}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.38, ease: [0.22, 1, 0.36, 1] }}
         >
           <Box sx={{ mb: 5 }}>
@@ -159,8 +158,7 @@ export default function Adhesion() {
         ) : (
           <motion.div
             initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-60px' }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.38, delay: 0.06, ease: [0.22, 1, 0.36, 1] }}
           >
             <Box sx={{
