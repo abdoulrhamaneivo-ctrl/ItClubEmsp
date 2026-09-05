@@ -12,7 +12,9 @@ import Switch from '@mui/material/Switch'
 import CircularProgress from '@mui/material/CircularProgress'
 import CheckIcon from '@mui/icons-material/Check'
 import AddIcon from '@mui/icons-material/Add'
+import DownloadIcon from '@mui/icons-material/Download'
 import { api } from '../lib/api'
+import { useAuth, hasRole } from '../stores/auth'
 import TitreSection from '../components/ui-components/TitreSection'
 import FondPropre from '../components/ui-components/FondPropre'
 
@@ -162,8 +164,23 @@ function FormulaireSondage({ onFait, onErreur }) {
 function CarteSondage({ s, index, onErreur }) {
   const [donnees, setDonnees] = useState(s)
   const [envoi, setEnvoi] = useState(false)
+  const [exportEnCours, setExportEnCours] = useState(false)
+  const user = useAuth((st) => st.user)
+  const estBureau = hasRole(user, ['P1', 'P3', 'P5'])
   const client = useQueryClient()
   const max = Math.max(1, ...donnees.options.map((o) => o.votes))
+
+  const exporter = async () => {
+    if (exportEnCours) return
+    setExportEnCours(true)
+    try {
+      await api.exporterSondage(donnees.id)
+    } catch (e) {
+      onErreur(e.message ?? 'Export impossible')
+    } finally {
+      setExportEnCours(false)
+    }
+  }
 
   const voter = async (optionId) => {
     if (donnees.clos || envoi) return
@@ -242,6 +259,12 @@ function CarteSondage({ s, index, onErreur }) {
           </AnimatePresence>
         </Box>
         <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 1.2 }}>
+          {estBureau && (
+            <Button size="small" startIcon={<DownloadIcon />} onClick={exporter}
+              sx={{ color: '#5B3FD6', fontWeight: 700, fontSize: '0.74rem' }}>
+              {exportEnCours ? '…' : 'Exporter CSV'}
+            </Button>
+          )}
           <Button size="small" onClick={clore} sx={{ color: '#5A6B63', fontWeight: 700, fontSize: '0.74rem' }}>
             {donnees.clos ? 'Rouvrir' : 'Clôturer'}
           </Button>

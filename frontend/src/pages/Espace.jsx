@@ -765,6 +765,7 @@ export default function Espace() {
               <Typography sx={{ fontWeight: 800, color: '#111827', fontSize: '1rem', mb: 2 }}>
                 Mes informations
               </Typography>
+              <PhotoProfil />
               {[
                 ['Nom', user.nom || '—'],
                 ['Email', user.email || 'prenom.nom@emsp.int'],
@@ -922,6 +923,62 @@ function PreferencesNotifications() {
           {sauve}
         </Typography>
       )}
+    </Box>
+  )
+}
+
+/* ── Photo de profil (upload réel vers /me/) ─────────────────── */
+function PhotoProfil() {
+  const user = useAuth((s) => s.user)
+  const mettreAJour = useAuth((s) => s.mettreAJour)
+  const [envoi, setEnvoi] = useState(false)
+  const [retour, setRetour] = useState('')
+
+  const choisir = async (e) => {
+    const fichier = e.target.files?.[0]
+    if (!fichier || envoi) return
+    if (!fichier.type.startsWith('image/')) {
+      setRetour('Choisis une image (JPG, PNG, WebP).')
+      return
+    }
+    if (fichier.size > 5 * 1024 * 1024) {
+      setRetour('5 Mo maximum.')
+      return
+    }
+    setEnvoi(true)
+    try {
+      const me = await api.changerPhoto(fichier)
+      if (me?.photo) mettreAJour({ photo: me.photo })
+      else {
+        const frais = await api.getMe().catch(() => null)
+        if (frais?.photo) mettreAJour({ photo: frais.photo })
+      }
+      setRetour('Photo mise à jour ✓')
+    } catch {
+      setRetour('Envoi impossible — réessaie.')
+    } finally {
+      setEnvoi(false)
+      e.target.value = ''
+    }
+  }
+
+  return (
+    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2, pb: 2, borderBottom: '1px solid #EEF2F0' }}>
+      <Avatar src={user?.photo ?? undefined} sx={{ width: 64, height: 64, bgcolor: '#0F5B3A', fontWeight: 800, fontSize: '1.4rem' }}>
+        {(user?.nom || 'M')[0]}
+      </Avatar>
+      <Box>
+        <Button variant="outlined" component="label" size="small" disabled={envoi}
+          sx={{ borderColor: '#1FAF72', color: '#0E7A50', fontWeight: 800, borderRadius: '10px' }}>
+          {envoi ? 'Envoi…' : 'Changer la photo'}
+          <input type="file" accept="image/*" hidden onChange={choisir} />
+        </Button>
+        {retour && (
+          <Typography variant="caption" sx={{ display: 'block', mt: 0.6, color: retour.includes('✓') ? '#0B7A4B' : '#B42318', fontWeight: 700 }}>
+            {retour}
+          </Typography>
+        )}
+      </Box>
     </Box>
   )
 }

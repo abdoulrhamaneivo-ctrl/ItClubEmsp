@@ -10,7 +10,7 @@ import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
 import AddIcon from '@mui/icons-material/Add'
 import { api } from '../../lib/api'
-import { EnteteModule, MessageFlash, useFlash } from './_Commun'
+import { EnteteModule, MessageFlash, useFlash, BoutonExport } from './_Commun'
 
 /**
  * Back-office — Cellules (P4) : créer, modifier, nommer le chef
@@ -136,6 +136,9 @@ export default function CellulesAdmin() {
               <IconButton size="small" aria-label="Modifier" onClick={() => { setForm({ id: c.id, nom: c.nom, slug: c.slug ?? '', description: c.description ?? '', couleur: c.couleur ?? '#1FAF72', chef_email: '' }); setFormOuvert(true) }} sx={{ color: '#2563EB' }}>
                 <EditIcon fontSize="small" />
               </IconButton>
+              {c.slug && (
+                <BoutonExport action={() => api.exporterMembresCellule(c.slug)} label="CSV" notify={notify} variant="contained" />
+              )}
               <IconButton size="small" aria-label="Supprimer" onClick={() => supprimer(c.id)} sx={{ color: '#B42318' }}>
                 <DeleteIcon fontSize="small" />
               </IconButton>

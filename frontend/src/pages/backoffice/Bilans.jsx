@@ -10,7 +10,7 @@ import Switch from '@mui/material/Switch'
 import StarIcon from '@mui/icons-material/Star'
 import StarBorderIcon from '@mui/icons-material/StarBorder'
 import { api } from '../../lib/api'
-import { EnteteModule, MessageFlash, useFlash } from './_Commun'
+import { EnteteModule, MessageFlash, useFlash, BoutonExport } from './_Commun'
 
 /**
  * Back-office — Bilan d'événement (P6) : rédige, publie → vitrine.
@@ -109,6 +109,7 @@ export default function Bilans() {
                 <Chip label={`Moyenne ${retours.note_moyenne}/5 · ${retours.nb_retours} retour${retours.nb_retours > 1 ? 's' : ''}`}
                   size="small" sx={{ bgcolor: '#FFF6E0', color: '#B45309', fontWeight: 800 }} />
               )}
+              <BoutonExport action={() => api.exporterRetours(evtId)} label="CSV" notify={notify} variant="contained" />
             </Box>
             {(retours?.avis ?? []).length === 0 && (
               <Typography variant="caption" sx={{ color: '#5A6B63' }}>Aucun retour pour le moment.</Typography>

@@ -11,6 +11,8 @@ import CheckIcon from '@mui/icons-material/Check'
 import CloseIcon from '@mui/icons-material/Close'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import { api } from '../../lib/api'
+import { useAuth, hasRole } from '../../stores/auth'
+import { BoutonExport } from './_Commun'
 
 /**
  * Back-office — Registre membres : validation des candidatures en 1 clic.
@@ -40,6 +42,8 @@ export default function RegistreMembres() {
   const [ouverte, setOuverte] = useState(null)
   const [actionEnCours, setActionEnCours] = useState(null)
   const [message, setMessage] = useState(null)
+  const user = useAuth((s) => s.user)
+  const estAdmin = hasRole(user, ['ADMIN'])
   const client = useQueryClient()
 
   const { data: candidatures = [], isLoading, isError, refetch } = useQuery({
@@ -107,6 +111,9 @@ export default function RegistreMembres() {
             </Typography>
           </Box>
           <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+            {estAdmin && (
+              <BoutonExport action={() => api.exporterMembres()} label="Annuaire CSV" notify={notify} />
+            )}
             {FILTRES.map((f) => (
               <Chip key={f.id} label={f.id === 'en_attente' && enAttente > 0 ? `${f.label} (${enAttente})` : f.label}
                 onClick={() => setFiltre(f.id)}

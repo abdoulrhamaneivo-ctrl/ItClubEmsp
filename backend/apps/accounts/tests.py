@@ -213,3 +213,63 @@ class StatsPubliquesTests(TestCase):
         for cle in ('membres_bureau', 'cellules', 'activites_a_venir', 'documents', 'actualites'):
             self.assertIn(cle, donnees)
             self.assertIsInstance(donnees[cle], int)
+
+
+@override_settings(BREVO_API_KEY='', BREVO_FROM='')
+class ExportsCsvTests(TestCase):
+    client_class = APIClient
+
+    def setUp(self):
+        from apps.accounts.models import Role
+        self.admin = membre('adminx@x.com', password='Azerty123!')
+        Role.objects.create(code='ADMIN', titulaire=self.admin)
+        self.p1 = membre('p1x@x.com', password='Azerty123!')
+        Role.objects.create(code='P1', titulaire=self.p1)
+        self.simple = membre('simplex@x.com', password='Azerty123!')
+
+    def test_membres_admin_seulement(self):
+        url = '/api/v1/admin/export-membres.csv'
+        self.assertEqual(self.client.get(url).status_code, 401)
+        self.client.force_authenticate(self.simple)
+        self.assertEqual(self.client.get(url).status_code, 403)
+        self.client.force_authenticate(self.admin)
+        r = self.client.get(url)
+        self.assertEqual(r.status_code, 200)
+        self.assertIn('text/csv', r['Content-Type'])
+        corps = r.content.decode('utf-8-sig')
+        self.assertIn('nom;email;roles', corps)
+        self.assertIn('adminx@x.com', corps)
+
+    def test_cellule_et_cr_et_retours(self):
+        from apps.accounts.models import Cellule, MembreCellule
+        from apps.governance.models import CompteRendu
+        cell = Cellule.objects.create(nom='Cellule Test', slug='test')
+        MembreCellule.objects.create(cellule=cell, membre=self.simple)
+        cr = CompteRendu.objects.create(titre='CR test', reunion_date='2026-09-01', contenu='x', auteur=self.p1)
+        self.client.force_authenticate(self.simple)
+        self.assertEqual(self.client.get('/api/v1/cellules/test/export-membres.csv').status_code, 403)
+        self.client.force_authenticate(self.p1)
+        r = self.client.get('/api/v1/cellules/test/export-membres.csv')
+        self.assertEqual(r.status_code, 200)
+        self.assertIn('simplex@x.com', r.content.decode('utf-8-sig'))
+        r = self.client.get('/api/v1/comptes-rendus/export.csv')
+        self.assertEqual(r.status_code, 200)
+        self.assertIn('CR test', r.content.decode('utf-8-sig'))
+        r = self.client.get('/api/v1/retours/export.csv')
+        self.assertEqual(r.status_code, 200)  # P1 autorisé (P1/P6/ADMIN)
+        self.client.force_authenticate(self.simple)
+        self.assertEqual(self.client.get('/api/v1/retours/export.csv').status_code, 403)
+
+    def test_sondage_export(self):
+        from apps.comms.models import Sondage, OptionSondage, Vote
+        s = Sondage.objects.create(titre='Sondage test', auteur=self.p1)
+        opt = OptionSondage.objects.create(sondage=s, texte='Oui')
+        Vote.objects.create(option=opt, membre=self.simple)
+        self.client.force_authenticate(self.simple)
+        self.assertEqual(self.client.get(f'/api/v1/sondages/{s.pk}/export.csv').status_code, 403)
+        self.client.force_authenticate(self.p1)
+        r = self.client.get(f'/api/v1/sondages/{s.pk}/export.csv')
+        self.assertEqual(r.status_code, 200)
+        corps = r.content.decode('utf-8-sig')
+        self.assertIn('Sondage test', corps)
+        self.assertIn('simplex@x.com', corps)

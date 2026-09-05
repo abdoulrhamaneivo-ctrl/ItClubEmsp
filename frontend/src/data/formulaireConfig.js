@@ -15,23 +15,39 @@
 
 const CLE = 'adhesion_form_config'
 
+export const FILIERES_DEFAUT = [
+  'Informatique — 1re année',
+  'Informatique — 2e année',
+  'Télécommunications — 1re année',
+  'Télécommunications — 2e année',
+  'Digitalisation des services — 1re année',
+  'Digitalisation des services — 2e année',
+  'Autre filière',
+]
+
 export const configParDefaut = [
   { id: 'prenom', label: 'Prénom', type: 'text', groupe: 'identite', requis: true },
   { id: 'nom', label: 'Nom', type: 'text', groupe: 'identite', requis: true },
   { id: 'email', label: 'E-mail', type: 'email', groupe: 'identite', requis: true },
   { id: 'whatsapp', label: 'WhatsApp', type: 'tel', groupe: 'identite', requis: false },
-  { id: 'filiere', label: 'Filière / niveau', type: 'text', groupe: 'identite', requis: true, aide: 'Ex. Digitalisation des services, 2e année' },
+  { id: 'filiere', label: 'Filière / niveau', type: 'select', groupe: 'identite', requis: true, options: [...FILIERES_DEFAUT], aide: 'Choisis ta filière (liste gérée par le Bureau)' },
   { id: 'motivation', label: 'Motivation', type: 'textarea', groupe: 'complement', requis: false, aide: 'Raconte-nous ce qui te donne envie de rejoindre le club…' },
 ]
 
 export function chargerConfig() {
   try {
     const brut = localStorage.getItem(CLE)
-    if (!brut) return [...configParDefaut]
+    if (!brut) return structuredClone(configParDefaut)
     const champs = JSON.parse(brut)
-    return Array.isArray(champs) && champs.length ? champs : [...configParDefaut]
+    if (!Array.isArray(champs) || !champs.length) return structuredClone(configParDefaut)
+    // Migration : l'ancienne filière texte devient la liste gérée par l'admin
+    return champs.map((c) => (
+      c.id === 'filiere' && c.type !== 'select'
+        ? { ...c, type: 'select', options: [...FILIERES_DEFAUT], aide: 'Choisis ta filière (liste gérée par le Bureau)' }
+        : c
+    ))
   } catch {
-    return [...configParDefaut]
+    return structuredClone(configParDefaut)
   }
 }
 

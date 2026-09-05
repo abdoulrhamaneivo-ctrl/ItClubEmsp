@@ -3,6 +3,8 @@ import { motion, AnimatePresence } from 'framer-motion'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import Alert from '@mui/material/Alert'
+import Button from '@mui/material/Button'
+import DownloadIcon from '@mui/icons-material/Download'
 
 /**
  * En-tête standard des modules back-office : dégradé marine→vert,
@@ -57,4 +59,33 @@ export function useFlash() {
     setTimeout(() => setMessage(null), 4000)
   }
   return [message, notify]
+}
+
+/* ── Bouton export CSV (téléchargement authentifié via lib/api) ─ */
+export function BoutonExport({ action, label, notify, variant }) {
+  const [enCours, setEnCours] = useState(false)
+  const exporter = async () => {
+    if (enCours) return
+    setEnCours(true)
+    try {
+      await action()
+      notify?.('success', `${label} téléchargé.`)
+    } catch {
+      notify?.('error', 'Export impossible — vérifie ta connexion et tes droits.')
+    } finally {
+      setEnCours(false)
+    }
+  }
+  return (
+    <Button size="small" variant={variant ?? 'outlined'} startIcon={<DownloadIcon />}
+      onClick={exporter} disabled={enCours}
+      sx={{
+        fontWeight: 800, borderRadius: '12px',
+        ...(variant === 'contained'
+          ? { bgcolor: '#1FAF72', '&:hover': { bgcolor: '#179963' } }
+          : { borderColor: 'rgba(255,255,255,.4)', color: '#fff', '&:hover': { borderColor: '#fff', bgcolor: 'rgba(255,255,255,.1)' } }),
+      }}>
+      {enCours ? '…' : label}
+    </Button>
+  )
 }

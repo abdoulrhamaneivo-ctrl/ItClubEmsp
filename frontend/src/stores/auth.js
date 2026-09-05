@@ -23,6 +23,11 @@ export const useAuth = create((set) => ({
     localStorage.removeItem('user')
     set({ user: null })
   },
+  mettreAJour: (patch) => {
+    const user = { ...(JSON.parse(localStorage.getItem('user') ?? 'null') ?? {}), ...patch }
+    localStorage.setItem('user', JSON.stringify(user))
+    set({ user })
+  },
 }))
 
 /** Le user a-t-il l'un de ces codes de rôle ? */

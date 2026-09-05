@@ -8,12 +8,23 @@ import Chip from '@mui/material/Chip'
 import Switch from '@mui/material/Switch'
 import CircularProgress from '@mui/material/CircularProgress'
 import { api } from '../../lib/api'
-import { EnteteModule, MessageFlash, useFlash } from './_Commun'
+import { EnteteModule, MessageFlash, useFlash, BoutonExport } from './_Commun'
+import { modulesBackoffice } from '../../data/backoffice'
+import { Fragment } from 'react'
 
 /**
  * Back-office — Administration (ADMIN) : annuaire des comptes
- * (activation/désactivation), passation des 10 postes par email.
+ * (activation/désactivation), passation des 10 postes par email,
+ * matrice des permissions par poste.
  */
+
+const LIBELLES_POSTES = {
+  P1: 'Président', P2: 'Vice-Présidente', P3: 'Secrétaire Générale',
+  P4: 'Resp. Cellules', P5: 'Resp. Communication',
+  P6: 'Resp. Activités', P7: 'Resp. Innovation', P8: 'Coordinateur Opportunités',
+  P9: 'Resp. Programmation', P10: 'Resp. Ateliers',
+  CHEF_CELLULE: 'Chef de cellule', ADMIN: 'Administrateur', MEMBRE: 'Membre simple',
+}
 
 export default function Admin() {
   const [message, notify] = useFlash()
@@ -67,7 +78,7 @@ export default function Admin() {
       <EnteteModule
         titre={<>Administration <Box component="span" sx={{ color: '#9AFBD7' }}>· club</Box></>}
         sousTitre="Comptes, postes, passation — la continuité du club."
-        actions={['Comptes', 'Postes & passation'].map((label, i) => (
+        actions={['Comptes', 'Postes & passation', 'Permissions'].map((label, i) => (
           <Chip key={label} label={label} onClick={() => setOnglet(i)}
             sx={{
               fontWeight: 800, cursor: 'pointer',
@@ -142,6 +153,64 @@ export default function Admin() {
           ))}
         </Box>
       )}
+
+      {onglet === 2 && <MatricePermissions />}
+    </Box>
+  )
+}
+
+/* ── Matrice : ce que chaque poste a le droit de faire ──────── */
+function MatricePermissions() {
+  const postes = ['P1', 'P2', 'P3', 'P4', 'P5', 'P6', 'P7', 'P8', 'P9', 'P10', 'CHEF_CELLULE', 'ADMIN']
+  const acces = (code, mod) => mod.roles.includes(code) || code === 'ADMIN'
+
+  return (
+    <Box sx={{ bgcolor: '#fff', borderRadius: '18px', border: '1px solid #E8ECEA', p: { xs: 2, md: 3 } }}>
+      <Typography sx={{ fontWeight: 800, color: '#111827', mb: 0.5 }}>
+        Qui a droit à quoi
+      </Typography>
+      <Typography variant="caption" sx={{ display: 'block', color: '#5A6B63', mb: 2, lineHeight: 1.7 }}>
+        L'ADMIN voit tout. Le membre simple n'a que son espace (vitrine, forum, sondages).
+        Le serveur applique les mêmes règles — cette table est le reflet exact du code.
+      </Typography>
+      <Box sx={{ overflowX: 'auto' }}>
+        <Box sx={{ display: 'grid', gridTemplateColumns: `180px repeat(${modulesBackoffice.length}, 44px)`, gap: 0.6, minWidth: 900 }}>
+          <Box />
+          {modulesBackoffice.map((m) => {
+            const I = m.Icone
+            return (
+              <Box key={m.path} title={m.label} sx={{ display: 'grid', placeItems: 'center', color: '#0F5B3A' }}>
+                {I ? <I size={19} /> : null}
+              </Box>
+            )
+          })}
+          {postes.map((code) => (
+            <Fragment key={code}>
+              <Typography sx={{ fontWeight: 800, color: '#111827', fontSize: '0.74rem', alignSelf: 'center', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                {LIBELLES_POSTES[code] ?? code}
+              </Typography>
+              {modulesBackoffice.map((m) => (
+                <Box key={`${code}-${m.path}`} title={`${LIBELLES_POSTES[code]} — ${m.label}`}
+                  sx={{
+                    width: 26, height: 26, borderRadius: '8px', placeSelf: 'center',
+                    bgcolor: acces(code, m) ? '#1FAF72' : '#EEF2F0',
+                    border: acces(code, m) ? '1px solid #0E7A50' : '1px solid #E2E8E5',
+                  }} />
+              ))}
+            </Fragment>
+          ))}
+        </Box>
+      </Box>
+      <Box sx={{ display: 'flex', gap: 2, mt: 2, flexWrap: 'wrap' }}>
+        {modulesBackoffice.map((m) => (
+          <Typography key={m.path} variant="caption" sx={{ color: '#5A6B63' }}>
+            <Box component="span" sx={{ color: '#0F5B3A', fontWeight: 800 }}>{m.label}</Box> : {m.roles.join(' · ')}
+          </Typography>
+        ))}
+      </Box>
+      <Box sx={{ mt: 2, display: 'flex', justifyContent: 'flex-end' }}>
+        <BoutonExport action={() => api.exporterMembres()} label="Annuaire CSV" variant="contained" />
+      </Box>
     </Box>
   )
 }

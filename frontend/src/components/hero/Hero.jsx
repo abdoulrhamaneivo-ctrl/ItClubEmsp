@@ -6,6 +6,7 @@ import Typography from '@mui/material/Typography'
 import Button from '@mui/material/Button'
 import { useTheme, useMediaQuery } from '@mui/material'
 import { api } from '../../lib/api'
+import { useAuth } from '../../stores/auth'
 import FondDonnees from '../ui-components/FondDonnees'
 
 /**
@@ -18,6 +19,7 @@ export default function Hero() {
   const theme = useTheme()
   // Mobile : orbes figés (un flou animé = repeint plein écran à chaque frame)
   const reduit = useMediaQuery(theme.breakpoints.down('sm'))
+  const user = useAuth((s) => s.user)
 
   // Chiffres réels (API) — repli statique le temps du chargement
   const [statsReelles, setStatsReelles] = useState(null)
@@ -170,14 +172,14 @@ export default function Hero() {
         >
           <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
             <Button
-              variant="contained" size="large" href="/adhesion"
+              variant="contained" size="large" href={user ? '/espace' : '/adhesion'}
               sx={{
                 bgcolor: '#1FAF72', color: '#fff', '&:hover': { bgcolor: '#179963' },
                 fontWeight: 800, px: 4.5, py: 1.6, borderRadius: 9999, fontSize: '1rem',
                 boxShadow: '0 8px 28px rgba(31,175,114,.45)',
               }}
             >
-              Nous rejoindre
+              {user ? 'Mon espace' : 'Nous rejoindre'}
             </Button>
           </motion.div>
           <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>

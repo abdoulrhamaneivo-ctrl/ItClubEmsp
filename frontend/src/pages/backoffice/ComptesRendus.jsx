@@ -12,6 +12,7 @@ import Switch from '@mui/material/Switch'
 import SendIcon from '@mui/icons-material/Send'
 import AddIcon from '@mui/icons-material/Add'
 import { api } from '../../lib/api'
+import { BoutonExport } from './_Commun'
 
 /**
  * Back-office — Comptes rendus & convocations (SG, P1/P3).
@@ -236,10 +237,13 @@ function OngletCR({ notify }) {
 
   return (
     <Box>
-      <Button variant="contained" startIcon={<AddIcon />} onClick={() => { reset(); setFormOuvert(true) }}
-        sx={{ bgcolor: '#1FAF72', '&:hover': { bgcolor: '#179963' }, fontWeight: 800, borderRadius: '12px', mb: 2 }}>
-        Rédiger un compte rendu
-      </Button>
+      <Box sx={{ display: 'flex', gap: 1.5, mb: 2, flexWrap: 'wrap' }}>
+        <Button variant="contained" startIcon={<AddIcon />} onClick={() => { reset(); setFormOuvert(true) }}
+          sx={{ bgcolor: '#1FAF72', '&:hover': { bgcolor: '#179963' }, fontWeight: 800, borderRadius: '12px' }}>
+          Rédiger un compte rendu
+        </Button>
+        <BoutonExport action={() => api.exporterComptesRendus()} label="Exporter CSV" notify={notify} variant="contained" />
+      </Box>
 
       {formOuvert && (
         <Box sx={{ bgcolor: '#fff', borderRadius: '18px', border: '1px solid #1FAF7245', p: { xs: 2.4, md: 3 }, display: 'grid', gap: 2, mb: 2 }}>

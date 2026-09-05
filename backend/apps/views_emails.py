@@ -332,6 +332,115 @@ def export_presences_csv(request, pk):
     return resp
 
 
+def _csv(nom_fichier, entetes, lignes):
+    """Helper exports CSV : BOM UTF-8 (Excel), séparateur point-virgule."""
+    import csv
+    from io import StringIO
+    from django.http import HttpResponse
+    buf = StringIO()
+    buf.write('﻿')  # BOM : Excel ouvre en UTF-8
+    w = csv.writer(buf, delimiter=';')
+    w.writerow(entetes)
+    for ligne in lignes:
+        w.writerow([(c.strftime('%d/%m/%Y %H:%M') if hasattr(c, 'strftime') else c) for c in ligne])
+    resp = HttpResponse(buf.getvalue(), content_type='text/csv; charset=utf-8')
+    resp['Content-Disposition'] = f'attachment; filename="{nom_fichier}.csv"'
+    return resp
+
+
+@api_view(['GET'])
+@permission_classes([permissions.IsAuthenticated])
+def export_membres_csv(request):
+    """GET /api/v1/admin/export-membres.csv — annuaire complet (ADMIN/staff)."""
+    u = request.user
+    if not (u.is_staff or a_role(u, ['ADMIN'])):
+        return Response({'detail': 'Réservé à l’administrateur.'}, status=403)
+    lignes = [(
+        m.get_full_name() or m.username, m.email,
+        ', '.join(sorted({r.code for r in m.roles.all()})) or 'MEMBRE',
+        ', '.join(sorted({mc.cellule.nom for mc in m.cellules.all() if mc.cellule_id})),
+        getattr(m, 'points', 0),
+        m.date_joined,
+    ) for m in User.objects.all().prefetch_related('roles', 'cellules__cellule').order_by('first_name', 'last_name')]
+    return _csv('membres-club', ['nom', 'email', 'roles', 'cellules', 'points', 'inscrit_le'], lignes)
+
+
+@api_view(['GET'])
+@permission_classes([permissions.IsAuthenticated])
+def export_cellule_csv(request, slug):
+    """GET /api/v1/cellules/{slug}/export-membres.csv — membres d'une cellule (P1/P4/ADMIN)."""
+    if not a_role(request.user, ['P1', 'P4', 'ADMIN']):
+        return Response({'detail': 'Réservé au Bureau (P1/P4).'}, status=403)
+    try:
+        cellule = Cellule.objects.get(slug=slug)
+    except Cellule.DoesNotExist:
+        return Response({'detail': 'Cellule introuvable.'}, status=404)
+    from apps.accounts.models import MembreCellule
+    lignes = [(
+        mc.membre.get_full_name() or mc.membre.username, mc.membre.email,
+        getattr(mc.membre, 'points', 0),
+    ) for mc in MembreCellule.objects.filter(cellule=cellule).select_related('membre').order_by('membre__first_name', 'membre__last_name')]
+    return _csv(f'membres-{slug}', ['nom', 'email', 'points'], lignes)
+
+
+@api_view(['GET'])
+@permission_classes([permissions.IsAuthenticated])
+def export_sondage_csv(request, pk):
+    """GET /api/v1/sondages/{id}/export.csv — résultats détaillés (P1/P3/P5/ADMIN)."""
+    from apps.comms.models import Sondage
+    if not a_role(request.user, ['P1', 'P3', 'P5', 'ADMIN']):
+        return Response({'detail': 'Réservé au Bureau (P1/P3/P5).'}, status=403)
+    try:
+        sondage = Sondage.objects.prefetch_related('options__votes__membre').get(pk=pk)
+    except Sondage.DoesNotExist:
+        return Response({'detail': 'Sondage introuvable.'}, status=404)
+    lignes = []
+    for opt in sondage.options.all():
+        for vote in opt.votes.all():
+            lignes.append((
+                sondage.titre, opt.texte,
+                vote.membre.get_full_name() or vote.membre.username,
+                vote.membre.email,
+            ))
+    return _csv(f'sondage-{pk}', ['sondage', 'option', 'membre', 'email'], lignes)
+
+
+@api_view(['GET'])
+@permission_classes([permissions.IsAuthenticated])
+def export_crs_csv(request):
+    """GET /api/v1/comptes-rendus/export.csv — tous les CR (P1/P3/ADMIN)."""
+    from apps.governance.models import CompteRendu
+    if not a_role(request.user, ['P1', 'P3', 'ADMIN']):
+        return Response({'detail': 'Réservé au Bureau (P1/P3).'}, status=403)
+    lignes = [(
+        cr.titre, cr.reunion_date, cr.lieu, cr.statut,
+        (cr.auteur.get_full_name() or cr.auteur.username) if cr.auteur else '',
+        (cr.valide_par.get_full_name() or cr.valide_par.username) if cr.valide_par else '',
+        cr.publie_le,
+    ) for cr in CompteRendu.objects.select_related('auteur', 'valide_par').all()]
+    return _csv('comptes-rendus', ['titre', 'reunion_le', 'lieu', 'statut', 'auteur', 'valide_par', 'publie_le'], lignes)
+
+
+@api_view(['GET'])
+@permission_classes([permissions.IsAuthenticated])
+def export_retours_csv(request, pk=None):
+    """GET /api/v1/retours/export.csv[?evenement=ID] — avis membres (P1/P6/ADMIN)."""
+    from apps.events.models import Retour
+    if not a_role(request.user, ['P1', 'P6', 'ADMIN']):
+        return Response({'detail': 'Réservé au Bureau (P1/P6).'}, status=403)
+    qs = Retour.objects.select_related('evenement', 'membre').all()
+    evt_id = request.query_params.get('evenement')
+    if evt_id:
+        qs = qs.filter(evenement_id=evt_id)
+    lignes = [(
+        r.evenement.titre if r.evenement else '',
+        r.membre.get_full_name() or r.membre.username,
+        r.note, r.avis or '',
+        r.cree_le,
+    ) for r in qs]
+    return _csv('retours-membres', ['evenement', 'membre', 'note', 'avis', 'donne_le'], lignes)
+
+
 @api_view(['GET'])
 @permission_classes([permissions.IsAuthenticated])
 def qr_presence(request, pk):
@@ -738,7 +847,7 @@ def me(request):
     """Profil du membre connecté + préférences notifications (PATCH partiel)."""
     from apps.core_serializers import ProfilSerializer
     if request.method == 'PATCH':
-        allowed = {'promotion', 'telephone', 'notif_prefs'}
+        allowed = {'promotion', 'telephone', 'notif_prefs', 'photo'}
         data = {k: v for k, v in request.data.items() if k in allowed}
         if 'notif_prefs' in data and not isinstance(data['notif_prefs'], dict):
             return Response({'detail': 'notif_prefs doit être un objet.'}, status=400)

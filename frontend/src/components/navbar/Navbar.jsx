@@ -84,13 +84,15 @@ export default function Navbar() {
               {l.label}
             </Button>
           ))}
-          <Button
-            variant="contained"
-            href="/adhesion"
-            sx={{ bgcolor: '#1FAF72', color: '#fff', '&:hover': { bgcolor: '#179963', boxShadow: '0 6px 18px rgba(31,175,114,.45)' }, mx: 0.5, transition: 'background 200ms ease, box-shadow 200ms ease' }}
-          >
-            Rejoindre le club
-          </Button>
+          {!user && (
+            <Button
+              variant="contained"
+              href="/adhesion"
+              sx={{ bgcolor: '#1FAF72', color: '#fff', '&:hover': { bgcolor: '#179963', boxShadow: '0 6px 18px rgba(31,175,114,.45)' }, mx: 0.5, transition: 'background 200ms ease, box-shadow 200ms ease' }}
+            >
+              Rejoindre le club
+            </Button>
+          )}
           {/* Connexion / Espace selon l'état */}
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
             <Button
@@ -120,9 +122,11 @@ export default function Navbar() {
                 {l.label}
               </ListItemButton>
             ))}
-            <ListItemButton component="a" href="/adhesion" sx={{ borderRadius: 2, fontWeight: 700, color: '#0F5B3A' }}>
-              Rejoindre le club
-            </ListItemButton>
+            {!user && (
+              <ListItemButton component="a" href="/adhesion" sx={{ borderRadius: 2, fontWeight: 700, color: '#0F5B3A' }}>
+                Rejoindre le club
+              </ListItemButton>
+            )}
             <ListItemButton
               component="a"
               href={user ? '/espace' : '/login'}

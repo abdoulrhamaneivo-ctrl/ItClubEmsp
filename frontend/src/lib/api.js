@@ -416,6 +416,29 @@ export const api = {
   async telechargerCSVPresences(evenementId) {
     return this.telechargerFichier(`/api/v1/evenements/${evenementId}/export-presences.csv`, `presences-evenement-${evenementId}.csv`)
   },
+  // Exports CSV du Bureau (même mécanisme blob authentifié)
+  async exporterMembres() {
+    return this.telechargerFichier('/api/v1/admin/export-membres.csv', 'membres-club.csv')
+  },
+  async exporterMembresCellule(slug) {
+    return this.telechargerFichier(`/api/v1/cellules/${slug}/export-membres.csv`, `membres-${slug}.csv`)
+  },
+  async exporterSondage(sondageId) {
+    return this.telechargerFichier(`/api/v1/sondages/${sondageId}/export.csv`, `sondage-${sondageId}.csv`)
+  },
+  async exporterComptesRendus() {
+    return this.telechargerFichier('/api/v1/comptes-rendus/export.csv', 'comptes-rendus.csv')
+  },
+  async exporterRetours(evenementId) {
+    const qs = evenementId ? `?evenement=${evenementId}` : ''
+    return this.telechargerFichier(`/api/v1/retours/export.csv${qs}`, 'retours-membres.csv')
+  },
+  // Photo de profil (multipart) : POST = FormData, PATCH /me/
+  async changerPhoto(fichier) {
+    const fd = new FormData()
+    fd.append('photo', fichier)
+    return postForm('/api/v1/me/', fd, 'PATCH')
+  },
   async telechargerQRPresence(evenementId) {
     return this.telechargerFichier(`/api/v1/evenements/${evenementId}/qr-presence`, `qr-presence-${evenementId}.png`)
   },

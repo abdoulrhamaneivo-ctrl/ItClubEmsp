@@ -15,6 +15,8 @@ from apps.views_emails import (
     admin_roles, admin_role_passation,
     donner_retour, retours_liste, bilan_evenement,
     lien_definition_mdp, definir_mot_de_passe, changer_mot_de_passe,
+    export_membres_csv, export_cellule_csv, export_sondage_csv,
+    export_crs_csv, export_retours_csv,
 )
 from apps.views_core import (
     CelluleViewSet, BureauViewSet, ActualiteViewSet,
@@ -47,6 +49,11 @@ urlpatterns = [
     path('api/v1/evenements/<int:pk>.ics', evenement_ics),
     path('api/v1/evenements/<int:pk>/export-presences.csv', export_presences_csv),
     path('api/v1/calendrier.ics', calendrier_ics),
+    path('api/v1/admin/export-membres.csv', export_membres_csv),
+    path('api/v1/cellules/<slug:slug>/export-membres.csv', export_cellule_csv),
+    path('api/v1/sondages/<int:pk>/export.csv', export_sondage_csv),
+    path('api/v1/comptes-rendus/export.csv', export_crs_csv),
+    path('api/v1/retours/export.csv', export_retours_csv),
     path('api/v1/', include(router.urls)),
     path('api/v1/auth/register-candidature', register_candidature),
     path('api/v1/adhesion/qr', qr_adhesion),
