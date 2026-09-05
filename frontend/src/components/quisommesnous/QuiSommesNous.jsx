@@ -260,7 +260,7 @@ export default function QuiSommesNous() {
               </Typography>
               <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', flexWrap: 'wrap' }}>
                 <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
-                  <Button variant="contained" size="large" href="#adhesion" sx={{ bgcolor: '#1FAF72', color: '#fff', '&:hover': { bgcolor: '#25C482' }, px: 4.5, py: 1.5, fontWeight: 800, borderRadius: 9999, boxShadow: '0 8px 24px rgba(31,175,114,.5)' }}>
+                  <Button variant="contained" size="large" href="/adhesion" sx={{ bgcolor: '#1FAF72', color: '#fff', '&:hover': { bgcolor: '#25C482' }, px: 4.5, py: 1.5, fontWeight: 800, borderRadius: 9999, boxShadow: '0 8px 24px rgba(31,175,114,.5)' }}>
                     Rejoins-nous
                   </Button>
                 </motion.div>

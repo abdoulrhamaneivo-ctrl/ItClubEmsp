@@ -186,8 +186,11 @@ export default function Adhesion() {
                 </Box>
               </Box>
 
-              {/* ── Stepper ─────────────────────────────────────── */}
-              <Box sx={{ px: { xs: 2.5, md: 5 }, pt: 4, pb: 3, borderBottom: '1px solid #EEF2F0', bgcolor: '#FBFDFC' }}>
+              {/* ── Stepper (collant : toujours visible en scrollant) ── */}
+              <Box sx={{
+                px: { xs: 2.5, md: 5 }, pt: 2.5, pb: 2.5, borderBottom: '1px solid #EEF2F0', bgcolor: '#FBFDFC',
+                position: 'sticky', top: { xs: 56, md: 64 }, zIndex: 5,
+              }}>
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                   {ETAPES.map((e, i) => (
                     <Box key={e.titre} sx={{ display: 'flex', alignItems: 'center', flex: i < ETAPES.length - 1 ? 1 : '0 0 auto' }}>

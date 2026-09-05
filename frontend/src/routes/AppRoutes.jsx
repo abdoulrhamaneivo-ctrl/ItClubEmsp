@@ -52,7 +52,6 @@ function Vitrine() {
         <Actualites />
         <Galerie />
         <Documentation />
-        <Adhesion />
       </main>
       <Footer />
     </>
@@ -117,6 +116,7 @@ function ScrollToTop() {
     const titres = {
       '/': 'IT-CLUB EMSP — Ensemble, innovons, communiquons',
       '/galerie': 'Galerie — IT-CLUB EMSP',
+      '/adhesion': 'Adhésion — IT-CLUB EMSP',
       '/forum': 'Forum — IT-CLUB EMSP',
       '/sondages': 'Sondages — IT-CLUB EMSP',
       '/veille': 'Veille techno — IT-CLUB EMSP',
@@ -138,6 +138,7 @@ export default function AppRoutes() {
         <Route path="/" element={<Vitrine />} />
         <Route path="*" element={<Page404 />} />
         <Route path="/galerie" element={<><Navbar /><Galerie /></>} />
+        <Route path="/adhesion" element={<><Navbar /><Box sx={{ pt: { xs: 8, md: 9 } }}><Adhesion /></Box><Footer /></>} />
         <Route
           path="/forum"
           element={

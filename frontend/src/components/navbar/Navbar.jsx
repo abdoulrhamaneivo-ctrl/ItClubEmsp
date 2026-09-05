@@ -86,7 +86,7 @@ export default function Navbar() {
           ))}
           <Button
             variant="contained"
-            href={surAccueil ? '#adhesion' : '/#adhesion'}
+            href="/adhesion"
             sx={{ bgcolor: '#1FAF72', color: '#fff', '&:hover': { bgcolor: '#179963', boxShadow: '0 6px 18px rgba(31,175,114,.45)' }, mx: 0.5, transition: 'background 200ms ease, box-shadow 200ms ease' }}
           >
             Rejoindre le club
@@ -120,7 +120,7 @@ export default function Navbar() {
                 {l.label}
               </ListItemButton>
             ))}
-            <ListItemButton component="a" href={surAccueil ? '#adhesion' : '/#adhesion'} sx={{ borderRadius: 2, fontWeight: 700, color: '#0F5B3A' }}>
+            <ListItemButton component="a" href="/adhesion" sx={{ borderRadius: 2, fontWeight: 700, color: '#0F5B3A' }}>
               Rejoindre le club
             </ListItemButton>
             <ListItemButton

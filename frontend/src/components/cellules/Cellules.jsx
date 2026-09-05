@@ -205,7 +205,7 @@ export default function Cellules() {
                     <Box sx={{ display: 'flex', gap: 1.5, flexWrap: 'wrap' }}>
                       <Button
                         variant="contained"
-                        href="#adhesion"
+                        href="/adhesion"
                         sx={{ bgcolor: actuelle.couleur, '&:hover': { filter: 'brightness(.9)' }, fontWeight: 800, borderRadius: '9999px', px: 3 }}
                       >
                         Rejoindre cette cellule
@@ -359,7 +359,7 @@ function ModaleCellule({ cellule, onClose }) {
               ))}
             </Box>
             <Button
-              fullWidth variant="contained" href="#adhesion" onClick={onClose}
+              fullWidth variant="contained" href="/adhesion" onClick={onClose}
               sx={{ mt: 3, bgcolor: cellule.couleur, '&:hover': { filter: 'brightness(.9)' }, fontWeight: 800, py: 1.4, borderRadius: '12px' }}
             >
               Rejoindre {cellule.nom} →

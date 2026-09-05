@@ -27,7 +27,7 @@ export default function Hero() {
       ref={ref}
       sx={{
         position: 'relative',
-        minHeight: { xs: '92vh', sm: '94vh', md: '100vh' },
+        minHeight: { xs: 'auto', sm: '94vh', md: '100vh' },
         overflow: 'hidden',
         background: 'linear-gradient(140deg,#0A1628 0%,#0D1B2A 42%,#0F5B3A 135%)',
       }}
@@ -71,9 +71,9 @@ export default function Hero() {
         maxWidth={false}
         sx={{
           position: 'relative', maxWidth: '1440px !important', px: { xs: 2.5, md: 4 },
-          height: '100%', minHeight: { xs: '92vh', sm: '94vh', md: '100vh' },
+          height: '100%', minHeight: { xs: 'auto', sm: '94vh', md: '100vh' },
           display: 'flex', flexDirection: 'column', justifyContent: 'center',
-          pt: '88px', pb: { xs: '190px', md: '170px' },
+          pt: { xs: '104px', md: '88px' }, pb: { xs: 5, md: '170px' },
         }}
       >
         {/* Badge glassmorphism */}
@@ -155,7 +155,7 @@ export default function Hero() {
         >
           <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
             <Button
-              variant="contained" size="large" href="#adhesion"
+              variant="contained" size="large" href="/adhesion"
               sx={{
                 bgcolor: '#1FAF72', color: '#fff', '&:hover': { bgcolor: '#179963' },
                 fontWeight: 800, px: 4.5, py: 1.6, borderRadius: 9999, fontSize: '1rem',
@@ -180,12 +180,17 @@ export default function Hero() {
         </motion.div>
       </Container>
 
-      {/* ── Bande de stats — grille équilibrée, lisible ──────────── */}
+      {/* ── Bande de stats — dans le flux sur mobile (jamais de
+          chevauchement), superposée au pied sur desktop ──────────── */}
+      <Box sx={{
+        position: { xs: 'relative', md: 'absolute' },
+        left: 0, right: 0, bottom: { md: 56 }, zIndex: 3,
+        mt: { xs: 4, md: 0 }, pb: { xs: 4, md: 0 },
+      }}>
       <motion.div
         initial={{ opacity: 0, y: 24 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.5, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-        style={{ position: 'absolute', left: 0, right: 0, bottom: 56, zIndex: 3 }}
       >
         <Box
           sx={{
@@ -220,10 +225,12 @@ export default function Hero() {
           </Container>
         </Box>
       </motion.div>
+      </Box>
 
-        {/* ── Feuille claire arrondie qui ouvre la vitrine ─────────── */}
+        {/* ── Feuille claire arrondie qui ouvre la vitrine (desktop) ── */}
         <Box
         sx={{
+          display: { xs: 'none', md: 'block' },
           position: 'absolute', left: 0, right: 0, bottom: -2, height: 56,
           bgcolor: '#fff', borderRadius: '52px 52px 0 0', zIndex: 4,
         }}

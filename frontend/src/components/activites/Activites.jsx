@@ -266,7 +266,7 @@ export default function Activites() {
             <Typography variant="body2" color="textSecondary" sx={{ mb: 2 }}>
               Tu veux organiser une activité ?
             </Typography>
-            <Button variant="contained" size="large" href="#adhesion"
+            <Button variant="contained" size="large" href="/adhesion"
               sx={{ bgcolor: '#2563EB', '&:hover': { bgcolor: '#1D4ED8' }, fontWeight: 800, borderRadius: '9999px', px: 4 }}>
               Proposer une activité
             </Button>
