@@ -182,7 +182,7 @@ function OngletCR({ notify }) {
   const [formOuvert, setFormOuvert] = useState(false)
   const [envoi, setEnvoi] = useState(false)
   const [ouvert, setOuvert] = useState(null)
-  const [form, setForm] = useState({ id: null, titre: '', reunion_date: '', lieu: '', ordre_du_jour: '', contenu: '' })
+  const [form, setForm] = useState({ id: null, titre: '', reunion_date: '', lieu: '', ordre_du_jour: '', contenu: '', video_url: '', imageFile: null, imageActuelle: '' })
   const client = useQueryClient()
 
   const { data: crs = [], isLoading } = useQuery({
@@ -190,7 +190,7 @@ function OngletCR({ notify }) {
   })
 
   const set = (k, v) => setForm((f) => ({ ...f, [k]: v }))
-  const reset = () => { setForm({ id: null, titre: '', reunion_date: '', lieu: '', ordre_du_jour: '', contenu: '' }); setFormOuvert(false) }
+  const reset = () => { setForm({ id: null, titre: '', reunion_date: '', lieu: '', ordre_du_jour: '', contenu: '', video_url: '', imageFile: null, imageActuelle: '' }); setFormOuvert(false) }
 
   const enregistrer = async () => {
     if (!form.titre.trim() || !form.reunion_date || !form.contenu.trim() || envoi) {
@@ -199,11 +199,17 @@ function OngletCR({ notify }) {
     }
     setEnvoi(true)
     try {
+      const payload = {
+        titre: form.titre.trim(), reunion_date: form.reunion_date,
+        lieu: form.lieu.trim(), ordre_du_jour: form.ordre_du_jour.trim(),
+        contenu: form.contenu.trim(), video_url: form.video_url.trim(),
+        ...(form.imageFile ? { imageFile: form.imageFile } : {}),
+      }
       if (form.id) {
-        await api.majCR(form.id, { titre: form.titre.trim(), reunion_date: form.reunion_date, lieu: form.lieu.trim(), ordre_du_jour: form.ordre_du_jour.trim(), contenu: form.contenu.trim() })
+        await api.majCR(form.id, payload)
         notify('success', 'Brouillon mis à jour.')
       } else {
-        await api.creerCR({ titre: form.titre.trim(), reunion_date: form.reunion_date, lieu: form.lieu.trim(), ordre_du_jour: form.ordre_du_jour.trim(), contenu: form.contenu.trim() })
+        await api.creerCR(payload)
         notify('success', 'Brouillon créé — soumets-le pour validation.')
       }
       client.invalidateQueries({ queryKey: ['comptes-rendus'] })
@@ -254,6 +260,17 @@ function OngletCR({ notify }) {
           </Box>
           <TextField label="Ordre du jour" value={form.ordre_du_jour} onChange={(e) => set('ordre_du_jour', e.target.value)} multiline rows={2} fullWidth sx={champSx} />
           <TextField label="Contenu *" value={form.contenu} onChange={(e) => set('contenu', e.target.value)} multiline rows={6} fullWidth sx={champSx} placeholder="Décisions, actions, responsables…" />
+          <TextField label="Lien vidéo (YouTube, Drive…)" value={form.video_url} onChange={(e) => set('video_url', e.target.value)} fullWidth sx={champSx} placeholder="https://…" />
+          <Box sx={{ display: 'flex', gap: 1.5, alignItems: 'center', flexWrap: 'wrap' }}>
+            <Button variant="outlined" component="label" sx={{ borderColor: '#1FAF72', color: '#0E7A50', fontWeight: 800, borderRadius: '12px' }}>
+              {form.imageFile ? 'Changer la photo' : (form.imageActuelle ? 'Remplacer la photo' : 'Ajouter une photo')}
+              <input type="file" accept="image/*" hidden onChange={(e) => set('imageFile', e.target.files?.[0] ?? null)} />
+            </Button>
+            {(form.imageFile || form.imageActuelle) && (
+              <Box component="img" src={form.imageFile ? URL.createObjectURL(form.imageFile) : form.imageActuelle}
+                alt="" sx={{ width: 120, height: 74, objectFit: 'cover', borderRadius: 2, border: '1px solid #E5E7EB' }} />
+            )}
+          </Box>
           <Box sx={{ display: 'flex', gap: 1.5, justifyContent: 'flex-end' }}>
             <Button onClick={reset} sx={{ color: '#5A6B63', fontWeight: 700 }}>Annuler</Button>
             <Button variant="contained" onClick={enregistrer} disabled={envoi}
@@ -294,6 +311,20 @@ function OngletCR({ notify }) {
                   <Typography variant="body2" sx={{ color: '#111827', fontSize: '0.88rem', lineHeight: 1.7, whiteSpace: 'pre-wrap' }}>
                     {cr.contenu}
                   </Typography>
+                  {(cr.image || cr.video_url) && (
+                    <Box sx={{ display: 'flex', gap: 1.5, mt: 1.5, flexWrap: 'wrap', alignItems: 'center' }}>
+                      {cr.image && (
+                        <Box component="img" src={cr.image} alt=""
+                          sx={{ width: 'min(320px, 100%)', borderRadius: '12px', border: '1px solid #E5E7EB', objectFit: 'cover' }} />
+                      )}
+                      {cr.video_url && (
+                        <Button size="small" variant="outlined" href={cr.video_url} target="_blank" rel="noreferrer"
+                          sx={{ borderColor: '#7B61FF', color: '#5B3FD6', fontWeight: 800, borderRadius: '10px' }}>
+                          Voir la vidéo
+                        </Button>
+                      )}
+                    </Box>
+                  )}
                   <Box sx={{ display: 'flex', gap: 1, mt: 1.6, flexWrap: 'wrap' }}>
                     {cr.statut === 'brouillon' && (
                       <>
@@ -301,7 +332,7 @@ function OngletCR({ notify }) {
                           sx={{ bgcolor: '#F5A623', '&:hover': { bgcolor: '#D97706' }, fontWeight: 800, borderRadius: '10px' }}>
                           Soumettre
                         </Button>
-                        <Button size="small" variant="outlined" onClick={() => { setForm({ id: cr.id, titre: cr.titre, reunion_date: (cr.reunion_date ?? '').slice(0, 10), lieu: cr.lieu ?? '', ordre_du_jour: cr.ordre_du_jour ?? '', contenu: cr.contenu }); setFormOuvert(true) }}
+                        <Button size="small" variant="outlined" onClick={() => { setForm({ id: cr.id, titre: cr.titre, reunion_date: (cr.reunion_date ?? '').slice(0, 10), lieu: cr.lieu ?? '', ordre_du_jour: cr.ordre_du_jour ?? '', contenu: cr.contenu, video_url: cr.video_url ?? '', imageFile: null, imageActuelle: cr.image ?? '' }); setFormOuvert(true) }}
                           sx={{ borderColor: '#D1D5DB', color: '#374151', fontWeight: 700 }}>
                           Modifier
                         </Button>

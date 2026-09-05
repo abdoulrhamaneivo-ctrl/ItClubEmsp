@@ -403,7 +403,7 @@ class CompteRenduSerializer(serializers.ModelSerializer):
         from apps.governance.models import CompteRendu as _CR
         model = _CR
         fields = ['id', 'titre', 'reunion_date', 'lieu', 'ordre_du_jour',
-                  'contenu', 'statut', 'statut_label',
+                  'contenu', 'image', 'video_url', 'statut', 'statut_label',
                   'auteur_nom', 'valide_par_nom', 'publie_le', 'maj_le']
         read_only_fields = ['id', 'publie_le', 'maj_le']
 

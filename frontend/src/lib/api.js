@@ -646,19 +646,38 @@ export const api = {
     const data = await fetchJson('/api/v1/comptes-rendus/')
     return data ?? []
   },
-  async creerCR({ titre, reunion_date, lieu, ordre_du_jour, contenu }) {
+  async creerCR({ titre, reunion_date, lieu, ordre_du_jour, contenu, imageFile, video_url }) {
     if (USE_MOCK) {
       await new Promise(r => setTimeout(r, 500))
       return { id: Date.now(), titre, statut: 'brouillon' }
     }
-    return postJson('/api/v1/comptes-rendus/', { titre, reunion_date, lieu, ordre_du_jour, contenu })
+    const fd = new FormData()
+    fd.append('titre', titre)
+    fd.append('reunion_date', reunion_date)
+    fd.append('lieu', lieu ?? '')
+    fd.append('ordre_du_jour', ordre_du_jour ?? '')
+    fd.append('contenu', contenu)
+    if (video_url) fd.append('video_url', video_url)
+    if (imageFile) fd.append('image', imageFile)
+    return postForm('/api/v1/comptes-rendus/', fd)
   },
   async majCR(id, patch) {
     if (USE_MOCK) {
       await new Promise(r => setTimeout(r, 400))
       return { id, ...patch }
     }
-    return postJson(`/api/v1/comptes-rendus/${id}/`, patch, 'PATCH')
+    // Fichier joint ? → multipart, sinon JSON simple (transitions de statut)
+    if (patch.imageFile) {
+      const fd = new FormData()
+      for (const [k, v] of Object.entries(patch)) {
+        if (k === 'imageFile') continue
+        if (v !== undefined && v !== null) fd.append(k, v)
+      }
+      fd.append('image', patch.imageFile)
+      return postForm(`/api/v1/comptes-rendus/${id}/`, fd, 'PATCH')
+    }
+    const { imageFile: _retire, ...reste } = patch
+    return postJson(`/api/v1/comptes-rendus/${id}/`, reste, 'PATCH')
   },
   async supprimerCR(id) {
     if (USE_MOCK) {

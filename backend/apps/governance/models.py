@@ -109,6 +109,9 @@ class CompteRendu(models.Model):
     lieu = models.CharField(max_length=140, blank=True)
     ordre_du_jour = models.TextField('Ordre du jour', blank=True)
     contenu = models.TextField('Contenu')
+    image = models.ImageField('Photo du rapport', upload_to='comptes-rendus/', blank=True, null=True)
+    video_url = models.URLField('Lien vidéo (YouTube, Drive…)', max_length=500, blank=True,
+                                help_text='Coller le lien de la vidéo — les fichiers lourds ne passent pas par le serveur.')
     statut = models.CharField(max_length=14, choices=STATUTS, default='brouillon')
     auteur = models.ForeignKey('accounts.User', on_delete=models.SET_NULL,
                                null=True, blank=True, related_name='crs_rediges')

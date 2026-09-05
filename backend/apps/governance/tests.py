@@ -230,3 +230,26 @@ class VeilleTests(TestCase):
         # auteur supprime
         self.auth(self.m1)
         self.assertEqual(self.client.delete(f'/api/v1/veille/{rid}/').status_code, 204)
+
+
+class CompteRenduMediaTests(TestCase):
+    client_class = APIClient
+
+    def test_image_et_video_url(self):
+        from django.contrib.auth import get_user_model
+        from apps.accounts.models import Role
+        U = get_user_model()
+        p1 = U.objects.create_user(username='crp1', email='crp1@x.com', password='x')
+        Role.objects.create(code='P1', titulaire=p1)
+        self.client.force_authenticate(p1)
+        from django.core.files.uploadedfile import SimpleUploadedFile
+        gif = (b'GIF89a\x01\x00\x01\x00\x80\x00\x00\x00\x00\x00\xff\xff\xff!'
+               b'\xf9\x04\x01\x00\x00\x00\x00,\x00\x00\x00\x00\x01\x00\x01\x00\x00\x02\x02D\x01\x00;')
+        r = self.client.post('/api/v1/comptes-rendus/',
+                             {'titre': 'CR média', 'reunion_date': '2026-09-01', 'contenu': 'x',
+                              'video_url': 'https://youtu.be/abc',
+                              'image': SimpleUploadedFile('photo.gif', gif, content_type='image/gif')},
+                             format='multipart')
+        self.assertEqual(r.status_code, 201)
+        self.assertTrue(r.json()['image'])
+        self.assertEqual(r.json()['video_url'], 'https://youtu.be/abc')
