@@ -4,6 +4,7 @@ import Box from '@mui/material/Box'
 import Container from '@mui/material/Container'
 import Typography from '@mui/material/Typography'
 import Button from '@mui/material/Button'
+import { useTheme, useMediaQuery } from '@mui/material'
 import FondDonnees from '../ui-components/FondDonnees'
 
 /**
@@ -13,6 +14,9 @@ import FondDonnees from '../ui-components/FondDonnees'
  */
 export default function Hero() {
   const ref = useRef(null)
+  const theme = useTheme()
+  // Mobile : orbes figés (un flou animé = repeint plein écran à chaque frame)
+  const reduit = useMediaQuery(theme.breakpoints.down('sm'))
 
   const stats = [
     { valeur: '24/7', label: 'Le club est actif' },
@@ -36,7 +40,7 @@ export default function Hero() {
       <FondDonnees intensite={0.45} sansSatellite sansEnveloppes fibresSeules />
       <Box sx={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
         <motion.div
-          animate={{ x: [0, 40, 0], y: [0, -30, 0] }}
+          animate={reduit ? {} : { x: [0, 40, 0], y: [0, -30, 0] }}
           transition={{ duration: 16, repeat: Infinity, ease: 'easeInOut' }}
           style={{
             position: 'absolute', top: '-12%', left: '-8%', width: { xs: 280, md: 480 }, height: { xs: 280, md: 480 },
@@ -45,7 +49,7 @@ export default function Hero() {
           }}
         />
         <motion.div
-          animate={{ x: [0, -50, 0], y: [0, 40, 0] }}
+          animate={reduit ? {} : { x: [0, -50, 0], y: [0, 40, 0] }}
           transition={{ duration: 20, repeat: Infinity, ease: 'easeInOut' }}
           style={{
             position: 'absolute', bottom: '6%', right: '-6%', width: { xs: 320, md: 560 }, height: { xs: 320, md: 560 },

@@ -202,7 +202,7 @@ export default function Adhesion() {
                           }}
                           transition={{ type: 'spring', stiffness: 300, damping: 22 }}
                           style={{
-                            width: 42, height: 42, borderRadius: '50%', display: 'grid', placeItems: 'center',
+                            width: 44, height: 44, borderRadius: '50%', display: 'grid', placeItems: 'center',
                             fontFamily: "'Orbitron',sans-serif", fontWeight: 800, fontSize: 15,
                             boxShadow: etape === i ? '0 6px 18px rgba(15,91,58,.35)' : 'none',
                             cursor: etape > i ? 'pointer' : 'default',
