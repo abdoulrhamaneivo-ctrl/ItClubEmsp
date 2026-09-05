@@ -314,6 +314,10 @@ export const api = {
   async definirMotDePasse(uid, token, password) {
     return postJson('/api/v1/auth/definir-mot-de-passe', { uid, token, password })
   },
+  // Rotation : le membre connecté change son mot de passe
+  async changerMotDePasse(ancien, nouveau) {
+    return postJson('/api/v1/me/mot-de-passe', { ancien, nouveau })
+  },
   // Diagnostic Bureau : tester l'envoi Brevo vers une adresse
   async testerEmail(destinataire) {
     if (USE_MOCK) {

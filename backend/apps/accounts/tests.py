@@ -175,3 +175,29 @@ class DefinitionMotDePasseTests(TestCase):
         # lien à usage unique
         r = self.client.post(url, {'uid': uid, 'token': tok, 'password': 'AutreMotDePasse2!'}, format='json')
         self.assertEqual(r.status_code, 400)
+
+
+@override_settings(BREVO_API_KEY='', BREVO_FROM='')
+class MotDePasseTests(TestCase):
+    client_class = APIClient
+
+    def test_rotation(self):
+        u = membre('mdprota@x.com', password='Ancien123!')
+        self.client.force_authenticate(u)
+        url = '/api/v1/me/mot-de-passe'
+        # anonyme refusé
+        self.client.force_authenticate(None)
+        self.assertEqual(self.client.post(url, {'ancien': 'x', 'nouveau': 'Nouveau123!'}, format='json').status_code, 401)
+        self.client.force_authenticate(u)
+        # mauvais actuel
+        r = self.client.post(url, {'ancien': 'Faux123!', 'nouveau': 'Nouveau123!'}, format='json')
+        self.assertEqual(r.status_code, 400)
+        # trop court
+        r = self.client.post(url, {'ancien': 'Ancien123!', 'nouveau': 'court'}, format='json')
+        self.assertEqual(r.status_code, 400)
+        # OK puis login avec le nouveau
+        r = self.client.post(url, {'ancien': 'Ancien123!', 'nouveau': 'Nouveau123!'}, format='json')
+        self.assertEqual(r.status_code, 200)
+        r = self.client.post('/api/v1/auth/token',
+                             {'email': 'mdprota@x.com', 'password': 'Nouveau123!'}, format='json')
+        self.assertEqual(r.status_code, 200)

@@ -10,6 +10,7 @@ import Divider from '@mui/material/Divider'
 import IconButton from '@mui/material/IconButton'
 import Tooltip from '@mui/material/Tooltip'
 import Switch from '@mui/material/Switch'
+import TextField from '@mui/material/TextField'
 import InputBase from '@mui/material/InputBase'
 import HomeIcon from '@mui/icons-material/Home'
 import SearchIcon from '@mui/icons-material/Search'
@@ -803,6 +804,7 @@ export default function Espace() {
               )}
             </Box>
             <PreferencesNotifications />
+            <ChangementMotDePasse />
 
             <Box sx={{ p: { xs: 2.8, md: 3.2 }, bgcolor: '#fff', borderRadius: '18px', border: '1px solid #E8ECEA' }}>
               <Typography sx={{ fontWeight: 800, color: '#111827', fontSize: '1rem', mb: 2 }}>
@@ -920,6 +922,60 @@ function PreferencesNotifications() {
           {sauve}
         </Typography>
       )}
+    </Box>
+  )
+}
+
+/* ── Changement de mot de passe (rotation demandée au 1er login) ─ */
+function ChangementMotDePasse() {
+  const [ancien, setAncien] = useState('')
+  const [nouveau, setNouveau] = useState('')
+  const [retour, setRetour] = useState('')
+  const [envoi, setEnvoi] = useState(false)
+
+  const changer = async () => {
+    if (nouveau.length < 8 || envoi) {
+      if (nouveau.length < 8) setRetour('8 caractères minimum.')
+      return
+    }
+    setEnvoi(true)
+    try {
+      await api.changerMotDePasse(ancien, nouveau)
+      setRetour('Mot de passe changé ✓ — reconnecte-toi avec le nouveau.')
+      setAncien('')
+      setNouveau('')
+    } catch (e) {
+      setRetour(e.message ?? 'Changement impossible')
+    } finally {
+      setEnvoi(false)
+    }
+  }
+
+  const champSx = { '& .MuiOutlinedInput-root': { borderRadius: '12px', bgcolor: '#F8FAF9' } }
+
+  return (
+    <Box sx={{ p: { xs: 2.8, md: 3.2 }, bgcolor: '#fff', borderRadius: '18px', border: '1px solid #E8ECEA' }}>
+      <Typography sx={{ fontWeight: 800, color: '#111827', fontSize: '1rem', mb: 0.5 }}>
+        Mot de passe
+      </Typography>
+      <Typography variant="caption" sx={{ color: '#5A6B63', display: 'block', mb: 1.5 }}>
+        Change le mot de passe temporaire reçu à la création du compte.
+      </Typography>
+      <Box sx={{ display: 'grid', gap: 1.4 }}>
+        <TextField size="small" label="Actuel" type="password" value={ancien}
+          onChange={(e) => setAncien(e.target.value)} fullWidth autoComplete="current-password" sx={champSx} />
+        <TextField size="small" label="Nouveau (8 min)" type="password" value={nouveau}
+          onChange={(e) => setNouveau(e.target.value)} fullWidth autoComplete="new-password" sx={champSx} />
+        <Button variant="contained" onClick={changer} disabled={envoi || nouveau.length < 8}
+          sx={{ bgcolor: '#1FAF72', '&:hover': { bgcolor: '#179963' }, fontWeight: 800, borderRadius: '12px', justifySelf: 'start' }}>
+          {envoi ? '…' : 'Changer'}
+        </Button>
+        {retour && (
+          <Typography variant="caption" sx={{ color: retour.includes('✓') ? '#0B7A4B' : '#B42318', fontWeight: 700 }}>
+            {retour}
+          </Typography>
+        )}
+      </Box>
     </Box>
   )
 }

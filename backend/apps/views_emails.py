@@ -728,6 +728,22 @@ def me(request):
     return Response(ProfilSerializer(request.user).data)
 
 
+@api_view(['POST'])
+@permission_classes([permissions.IsAuthenticated])
+def changer_mot_de_passe(request):
+    """POST /api/v1/me/mot-de-passe {ancien, nouveau} — rotation par le membre."""
+    ancien = request.data.get('ancien') or ''
+    nouveau = request.data.get('nouveau') or ''
+    if len(nouveau) < 8:
+        return Response({'detail': '8 caractères minimum.'}, status=400)
+    u = request.user
+    if u.has_usable_password() and not u.check_password(ancien):
+        return Response({'detail': 'Mot de passe actuel incorrect.'}, status=400)
+    u.set_password(nouveau)
+    u.save(update_fields=['password'])
+    return Response({'statut': 'ok'})
+
+
 @api_view(['GET'])
 @permission_classes([permissions.IsAuthenticated])
 def mes_inscriptions(request):
