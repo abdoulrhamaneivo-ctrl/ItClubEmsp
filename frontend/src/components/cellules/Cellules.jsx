@@ -13,14 +13,14 @@ import FondPropre from '../ui-components/FondPropre'
 import { BandeauAccent } from '../ui-components/FondPropre'
 import TitreSection from '../ui-components/TitreSection'
 import FondHalos from '../ui-components/FondHalos'
-import { IcWeb, IcIA, IcCyber, IcDesign, IcMembres, IcCalendrier, IcRocket, iconesCellules } from '../ui-components/IconesClub'
+import { IcWeb, IcIA, IcCyber, IcDesign, IcMembres, IcCalendrier, IcRocket, IcCube, iconesCellules } from '../ui-components/IconesClub'
 import { useCellules } from '../../hooks/useApi'
 
-/** Icône line art d'une cellule (fallback emoji uniquement si id inconnu). */
+/** Icône line art d'une cellule (jamais de texte : IcCube générique en repli). */
 function IconeCellule({ cellule, taille = 28, couleur = 'currentColor' }) {
-  const Comp = iconesCellules[cellule.id]
+  const Comp = iconesCellules[cellule.id] ?? iconesCellules[cellule.slug] ?? null
   if (Comp) return <Comp taille={taille} couleur={couleur} />
-  return <Typography sx={{ fontSize: taille * 0.8 }}>{cellule.icone}</Typography>
+  return <IcCube taille={taille} couleur={couleur} />
 }
 
 /**
@@ -342,8 +342,8 @@ function ModaleCellule({ cellule, onClose }) {
             <Typography variant="overline" sx={{ letterSpacing: '0.12em', textTransform: 'uppercase', opacity: 0.9 }}>
               Programme de la cellule
             </Typography>
-            <Typography variant="h5" sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 700, fontSize: { xs: '1.3rem', md: '1.6rem' } }}>
-              {cellule.icone} {cellule.nom}
+            <Typography variant="h5" sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 700, fontSize: { xs: '1.3rem', md: '1.6rem' }, display: 'flex', alignItems: 'center', gap: 1.2 }}>
+              <IconeCellule cellule={cellule} taille={26} couleur="#fff" /> {cellule.nom}
             </Typography>
           </Box>
           <Box sx={{ p: { xs: 3, md: 4 } }}>

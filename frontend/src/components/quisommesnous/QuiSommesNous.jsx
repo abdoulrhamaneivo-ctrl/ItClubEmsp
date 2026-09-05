@@ -10,6 +10,7 @@ import AccordionDetails from '@mui/material/AccordionDetails'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import FondPropre from '../ui-components/FondPropre'
 import { BandeauAccent } from '../ui-components/FondPropre'
+import { IcFormation, IcEquipe, IcRocket } from '../ui-components/IconesClub'
 import { SectionTitleUnifiee, CarteUnifiee, gridStandard, colors, ButtonStyles, StatCard } from '../ui-components/DesignSystem'
 import { usePresentation } from '../../hooks/useApi'
 import { mediasGalerie } from '../../data/galerie'
@@ -164,7 +165,7 @@ export default function QuiSommesNous() {
                   }}
                 >
                   <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2, mb: 3 }}>
-                    <Typography sx={{ fontSize: 40, lineHeight: 1 }}>{p.icone}</Typography>
+                    <Box sx={{ width: 56, height: 56, borderRadius: '16px', display: 'grid', placeItems: 'center', flexShrink: 0, bgcolor: `${p.couleur}14`, border: `1px solid ${p.couleur}30` }}>{(() => { const I = [IcFormation, IcEquipe, IcRocket][Number(p.numero) - 1] ?? IcFormation; return <I taille={28} couleur={p.couleur} /> })()}</Box>
                     <Box>
                       <Typography variant="overline" sx={{ color: p.couleur, fontWeight: 800, letterSpacing: '0.08em', textTransform: 'uppercase', mb: 0.5 }}>
                         Pilier {p.numero}
