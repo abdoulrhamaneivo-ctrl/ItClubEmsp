@@ -201,3 +201,15 @@ class MotDePasseTests(TestCase):
         r = self.client.post('/api/v1/auth/token',
                              {'email': 'mdprota@x.com', 'password': 'Nouveau123!'}, format='json')
         self.assertEqual(r.status_code, 200)
+
+
+class StatsPubliquesTests(TestCase):
+    client_class = APIClient
+
+    def test_public_sans_auth(self):
+        r = self.client.get('/api/v1/stats-publiques/')
+        self.assertEqual(r.status_code, 200)
+        donnees = r.json()
+        for cle in ('membres_bureau', 'cellules', 'activites_a_venir', 'documents', 'actualites'):
+            self.assertIn(cle, donnees)
+            self.assertIsInstance(donnees[cle], int)

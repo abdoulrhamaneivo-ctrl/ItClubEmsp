@@ -487,6 +487,26 @@ def dashboard(request):
 
 
 @api_view(['GET'])
+@permission_classes([permissions.AllowAny])
+def stats_publiques(request):
+    """GET /api/v1/stats-publiques/ — chiffres vitrine (zéro chiffre en dur).
+
+    Bureau, cellules, activités à venir, documents, actualités : tout
+    vient de la base. Cache navigateur 5 min (données non sensibles)."""
+    from django.utils import timezone
+    from apps.comms.models import Actualite, Document
+    from apps.events.models import Evenement
+    return Response({
+        'membres_bureau': Role.objects.exclude(titulaire=None).count(),
+        'cellules': Cellule.objects.count(),
+        'activites_a_venir': Evenement.objects.filter(
+            date_debut__gte=timezone.now()).count(),
+        'documents': Document.objects.count(),
+        'actualites': Actualite.objects.count(),
+    })
+
+
+@api_view(['GET'])
 @permission_classes([permissions.IsAuthenticated])
 def admin_utilisateurs(request):
     """GET /api/v1/admin/utilisateurs — annuaire complet (ADMIN/staff)."""

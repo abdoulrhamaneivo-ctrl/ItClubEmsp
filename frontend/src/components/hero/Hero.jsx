@@ -1,10 +1,11 @@
-import { useRef } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import Box from '@mui/material/Box'
 import Container from '@mui/material/Container'
 import Typography from '@mui/material/Typography'
 import Button from '@mui/material/Button'
 import { useTheme, useMediaQuery } from '@mui/material'
+import { api } from '../../lib/api'
 import FondDonnees from '../ui-components/FondDonnees'
 
 /**
@@ -18,10 +19,20 @@ export default function Hero() {
   // Mobile : orbes figés (un flou animé = repeint plein écran à chaque frame)
   const reduit = useMediaQuery(theme.breakpoints.down('sm'))
 
+  // Chiffres réels (API) — repli statique le temps du chargement
+  const [statsReelles, setStatsReelles] = useState(null)
+  useEffect(() => {
+    let stop = false
+    api.getStatsPubliques()
+      .then((s) => { if (!stop && s) setStatsReelles(s) })
+      .catch(() => {})
+    return () => { stop = true }
+  }, [])
+
   const stats = [
-    { valeur: '24/7', label: 'Le club est actif' },
-    { valeur: '4', label: 'Domaines tech' },
-    { valeur: '28', label: 'Activités / an' },
+    { valeur: statsReelles ? String(statsReelles.cellules) : '4', label: 'Domaines tech' },
+    { valeur: statsReelles ? String(statsReelles.activites_a_venir) : '—', label: 'Activités à venir' },
+    { valeur: statsReelles ? String(statsReelles.documents) : '—', label: 'Ressources' },
     { valeur: '0', label: 'Frais d’adhésion' },
   ]
 

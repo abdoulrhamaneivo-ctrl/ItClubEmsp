@@ -13,6 +13,7 @@ import { BandeauAccent } from '../ui-components/FondPropre'
 import { IcFormation, IcEquipe, IcRocket } from '../ui-components/IconesClub'
 import { SectionTitleUnifiee, CarteUnifiee, gridStandard, colors, ButtonStyles, StatCard } from '../ui-components/DesignSystem'
 import { usePresentation } from '../../hooks/useApi'
+import { api } from '../../lib/api'
 import { mediasGalerie } from '../../data/galerie'
 import { MotFort, ParagrapheIntro } from '../ui-components/Typographie'
 import { ArrowRight } from '../ui-components/IconesClub'
@@ -23,6 +24,15 @@ import { ArrowRight } from '../ui-components/IconesClub'
 export default function QuiSommesNous() {
   const { data: presentation, loading, error } = usePresentation()
   const [openDoc, setOpenDoc] = useState(null)
+  // Chiffres réels (API) — repli statique le temps du chargement
+  const [statsReelles, setStatsReelles] = useState(null)
+  useEffect(() => {
+    let stop = false
+    api.getStatsPubliques()
+      .then((s) => { if (!stop && s) setStatsReelles(s) })
+      .catch(() => {})
+    return () => { stop = true }
+  }, [])
   const ref = useRef(null)
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] })
   const yContainer = useTransform(scrollYProgress, [0, 1], [40, 0])
@@ -83,8 +93,8 @@ export default function QuiSommesNous() {
               justifyContent: 'space-around', py: { xs: 4, md: 5 }, px: { xs: 2, md: 6 }, gap: { xs: 3, md: 0 },
             }}>
               {[
-                { valeur: '3', label: 'Piliers fondateurs' },
-                { valeur: '4', label: 'Cellules thématiques' },
+                { valeur: statsReelles ? String(statsReelles.membres_bureau) : '10', label: 'Membres du Bureau' },
+                { valeur: statsReelles ? String(statsReelles.cellules) : '4', label: 'Cellules thématiques' },
                 { valeur: '100%', label: 'Bénévolat & entraide' },
                 { valeur: '48h', label: 'Réponse à ta candidature' },
               ].map((s, i) => (

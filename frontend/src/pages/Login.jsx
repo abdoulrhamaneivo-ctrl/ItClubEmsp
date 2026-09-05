@@ -18,16 +18,31 @@ export default function Login() {
   const navigate = useNavigate()
   const [erreur, setErreur] = useState(null)
   const [chargement, setChargement] = useState(false)
+  const [reveil, setReveil] = useState(false)
 
   const submit = async (e) => {
     e.preventDefault()
     const fd = new FormData(e.currentTarget)
+    setErreur(null)
     setChargement(true)
+    setReveil(false)
+    // Render gratuit s'endort après 15 min : le 1er appel peut prendre
+    // ~50s. On prévient au lieu de laisser le bouton muet.
+    const minuteur = setTimeout(() => setReveil(true), 8000)
     try {
       await login(fd.get('email'), fd.get('password'))
+      clearTimeout(minuteur)
       navigate('/espace')
-    } catch {
-      setErreur('Connexion impossible — vérifie tes identifiants.')
+    } catch (err) {
+      clearTimeout(minuteur)
+      const msg = String(err?.message ?? '')
+      if (msg.includes('401') || msg.includes('identifiants') || msg.includes('actif')) {
+        setErreur('Identifiants incorrects — vérifie ton e-mail et ton mot de passe.')
+      } else if (msg.includes('Failed to fetch') || msg.includes('Network') || msg.includes('fetch')) {
+        setErreur('Serveur injoignable — vérifie ta connexion, puis réessaie (le serveur gratuit met ~50s à se réveiller).')
+      } else {
+        setErreur(`Connexion impossible (${msg.slice(0, 120) || 'erreur inconnue'}) — réessaie.`)
+      }
       setChargement(false)
     }
   }
@@ -116,9 +131,11 @@ export default function Login() {
             <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', lineHeight: 1.8 }}>
               Pas encore membre ? <RouterLink to="/adhesion" style={{ color: '#0E7A50', fontWeight: 700 }}>Remplis le formulaire d'adhésion</RouterLink>.
             </Typography>
-            <Typography variant="caption" sx={{ textAlign: 'center', color: '#9CA3AF', display: 'block', fontFamily: "'JetBrains Mono',monospace", fontSize: '0.66rem' }}>
-              // démo : n'importe quels identifiants fonctionnent
-            </Typography>
+            {reveil && chargement && (
+              <Typography variant="caption" sx={{ textAlign: 'center', color: '#B45309', display: 'block', fontWeight: 700 }}>
+                Le serveur gratuit se réveille (~50s après inactivité) — laisse la page ouverte…
+              </Typography>
+            )}
           </Box>
         </motion.div>
       </Box>

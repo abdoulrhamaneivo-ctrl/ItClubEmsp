@@ -64,6 +64,13 @@ for code, nom, email, mission, objectif in BUREAU:
         # (doc 09 §2). Jamais réinitialisé si le compte existe déjà.
         user.set_password('ITClub2026!')
         user.save(update_fields=['password'])
+    elif not (user.password or '').startswith('!'):
+        pass  # le membre a déjà son mot de passe : on n'y touche pas
+    else:
+        # Compte seed créé avant le bootstrap (mdp inutilisable) → réparé
+        # à chaque déploiement, jusqu'à ce que le membre se connecte.
+        user.set_password('ITClub2026!')
+        user.save(update_fields=['password'])
     # Titulaire du poste
     role, role_created = Role.objects.get_or_create(
         code=code,
@@ -78,6 +85,14 @@ for code, nom, email, mission, objectif in BUREAU:
         defaults={'mission': mission, 'objectif': objectif},
     )
     print(f'  {"＋" if role_created else "·"} {code}  {nom}')
+
+# ADMIN au Président (P1) — transférable ensuite via backoffice Admin.
+try:
+    _p1 = User.objects.get(email__iexact='ivo.abdoul@emsp.int')
+    Role.objects.update_or_create(code='ADMIN', defaults={'titulaire': _p1})
+    print('  · ADMIN  ivo.abdoul@emsp.int')
+except User.DoesNotExist:
+    print('  ! P1 absent — ADMIN non attribué')
 
 # ─────────────────────────────────────────────────────────────
 # 2. CELLULES (4 — charte et icônes du front)

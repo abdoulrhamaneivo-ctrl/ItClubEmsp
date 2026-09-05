@@ -197,7 +197,11 @@ async function postJson(endpoint, payload, method = 'POST') {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
   })
-  if (!res.ok) throw new Error(`API ${res.status}`)
+  if (!res.ok) {
+    let detail = ''
+    try { detail = JSON.stringify(await res.json()).slice(0, 200) } catch { /* ignore */ }
+    throw new Error(`API ${res.status}${detail ? ` — ${detail}` : ''}`)
+  }
   // Écriture réussie → React Query rafraîchit les lectures liées
   invaliderCacheMetier()
   return res.json()
@@ -205,6 +209,10 @@ async function postJson(endpoint, payload, method = 'POST') {
 
 // API publique
 export const api = {
+  // Chiffres vitrine (public, zéro chiffre en dur sur l'accueil)
+  async getStatsPubliques() {
+    return fetchJson('/api/v1/stats-publiques/')
+  },
   // Bureau
   async getBureau() {
     const data = await fetchJson('/api/v1/bureau/')
