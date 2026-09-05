@@ -128,7 +128,7 @@ export default function Adhesion() {
   }
 
   return (
-    <Box id="adhesion" sx={{ py: { xs: 6, md: 8 }, position: 'relative', overflow: 'hidden' }}>
+    <Box id="formulaire-adhesion" sx={{ py: { xs: 6, md: 8 }, position: 'relative', overflow: 'hidden' }}>
       <FondPropre variante="doux" />
       <BandeauAccent couleur="#F5A623" />
 
