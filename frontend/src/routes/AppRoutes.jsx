@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect } from 'react'
+import { lazy, Suspense, useEffect, Component } from 'react'
 import { motion } from 'framer-motion'
 import Button from '@mui/material/Button'
 import Box from '@mui/material/Box'
@@ -129,11 +129,34 @@ function ScrollToTop() {
   return null
 }
 
+/* ── Filet anti page-blanche : une erreur d'un module affiche un
+      message + bouton au lieu d'un chargement infini ── */
+class FrontiereErreur extends Component {
+  constructor(props) { super(props); this.state = { erreur: null } }
+  static getDerivedStateFromError(erreur) { return { erreur } }
+  render() {
+    if (!this.state.erreur) return this.props.children
+    return (
+      <Box sx={{ minHeight: '60vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 2, px: 3, textAlign: 'center' }}>
+        <Typography sx={{ fontWeight: 800, color: '#111827' }}>Oups — cette page a planté.</Typography>
+        <Typography variant="body2" color="textSecondary" sx={{ maxWidth: 480 }}>
+          {String(this.state.erreur?.message ?? this.state.erreur).slice(0, 220)}
+        </Typography>
+        <Button variant="contained" onClick={() => window.location.reload()}
+          sx={{ bgcolor: '#1FAF72', '&:hover': { bgcolor: '#179963' }, fontWeight: 800, borderRadius: 9999 }}>
+          Recharger la page
+        </Button>
+      </Box>
+    )
+  }
+}
+
 export default function AppRoutes() {
   return (
     <BrowserRouter>
       <ScrollToTop />
       <Suspense fallback={<FallbackPage />}>
+      <FrontiereErreur>
       <Routes>
         <Route path="/" element={<Vitrine />} />
         <Route path="*" element={<Page404 />} />
@@ -181,6 +204,7 @@ export default function AppRoutes() {
           }
         />
       </Routes>
+      </FrontiereErreur>
           </Suspense>
     </BrowserRouter>
   )

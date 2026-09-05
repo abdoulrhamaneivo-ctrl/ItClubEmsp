@@ -15,6 +15,7 @@ import { BandeauAccent } from '../ui-components/FondPropre'
 import { ButtonStyles } from '../ui-components/DesignSystem'
 import { api } from '../../lib/api'
 import { chargerConfig, validerChamp } from '../../data/formulaireConfig'
+import { IcWeb, IcIA, IcCyber, IcDesign } from '../ui-components/IconesClub'
 
 /**
  * Parcours d'adhésion — 3 étapes animées, champs DYNAMIQUES issus de la
@@ -23,10 +24,10 @@ import { chargerConfig, validerChamp } from '../../data/formulaireConfig'
  */
 
 const CELLULES = [
-  { id: 'web', nom: 'Cellule Web', couleur: '#1FAF72', icone: 'web', tag: 'React · Django · Déploiement' },
-  { id: 'ia', nom: 'Cellule IA', couleur: '#2563EB', icone: 'ia', tag: 'Python · LLMs · Data' },
-  { id: 'cyber', nom: 'Cellule Cybersécurité', couleur: '#0F5B3A', icone: 'cyber', tag: 'Linux · CTF · Sécurité' },
-  { id: 'design', nom: 'Cellule Design', couleur: '#7B61FF', icone: 'design', tag: 'Figma · Vidéo · Identité' },
+  { id: 'web', nom: 'Cellule Web', couleur: '#1FAF72', Icone: IcWeb, tag: 'React · Django · Déploiement' },
+  { id: 'ia', nom: 'Cellule IA', couleur: '#2563EB', Icone: IcIA, tag: 'Python · LLMs · Data' },
+  { id: 'cyber', nom: 'Cellule Cybersécurité', couleur: '#0F5B3A', Icone: IcCyber, tag: 'Linux · CTF · Sécurité' },
+  { id: 'design', nom: 'Cellule Design', couleur: '#7B61FF', Icone: IcDesign, tag: 'Figma · Vidéo · Identité' },
 ]
 
 const ETAPES = [
@@ -215,7 +216,7 @@ export default function Adhesion() {
                         <Typography variant="caption" sx={{
                           fontWeight: 800, fontSize: '0.68rem', letterSpacing: '0.04em',
                           color: etape === i ? '#0F5B3A' : '#9CA3AF', textTransform: 'uppercase',
-                          whiteSpace: 'nowrap',
+                          whiteSpace: 'nowrap', display: { xs: 'none', sm: 'block' },
                         }}>
                           {e.titre}
                         </Typography>
@@ -310,7 +311,7 @@ export default function Adhesion() {
                                 </motion.div>
                               )}
                             </AnimatePresence>
-                            <Typography sx={{ fontSize: 30, mb: 0.8 }}>{c.icone}</Typography>
+                            <Box sx={{ color: c.couleur, mb: 0.8, display: 'flex' }}><c.Icone taille={30} couleur={c.couleur} /></Box>
                             <Typography sx={{ fontWeight: 800, color: '#111827', fontSize: '0.98rem' }}>{c.nom}</Typography>
                             <Typography variant="caption" sx={{ color: '#5A6B63', display: 'block', mt: 0.4 }}>{c.tag}</Typography>
                           </motion.button>
@@ -332,7 +333,7 @@ export default function Adhesion() {
                             const c = CELLULES.find((x) => x.id === id)
                             return (
                               <motion.div key={id} initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring', stiffness: 400, damping: 18 }}>
-                                <Chip label={`${c.icone} ${c.nom}`} sx={{ bgcolor: `${c.couleur}1A`, color: c.couleur, fontWeight: 800 }} />
+                                <Chip label={c.nom} sx={{ bgcolor: `${c.couleur}1A`, color: c.couleur, fontWeight: 800 }} />
                               </motion.div>
                             )
                           })}

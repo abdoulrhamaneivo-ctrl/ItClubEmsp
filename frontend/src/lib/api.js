@@ -73,10 +73,7 @@ async function fetchJson(endpoint) {
   if (USE_MOCK) return null
   let res
   try {
-    res = await fetch(`${BASE_URL}${endpoint}`, {
-      headers: authHeaders(),
-      credentials: 'include',
-    })
+    res = await fetchAuth(endpoint)
   } catch {
     // Backend injoignable (éteint, réseau) : les `?? repli` des getters
     // affichent les mocks au lieu d'une page en erreur.
@@ -86,6 +83,60 @@ async function fetchJson(endpoint) {
   const json = await res.json()
   // DRF pagination : { count, results } → on renvoie la liste directement
   return (json && Array.isArray(json.results)) ? json.results : json
+}
+
+// ── Session : refresh auto du JWT (access = 30 min) ────────────
+// Sans ça, tout appel authentifié répond 401 après 30 min alors que le
+// membre semble connecté. Un seul refresh partagé (pas de rafale).
+let refreshEnCours = null
+
+function deconnecterSilencieuse() {
+  localStorage.removeItem('access_token')
+  localStorage.removeItem('refresh_token')
+  localStorage.removeItem('user')
+  if (typeof window !== 'undefined' && window.location.pathname !== '/login') {
+    window.location.href = '/login'
+  }
+}
+
+async function rafraichirToken() {
+  if (!refreshEnCours) {
+    refreshEnCours = (async () => {
+      const refresh = localStorage.getItem('refresh_token')
+      if (!refresh || USE_MOCK) throw new Error('pas de refresh')
+      const res = await fetchAuth(`/api/v1/auth/token/refresh`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ refresh }),
+      })
+      if (!res.ok) throw new Error(`refresh ${res.status}`)
+      const data = await res.json()
+      localStorage.setItem('access_token', data.access)
+      return data.access
+    })().finally(() => { refreshEnCours = null })
+  }
+  return refreshEnCours
+}
+
+/** fetch authentifié : sur 401, un refresh puis une seule relance. */
+async function fetchAuth(endpoint, options = {}, retente = true) {
+  const res = await fetch(`${BASE_URL}${endpoint}`, {
+    ...options,
+    headers: authHeaders(options.headers),
+    credentials: 'include',
+  })
+  const estLogin = endpoint.includes('/auth/token')
+  if (res.status === 401 && retente && !estLogin && localStorage.getItem('refresh_token')) {
+    try {
+      await rafraichirToken()
+      return fetchAuth(endpoint, options, false)
+    } catch {
+      deconnecterSilencieuse()
+      throw new Error('API 401')
+    }
+  }
+  return res
 }
 
 // Token management
@@ -103,10 +154,8 @@ async function postForm(endpoint, formData, method = 'POST') {
     await new Promise(r => setTimeout(r, 600))
     return { success: true, message: 'OK (mock)' }
   }
-  const res = await fetch(`${BASE_URL}${endpoint}`, {
+  const res = await fetchAuth(endpoint, {
     method,
-    headers: authHeaders(),
-    credentials: 'include',
     body: formData,
   })
   if (!res.ok) {
@@ -123,10 +172,8 @@ async function supprimerRessource(endpoint) {
     await new Promise(r => setTimeout(r, 400))
     return { success: true }
   }
-  const res = await fetch(`${BASE_URL}${endpoint}`, {
+  const res = await fetchAuth(endpoint, {
     method: 'DELETE',
-    headers: authHeaders(),
-    credentials: 'include',
   })
   if (!res.ok) throw new Error(`API ${res.status}`)
   invaliderCacheMetier()
@@ -145,10 +192,9 @@ async function postJson(endpoint, payload, method = 'POST') {
     }
     return { success: true, message: 'OK (mock)' }
   }
-  const res = await fetch(`${BASE_URL}${endpoint}`, {
+  const res = await fetchAuth(endpoint, {
     method,
-    headers: authHeaders({ 'Content-Type': 'application/json' }),
-    credentials: 'include',
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
   })
   if (!res.ok) throw new Error(`API ${res.status}`)
@@ -303,10 +349,8 @@ export const api = {
       await new Promise(r => setTimeout(r, 600))
       return { statut: 'desinscrit' }
     }
-    const res = await fetch(`${BASE_URL}/api/v1/evenements/${id}/desinscrire`, {
+    const res = await fetchAuth(`/api/v1/evenements/${id}/desinscrire`, {
       method: 'DELETE',
-      headers: authHeaders(),
-      credentials: 'include',
     })
     if (!res.ok) throw new Error(`API ${res.status}`)
     invaliderCacheMetier()
@@ -334,7 +378,7 @@ export const api = {
   },
   // Téléchargement authentifié (blob) : CSV orga + QR présence
   async telechargerFichier(url, nomFichier) {
-    const res = await fetch(`${BASE_URL}${url}`, { headers: authHeaders(), credentials: 'include' })
+    const res = await fetchAuth(url)
     if (!res.ok) throw new Error(`API ${res.status}`)
     const blob = await res.blob()
     const lien = document.createElement('a')
@@ -400,8 +444,8 @@ export const api = {
       await new Promise(r => setTimeout(r, 300))
       return { success: true }
     }
-    const res = await fetch(`${BASE_URL}/api/v1/projets/${id}/`, {
-      method: 'DELETE', headers: authHeaders(), credentials: 'include',
+    const res = await fetchAuth(`/api/v1/projets/${id}/`, {
+      method: 'DELETE',
     })
     if (!res.ok) throw new Error(`API ${res.status}`)
     invaliderCacheMetier()
@@ -426,8 +470,8 @@ export const api = {
       await new Promise(r => setTimeout(r, 300))
       return { success: true }
     }
-    const res = await fetch(`${BASE_URL}/api/v1/opportunites/${id}/`, {
-      method: 'DELETE', headers: authHeaders(), credentials: 'include',
+    const res = await fetchAuth(`/api/v1/opportunites/${id}/`, {
+      method: 'DELETE',
     })
     if (!res.ok) throw new Error(`API ${res.status}`)
     invaliderCacheMetier()
@@ -502,8 +546,8 @@ export const api = {
       await new Promise(r => setTimeout(r, 300))
       return { success: true }
     }
-    const res = await fetch(`${BASE_URL}/api/v1/cellules/${id}/`, {
-      method: 'DELETE', headers: authHeaders(), credentials: 'include',
+    const res = await fetchAuth(`/api/v1/cellules/${id}/`, {
+      method: 'DELETE',
     })
     if (!res.ok) throw new Error(`API ${res.status}`)
     invaliderCacheMetier()
@@ -529,8 +573,8 @@ export const api = {
     return postJson('/api/v1/forum/messages/', { sujet: sujetId, contenu })
   },
   async modererMessage(id) {
-    const res = await fetch(`${BASE_URL}/api/v1/forum/messages/${id}/`, {
-      method: 'DELETE', headers: authHeaders(), credentials: 'include',
+    const res = await fetchAuth(`/api/v1/forum/messages/${id}/`, {
+      method: 'DELETE',
     })
     if (!res.ok) throw new Error(`API ${res.status}`)
     invaliderCacheMetier()
@@ -574,8 +618,8 @@ export const api = {
       await new Promise(r => setTimeout(r, 300))
       return { success: true }
     }
-    const res = await fetch(`${BASE_URL}/api/v1/comptes-rendus/${id}/`, {
-      method: 'DELETE', headers: authHeaders(), credentials: 'include',
+    const res = await fetchAuth(`/api/v1/comptes-rendus/${id}/`, {
+      method: 'DELETE',
     })
     if (!res.ok) throw new Error(`API ${res.status}`)
     invaliderCacheMetier()
@@ -614,8 +658,8 @@ export const api = {
     return postJson(`/api/v1/veille/${veilleId}/voter/`, {})
   },
   async supprimerVeille(id) {
-    const res = await fetch(`${BASE_URL}/api/v1/veille/${id}/`, {
-      method: 'DELETE', headers: authHeaders(), credentials: 'include',
+    const res = await fetchAuth(`/api/v1/veille/${id}/`, {
+      method: 'DELETE',
     })
     if (!res.ok) throw new Error(`API ${res.status}`)
     invaliderCacheMetier()
