@@ -146,6 +146,12 @@ function CarteActu({ n, index }) {
                   <Typography variant="body2" sx={{ color: '#5A6B63', lineHeight: 1.75, flex: 1 }}>
                     {n.extrait}
                   </Typography>
+                  {n.video_url && (
+                    <Button size="small" variant="text" href={n.video_url} target="_blank" rel="noreferrer"
+                      sx={{ color: '#5B3FD6', fontWeight: 800, fontSize: '0.74rem', alignSelf: 'flex-start', mt: 0.5, px: 0 }}>
+                      Voir la vidéo
+                    </Button>
+                  )}
 
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 2, pt: 1.6, borderTop: '1px solid #EEF2F0' }}>
                     <Box sx={{

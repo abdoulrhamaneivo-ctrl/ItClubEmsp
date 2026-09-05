@@ -209,6 +209,20 @@ export default function Activites() {
                             <Typography variant="body2" color="textSecondary" sx={{ lineHeight: 1.65, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                               {a.description}
                             </Typography>
+                            {(a.image || a.video_url) && (
+                              <Box sx={{ display: 'flex', gap: 1.2, mt: 1, flexWrap: 'wrap', alignItems: 'center' }}>
+                                {a.image && (
+                                  <Box component="img" src={a.image} alt=""
+                                    sx={{ width: 'min(260px, 100%)', borderRadius: '10px', border: '1px solid #E5E7EB', objectFit: 'cover' }} />
+                                )}
+                                {a.video_url && (
+                                  <Button size="small" variant="text" href={a.video_url} target="_blank" rel="noreferrer"
+                                    sx={{ color: '#5B3FD6', fontWeight: 800, fontSize: '0.74rem' }}>
+                                    Voir la vidéo
+                                  </Button>
+                                )}
+                              </Box>
+                            )}
                             {/* CTA mobile — même inscription, pleine largeur */}
                             <Button
                               variant={inscriptions[a.id] && inscriptions[a.id] !== 'erreur' ? 'contained' : 'outlined'}

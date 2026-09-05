@@ -254,11 +254,12 @@ export const api = {
   },
 
   // Publication multipart (fichiers réels) — crée ou modifie (id/slug fourni)
-  async publierActualite({ id, titre, extrait, imageFile, tag_cellule }) {
+  async publierActualite({ id, titre, extrait, imageFile, tag_cellule, video_url }) {
     const fd = new FormData()
     fd.append('titre', titre)
     fd.append('extrait', extrait ?? '')
     if (tag_cellule) fd.append('tag_cellule', tag_cellule)
+    if (video_url) fd.append('video_url', video_url)
     if (imageFile) fd.append('image', imageFile)
     return postForm(id ? `/api/v1/actualites/${id}/` : '/api/v1/actualites/', fd, id ? 'PATCH' : 'POST')
   },
@@ -570,12 +571,21 @@ export const api = {
   },
 
   // Ateliers = événements type=atelier (P10) : création anti-conflit serveur
-  async creerAtelier({ titre, description, date, lieu, places }) {
+  async creerAtelier({ titre, description, date, lieu, places, imageFile, video_url }) {
     if (USE_MOCK) {
       await new Promise(r => setTimeout(r, 600))
       return { id: Date.now(), titre }
     }
-    return postJson('/api/v1/evenements/', { titre, description, type: 'atelier', date, lieu, places })
+    const fd = new FormData()
+    fd.append('titre', titre)
+    fd.append('description', description ?? '')
+    fd.append('type', 'atelier')
+    fd.append('date', date)
+    fd.append('lieu', lieu ?? '')
+    fd.append('places', places ?? 0)
+    if (video_url) fd.append('video_url', video_url)
+    if (imageFile) fd.append('image', imageFile)
+    return postForm('/api/v1/evenements/', fd)
   },
   // Cellules (P4) — création, modification, chef par email
   async sauverCellule({ id, slug, nom, description, couleur, chef_email }) {

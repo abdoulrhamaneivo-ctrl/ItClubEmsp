@@ -126,7 +126,7 @@ class ActualiteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Actualite
-        fields = ['id', 'titre', 'extrait', 'image', 'tag_cellule', 'tag_cellule_nom',
+        fields = ['id', 'titre', 'extrait', 'image', 'video_url', 'tag_cellule', 'tag_cellule_nom',
                   'tag_cellule_couleur', 'auteur_nom', 'auteur_initiale',
                   'reactions', 'ma_reaction', 'commentaires_count', 'date']
 
@@ -215,7 +215,7 @@ class EvenementSerializer(serializers.ModelSerializer):
         fields = ['id', 'titre', 'description', 'type', 'type_label', 'couleur', 'date', 'date_fin', 'lieu',
                   'places', 'places_disponibles', 'inscrits_count', 'presents_count',
                   'code_presence', 'note_moyenne', 'nb_retours', 'mon_retour',
-                  'bilan', 'icone']
+                  'bilan', 'icone', 'image', 'video_url']
 
     def get_inscrits_count(self, obj):
         # Confirmés uniquement (annoté en 1 requête ; fallback si absent)

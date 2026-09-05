@@ -103,7 +103,7 @@ function OngletActualites({ notify, idParSlug }) {
     id: a?.id || null, titre: a?.titre || '', extrait: a?.extrait || '',
     auteur: a?.auteur || '', tag: a?.tag || 'Annonce officielle',
     cellule: a?.cellule || 'general', date: a?.date || new Date().toISOString().slice(0, 10),
-    image: a?.image || null, imageFile: null,
+    image: a?.image || null, imageFile: null, video_url: a?.video_url || '',
   })
   const [form, setForm] = useState(initForm())
 
@@ -122,6 +122,7 @@ function OngletActualites({ notify, idParSlug }) {
         titre: form.titre.trim(),
         extrait: form.extrait.trim(),
         imageFile: form.imageFile,
+        video_url: form.video_url.trim(),
         tag_cellule: form.cellule === 'general' ? null : (idParSlug[form.cellule] ?? null),
       })
       notify('success', 'Actualité publiée — visible sur la vitrine.')
@@ -200,7 +201,8 @@ function ChampsActualite({ form, setForm, choisirImage }) {
         </TextField>
         <TextField type="date" label="Date" value={form.date} onChange={(e) => setForm((f) => ({ ...f, date: e.target.value }))} fullWidth InputLabelProps={{ shrink: true }} />
       </Box>
-      {/* Image d'illustration */}
+      {/* Image d'illustration + vidéo */}
+      <TextField label="Lien vidéo (reportage, interview…)" value={form.video_url} onChange={(e) => setForm((f) => ({ ...f, video_url: e.target.value }))} fullWidth placeholder="https://…" />
       <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', flexWrap: 'wrap' }}>
         {form.image && (
           <Box component="img" src={form.image} alt="" sx={{ width: 120, height: 74, objectFit: 'cover', borderRadius: 2, border: '1px solid #E5E7EB' }} />

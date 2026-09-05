@@ -261,3 +261,26 @@ class RetoursBilanTests(TestCase):
         self.client.patch(f'/api/v1/evenements/{self.e.id}/bilan/', {'publie': False}, format='json')
         r = self.client.get(f'/api/v1/evenements/{self.e.id}/').json()
         self.assertIsNone(r['bilan'])
+
+
+class EvenementMediaTests(TestCase):
+    client_class = APIClient
+
+    def test_affiche_et_video(self):
+        from django.contrib.auth import get_user_model
+        from apps.accounts.models import Role
+        U = get_user_model()
+        p6 = U.objects.create_user(username='evtp6', email='evtp6@x.com', password='x')
+        Role.objects.create(code='P6', titulaire=p6)
+        self.client.force_authenticate(p6)
+        from django.core.files.uploadedfile import SimpleUploadedFile
+        gif = (b'GIF89a\x01\x00\x01\x00\x80\x00\x00\x00\x00\x00\xff\xff\xff!'
+               b'\xf9\x04\x01\x00\x00\x00\x00,\x00\x00\x00\x00\x01\x00\x01\x00\x00\x02\x02D\x01\x00;')
+        r = self.client.post('/api/v1/evenements/',
+                             {'titre': 'Evt média', 'type': 'atelier', 'date': '2026-12-01T15:00:00Z',
+                              'lieu': 'Salle info', 'video_url': 'https://youtu.be/xyz',
+                              'image': SimpleUploadedFile('affiche.gif', gif, content_type='image/gif')},
+                             format='multipart')
+        self.assertEqual(r.status_code, 201)
+        self.assertTrue(r.json()['image'])
+        self.assertEqual(r.json()['video_url'], 'https://youtu.be/xyz')

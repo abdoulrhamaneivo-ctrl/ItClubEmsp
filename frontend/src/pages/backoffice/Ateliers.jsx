@@ -22,7 +22,7 @@ export default function Ateliers() {
   const [message, notify] = useFlash()
   const [formOuvert, setFormOuvert] = useState(false)
   const [envoi, setEnvoi] = useState(false)
-  const [form, setForm] = useState({ titre: '', description: '', date: '', lieu: '', places: '' })
+  const [form, setForm] = useState({ titre: '', description: '', date: '', lieu: '', places: '', imageFile: null, video_url: '' })
   const client = useQueryClient()
 
   const { data: evenements = [] } = useQuery({
@@ -51,10 +51,12 @@ export default function Ateliers() {
         date: iso,
         lieu: form.lieu.trim(),
         places: form.places === '' ? 0 : Math.max(0, parseInt(form.places, 10) || 0),
+        imageFile: form.imageFile,
+        video_url: form.video_url.trim(),
       })
       client.invalidateQueries({ queryKey: ['evenements'] })
       notify('success', 'Atelier créé — visible dans les Activités.')
-      setForm({ titre: '', description: '', date: '', lieu: '', places: '' })
+      setForm({ titre: '', description: '', date: '', lieu: '', places: '', imageFile: null, video_url: '' })
       setFormOuvert(false)
     } catch (e) {
       // 400 conflit de salle : le message serveur est explicite
@@ -82,6 +84,16 @@ export default function Ateliers() {
         <Box sx={{ bgcolor: '#fff', borderRadius: '18px', border: '1px solid #1FAF7245', p: { xs: 2.4, md: 3 }, display: 'grid', gap: 2, mb: 2.5 }}>
           <TextField label="Titre *" value={form.titre} onChange={(e) => set('titre', e.target.value)} fullWidth sx={champSx} />
           <TextField label="Description" value={form.description} onChange={(e) => set('description', e.target.value)} multiline rows={2} fullWidth sx={champSx} />
+          <TextField label="Lien vidéo (teaser, replay…)" value={form.video_url} onChange={(e) => set('video_url', e.target.value)} fullWidth sx={champSx} placeholder="https://…" />
+          <Box sx={{ display: 'flex', gap: 1.5, alignItems: 'center', flexWrap: 'wrap' }}>
+            <Button variant="outlined" component="label" sx={{ borderColor: '#1FAF72', color: '#0E7A50', fontWeight: 800, borderRadius: '12px' }}>
+              {form.imageFile ? 'Changer l’affiche' : 'Ajouter une affiche (photo)'}
+              <input type="file" accept="image/*" hidden onChange={(e) => set('imageFile', e.target.files?.[0] ?? null)} />
+            </Button>
+            {form.imageFile && (
+              <Typography variant="caption" sx={{ color: '#374151', fontWeight: 700 }}>{form.imageFile.name}</Typography>
+            )}
+          </Box>
           <Box sx={{ display: 'grid', gap: 2, gridTemplateColumns: { xs: '1fr', md: '1fr 1fr 1fr' } }}>
             <TextField type="datetime-local" label="Date et heure *" value={form.date} onChange={(e) => set('date', e.target.value)} fullWidth sx={champSx} InputLabelProps={{ shrink: true }} />
             <TextField label="Lieu *" value={form.lieu} onChange={(e) => set('lieu', e.target.value)} placeholder="Ex. salle info 2" fullWidth sx={champSx} />

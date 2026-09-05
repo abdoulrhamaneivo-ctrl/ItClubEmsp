@@ -11,6 +11,8 @@ class Actualite(models.Model):
     titre = models.CharField(max_length=140)
     extrait = models.TextField(blank=True)
     image = models.ImageField(upload_to='actualites/', blank=True, null=True)
+    video_url = models.URLField('Lien vidéo (reportage, interview…)', max_length=500, blank=True,
+                                help_text='Coller le lien — les fichiers lourds ne passent pas par le serveur.')
     tag_cellule = models.ForeignKey(Cellule, on_delete=models.SET_NULL, null=True, blank=True, related_name='actualites')
     auteur = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     date = models.DateField(auto_now_add=True)
