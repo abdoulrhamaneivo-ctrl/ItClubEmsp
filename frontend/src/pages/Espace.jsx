@@ -489,11 +489,11 @@ export default function Espace() {
 
       {/* ── CONTENU ──────────────────────────────────────────── */}
       <Container maxWidth={false} sx={{
-        position: 'relative', maxWidth: '1200px !important',
+        position: 'relative', maxWidth: '1200px !important', mx: 'auto',
         px: { xs: 2.5, md: 4 }, pt: { xs: 10, md: 12 }, pb: { xs: 14, lg: 10 },
         minHeight: '100vh',
         // Le dock vertical fixe (desktop) ne recouvre pas le contenu
-        mr: { xs: 0, md: '88px' },
+        pr: { xs: 2.5, md: '120px' },
       }}>
         {/* ═══ ACCUEIL — carte membre ═══════════════════════════ */}
         <Box ref={refs.accueil} data-section="accueil" sx={{ scrollMarginTop: 90 }}>

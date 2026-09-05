@@ -267,22 +267,22 @@ export default function BackofficeLayout() {
 
       {/* ── CONTENU plein écran (sans sidebar !) ────────────── */}
       <Container maxWidth={false} sx={{
-        position: 'relative', maxWidth: '1280px !important',
+        position: 'relative', maxWidth: '1280px !important', mx: 'auto',
         px: { xs: 2, md: 4 }, pt: { xs: 10, md: 12 }, pb: { xs: 14, lg: 8 },
         minHeight: '100vh',
-        // Le dock fixe à droite (74px + marges) ne doit jamais recouvrir le contenu
-        mr: { xs: 0, md: `${DOCK_W + 28}px` },
+        // Le dock fixe à droite ne recouvre pas le contenu (padding, pas décalage)
+        pr: { xs: 2, md: `calc(32px + ${DOCK_W + 28}px)` },
       }}>
         <AnimatePresence mode="wait">
           <motion.div
             key={location.pathname}
-            initial={{ opacity: 0, y: 26, filter: 'blur(6px)' }}
-            animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-            exit={{ opacity: 0, y: -18, filter: 'blur(4px)' }}
+            initial={{ opacity: 0, y: 26 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -18 }}
             transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
           >
             <Routes location={location}>
-              <Route index element={<Navigate to={modules[0]?.path ?? '/espace'} replace />} />
+              <Route index element={<HubAccueil modules={modules} user={user} />} />
               {modules.map((m) => (
                 <Route key={m.path} path={m.path}
                   element={
@@ -306,6 +306,8 @@ export default function BackofficeLayout() {
                     <PlaceholderModule module={m} />
                   } />
               ))}
+              {/* Jamais de page vide : module inconnu → retour à l'accueil */}
+              <Route path="*" element={<Navigate to="/backoffice" replace />} />
             </Routes>
           </motion.div>
         </AnimatePresence>
@@ -342,6 +344,71 @@ export default function BackofficeLayout() {
         </Box>
       </motion.div>
     </Box>
+  )
+}
+
+/* ── Hub d'accueil : tous les modules accessibles en cartes ─ */
+function HubAccueil({ modules, user }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+    >
+      <Box sx={{ mb: 3 }}>
+        <Typography sx={{ color: '#9AFBD7', fontFamily: "'JetBrains Mono',monospace", fontWeight: 700, fontSize: '0.78rem' }}>
+          $ backoffice --list
+        </Typography>
+        <Typography sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 800, fontSize: { xs: '1.5rem', md: '2rem' }, color: '#fff', mt: 0.5 }}>
+          {user?.nom?.split(' ')[0] ?? 'Bureau'}, tes modules
+        </Typography>
+        <Typography sx={{ color: 'rgba(255,255,255,.65)', mt: 0.5 }}>
+          {modules.length} module{modules.length > 1 ? 's' : ''} — choisis par où commencer.
+        </Typography>
+      </Box>
+      <Box sx={{ display: 'grid', gap: 2, gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', lg: '1fr 1fr 1fr' } }}>
+        {modules.map((m, i) => {
+          const I = m.Icone ?? iconeModule(m.path)
+          return (
+            <motion.div key={m.path}
+              initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.05 * i, duration: 0.3 }}>
+              <Button component={NavLink} to={`/backoffice/${m.path}`} fullWidth
+                sx={{
+                  justifyContent: 'flex-start', gap: 2, p: 2.4, borderRadius: '18px', textAlign: 'left',
+                  bgcolor: 'rgba(255,255,255,.97)', color: '#111827', textTransform: 'none',
+                  border: '1px solid rgba(154,251,215,.3)', boxShadow: '0 12px 30px rgba(0,0,0,.3)',
+                  '&:hover': { bgcolor: '#fff', boxShadow: '0 16px 36px rgba(0,0,0,.4)' },
+                }}>
+                <Box sx={{
+                  width: 48, height: 48, borderRadius: '14px', flexShrink: 0,
+                  background: 'linear-gradient(135deg,#1FAF72,#0F5B3A)',
+                  display: 'grid', placeItems: 'center',
+                }}>
+                  <I size={24} color="#fff" strokeWidth={1.8} />
+                </Box>
+                <Box sx={{ minWidth: 0 }}>
+                  <Typography sx={{ fontWeight: 800, fontSize: '0.95rem' }}>{m.label}</Typography>
+                  <Typography variant="caption" sx={{ color: '#5A6B63', display: 'block', lineHeight: 1.5 }}>
+                    {m.desc}
+                  </Typography>
+                </Box>
+              </Button>
+            </motion.div>
+          )
+        })}
+      </Box>
+      {modules.length === 0 && (
+        <Box sx={{ p: 4, bgcolor: 'rgba(255,255,255,.97)', borderRadius: '18px', textAlign: 'center' }}>
+          <Typography sx={{ fontWeight: 800, color: '#111827' }}>Aucun module assigné</Typography>
+          <Typography variant="body2" sx={{ color: '#5A6B63', mt: 1 }}>
+            Ton compte n'a pas encore de poste au Bureau — contacte le Président.
+          </Typography>
+          <Button href="/espace" sx={{ mt: 2, bgcolor: '#1FAF72', color: '#fff', fontWeight: 800, borderRadius: '12px' }}>
+            Retour à mon espace
+          </Button>
+        </Box>
+      )}
+    </motion.div>
   )
 }
 
