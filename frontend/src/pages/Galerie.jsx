@@ -139,7 +139,7 @@ export default function Galerie() {
                     <Box component="img" src={m.image} alt={m.titre} loading="lazy" decoding="async" sx={{ width: '100%', minHeight: 180, objectFit: 'cover', display: 'block' }} />
                   ) : (
                     <Box sx={{
-                      height: m.type === 'video' ? 210 : 170 + (parseInt(m.id?.slice(-1), 10) || m.id % 3) * 34,
+                      height: m.type === 'video' ? 210 : 170 + (parseInt(String(m.id ?? '').slice(-1), 10) || Number(m.id) % 3 || 0) * 34,
                       background: `linear-gradient(135deg, ${m.couleur}, ${m.couleur}88 60%, #0D1B2A)`,
                       display: 'grid', placeItems: 'center', position: 'relative',
                     }}>

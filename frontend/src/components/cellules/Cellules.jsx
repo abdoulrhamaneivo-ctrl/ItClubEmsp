@@ -187,7 +187,7 @@ export default function Cellules() {
                     </Typography>
                     {/* Programme en puces fléchées */}
                     <Box sx={{ display: 'grid', gap: 1.2, mb: 3 }}>
-                      {(actuelle.programme ?? '').split('\n').filter((l) => l.trim()).slice(0, 5).map((ligne, j) => (
+                      {texteProgramme(actuelle.programme).split('\n').filter((l) => l.trim()).slice(0, 5).map((ligne, j) => (
                         <motion.div
                           key={j}
                           initial={{ opacity: 0, x: 14 }}
@@ -318,6 +318,9 @@ function CarteCellule({ card, active }) {
 }
 
 /* ── Modale programme complet ───────────────────────────────── */
+/** Le backend stocke le programme en liste JSON ; les mocks en texte :
+    on accepte les deux pour ne jamais planter le rendu. */
+const texteProgramme = (p) => (Array.isArray(p) ? p.join('\n') : (p ?? ''))
 function ModaleCellule({ cellule, onClose }) {
   return (
     <motion.div
@@ -351,7 +354,7 @@ function ModaleCellule({ cellule, onClose }) {
               <Typography sx={{ fontWeight: 800, color: '#0F5B3A', mb: 1.5, fontSize: '0.9rem' }}>
                 Ce que tu y apprendras
               </Typography>
-              {(cellule.programme ?? '').split('\n').filter((l) => l.trim()).map((ligne, j) => (
+              {texteProgramme(cellule.programme).split('\n').filter((l) => l.trim()).map((ligne, j) => (
                 <Typography key={j} variant="body2" sx={{ color: '#374151', lineHeight: 1.8, display: 'flex', gap: 1 }}>
                   <Box component="span" sx={{ color: cellule.couleur, fontWeight: 800 }}>→</Box>
                   {ligne.replace(/^[•\-\s]+/, '')}
