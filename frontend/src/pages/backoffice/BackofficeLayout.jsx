@@ -270,6 +270,8 @@ export default function BackofficeLayout() {
         position: 'relative', maxWidth: '1280px !important',
         px: { xs: 2, md: 4 }, pt: { xs: 10, md: 12 }, pb: { xs: 14, lg: 8 },
         minHeight: '100vh',
+        // Le dock fixe à droite (74px + marges) ne doit jamais recouvrir le contenu
+        mr: { xs: 0, md: `${DOCK_W + 28}px` },
       }}>
         <AnimatePresence mode="wait">
           <motion.div

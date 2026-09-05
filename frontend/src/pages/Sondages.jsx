@@ -37,7 +37,7 @@ export default function Sondages() {
   const visibles = sondages.filter((s) => (filtre === 'ouverts' ? !s.clos : s.clos))
 
   return (
-    <Box sx={{ py: { xs: 4, md: 6 }, position: 'relative', minHeight: '70vh' }}>
+    <Box sx={{ pt: { xs: 11, md: 13 }, pb: { xs: 4, md: 6 }, position: 'relative', minHeight: '70vh' }}>
       <FondPropre variante="doux" />
       <Container maxWidth={false} sx={{ position: 'relative', maxWidth: '1100px !important', px: { xs: 2.5, md: 4 } }}>
         <TitreSection

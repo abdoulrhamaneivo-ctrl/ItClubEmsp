@@ -67,7 +67,7 @@ export default function Galerie() {
   }
 
   return (
-    <Box sx={{ py: { xs: 6, md: 8 }, position: 'relative', minHeight: '80vh' }}>
+    <Box sx={{ pt: { xs: 11, md: 13 }, pb: { xs: 6, md: 8 }, position: 'relative', minHeight: '80vh' }}>
       <FondPropre variante="blanc" />
       <BandeauAccent couleur="#1FAF72" />
       <FondHalos couleurs={['rgba(31,175,114,.11)', 'rgba(37,99,235,.09)', 'rgba(245,166,35,.08)']} trame={false} />

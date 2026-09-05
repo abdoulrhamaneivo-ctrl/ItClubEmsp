@@ -6,6 +6,7 @@ html {
 
 body {
   overscroll-behavior-y: none;
+  overflow-x: clip;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
 }

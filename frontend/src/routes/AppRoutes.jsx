@@ -163,7 +163,7 @@ export default function AppRoutes() {
         <Route path="/" element={<Vitrine />} />
         <Route path="*" element={<Page404 />} />
         <Route path="/galerie" element={<><Navbar /><Galerie /></>} />
-        <Route path="/adhesion" element={<><Navbar /><Box sx={{ pt: { xs: 8, md: 9 } }}><Adhesion /></Box><Footer /></>} />
+        <Route path="/adhesion" element={<><Navbar /><Box sx={{ pt: { xs: 10, md: 12 } }}><Adhesion /></Box><Footer /></>} />
         <Route
           path="/forum"
           element={
@@ -194,7 +194,7 @@ export default function AppRoutes() {
           path="/espace"
           element={
             <RequireAuth>
-              <><Navbar /><Espace /></>
+              <Espace />
             </RequireAuth>
           }
         />
