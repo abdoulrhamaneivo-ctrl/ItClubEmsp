@@ -59,6 +59,11 @@ for code, nom, email, mission, objectif in BUREAU:
             'last_name': ' '.join(parts[1:]),
         },
     )
+    if created:
+        # Bootstrap prod : mot de passe temporaire à changer à la 1re connexion
+        # (doc 09 §2). Jamais réinitialisé si le compte existe déjà.
+        user.set_password('ITClub2026!')
+        user.save(update_fields=['password'])
     # Titulaire du poste
     role, role_created = Role.objects.get_or_create(
         code=code,

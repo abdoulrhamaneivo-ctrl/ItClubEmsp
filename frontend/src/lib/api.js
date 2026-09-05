@@ -310,6 +310,10 @@ export const api = {
   async post(endpoint, payload) {
     return postJson(endpoint, payload)
   },
+  // Invitation : le membre choisit son mot de passe (lien email)
+  async definirMotDePasse(uid, token, password) {
+    return postJson('/api/v1/auth/definir-mot-de-passe', { uid, token, password })
+  },
 
   // Espace membre — endpoints réels (Authorization via authHeaders)
   async getMe() {

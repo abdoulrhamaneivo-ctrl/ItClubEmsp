@@ -13,6 +13,7 @@ from apps.views_emails import (
     dashboard, admin_utilisateurs, admin_utilisateur_maj,
     admin_roles, admin_role_passation,
     donner_retour, retours_liste, bilan_evenement,
+    lien_definition_mdp, definir_mot_de_passe,
 )
 from apps.views_core import (
     CelluleViewSet, BureauViewSet, ActualiteViewSet,
@@ -51,6 +52,7 @@ urlpatterns = [
     path('api/v1/presentation/', presentation),
     path('api/v1/auth/token', TokenAvecUserView.as_view()),
     path('api/v1/auth/token/refresh', TokenRefreshView.as_view()),
+    path('api/v1/auth/definir-mot-de-passe', definir_mot_de_passe),
     path('api/v1/evenements/<int:pk>/inscrire', inscrire),
     path('api/v1/evenements/<int:pk>/desinscrire', desinscrire),
     path('api/v1/evenements/<int:pk>/presence', marquer_presence),

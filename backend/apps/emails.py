@@ -226,10 +226,11 @@ def send_candidature_recue(c):
                       notif_type='candidature', objet_id=c.pk)
 
 
-def send_candidature_validee(c, user):
+def send_candidature_validee(c, user, lien_mdp=None):
     return send_email(user.email, '[IT-CLUB EMSP] Bienvenue dans le club !',
                       'candidature_validee.html',
-                      {'nom': user.get_full_name() or user.username, 'cellules': _cellules_noms(c)},
+                      {'nom': user.get_full_name() or user.username, 'cellules': _cellules_noms(c),
+                       'lien_mdp': lien_mdp or ''},
                       notif_type='candidature', user=user, objet_id=c.pk)
 
 

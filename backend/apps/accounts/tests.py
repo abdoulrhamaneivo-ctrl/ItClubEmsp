@@ -1,5 +1,5 @@
 """Tests des règles adhésion + espace membre (doc 02 D2, doc 06 Phase 2)."""
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.contrib.auth import get_user_model
 from rest_framework.test import APIClient
 
@@ -20,6 +20,8 @@ def donner_role(user, code):
     Role.objects.update_or_create(code=code, defaults={'titulaire': user})
 
 
+# Sans clé dans l'environnement (sinon le log-only attendu part en vrai envoi)
+@override_settings(BREVO_API_KEY='', BREVO_FROM='')
 class CandidatureTests(TestCase):
     def setUp(self):
         self.client = APIClient()
@@ -140,3 +142,36 @@ class GamificationTests(TestCase):
         self.assertEqual(me['points'], 10)
         self.assertEqual(me['niveau'], 'Actif')
         u.delete()
+
+
+class DefinitionMotDePasseTests(TestCase):
+    client_class = APIClient
+
+    def setUp(self):
+        self.u = membre('invitemdp@x.com')
+        self.u.set_unusable_password()
+        self.u.save()
+
+    def test_cycle_invitation(self):
+        from apps.views_emails import lien_definition_mdp
+        import re
+        lien = lien_definition_mdp(self.u)
+        self.assertIn('/definir-mot-de-passe?uid=', lien)
+        uid = re.search(r'uid=([^&]+)', lien).group(1)
+        tok = re.search(r'token=(.+)', lien).group(1)
+        url = '/api/v1/auth/definir-mot-de-passe'
+        # trop court
+        r = self.client.post(url, {'uid': uid, 'token': tok, 'password': 'Court'}, format='json')
+        self.assertEqual(r.status_code, 400)
+        # token bidon
+        r = self.client.post(url, {'uid': uid, 'token': 'faux', 'password': 'BonMotDePasse1!'}, format='json')
+        self.assertEqual(r.status_code, 400)
+        # OK puis login
+        r = self.client.post(url, {'uid': uid, 'token': tok, 'password': 'BonMotDePasse1!'}, format='json')
+        self.assertEqual(r.status_code, 200)
+        r = self.client.post('/api/v1/auth/token',
+                             {'email': 'invitemdp@x.com', 'password': 'BonMotDePasse1!'}, format='json')
+        self.assertEqual(r.status_code, 200)
+        # lien à usage unique
+        r = self.client.post(url, {'uid': uid, 'token': tok, 'password': 'AutreMotDePasse2!'}, format='json')
+        self.assertEqual(r.status_code, 400)

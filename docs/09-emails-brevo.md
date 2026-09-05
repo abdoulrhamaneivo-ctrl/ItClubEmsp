@@ -27,6 +27,10 @@
    - `BREVO_SMTP_USER` = login du compte si différent de `BREVO_FROM`.
 2. **Sans domaine vérifié** (état actuel) :
    - `BREVO_FROM = l'email du compte Brevo` (expéditeur validé dans Brevo)
+   - Comptes seed (Bureau) : mot de passe initial `ITClub2026!` (mis une seule
+     fois à la création — à changer à la 1re connexion, puis rotation).
+   - Membres validés : reçoivent un lien personnel `/definir-mot-de-passe`
+     (token usage unique) dans l'email de bienvenue.
    - destinataires : tout le monde (Brevo ne limite pas tant que l'expéditeur est validé).
    - Brevo sans expéditeur validé → 401/400 ; valider un expéditeur ou un domaine dans Senders.
 3. **Pour envoyer aux vrais membres** (obligatoire en prod) :

@@ -12,7 +12,7 @@ import logging
 from django.contrib.auth import get_user_model
 from django.db import transaction
 from rest_framework import viewsets, permissions, status
-from rest_framework.decorators import api_view, permission_classes, action
+from rest_framework.decorators import api_view, permission_classes, action, throttle_classes
 from rest_framework.response import Response
 from rest_framework import serializers as drf_serializers
 
@@ -116,7 +116,9 @@ class CandidatureViewSet(viewsets.ReadOnlyModelViewSet):
             cand.statut = 'validee'
             cand.traitee_par = request.user
             cand.save(update_fields=['statut', 'traitee_par'])
-        envoi = _fail_open('bienvenue', mail.send_candidature_validee, cand, user)
+        # Invitation : le membre choisit son mot de passe (compte créé sans mdp)
+        lien = lien_definition_mdp(user) if (created or not user.has_usable_password()) else None
+        envoi = _fail_open('bienvenue', mail.send_candidature_validee, cand, user, lien)
         return Response({'id': cand.id, 'statut': 'validee', 'user_id': user.id,
                          'compte_cree': created, 'email': envoi})
 
@@ -656,6 +658,54 @@ def bilan_evenement(request, pk):
     return Response({'statut': 'publie' if bilan.publie else 'brouillon',
                      'texte': bilan.texte, 'points_forts': bilan.points_forts,
                      'points_ameliorer': bilan.points_ameliorer})
+
+
+# ── Mot de passe : invitation + définition (comptes créés sans mdp) ─
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes, force_str
+
+_generateur_mdp = PasswordResetTokenGenerator()
+
+
+def lien_definition_mdp(user):
+    """Lien d'invitation : le membre choisit son mot de passe (valide
+    jusqu'à la première définition — le token s'invalide au changement)."""
+    from django.conf import settings
+    uid = urlsafe_base64_encode(force_bytes(user.pk))
+    token = _generateur_mdp.make_token(user)
+    base = settings.FRONTEND_URL.rstrip('/')
+    return f'{base}/definir-mot-de-passe?uid={uid}&token={token}'
+
+
+# Même compteur anti-spam que views_core (import direct = circulaire)
+from rest_framework.throttling import AnonRateThrottle
+
+
+class InvitationThrottle(AnonRateThrottle):
+    scope = 'public_write'
+
+
+@api_view(['POST'])
+@permission_classes([permissions.AllowAny])
+@throttle_classes([InvitationThrottle])
+def definir_mot_de_passe(request):
+    """POST /api/v1/auth/definir-mot-de-passe {uid, token, password}."""
+    from django.contrib.auth import get_user_model
+    User = get_user_model()
+    password = (request.data.get('password') or '')
+    if len(password) < 8:
+        return Response({'detail': '8 caractères minimum.'}, status=400)
+    try:
+        pk = force_str(urlsafe_base64_decode(request.data.get('uid', '')))
+        user = User.objects.get(pk=pk, is_active=True)
+    except (User.DoesNotExist, ValueError, TypeError):
+        return Response({'detail': 'Lien invalide ou expiré.'}, status=400)
+    if not _generateur_mdp.check_token(user, request.data.get('token', '')):
+        return Response({'detail': 'Lien invalide ou expiré.'}, status=400)
+    user.set_password(password)
+    user.save(update_fields=['password'])
+    return Response({'statut': 'ok'})
 
 
 # ── Espace membre : /me/* (doc 04 §5 accounts) ────────────────
