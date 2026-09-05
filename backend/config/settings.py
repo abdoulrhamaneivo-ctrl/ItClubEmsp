@@ -27,16 +27,18 @@ THIRD_PARTY_APPS = [
     'django_filters',
     'corsheaders',
     'drf_spectacular',
+    'channels',
 ]
 LOCAL_APPS = [
     'apps.accounts',
     'apps.comms',
     'apps.events',
+    'apps.chat',
     'apps.resources',
     'apps.governance',
     'apps.notifications',
 ]
-INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
+INSTALLED_APPS = ['daphne'] + DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
@@ -67,6 +69,14 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'config.wsgi.application'
+
+# ── Channels / WebSocket (chat forum temps réel) ────────────────
+ASGI_APPLICATION = 'config.asgi.application'
+# InMemoryChannelLayer : parfait pour 1 instance Render (plan gratuit).
+# Si passage multi-instances : remplacer par channels_redis.
+CHANNEL_LAYERS = {
+    'default': {'BACKEND': 'channels.layers.InMemoryChannelLayer'},
+}
 
 # ── DB : PostgreSQL si DATABASE_URL fournie, sinon SQLite (dev) ──
 # Neon : utilise l'URL poolée (…-pooler.…?sslmode=require) et mets

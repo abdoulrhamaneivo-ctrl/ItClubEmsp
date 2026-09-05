@@ -15,6 +15,7 @@ import LockIcon from '@mui/icons-material/Lock'
 import AddIcon from '@mui/icons-material/Add'
 import DeleteIcon from '@mui/icons-material/Delete'
 import { api } from '../lib/api'
+import { useForumLive } from '../lib/useForumLive'
 import { useAuth, hasRole } from '../stores/auth'
 import TitreSection from '../components/ui-components/TitreSection'
 import FondPropre from '../components/ui-components/FondPropre'
@@ -226,6 +227,10 @@ function FilSujet({ sujet, modo, onRetour, onMute, notify }) {
   const [texte, setTexte] = useState('')
   const [envoi, setEnvoi] = useState(false)
   const client = useQueryClient()
+  // Direct : les messages des autres arrivent sans recharger
+  const { connecte, envoyer, tempsReel } = useForumLive(sujet.id, {
+    onErreur: (detail) => notify('error', detail),
+  })
 
   const { data: messages = [], isLoading } = useQuery({
     queryKey: ['forum-messages', sujet.id],
@@ -236,10 +241,9 @@ function FilSujet({ sujet, modo, onRetour, onMute, notify }) {
     if (!texte.trim() || envoi) return
     setEnvoi(true)
     try {
-      await api.posterMessage(sujet.id, texte.trim())
+      await envoyer(texte.trim())
       setTexte('')
-      client.invalidateQueries({ queryKey: ['forum-messages', sujet.id] })
-      client.invalidateQueries({ queryKey: ['forum-sujets'] })
+      // En WS, le message revient par diffusion ; en REST, le hook réactualise.
     } catch (e) {
       notify('error', e.message ?? 'Envoi impossible')
     } finally {
@@ -283,6 +287,18 @@ function FilSujet({ sujet, modo, onRetour, onMute, notify }) {
         <Typography variant="caption" sx={{ color: '#5A6B63', display: 'block', mb: 2 }}>
           Ouvert par {sujet.auteur_nom} · {sujet.messages_count ?? 0} message{(sujet.messages_count ?? 0) > 1 ? 's' : ''}
           {sujet.verrouille && ' · verrouillé (modération uniquement)'}
+          {tempsReel && (
+            <Box component="span" sx={{
+              display: 'inline-flex', alignItems: 'center', gap: 0.6, ml: 1.2,
+              color: connecte ? '#0B7A4B' : '#6B7280', fontWeight: 800,
+            }}>
+              <Box component="span" sx={{
+                width: 7, height: 7, borderRadius: '50%',
+                bgcolor: connecte ? '#1FAF72' : '#9CA3AF',
+              }} />
+              {connecte ? 'En direct' : 'Connexion…'}
+            </Box>
+          )}
         </Typography>
 
         {isLoading && <Box sx={{ display: 'flex', justifyContent: 'center', py: 3 }}><CircularProgress size={24} sx={{ color: '#1FAF72' }} /></Box>}

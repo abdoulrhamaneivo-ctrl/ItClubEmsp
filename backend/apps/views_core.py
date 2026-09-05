@@ -416,6 +416,25 @@ class MessageForumViewSet(viewsets.ModelViewSet):
             raise ValidationError({'contenu': 'Message vide.'})
         msg = serializer.save(auteur=self.request.user, contenu=contenu)
         Sujet.objects.filter(pk=sujet.pk).update(derniere_activite=msg.cree_le)
+        # Temps réel : diffuse aux sockets ouvertes sur ce sujet.
+        # Best-effort : le POST réussit même si la diffusion échoue.
+        try:
+            from asgiref.sync import async_to_sync as _ats
+            from channels.layers import get_channel_layer as _gcl
+            _layer = _gcl()
+            if _layer is not None:
+                _ats(_layer.group_send)(f'forum_{sujet.pk}', {
+                    'type': 'chat_message',
+                    'message': {
+                        'id': msg.id, 'sujet': sujet.pk,
+                        'auteur_nom': (self.request.user.get_full_name()
+                                       or self.request.user.username),
+                        'contenu': msg.contenu,
+                        'cree_le': msg.cree_le.isoformat(),
+                    },
+                })
+        except Exception:
+            pass
 
     def perform_destroy(self, instance):
         # Modération par masquage (conservé en base, comme les commentaires)
@@ -424,6 +443,17 @@ class MessageForumViewSet(viewsets.ModelViewSet):
             raise PermissionDenied('Réservé à la modération (P1/P5).')
         instance.modere = True
         instance.save(update_fields=['modere'])
+        # Temps réel : retire le message des fils ouverts (best-effort)
+        try:
+            from asgiref.sync import async_to_sync as _ats
+            from channels.layers import get_channel_layer as _gcl
+            _layer = _gcl()
+            if _layer is not None:
+                _ats(_layer.group_send)(f'forum_{instance.sujet_id}', {
+                    'type': 'message_retire', 'message_id': instance.pk,
+                })
+        except Exception:
+            pass
 
 
 class MediaViewSet(PublicReadOrStaffWrite):

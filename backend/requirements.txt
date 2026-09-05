@@ -8,6 +8,8 @@ django-cors-headers
 dj-database-url
 whitenoise
 gunicorn
+channels
+daphne
 psycopg[binary]
 Pillow
 qrcode[pil]

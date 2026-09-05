@@ -4,8 +4,13 @@ services:
     runtime: python
     rootDir: backend
     buildCommand: ./build.sh
-    startCommand: gunicorn config.wsgi:application --chdir /opt/render/project/src/backend --bind 0.0.0.0:$PORT --workers 2 --settings config.settings_prod
+    # Daphne (ASGI) : sert le HTTP (DRF) + le WebSocket (chat forum).
+    # 1 seule instance sur le plan gratuit → InMemoryChannelLayer suffit.
+    startCommand: daphne config.asgi:application --bind 0.0.0.0 --port $PORT
     envVars:
+      # Daphne lit ce module (asgi.py ne fait que le défaut dev).
+      - key: DJANGO_SETTINGS_MODULE
+        value: config.settings_prod
       - key: DJANGO_SECRET_KEY
         generateValue: true
       - key: DJANGO_ALLOWED_HOSTS
