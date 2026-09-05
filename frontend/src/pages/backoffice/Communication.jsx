@@ -81,6 +81,46 @@ export default function Communication() {
           Le premier enregistrement crée chaque réglage ; les suivants le modifient.
         </Typography>
       )}
+
+      <TestEmail notify={notify} />
+    </Box>
+  )
+}
+
+/* ── Diagnostic : vérifie que Brevo envoie vraiment ────────── */
+function TestEmail({ notify }) {
+  const [destinataire, setDestinataire] = useState('')
+  const [envoi, setEnvoi] = useState(false)
+
+  const tester = async () => {
+    if (!destinataire.trim() || envoi) return
+    setEnvoi(true)
+    try {
+      const res = await api.testerEmail(destinataire.trim())
+      if (res.ok) notify('success', `Email parti vers ${destinataire.trim()} — vérifie la boîte (et les spams).`)
+      else notify('error', `Non parti : ${res.resultat?.skipped ?? res.erreur ?? 'voir les logs serveur'}`)
+    } catch (e) {
+      notify('error', e.message ?? 'Test impossible')
+    } finally {
+      setEnvoi(false)
+    }
+  }
+
+  return (
+    <Box sx={{ mt: 2, bgcolor: '#fff', borderRadius: '18px', border: '1px solid #E8ECEA', p: { xs: 2.4, md: 3.2 } }}>
+      <Typography sx={{ fontWeight: 800, color: '#111827', mb: 0.5 }}>Tester l'envoi d'emails</Typography>
+      <Typography variant="caption" sx={{ display: 'block', color: '#5A6B63', mb: 1.5 }}>
+        Envoie un vrai email via Brevo pour vérifier clé + expéditeur avant d'inviter des membres.
+      </Typography>
+      <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+        <TextField size="small" label="Adresse de test" value={destinataire}
+          onChange={(e) => setDestinataire(e.target.value)} placeholder="toi@exemple.com"
+          sx={{ flex: 1, minWidth: 220, '& .MuiOutlinedInput-root': { borderRadius: '12px', bgcolor: '#F8FAF9' } }} />
+        <Button variant="contained" onClick={tester} disabled={!destinataire.trim() || envoi}
+          sx={{ bgcolor: '#1FAF72', '&:hover': { bgcolor: '#179963' }, fontWeight: 800, borderRadius: '12px' }}>
+          {envoi ? 'Envoi…' : 'Envoyer le test'}
+        </Button>
+      </Box>
     </Box>
   )
 }

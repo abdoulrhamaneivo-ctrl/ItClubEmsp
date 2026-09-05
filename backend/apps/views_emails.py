@@ -221,11 +221,13 @@ def convocation(request):
     return Response({'envoyes': envoyes, 'ignores': ignores})
 
 
-# ── Test Resend (staff) ──────────────────────────────────────
+# ── Test Brevo (Bureau) ──────────────────────────────────────
 @api_view(['POST'])
-@permission_classes([permissions.IsAdminUser])
+@permission_classes([permissions.IsAuthenticated])
 def tester_email(request):
-    """POST /api/v1/emails/test {to} — vérifie Resend de bout en bout."""
+    """POST /api/v1/emails/test {to} — vérifie Brevo de bout en bout (P1/P3/P5/ADMIN)."""
+    if not a_role(request.user, ['P1', 'P3', 'P5', 'ADMIN']):
+        return Response({'detail': 'Réservé au Bureau (P1/P3/P5).'}, status=403)
     to = (request.data.get('to') or '').strip()
     if not to:
         return Response({'detail': 'Champ "to" requis.'}, status=400)
@@ -235,7 +237,8 @@ def tester_email(request):
             'candidature_recue.html',
             {'nom': 'équipe test', 'cellules': 'toutes les cellules'},
             notif_type='annonce', user=request.user, objet_id='test')
-        return Response({'ok': True, 'resend': res})
+        envoye = not res.get('skipped')
+        return Response({'ok': envoye, 'resultat': res})
     except Exception as exc:
         return Response({'ok': False, 'erreur': str(exc)[:300]}, status=502)
 

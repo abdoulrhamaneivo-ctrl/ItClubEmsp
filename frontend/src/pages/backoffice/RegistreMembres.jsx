@@ -59,6 +59,14 @@ export default function RegistreMembres() {
 
   const notify = (t, m) => { setMessage({ t, m }); setTimeout(() => setMessage(null), 4000) }
 
+  // Le backend dit si l'email est vraiment parti (fail-open : skipped sinon)
+  const statutEmail = (res) => {
+    const e = res?.email
+    if (!e) return ''
+    if (e.skipped) return ` — email NON parti (${e.skipped})`
+    return ' — email parti.'
+  }
+
   const agir = async (id, action) => {
     setActionEnCours(`${action}:${id}`)
     try {
@@ -66,9 +74,10 @@ export default function RegistreMembres() {
         ? await api.validerCandidature(id)
         : await api.refuserCandidature(id)
       client.invalidateQueries({ queryKey: ['candidatures'] })
-      notify('success', action === 'valider'
-        ? `Candidature validée — compte créé${res.compte_cree === false ? ' (déjà existant)' : ''}, email de bienvenue envoyé.`
-        : 'Candidature refusée — email envoyé.')
+      const skip = res?.email?.skipped
+      notify(skip ? 'error' : 'success', action === 'valider'
+        ? `Candidature validée — compte créé${res.compte_cree === false ? ' (déjà existant)' : ''}${statutEmail(res)}`
+        : `Candidature refusée${statutEmail(res)}`)
     } catch (e) {
       notify('error', e.message ?? 'Action impossible')
     } finally {

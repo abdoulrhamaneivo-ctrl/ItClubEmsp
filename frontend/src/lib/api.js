@@ -314,6 +314,14 @@ export const api = {
   async definirMotDePasse(uid, token, password) {
     return postJson('/api/v1/auth/definir-mot-de-passe', { uid, token, password })
   },
+  // Diagnostic Bureau : tester l'envoi Brevo vers une adresse
+  async testerEmail(destinataire) {
+    if (USE_MOCK) {
+      await new Promise(r => setTimeout(r, 500))
+      return { ok: true, resultat: { id: 'mock' } }
+    }
+    return postJson('/api/v1/emails/test', { to: destinataire })
+  },
 
   // Espace membre — endpoints réels (Authorization via authHeaders)
   async getMe() {
