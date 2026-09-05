@@ -11,7 +11,7 @@ import CircularProgress from '@mui/material/CircularProgress'
 import Switch from '@mui/material/Switch'
 import SendIcon from '@mui/icons-material/Send'
 import AddIcon from '@mui/icons-material/Add'
-import { api } from '../../lib/api'
+import { api, urlMedia } from '../../lib/api'
 import { BoutonExport } from './_Commun'
 
 /**
@@ -314,7 +314,7 @@ function OngletCR({ notify }) {
                   {(cr.image || cr.video_url) && (
                     <Box sx={{ display: 'flex', gap: 1.5, mt: 1.5, flexWrap: 'wrap', alignItems: 'center' }}>
                       {cr.image && (
-                        <Box component="img" src={cr.image} alt=""
+                        <Box component="img" src={urlMedia(cr.image)} alt=""
                           sx={{ width: 'min(320px, 100%)', borderRadius: '12px', border: '1px solid #E5E7EB', objectFit: 'cover' }} />
                       )}
                       {cr.video_url && (

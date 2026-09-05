@@ -19,7 +19,7 @@ import LogoutIcon from '@mui/icons-material/Logout'
 import NotificationsIcon from '@mui/icons-material/Notifications'
 import CloseIcon from '@mui/icons-material/Close'
 import { useAuth, hasRole } from '../stores/auth'
-import { api } from '../lib/api'
+import { api, urlMedia } from '../lib/api'
 import FondGlobalDonnees from '../components/ui-components/FondGlobalDonnees'
 import { IcMembres, IcCube, IcCalendrier, IcDocument, IcPhoto, IcTrophee, IcCommunication, iconePoste } from '../components/ui-components/IconesClub'
 
@@ -964,7 +964,7 @@ function PhotoProfil() {
 
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2, pb: 2, borderBottom: '1px solid #EEF2F0' }}>
-      <Avatar src={user?.photo ?? undefined} sx={{ width: 64, height: 64, bgcolor: '#0F5B3A', fontWeight: 800, fontSize: '1.4rem' }}>
+      <Avatar src={urlMedia(user?.photo) ?? undefined} sx={{ width: 64, height: 64, bgcolor: '#0F5B3A', fontWeight: 800, fontSize: '1.4rem' }}>
         {(user?.nom || 'M')[0]}
       </Avatar>
       <Box>

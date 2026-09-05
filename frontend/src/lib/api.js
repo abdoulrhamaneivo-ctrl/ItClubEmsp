@@ -139,6 +139,15 @@ async function fetchAuth(endpoint, options = {}, retente = true) {
   return res
 }
 
+// URL absolue d'un fichier servi par l'API (images, documents, affiches).
+// L'API renvoie '/media/...' (relatif) : sans préfixe, le navigateur le
+// chercherait sur le domaine du site (Vercel) au lieu de Render → 404.
+export function urlMedia(u) {
+  if (!u) return u
+  if (/^(https?:|blob:|data:)/i.test(u)) return u
+  return `${BASE_URL}${u.startsWith('/') ? '' : '/'}${u}`
+}
+
 // Token management
 export function setToken(token) {
   if (token) {

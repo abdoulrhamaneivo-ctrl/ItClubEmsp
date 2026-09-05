@@ -11,7 +11,7 @@ import { BandeauAccent } from '../ui-components/FondPropre'
 import TitreSection from '../ui-components/TitreSection'
 import { IcCalendrier, IcRocket, IcMembres, IcLieu, IcFormation, IcTrophee } from '../ui-components/IconesClub'
 import { useActivites } from '../../hooks/useApi'
-import { api } from '../../lib/api'
+import { api, urlMedia } from '../../lib/api'
 import { useAuth } from '../../stores/auth'
 
 /**
@@ -212,7 +212,7 @@ export default function Activites() {
                             {(a.image || a.video_url) && (
                               <Box sx={{ display: 'flex', gap: 1.2, mt: 1, flexWrap: 'wrap', alignItems: 'center' }}>
                                 {a.image && (
-                                  <Box component="img" src={a.image} alt=""
+                                  <Box component="img" src={urlMedia(a.image)} alt=""
                                     sx={{ width: 'min(260px, 100%)', borderRadius: '10px', border: '1px solid #E5E7EB', objectFit: 'cover' }} />
                                 )}
                                 {a.video_url && (

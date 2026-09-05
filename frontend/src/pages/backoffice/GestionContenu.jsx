@@ -21,7 +21,7 @@ import {
   sauverDocument, supprimerDocument, sauverMedia, supprimerMedia,
   fichierVersDataUrl, CELLULES_TAGGABLES, slugifier,
 } from '../../lib/contenu'
-import { api } from '../../lib/api'
+import { api, urlMedia } from '../../lib/api'
 
 /** Famille locale → backend (doc 03 : fondamentaux/vie/archives). */
 const FAMILLE_VERS_API = { fondamentaux: 'fondamentaux', organisation: 'vie', archives: 'archives' }
@@ -205,7 +205,7 @@ function ChampsActualite({ form, setForm, choisirImage }) {
       <TextField label="Lien vidéo (reportage, interview…)" value={form.video_url} onChange={(e) => setForm((f) => ({ ...f, video_url: e.target.value }))} fullWidth placeholder="https://…" />
       <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', flexWrap: 'wrap' }}>
         {form.image && (
-          <Box component="img" src={form.image} alt="" sx={{ width: 120, height: 74, objectFit: 'cover', borderRadius: 2, border: '1px solid #E5E7EB' }} />
+          <Box component="img" src={urlMedia(form.image)} alt="" sx={{ width: 120, height: 74, objectFit: 'cover', borderRadius: 2, border: '1px solid #E5E7EB' }} />
         )}
         <Button variant="outlined" component="label" sx={{ borderColor: '#1FAF72', color: '#1FAF72', fontWeight: 700 }}>
           {form.image ? 'Changer l’image' : '+ Ajouter une image'}
@@ -432,7 +432,7 @@ function OngletGalerie({ notify, idParSlug }) {
             <TextField label="ID YouTube" value={form.youtube} onChange={(e) => setForm((f) => ({ ...f, youtube: e.target.value }))} fullWidth placeholder="Ex. dQw4w9WgXcQ" helperText="L'identifiant dans l'URL youtube.com/watch?v=…" />
           ) : (
             <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', flexWrap: 'wrap' }}>
-              {form.image && <Box component="img" src={form.image} alt="" sx={{ width: 120, height: 74, objectFit: 'cover', borderRadius: 2, border: '1px solid #E5E7EB' }} />}
+              {form.image && <Box component="img" src={urlMedia(form.image)} alt="" sx={{ width: 120, height: 74, objectFit: 'cover', borderRadius: 2, border: '1px solid #E5E7EB' }} />}
               <Button variant="outlined" component="label" sx={{ borderColor: '#1FAF72', color: '#1FAF72', fontWeight: 700 }}>
                 {form.image ? 'Changer la photo' : '+ Ajouter la photo'}
                 <input type="file" accept="image/*" hidden onChange={choisirImage} />

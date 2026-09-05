@@ -5,7 +5,7 @@
  */
 import { useEffect, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { api } from './api'
+import { api, urlMedia } from './api'
 
 const CLES = {
   actualites: 'club_actualites',
@@ -150,7 +150,7 @@ function adapterActu(a, slugParId) {
     cellule: a.tag_cellule != null ? (slugParId[a.tag_cellule] ?? 'general') : 'general',
     date: (a.date ?? '').slice(0, 10),
     couleur: a.tag_cellule_couleur ?? '#1FAF72',
-    image: a.image ?? null,
+    image: urlMedia(a.image),
     reactions: a.reactions ?? { '👍': 0, '❤️': 0, '🔥': 0 },
     ma_reaction: a.ma_reaction ?? null,
     commentaires_count: a.commentaires_count ?? 0,
@@ -167,7 +167,7 @@ function adapterDoc(d) {
     description: d.description ?? '',
     famille: FAMILLE_VERS_LOCAL[d.famille_id] ?? 'fondamentaux',
     couleur: d.couleur ?? '#1FAF72',
-    fichier: nom, fichierUrl: d.fichier ?? null,
+    fichier: nom, fichierUrl: urlMedia(d.fichier),
     format: d.format ?? 'FICHIER',
   }
 }
@@ -184,7 +184,7 @@ function adapterMedia(m, slugParId) {
     youtube: m.youtube_id ?? '',
     iconeId: m.icone ?? 'trophee',
     couleur: '#1FAF72',
-    image: m.image ?? null,
+    image: urlMedia(m.image),
   }
 }
 

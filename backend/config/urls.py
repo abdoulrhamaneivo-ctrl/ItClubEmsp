@@ -10,3 +10,8 @@ urlpatterns = [
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+else:
+    # PROD : Django sert aussi /media/ (petite échelle du club).
+    # Fichiers éphémères sur Render (effacés à chaque redéploiement) :
+    # les documents importants se re-téléversent après un deploy.
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
