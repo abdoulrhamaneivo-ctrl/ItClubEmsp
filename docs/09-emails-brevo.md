@@ -2,9 +2,12 @@
 
 > **04/09/2026 : Resend → Brevo.** Le WAF Cloudflare de Resend coupait le TLS
 > depuis le réseau de l'EMSP (handshake timeout, jamais résolu). Brevo : 300
-> mails/jour gratuits, `api.brevo.com` joignable, pas de blocage. Le code est
-> passé à `apps/emails.py` (headers `api-key`, payload `sender/to/htmlContent`).
-> Clé : `BREVO_API_KEY` (xkeysib-…), expéditeur : `BREVO_FROM`.
+> mails/jour gratuits, `api.brevo.com` joignable, pas de blocage.
+> Double transport auto (`apps/emails.py`, stdlib uniquement) : clé
+> `xkeysib-…` → API v3 https (passe le réseau EMSP) ; clé `xsmtpsib-…` →
+> relais SMTP :587 (bloqué à l'EMSP, OK sur Render).
+> Clé : `BREVO_API_KEY`, expéditeur : `BREVO_FROM`, login SMTP : `BREVO_SMTP_USER`
+> (défaut = `BREVO_FROM`). Expéditeur actuel : compte Gmail validé dans Brevo.
 
 ## 1. Vue d'ensemble
 
@@ -18,7 +21,10 @@
 
 ## 2. Mise en route Resend (5 min)
 
-1. [brevo.com](https://app.brevo.com) → compte → **SMTP & API** → générer la clé API (xkeysib-…).
+1. [brevo.com](https://app.brevo.com) → compte → **SMTP & API** :
+   - pour tester **depuis l'EMSP** : générer une clé **API** (`xkeysib-…`) → transport https ;
+   - pour la **prod Render** : la clé **SMTP** (`xsmtpsib-…`) suffit → transport SMTP.
+   - `BREVO_SMTP_USER` = login du compte si différent de `BREVO_FROM`.
 2. **Sans domaine vérifié** (état actuel) :
    - `BREVO_FROM = l'email du compte Brevo` (expéditeur validé dans Brevo)
    - destinataires : tout le monde (Brevo ne limite pas tant que l'expéditeur est validé).

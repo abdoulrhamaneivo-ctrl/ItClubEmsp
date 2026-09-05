@@ -119,6 +119,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # les vues restent fonctionnelles. Clé jamais dans le repo.
 BREVO_API_KEY = os.environ.get('BREVO_API_KEY', '')
 BREVO_FROM = os.environ.get('BREVO_FROM', '')  # vide = log-only (voir send_email)
+BREVO_SMTP_USER = os.environ.get('BREVO_SMTP_USER', '')  # vide = = BREVO_FROM
 FRONTEND_URL = os.environ.get('FRONTEND_URL', 'https://it-club-emsp.vercel.app').rstrip('/')
 
 # ── DRF ──────────────────────────────────────────────────────

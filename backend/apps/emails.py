@@ -1,9 +1,10 @@
 """Envoi d'emails transactionnels via Brevo (doc 02 D10, doc 04 §7).
 
-- Transport : API REST Brevo (api.brevo.com) en stdlib (urllib), sans dépendance.
-  Brevo remplace Resend (04/09/2026) : gratuit 300 mails/jour, IP joignable
-  depuis ce réseau (Resend/Cloudflare coupait le TLS depuis l'EMSP).
+- Transport double (choix auto selon la clé, stdlib uniquement) :
+  xkeysib- → API v3 https (passe le réseau EMSP) ;
+  xsmtpsib- → relais SMTP :587 STARTTLS (OK sur Render).
 - Clé lue depuis BREVO_API_KEY (jamais dans le repo). Resend ignoré.
+- Identifiant SMTP = BREVO_SMTP_USER sinon BREVO_FROM (login du compte).
 - Sans clé : log-only, les vues restent fonctionnelles (fail-open).
 - Chaque envoi (ou tentative) est tracé en Notification (audit + in-app).
 - Les préférences du profil (User.notif_prefs) sont respectées par type.
@@ -81,7 +82,11 @@ def send_email(to, subject, template, context=None, notif_type=None,
         logger.warning('BREVO_API_KEY absente — email log-only vers %s (%s)', to, subject)
         return {'skipped': 'no-key'}
 
-    # Contrat Brevo : expéditeur structuré {name, email}
+    # Transport SMTP Brevo (clé xsmtpsib-, stdlib smtplib, sans dépendance).
+    # L'API v3 exige une clé xkeysib- (Brevo 401 sinon) ; le relais SMTP
+    # accepte la clé SMTP + le login du compte comme identifiant.
+    # Choix auto selon le préfixe : xkeysib- → API v3 (port 443, passe
+    # le réseau EMSP), xsmtpsib- → SMTP (port 587, OK sur Render).
     m = (settings.BREVO_FROM or '').strip()
     if not m:
         # Pas d'expéditeur validé → Brevo refuserait tout : log-only explicite
@@ -90,9 +95,36 @@ def send_email(to, subject, template, context=None, notif_type=None,
             trace.envoye = False
             trace.save(update_fields=['envoye'])
         return {'skipped': 'no-sender'}
-    expediteur = {'email': m, 'name': 'IT-CLUB EMSP'}
+    if cle.startswith('xkeysib-'):
+        return _envoi_api_v3(cle, m, to, subject, html, text, reply_to, trace)
+    return _envoi_smtp(cle, m, to, subject, html, text, reply_to, trace)
+
+
+def _maj_trace_id(to, subject, brevo_id):
+    # met à jour la trace avec l'id du message (colonne resend_id réutilisée)
+    try:
+        n = _notif_model().objects.filter(
+            destinataire_email=to, titre=subject[:140]).order_by('-cree_le').first()
+        if n is not None:
+            n.resend_id = brevo_id
+            n.save(update_fields=['resend_id'])
+    except Exception as exc:
+        logger.warning('Trace Brevo non mise à jour: %s', exc)
+
+
+def _marque_non_envoye(trace):
+    if trace is not None:
+        try:
+            trace.envoye = False
+            trace.save(update_fields=['envoye'])
+        except Exception:
+            pass
+
+
+def _envoi_api_v3(cle, m, to, subject, html, text, reply_to, trace):
+    """API v3 Brevo (clé xkeysib-) : POST https JSON."""
     payload = {
-        'sender': expediteur,
+        'sender': {'email': m, 'name': 'IT-CLUB EMSP'},
         'to': [{'email': to}],
         'subject': subject,
         'htmlContent': html,
@@ -114,33 +146,50 @@ def send_email(to, subject, template, context=None, notif_type=None,
             data = json.loads(resp.read().decode('utf-8'))
     except urllib.error.HTTPError as exc:
         detail = exc.read().decode('utf-8', 'replace')[:300]
-        if trace is not None:
-            try:
-                trace.envoye = False
-                trace.save(update_fields=['envoye'])
-            except Exception:
-                pass
+        _marque_non_envoye(trace)
         raise EmailError(f'Brevo {exc.code}: {detail}')
     except Exception as exc:
-        if trace is not None:
-            try:
-                trace.envoye = False
-                trace.save(update_fields=['envoye'])
-            except Exception:
-                pass
+        _marque_non_envoye(trace)
         raise EmailError(f'réseau Brevo: {exc}')
     brevo_id = data.get('messageId', '')
-    # met à jour la trace avec l'id Brevo (colonne resend_id réutilisée)
-    try:
-        n = _notif_model().objects.filter(
-            destinataire_email=to, titre=subject[:140]).order_by('-cree_le').first()
-        if n is not None:
-            n.resend_id = brevo_id
-            n.save(update_fields=['resend_id'])
-    except Exception as exc:
-        logger.warning('Trace Brevo non mise à jour: %s', exc)
-    logger.info('Email envoyé à %s via Brevo (%s)', to, brevo_id)
+    _maj_trace_id(to, subject, brevo_id)
+    logger.info('Email envoyé à %s via Brevo API (%s)', to, brevo_id)
     return {'id': brevo_id}
+
+
+def _envoi_smtp(cle, m, to, subject, html, text, reply_to, trace):
+    """Relais SMTP Brevo (clé xsmtpsib-) : smtp-relay.brevo.com:587 STARTTLS."""
+    import smtplib
+    from email.mime.multipart import MIMEMultipart
+    from email.mime.text import MIMEText
+    from email.utils import formataddr, make_msgid
+    smtp_user = (getattr(settings, 'BREVO_SMTP_USER', '') or '').strip() or m
+    msg = MIMEMultipart('alternative')
+    msg['Subject'] = subject
+    msg['From'] = formataddr(('IT-CLUB EMSP', m))
+    msg['To'] = to
+    if reply_to:
+        msg['Reply-To'] = reply_to
+    msg_id = make_msgid(domain='emsp.int')
+    msg['Message-ID'] = msg_id
+    msg.attach(MIMEText(text, 'plain', 'utf-8'))
+    msg.attach(MIMEText(html, 'html', 'utf-8'))
+    try:
+        with smtplib.SMTP('smtp-relay.brevo.com', 587, timeout=15) as srv:
+            srv.ehlo()
+            srv.starttls()
+            srv.ehlo()
+            srv.login(smtp_user, cle)
+            srv.sendmail(m, [to], msg.as_string())
+    except smtplib.SMTPAuthenticationError as exc:
+        _marque_non_envoye(trace)
+        raise EmailError(f'Brevo SMTP auth: {exc}')
+    except Exception as exc:
+        _marque_non_envoye(trace)
+        raise EmailError(f'réseau Brevo SMTP: {exc}')
+    _maj_trace_id(to, subject, msg_id)
+    logger.info('Email envoyé à %s via Brevo SMTP (%s)', to, msg_id)
+    return {'id': msg_id}
 
 
 # ── Extraction depuis le formulaire dynamique (donnees JSON) ──
