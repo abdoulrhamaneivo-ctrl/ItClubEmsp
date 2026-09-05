@@ -15,6 +15,9 @@ if [ -n "${NEON_DIRECT_URL:-}" ]; then
 fi
 python manage.py migrate
 
-# Seed idempotent : ne crée que ce qui manque (relançable à chaque déploiement)
-python manage.py shell < fixtures/seed.py
+# Seed OPT-IN uniquement (base prod nettoyée : aucun re-seed surprise).
+# Pour repeupler une base de démo : SEED_DEMO=1 dans l'environnement.
+if [ "${SEED_DEMO:-0}" = "1" ]; then
+  python manage.py shell < fixtures/seed.py
+fi
 echo "BUILD_OK"
