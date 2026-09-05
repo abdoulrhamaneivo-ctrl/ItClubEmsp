@@ -307,7 +307,7 @@ class ProjetSerializer(serializers.ModelSerializer):
         model = _P
         fields = ['id', 'nom', 'description', 'statut', 'statut_label',
                   'responsable', 'responsable_nom', 'cellule', 'cellule_nom',
-                  'lien', 'cree_le', 'maj_le']
+                  'lien', 'image', 'cree_le', 'maj_le']
         read_only_fields = ['id', 'cree_le', 'maj_le']
 
     def get_responsable_nom(self, obj):

@@ -27,6 +27,7 @@ class Projet(models.Model):
     cellule = models.ForeignKey('accounts.Cellule', on_delete=models.SET_NULL,
                                 null=True, blank=True, related_name='projets')
     lien = models.URLField('Lien (repo, démo…)', blank=True)
+    image = models.ImageField('Visuel du projet', upload_to='projets/', blank=True, null=True)
     cree_le = models.DateTimeField(auto_now_add=True)
     maj_le = models.DateTimeField(auto_now=True)
 

@@ -30,7 +30,7 @@ export default function Projets() {
   const [message, notify] = useFlash()
   const [formOuvert, setFormOuvert] = useState(false)
   const [envoi, setEnvoi] = useState(false)
-  const [form, setForm] = useState({ id: null, nom: '', description: '', statut: 'idee', lien: '' })
+  const [form, setForm] = useState({ id: null, nom: '', description: '', statut: 'idee', lien: '', imageFile: null })
   const client = useQueryClient()
 
   const { data: projets = [] } = useQuery({
@@ -38,7 +38,7 @@ export default function Projets() {
   })
 
   const set = (k, v) => setForm((f) => ({ ...f, [k]: v }))
-  const reset = () => { setForm({ id: null, nom: '', description: '', statut: 'idee', lien: '' }); setFormOuvert(false) }
+  const reset = () => { setForm({ id: null, nom: '', description: '', statut: 'idee', lien: '', imageFile: null }); setFormOuvert(false) }
 
   const enregistrer = async () => {
     if (!form.nom.trim() || envoi) {
@@ -104,6 +104,15 @@ export default function Projets() {
           </Box>
           <TextField label="Description" value={form.description} onChange={(e) => set('description', e.target.value)} multiline rows={2} fullWidth sx={champSx} />
           <TextField label="Lien (repo, démo…)" value={form.lien} onChange={(e) => set('lien', e.target.value)} fullWidth sx={champSx} placeholder="https://…" />
+          <Box sx={{ display: 'flex', gap: 1.5, alignItems: 'center', flexWrap: 'wrap' }}>
+            <Button variant="outlined" component="label" sx={{ borderColor: '#1FAF72', color: '#0E7A50', fontWeight: 800, borderRadius: '12px' }}>
+              {form.imageFile ? 'Changer le visuel' : 'Ajouter un visuel (photo)'}
+              <input type="file" accept="image/*" hidden onChange={(e) => set('imageFile', e.target.files?.[0] ?? null)} />
+            </Button>
+            {form.imageFile && (
+              <Typography variant="caption" sx={{ color: '#374151', fontWeight: 700 }}>{form.imageFile.name}</Typography>
+            )}
+          </Box>
           <Box sx={{ display: 'flex', gap: 1.5, justifyContent: 'flex-end' }}>
             <Button onClick={reset} sx={{ color: '#5A6B63', fontWeight: 700 }}>Annuler</Button>
             <Button variant="contained" onClick={enregistrer} disabled={envoi}

@@ -489,12 +489,18 @@ export const api = {
     const data = await fetchJson('/api/v1/projets/')
     return data ?? []
   },
-  async sauverProjet({ id, nom, description, statut, lien }) {
+  async sauverProjet({ id, nom, description, statut, lien, imageFile }) {
     if (USE_MOCK) {
       await new Promise(r => setTimeout(r, 500))
       return { id: id ?? Date.now(), nom, statut }
     }
-    return postJson(id ? `/api/v1/projets/${id}/` : '/api/v1/projets/', { nom, description, statut, lien }, id ? 'PATCH' : 'POST')
+    const fd = new FormData()
+    fd.append('nom', nom)
+    fd.append('description', description ?? '')
+    fd.append('statut', statut ?? 'idee')
+    fd.append('lien', lien ?? '')
+    if (imageFile) fd.append('image', imageFile)
+    return postForm(id ? `/api/v1/projets/${id}/` : '/api/v1/projets/', fd, id ? 'PATCH' : 'POST')
   },
   async supprimerProjet(id) {
     if (USE_MOCK) {
