@@ -11,6 +11,10 @@ import LoginIcon from '@mui/icons-material/Login'
 import Drawer from '@mui/material/Drawer'
 import List from '@mui/material/List'
 import ListItemButton from '@mui/material/ListItemButton'
+import ListItemText from '@mui/material/ListItemText'
+import Menu from '@mui/material/Menu'
+import MenuItem from '@mui/material/MenuItem'
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import useScrollTrigger from '@mui/material/useScrollTrigger'
 import { useAuth } from '../../stores/auth'
 
@@ -28,13 +32,19 @@ const liens = [
   { label: 'Veille', cible: '/veille', route: true, membres: true },
 ]
 
+// Liens principaux (toujours visibles) et liens regroupés (menu déroulant)
+const LIENS_PRINCIPAUX = ['Le club', 'Activités']
+const plusDe = (u) => liens.filter((l) => !LIENS_PRINCIPAUX.includes(l.label) && (!l.membres || u))
+
 export default function Navbar() {
   const location = useLocation()
   const navigate = useNavigate()
   const surAccueil = location.pathname === '/'
   const [open, setOpen] = useState(false)
+  const [menuPlus, setMenuPlus] = useState(null)
   const scrolled = useScrollTrigger({ disableHysteresis: true, threshold: 80 })
   const user = useAuth((s) => s.user)
+  const actif = (l) => (l.route ? location.pathname.startsWith(l.cible) : false)
 
   // Ancres : depuis une autre page, naviguer vers / puis scroller après rendu
   const allerVers = (cible) => {
@@ -83,11 +93,11 @@ export default function Navbar() {
         </motion.a>
 
         <Box sx={{ display: { xs: 'none', lg: 'flex' }, gap: 0.25, alignItems: 'center', flexShrink: 1, minWidth: 0 }}>
-          {liens.filter((l) => !l.membres || user).map((l) => (
+          {liens.filter((l) => LIENS_PRINCIPAUX.includes(l.label)).map((l) => (
             <Button key={l.cible} color="inherit"
               onClick={(e) => { e.preventDefault(); l.route ? navigate(l.cible) : allerVers(l.cible) }}
               sx={{
-                position: 'relative', fontWeight: 600, fontSize: { lg: '0.78rem', xl: '0.9rem' }, px: { lg: 0.75, xl: 1 },
+                position: 'relative', fontWeight: 600, fontSize: { lg: '0.82rem', xl: '0.9rem' }, px: { lg: 1, xl: 1.25 },
                 whiteSpace: 'nowrap',
                 '&::after': {
                   content: '""', position: 'absolute', bottom: 4, left: '50%',
@@ -99,11 +109,43 @@ export default function Navbar() {
               {l.label}
             </Button>
           ))}
+          {/* Regroupés : tout le reste dans un menu déroulant */}
+          <Button color="inherit"
+            onClick={(e) => setMenuPlus(e.currentTarget)}
+            endIcon={<ExpandMoreIcon sx={{ transition: 'transform 200ms ease', rotate: menuPlus ? '180deg' : '0deg' }} />}
+            sx={{
+              fontWeight: 600, fontSize: { lg: '0.82rem', xl: '0.9rem' }, px: { lg: 1, xl: 1.25 },
+              whiteSpace: 'nowrap',
+              color: plusDe(user).some((l) => actif(l)) ? '#1FAF72' : 'inherit',
+            }}>
+            Plus
+          </Button>
+          <Menu
+            anchorEl={menuPlus}
+            open={!!menuPlus}
+            onClose={() => setMenuPlus(null)}
+            anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+            transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+            slotProps={{ paper: { sx: { mt: 1, borderRadius: '14px', border: '1px solid #E8ECEA', boxShadow: '0 16px 40px rgba(13,27,42,.14)', minWidth: 210, py: 0.6 } } }}
+          >
+            {plusDe(user).map((l) => (
+              <MenuItem key={l.cible}
+                onClick={() => { setMenuPlus(null); l.route ? navigate(l.cible) : allerVers(l.cible) }}
+                sx={{
+                  fontWeight: 600, fontSize: '0.88rem', py: 1,
+                  color: actif(l) ? '#0E7A50' : '#111827',
+                  bgcolor: actif(l) ? '#E4F8EF' : 'transparent',
+                  '&:hover': { bgcolor: '#F6FBF9' },
+                }}>
+                {l.label}
+              </MenuItem>
+            ))}
+          </Menu>
           {!user && (
             <Button
               variant="contained"
               href="/adhesion"
-              sx={{ bgcolor: '#1FAF72', color: '#fff', '&:hover': { bgcolor: '#179963', boxShadow: '0 6px 18px rgba(31,175,114,.45)' }, mx: { lg: 0, xl: 0.5 }, transition: 'background 200ms ease, box-shadow 200ms ease', whiteSpace: 'nowrap', px: { lg: 1.2, xl: 2 } }}
+              sx={{ bgcolor: '#1FAF72', color: '#fff', '&:hover': { bgcolor: '#179963', boxShadow: '0 6px 18px rgba(31,175,114,.45)' }, ml: { lg: 0.5, xl: 1 }, transition: 'background 200ms ease, box-shadow 200ms ease', whiteSpace: 'nowrap', px: { lg: 1.4, xl: 2 } }}
             >
               Rejoindre le club
             </Button>
@@ -133,13 +175,13 @@ export default function Navbar() {
         </IconButton>
 
         <Drawer anchor="right" open={open} onClose={() => setOpen(false)}>
-          <List sx={{ width: 240, pt: 2 }} onClick={() => setOpen(false)}>
+          <List sx={{ width: 250, pt: 2 }} onClick={() => setOpen(false)}>
             {liens.filter((l) => !l.membres || user).map((l) => (
               <ListItemButton key={l.cible} component="a"
                 href={l.route ? l.cible : '#'}
                 onClick={(e) => { if (!l.route) { e.preventDefault(); allerVers(l.cible) } }}
                 sx={{ borderRadius: 2 }}>
-                {l.label}
+                <ListItemText primary={l.label} primaryTypographyProps={{ fontWeight: 600, fontSize: '0.92rem' }} />
               </ListItemButton>
             ))}
             {!user && (
