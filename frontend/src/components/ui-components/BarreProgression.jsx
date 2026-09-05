@@ -14,7 +14,7 @@ export default function BarreProgression() {
     <Box
       sx={{
         position: 'fixed', top: 0, left: 0, right: 0,
-        height: 3.5, zIndex: 1300, pointerEvents: 'none',
+        height: 3.5, zIndex: 1100, pointerEvents: 'none',
         background: 'rgba(13,27,42,.06)',
       }}
       aria-hidden

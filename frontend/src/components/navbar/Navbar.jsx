@@ -68,7 +68,7 @@ export default function Navbar() {
           </Box>
         </motion.a>
 
-        <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 0.5, alignItems: 'center' }}>
+        <Box sx={{ display: { xs: 'none', lg: 'flex' }, gap: 0.5, alignItems: 'center' }}>
           {liens.filter((l) => !l.membres || user).map((l) => (
             <Button key={l.cible} color="inherit"
               href={l.route ? l.cible : (surAccueil ? `#${l.cible}` : `/#${l.cible}`)}
@@ -109,7 +109,7 @@ export default function Navbar() {
           </motion.div>
         </Box>
 
-        <IconButton sx={{ display: { xs: 'block', md: 'none' } }} onClick={() => setOpen(true)}>
+        <IconButton sx={{ display: { xs: 'block', lg: 'none' } }} onClick={() => setOpen(true)}>
           <MenuIcon />
         </IconButton>
 
