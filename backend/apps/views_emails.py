@@ -4,7 +4,7 @@
 - Inscriptions événements : inscrire (gère liste d'attente) / désinscrire
   (promouvant le premier en attente) — doc 02 D5, RG-E2.
 - Convocation : envoi ciblé (P1/P3/staff) — doc 02 D9.
-- Test : vérification Resend par le staff.
+- Test : vérification Brevo par le Bureau (P1/P3/P5).
 - Notifications : centre in-app du membre (doc 02 D10).
 """
 import logging
