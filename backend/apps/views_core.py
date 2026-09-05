@@ -320,7 +320,7 @@ class VeilleViewSet(viewsets.ModelViewSet):
         from django.db.models import Count
         return super().get_queryset().annotate(
             _votes=Count('votes', distinct=True),
-        )
+        ).prefetch_related('votes')  # jai_vote lit le cache, pas 1 requête/ligne
 
     def perform_create(self, serializer):
         # Lien = URL http(s) valide (validation modèle) ; auteur = membre
@@ -581,7 +581,8 @@ class EvenementViewSet(PublicReadOrStaffWrite):
             _confirmes=Count('inscrits', filter=Q(inscription__liste_attente=False)),
             _presents=Count('presences', distinct=True),
         ).prefetch_related(Prefetch('retours', queryset=Retour.objects.only(
-            'evenement_id', 'membre_id', 'note')))
+            'evenement_id', 'membre_id', 'note', 'avis'))  # avis lu par mon_retour : sans lui = 1 requête/retour
+        ).select_related('bilan')  # OneToOne inverse : évite 1 requête/événement
         a_venir = self.request.query_params.get('a_venir') or self.request.query_params.get('upcoming')
         if str(a_venir).lower() in ('1', 'true'):
             qs = qs.filter(date_debut__gte=timezone.now())

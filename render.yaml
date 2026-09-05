@@ -33,7 +33,7 @@ services:
       - key: BREVO_API_KEY
         sync: false
       - key: BREVO_FROM
-        value: onboarding@resend.dev
+        value: ""
       - key: FRONTEND_URL
         value: https://it-club-emsp.vercel.app
 
@@ -56,6 +56,6 @@ services:
       - key: BREVO_API_KEY
         sync: false
       - key: BREVO_FROM
-        value: onboarding@resend.dev
+        value: ""
       - key: FRONTEND_URL
         value: https://it-club-emsp.vercel.app

@@ -118,7 +118,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Sans BREVO_API_KEY : les envois sont journalisés et ignorés (log-only),
 # les vues restent fonctionnelles. Clé jamais dans le repo.
 BREVO_API_KEY = os.environ.get('BREVO_API_KEY', '')
-BREVO_FROM = os.environ.get('BREVO_FROM', 'onboarding@resend.dev')
+BREVO_FROM = os.environ.get('BREVO_FROM', '')  # vide = log-only (voir send_email)
 FRONTEND_URL = os.environ.get('FRONTEND_URL', 'https://it-club-emsp.vercel.app').rstrip('/')
 
 # ── DRF ──────────────────────────────────────────────────────

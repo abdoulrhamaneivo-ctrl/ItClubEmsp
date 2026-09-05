@@ -370,6 +370,9 @@ class VeilleSerializer(serializers.ModelSerializer):
             return False
         if getattr(obj, '_mes_votes', None) is not None:
             return u.id in obj._mes_votes
+        cache = getattr(obj, '_prefetched_objects_cache', {}) or {}
+        if 'votes' in cache:
+            return any(v.membre_id == u.id for v in cache['votes'])
         return obj.votes.filter(membre_id=u.id).exists()
 
     def get_auteur(self, obj):

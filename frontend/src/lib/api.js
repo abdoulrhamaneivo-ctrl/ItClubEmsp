@@ -71,10 +71,17 @@ function authHeaders(extra = {}) {
 // staleTime 60s). Ici : juste fetch + dépliage pagination DRF.
 async function fetchJson(endpoint) {
   if (USE_MOCK) return null
-  const res = await fetch(`${BASE_URL}${endpoint}`, {
-    headers: authHeaders(),
-    credentials: 'include',
-  })
+  let res
+  try {
+    res = await fetch(`${BASE_URL}${endpoint}`, {
+      headers: authHeaders(),
+      credentials: 'include',
+    })
+  } catch {
+    // Backend injoignable (éteint, réseau) : les `?? repli` des getters
+    // affichent les mocks au lieu d'une page en erreur.
+    return null
+  }
   if (!res.ok) throw new Error(`API ${res.status}`)
   const json = await res.json()
   // DRF pagination : { count, results } → on renvoie la liste directement

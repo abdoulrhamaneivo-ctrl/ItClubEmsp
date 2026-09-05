@@ -82,7 +82,14 @@ def send_email(to, subject, template, context=None, notif_type=None,
         return {'skipped': 'no-key'}
 
     # Contrat Brevo : expéditeur structuré {name, email}
-    m = settings.BREVO_FROM
+    m = (settings.BREVO_FROM or '').strip()
+    if not m:
+        # Pas d'expéditeur validé → Brevo refuserait tout : log-only explicite
+        logger.warning('BREVO_FROM absent — email log-only vers %s (%s)', to, subject)
+        if trace is not None:
+            trace.envoye = False
+            trace.save(update_fields=['envoye'])
+        return {'skipped': 'no-sender'}
     expediteur = {'email': m, 'name': 'IT-CLUB EMSP'}
     payload = {
         'sender': expediteur,
