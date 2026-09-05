@@ -12,7 +12,8 @@ import logging
 from django.contrib.auth import get_user_model
 from django.db import transaction
 from rest_framework import viewsets, permissions, status
-from rest_framework.decorators import api_view, permission_classes, action, throttle_classes
+from rest_framework.decorators import api_view, permission_classes, action, throttle_classes, parser_classes
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from rest_framework.response import Response
 from rest_framework import serializers as drf_serializers
 
@@ -843,18 +844,25 @@ def definir_mot_de_passe(request):
 # ── Espace membre : /me/* (doc 04 §5 accounts) ────────────────
 @api_view(['GET', 'PATCH'])
 @permission_classes([permissions.IsAuthenticated])
+@parser_classes([MultiPartParser, FormParser, JSONParser])
 def me(request):
-    """Profil du membre connecté + préférences notifications (PATCH partiel)."""
+    """Profil du membre connecté + préférences notifications (PATCH partiel).
+    La photo passe par PATCH multipart (champ 'photo', ImageField)."""
     from apps.core_serializers import ProfilSerializer
     if request.method == 'PATCH':
         allowed = {'promotion', 'telephone', 'notif_prefs', 'photo'}
         data = {k: v for k, v in request.data.items() if k in allowed}
         if 'notif_prefs' in data and not isinstance(data['notif_prefs'], dict):
             return Response({'detail': 'notif_prefs doit être un objet.'}, status=400)
+        fichiers = {k: v for k, v in data.items() if hasattr(v, 'file') or hasattr(v, 'name')}
+        for k, v in fichiers.items():
+            setattr(request.user, k, v)
+            data.pop(k, None)
         for k, v in data.items():
             setattr(request.user, k, v)
-        request.user.save(update_fields=[k for k in data] or None)
-    return Response(ProfilSerializer(request.user).data)
+        champs = list(data) + list(fichiers)
+        request.user.save(update_fields=champs or None)
+    return Response(ProfilSerializer(request.user, context={'request': request}).data)
 
 
 @api_view(['POST'])

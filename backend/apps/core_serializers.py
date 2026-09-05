@@ -583,10 +583,14 @@ class InscriptionMembreSerializer(serializers.ModelSerializer):
 
 
 class ProfilSerializer(serializers.ModelSerializer):
-    """Profil membre (GET/PATCH /me) — doc 04 §5 accounts."""
+    """Profil membre (GET/PATCH /me) — doc 04 §5 accounts.
+
+    La photo s'upload via PATCH multipart (view /me/) ; ici elle est
+    exposée en lecture + URL absolue (le front n'a plus à deviner)."""
     nom = serializers.SerializerMethodField()
     roles = serializers.SerializerMethodField()
     niveau = serializers.SerializerMethodField()
+    photo = serializers.SerializerMethodField()
 
     class Meta:
         from django.contrib.auth import get_user_model as _gum
@@ -594,6 +598,13 @@ class ProfilSerializer(serializers.ModelSerializer):
         fields = ['id', 'nom', 'email', 'photo', 'promotion', 'telephone',
                   'notif_prefs', 'points', 'niveau', 'roles']
         read_only_fields = ['id', 'nom', 'email', 'photo', 'points', 'niveau', 'roles']
+
+    def get_photo(self, obj):
+        if obj.photo:
+            request = self.context.get('request')
+            url = obj.photo.url
+            return request.build_absolute_uri(url) if request else url
+        return None
 
     def get_niveau(self, obj):
         from apps.views_emails import niveau_de
