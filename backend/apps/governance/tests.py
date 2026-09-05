@@ -253,3 +253,49 @@ class CompteRenduMediaTests(TestCase):
         self.assertEqual(r.status_code, 201)
         self.assertTrue(r.json()['image'])
         self.assertEqual(r.json()['video_url'], 'https://youtu.be/abc')
+
+
+class CrudBureauTests(TestCase):
+    """Boutons modifier : PATCH partiel prouvé sur chaque module."""
+
+    client_class = APIClient
+
+    def setUp(self):
+        from django.contrib.auth import get_user_model
+        from apps.accounts.models import Role
+        U = get_user_model()
+        self.admin = U.objects.create_user(username='crud', email='crud@x.com', password='x')
+        Role.objects.create(code='ADMIN', titulaire=self.admin)
+        self.client.force_authenticate(self.admin)
+
+    def test_projet_patch(self):
+        from apps.governance.models import Projet
+        p = Projet.objects.create(nom='P1', statut='idee')
+        r = self.client.patch(f'/api/v1/projets/{p.pk}/', {'statut': 'en_cours'}, format='json')
+        self.assertEqual(r.status_code, 200)
+        Projet.objects.get(pk=p.pk).refresh_from_db()
+        self.assertEqual(Projet.objects.get(pk=p.pk).statut, 'en_cours')
+
+    def test_opportunite_patch(self):
+        from apps.governance.models import Opportunite
+        o = Opportunite.objects.create(titre='Hackathon', type='hackathon', statut='a_suivre')
+        r = self.client.patch(f'/api/v1/opportunites/{o.pk}/', {'statut': 'inscrit'}, format='json')
+        self.assertEqual(r.status_code, 200)
+
+    def test_cellule_patch(self):
+        from apps.accounts.models import Cellule
+        c = Cellule.objects.create(nom='Cell', slug='cell', description='x')
+        r = self.client.patch(f'/api/v1/cellules/{c.pk}/', {'nom': 'Cell 2'}, format='json')
+        self.assertEqual(r.status_code, 200)
+
+    def test_cr_patch_statut(self):
+        from apps.governance.models import CompteRendu
+        cr = CompteRendu.objects.create(titre='CR', reunion_date='2026-09-01', contenu='x', statut='brouillon')
+        r = self.client.patch(f'/api/v1/comptes-rendus/{cr.pk}/', {'statut': 'en_validation'}, format='json')
+        self.assertEqual(r.status_code, 200)
+
+    def test_parametre_upsert(self):
+        r = self.client.post('/api/v1/parametres/', {'cle': 'rs_x', 'valeur': 'https://x'}, format='json')
+        self.assertIn(r.status_code, (200, 201))
+        r = self.client.post('/api/v1/parametres/', {'cle': 'rs_x', 'valeur': 'https://y'}, format='json')
+        self.assertIn(r.status_code, (200, 201))
