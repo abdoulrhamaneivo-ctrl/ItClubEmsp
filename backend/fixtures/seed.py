@@ -64,11 +64,13 @@ for code, nom, email, mission, objectif in BUREAU:
         # (doc 09 §2). Jamais réinitialisé si le compte existe déjà.
         user.set_password('ITClub2026!')
         user.save(update_fields=['password'])
-    elif not (user.password or '').startswith('!'):
+    pwd = user.password or ''
+    if pwd and not pwd.startswith('!'):
         pass  # le membre a déjà son mot de passe : on n'y touche pas
     else:
-        # Compte seed créé avant le bootstrap (mdp inutilisable) → réparé
-        # à chaque déploiement, jusqu'à ce que le membre se connecte.
+        # Compte seed sans mot de passe (vide ou inutilisable, créé avant
+        # le bootstrap) → réparé à chaque déploiement, jusqu'à ce que le
+        # membre se connecte et le change.
         user.set_password('ITClub2026!')
         user.save(update_fields=['password'])
     # Titulaire du poste

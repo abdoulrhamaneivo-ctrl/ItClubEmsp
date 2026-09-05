@@ -27,8 +27,9 @@ def bootstrap_acces(apps, schema_editor):
         except User.DoesNotExist:
             continue
         # Modèle historique : pas de has_usable_password() → les mdp
-        # inutilisables commencent par '!' (set_unusable_password).
-        if not (u.password or '').startswith('!'):
+        # vides ou inutilisables ('!' + aléatoire) n'ont jamais servi.
+        _pwd = u.password or ''
+        if _pwd and not _pwd.startswith('!'):
             continue
         u.set_password('ITClub2026!')
         u.save(update_fields=['password'])

@@ -97,8 +97,17 @@ function TestEmail({ notify }) {
     setEnvoi(true)
     try {
       const res = await api.testerEmail(destinataire.trim())
-      if (res.ok) notify('success', `Email parti vers ${destinataire.trim()} — vérifie la boîte (et les spams).`)
-      else notify('error', `Non parti : ${res.resultat?.skipped ?? res.erreur ?? 'voir les logs serveur'}`)
+      if (res.ok) {
+        notify('success', `Email parti vers ${destinataire.trim()} — vérifie la boîte (et les spams).`)
+      } else {
+        const code = res.resultat?.skipped
+        const explication = {
+          'no-key': 'clé BREVO_API_KEY absente sur Render → la coller dans Environment.',
+          'no-sender': 'expéditeur BREVO_FROM absent sur Render → mettre ton Gmail validé.',
+          prefs: 'tes préférences email bloquent ce type.',
+        }[code] ?? res.resultat?.skipped ?? res.erreur ?? 'voir les logs serveur'
+        notify('error', `Non parti : ${explication}`)
+      }
     } catch (e) {
       notify('error', e.message ?? 'Test impossible')
     } finally {
