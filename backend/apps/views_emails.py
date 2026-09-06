@@ -855,6 +855,11 @@ def me(request):
         if 'notif_prefs' in data and not isinstance(data['notif_prefs'], dict):
             return Response({'detail': 'notif_prefs doit être un objet.'}, status=400)
         fichiers = {k: v for k, v in data.items() if hasattr(v, 'file') or hasattr(v, 'name')}
+        anciennes = {}
+        for k in fichiers:
+            ancien = getattr(request.user, k, None)
+            if ancien:
+                anciennes[k] = str(ancien)
         for k, v in fichiers.items():
             setattr(request.user, k, v)
             data.pop(k, None)
@@ -862,6 +867,15 @@ def me(request):
             setattr(request.user, k, v)
         champs = list(data) + list(fichiers)
         request.user.save(update_fields=champs or None)
+        # Ancienne photo remplacée → effacée (Cloudinary ou disque, best-effort)
+        for k, vieux in anciennes.items():
+            nouveau = str(getattr(request.user, k, '') or '')
+            if vieux and vieux != nouveau:
+                try:
+                    from django.core.files.storage import default_storage
+                    default_storage.delete(vieux)
+                except Exception:
+                    pass
     return Response(ProfilSerializer(request.user, context={'request': request}).data)
 
 

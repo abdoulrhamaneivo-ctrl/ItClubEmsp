@@ -19,6 +19,13 @@ build/
 # OS / éditeur
 .DS_Store
 Thumbs.db
+
+# Uploads locaux (ne jamais commiter les fichiers des membres ;
+# en prod ils vivent sur Cloudinary, en dev sur le disque)
+backend/media/
+*.sqlite3
+__pycache__/
+*.pyc
 *.swp
 *~
 

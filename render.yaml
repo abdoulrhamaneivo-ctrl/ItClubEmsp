@@ -34,11 +34,18 @@ services:
         sync: false
       - key: BREVO_FROM
         value: ""
+      # Fichiers Cloudinary (sans ça, Render efface le disque à chaque
+      # redémarrage → images 404). Chaîne complète
+      # CLOUDINARY_URL=cloudinary://cle:secret@nom en secret Render, jamais ici.
+      # Absente : repli disque local (dev).
+      - key: CLOUDINARY_URL
+        sync: false
       - key: FRONTEND_URL
         value: https://it-club-emsp.vercel.app
 
   # Emails automatiques : rappels J-1/H-2h, satisfaction, récap dimanche.
   # 6h UTC = 6h à Abidjan (UTC+0 toute l'année).
+  # (Pas de CLOUDINARY_URL ici : seul le service API reçoit des fichiers.)
   - type: cron
     name: itclub-emsp-emails
     runtime: python

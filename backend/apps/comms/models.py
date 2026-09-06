@@ -10,7 +10,7 @@ class Actualite(models.Model):
     """Actualité avec image + tag cellule (front : fil Actualites)."""
     titre = models.CharField(max_length=140)
     extrait = models.TextField(blank=True)
-    image = models.ImageField(upload_to='actualites/', blank=True, null=True)
+    image = models.ImageField(upload_to='actualites/', blank=True, null=True, max_length=500)
     video_url = models.URLField('Lien vidéo (reportage, interview…)', max_length=500, blank=True,
                                 help_text='Coller le lien — les fichiers lourds ne passent pas par le serveur.')
     tag_cellule = models.ForeignKey(Cellule, on_delete=models.SET_NULL, null=True, blank=True, related_name='actualites')
@@ -133,7 +133,7 @@ class Document(models.Model):
     slug = models.SlugField(primary_key=True, max_length=40)
     titre = models.CharField(max_length=140)
     description = models.TextField(blank=True)
-    fichier = models.FileField(upload_to='documents/')
+    fichier = models.FileField(upload_to='documents/', max_length=500)
     famille = models.CharField(max_length=14, choices=FAMILLES, default='fondamentaux')
     couleur = models.CharField(max_length=9, default='#1FAF72')
     date = models.DateField(auto_now_add=True)
@@ -151,7 +151,7 @@ class Media(models.Model):
     titre = models.CharField(max_length=140)
     legende = models.TextField(blank=True)
     type = models.CharField(max_length=6, choices=TYPES, default='photo')
-    image = models.ImageField(upload_to='galerie/', blank=True, null=True)
+    image = models.ImageField(upload_to='galerie/', blank=True, null=True, max_length=500)
     youtube_id = models.CharField('ID YouTube', max_length=24, blank=True)
     evenement = models.CharField('Événement (filtre)', max_length=80, blank=True)
     tag_cellule = models.ForeignKey(Cellule, on_delete=models.SET_NULL, null=True, blank=True)

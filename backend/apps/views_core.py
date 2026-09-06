@@ -77,6 +77,22 @@ class PublicReadOrStaffWrite(viewsets.ModelViewSet):
     permission_classes = [BureauWritePermission]
 
 
+class NettoyageFichiersMixin:
+    """À la suppression, efface aussi les fichiers (Cloudinary ou disque)
+    pour ne pas remplir le quota gratuit d'orphelins invisibles."""
+    champs_fichiers = ()
+
+    def perform_destroy(self, instance):
+        for champ in self.champs_fichiers:
+            f = getattr(instance, champ, None)
+            if f:
+                try:
+                    f.delete(save=False)
+                except Exception:
+                    pass
+        super().perform_destroy(instance)
+
+
 # ── Vitrine ─────────────────────────────────────────────────
 class CelluleViewSet(PublicReadOrStaffWrite):
     queryset = Cellule.objects.all().prefetch_related('membres')
@@ -98,7 +114,8 @@ class BureauViewSet(viewsets.ReadOnlyModelViewSet):
         return ctx
 
 
-class ActualiteViewSet(PublicReadOrStaffWrite):
+class ActualiteViewSet(NettoyageFichiersMixin, PublicReadOrStaffWrite):
+    champs_fichiers = ('image',)
     queryset = Actualite.objects.select_related('tag_cellule', 'auteur').all()
     serializer_class = ActualiteSerializer
     filterset_fields = ['tag_cellule']
@@ -221,7 +238,8 @@ class ActualiteViewSet(PublicReadOrStaffWrite):
             logging.getLogger(__name__).warning('Emails annonce ignorés: %s', exc)
 
 
-class ProjetViewSet(PublicReadOrStaffWrite):
+class ProjetViewSet(NettoyageFichiersMixin, PublicReadOrStaffWrite):
+    champs_fichiers = ('image',)
     """Suivi des projets techniques (P2/P7) — lecture publique, écriture Bureau."""
     queryset = Projet.objects.select_related('responsable', 'cellule').all()
     serializer_class = ProjetSerializer
@@ -252,7 +270,8 @@ class ParametreViewSet(PublicReadOrStaffWrite):
         return _R(ParametreSerializer(obj).data, status=200)
 
 
-class CompteRenduViewSet(viewsets.ModelViewSet):
+class CompteRenduViewSet(NettoyageFichiersMixin, viewsets.ModelViewSet):
+    champs_fichiers = ('image',)
     """CR de réunion : brouillon → en validation → publié (doc 01 P3).
 
     Lecture = membres connectés (interne). Rédaction = P3/P1/ADMIN/staff.
@@ -351,7 +370,8 @@ class VeilleViewSet(viewsets.ModelViewSet):
         return Response({'statut': statut, 'ressource': data})
 
 
-class DocumentViewSet(PublicReadOrStaffWrite):
+class DocumentViewSet(NettoyageFichiersMixin, PublicReadOrStaffWrite):
+    champs_fichiers = ('fichier',)
     queryset = Document.objects.all()
     serializer_class = DocumentSerializer
     filterset_fields = ['famille']
@@ -456,7 +476,8 @@ class MessageForumViewSet(viewsets.ModelViewSet):
             pass
 
 
-class MediaViewSet(PublicReadOrStaffWrite):
+class MediaViewSet(NettoyageFichiersMixin, PublicReadOrStaffWrite):
+    champs_fichiers = ('image',)
     queryset = Media.objects.all()
     serializer_class = MediaSerializer
     filterset_fields = ['type', 'evenement', 'tag_cellule']
@@ -534,7 +555,8 @@ class SondageViewSet(viewsets.ModelViewSet):
         return Response({'statut': statut, 'sondage': data})
 
 
-class EvenementViewSet(PublicReadOrStaffWrite):
+class EvenementViewSet(NettoyageFichiersMixin, PublicReadOrStaffWrite):
+    champs_fichiers = ('image',)
     queryset = Evenement.objects.all()
     serializer_class = EvenementSerializer
     filterset_fields = ['type']

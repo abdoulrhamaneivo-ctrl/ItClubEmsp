@@ -27,7 +27,7 @@ class Projet(models.Model):
     cellule = models.ForeignKey('accounts.Cellule', on_delete=models.SET_NULL,
                                 null=True, blank=True, related_name='projets')
     lien = models.URLField('Lien (repo, démo…)', blank=True)
-    image = models.ImageField('Visuel du projet', upload_to='projets/', blank=True, null=True)
+    image = models.ImageField('Visuel du projet', upload_to='projets/', blank=True, null=True, max_length=500)
     cree_le = models.DateTimeField(auto_now_add=True)
     maj_le = models.DateTimeField(auto_now=True)
 
@@ -110,7 +110,7 @@ class CompteRendu(models.Model):
     lieu = models.CharField(max_length=140, blank=True)
     ordre_du_jour = models.TextField('Ordre du jour', blank=True)
     contenu = models.TextField('Contenu')
-    image = models.ImageField('Photo du rapport', upload_to='comptes-rendus/', blank=True, null=True)
+    image = models.ImageField('Photo du rapport', upload_to='comptes-rendus/', blank=True, null=True, max_length=500)
     video_url = models.URLField('Lien vidéo (YouTube, Drive…)', max_length=500, blank=True,
                                 help_text='Coller le lien de la vidéo — les fichiers lourds ne passent pas par le serveur.')
     statut = models.CharField(max_length=14, choices=STATUTS, default='brouillon')

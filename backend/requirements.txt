@@ -12,4 +12,5 @@ channels
 daphne
 psycopg[binary]
 Pillow
+cloudinary==1.46.2
 qrcode[pil]

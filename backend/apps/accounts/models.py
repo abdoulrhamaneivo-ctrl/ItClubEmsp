@@ -27,7 +27,7 @@ STATUT_CANDIDATURE = [
 class User(AbstractUser):
     """Membre du club. email = identifiant (auth @emsp.int en prod)."""
     email = models.EmailField('E-mail', unique=True)
-    photo = models.ImageField('Photo', upload_to='photos/membres/', blank=True, null=True)
+    photo = models.ImageField('Photo', upload_to='photos/membres/', blank=True, null=True, max_length=500)
     promotion = models.CharField('Promotion', max_length=20, blank=True)
     telephone = models.CharField('Téléphone', max_length=20, blank=True)
     notif_prefs = models.JSONField(

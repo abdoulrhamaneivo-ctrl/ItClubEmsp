@@ -24,7 +24,7 @@ class Evenement(models.Model):
         max_length=6, blank=True, default='',
         help_text='Généré automatiquement ; affiché au vidéoprojecteur le jour J.',
     )
-    image = models.ImageField("Affiche de l'activité", upload_to='evenements/', blank=True, null=True)
+    image = models.ImageField("Affiche de l'activité", upload_to='evenements/', blank=True, null=True, max_length=500)
     video_url = models.URLField('Lien vidéo (teaser, replay…)', max_length=500, blank=True,
                                 help_text='Coller le lien — les fichiers lourds ne passent pas par le serveur.')
 

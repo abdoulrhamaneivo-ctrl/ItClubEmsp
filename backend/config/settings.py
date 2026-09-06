@@ -114,6 +114,17 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# ── Fichiers : Cloudinary si configuré, disque local sinon ──────
+# Render gratuit efface le disque à chaque redémarrage (images 404
+# alors que la base garde leur chemin) → en prod, définir
+# CLOUDINARY_CLOUD_NAME + CLOUDINARY_API_KEY + CLOUDINARY_API_SECRET
+# (Render → Environment). Clés jamais dans le repo.
+if os.environ.get('CLOUDINARY_CLOUD_NAME') or os.environ.get('CLOUDINARY_URL'):
+    STORAGES = {
+        'default': {'BACKEND': 'apps.storage_cloudinary.StockageCloudinary'},
+        'staticfiles': {'BACKEND': 'django.contrib.staticfiles.storage.StaticFilesStorage'},
+    }
+
 # ── Emails (Brevo — remplace Resend le 04/09/2026) ──────────────
 # Sans BREVO_API_KEY : les envois sont journalisés et ignorés (log-only),
 # les vues restent fonctionnelles. Clé jamais dans le repo.
