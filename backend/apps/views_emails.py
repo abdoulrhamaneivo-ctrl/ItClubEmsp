@@ -547,10 +547,12 @@ def evenement_ics(request, pk):
 @api_view(['GET'])
 @permission_classes([permissions.AllowAny])
 def classement(request):
-    """GET /api/v1/classement/ — [{nom, points, niveau}], points > 0."""
+    """GET /api/v1/classement/ — [{nom, photo, points, niveau}], points > 0."""
+    from apps.core_serializers import photo_absolue
     joueurs = User.objects.filter(is_active=True, points__gt=0).order_by('-points')[:20]
     return Response([{
         'nom': u.get_full_name() or u.username,
+        'photo': photo_absolue(u, request),
         'points': u.points,
         'niveau': niveau_de(u.points),
     } for u in joueurs])

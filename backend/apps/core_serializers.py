@@ -12,6 +12,35 @@ from apps.events.models import Evenement, Inscription
 User = get_user_model()
 
 
+def photo_absolue(utilisateur, request=None):
+    """URL absolue de la photo d'un membre (ou None).
+
+    Affichée partout où son profil apparaît : auteurs d'actus/sujets/
+    messages/sondages/veilles/CR, classement, listes. Les URLs Cloudinary
+    (https) passent telles quelles ; les chemins locaux sont préfixés.
+    """
+    try:
+        if utilisateur and getattr(utilisateur, 'photo', None):
+            url = utilisateur.photo.url
+            if request is not None and url.startswith('/'):
+                return request.build_absolute_uri(url)
+            return url
+    except Exception:
+        pass
+    return None
+
+
+class PhotoAuteurMixin:
+    """Ajoute auteur_photo (URL absolue ou None) à côté d'auteur_nom."""
+    def get_auteur_photo(self, obj):
+        request = None
+        try:
+            request = self.context.get('request')
+        except Exception:
+            pass
+        return photo_absolue(getattr(obj, 'auteur', None), request)
+
+
 class MembreMiniSerializer(serializers.ModelSerializer):
     """Mini profil (initiale calculée côté front)."""
     nom = serializers.SerializerMethodField()
@@ -115,11 +144,12 @@ class BureauSerializer(serializers.ModelSerializer):
         return rep
 
 
-class ActualiteSerializer(serializers.ModelSerializer):
+class ActualiteSerializer(PhotoAuteurMixin, serializers.ModelSerializer):
     tag_cellule_nom = serializers.CharField(source='tag_cellule.nom', read_only=True, default=None)
     tag_cellule_couleur = serializers.CharField(source='tag_cellule.couleur', read_only=True, default=None)
     auteur_nom = serializers.SerializerMethodField()
     auteur_initiale = serializers.SerializerMethodField()
+    auteur_photo = serializers.SerializerMethodField()
     reactions = serializers.SerializerMethodField()
     ma_reaction = serializers.SerializerMethodField()
     commentaires_count = serializers.SerializerMethodField()
@@ -127,7 +157,7 @@ class ActualiteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Actualite
         fields = ['id', 'titre', 'extrait', 'image', 'video_url', 'tag_cellule', 'tag_cellule_nom',
-                  'tag_cellule_couleur', 'auteur_nom', 'auteur_initiale',
+                  'tag_cellule_couleur', 'auteur_nom', 'auteur_initiale', 'auteur_photo',
                   'reactions', 'ma_reaction', 'commentaires_count', 'date']
 
     def get_auteur_nom(self, obj):
@@ -350,13 +380,14 @@ class VeilleSerializer(serializers.ModelSerializer):
     votes_count = serializers.SerializerMethodField()
     jai_vote = serializers.SerializerMethodField()
     auteur = serializers.SerializerMethodField()
+    auteur_photo = serializers.SerializerMethodField()
     theme_label = serializers.CharField(source='get_theme_display', read_only=True)
 
     class Meta:
         from apps.governance.models import RessourceVeille as _RV
         model = _RV
         fields = ['id', 'titre', 'lien', 'theme', 'theme_label', 'resume',
-                  'votes_count', 'jai_vote', 'auteur', 'cree_le']
+                  'votes_count', 'jai_vote', 'auteur', 'auteur_photo', 'cree_le']
         read_only_fields = ['id', 'cree_le']
 
     def get_votes_count(self, obj):
@@ -384,6 +415,14 @@ class VeilleSerializer(serializers.ModelSerializer):
         except Exception:
             return 'Ancien membre'
 
+    def get_auteur_photo(self, obj):
+        request = None
+        try:
+            request = self.context.get('request')
+        except Exception:
+            pass
+        return photo_absolue(getattr(obj, 'partage_par', None), request)
+
 
 class ParametreSerializer(serializers.ModelSerializer):
     class Meta:
@@ -393,9 +432,10 @@ class ParametreSerializer(serializers.ModelSerializer):
         read_only_fields = ['modifie_le']
 
 
-class CompteRenduSerializer(serializers.ModelSerializer):
+class CompteRenduSerializer(PhotoAuteurMixin, serializers.ModelSerializer):
     """CR : auteur + validateur + libellé statut (doc 01 P3)."""
     auteur_nom = serializers.SerializerMethodField()
+    auteur_photo = serializers.SerializerMethodField()
     valide_par_nom = serializers.SerializerMethodField()
     statut_label = serializers.CharField(source='get_statut_display', read_only=True)
 
@@ -404,7 +444,7 @@ class CompteRenduSerializer(serializers.ModelSerializer):
         model = _CR
         fields = ['id', 'titre', 'reunion_date', 'lieu', 'ordre_du_jour',
                   'contenu', 'image', 'video_url', 'statut', 'statut_label',
-                  'auteur_nom', 'valide_par_nom', 'publie_le', 'maj_le']
+                  'auteur_nom', 'auteur_photo', 'valide_par_nom', 'publie_le', 'maj_le']
         read_only_fields = ['id', 'publie_le', 'maj_le']
 
     def _nom(self, user):
@@ -422,9 +462,10 @@ class CompteRenduSerializer(serializers.ModelSerializer):
         return self._nom(getattr(obj, 'valide_par', None))
 
 
-class SujetSerializer(serializers.ModelSerializer):
+class SujetSerializer(PhotoAuteurMixin, serializers.ModelSerializer):
     """Sujet du forum : auteur + compteurs + dernier message (doc 03 §4)."""
     auteur_nom = serializers.SerializerMethodField()
+    auteur_photo = serializers.SerializerMethodField()
     messages_count = serializers.SerializerMethodField()
     dernier_message = serializers.SerializerMethodField()
     espace_label = serializers.SerializerMethodField()
@@ -433,7 +474,7 @@ class SujetSerializer(serializers.ModelSerializer):
         from apps.comms.models import Sujet as _S
         model = _S
         fields = ['id', 'espace', 'espace_label', 'cellule', 'projet',
-                  'titre', 'auteur_nom', 'epingle', 'verrouille',
+                  'titre', 'auteur_nom', 'auteur_photo', 'epingle', 'verrouille',
                   'messages_count', 'dernier_message', 'cree_le',
                   'derniere_activite']
         read_only_fields = ['id', 'cree_le', 'derniere_activite']
@@ -467,7 +508,7 @@ class SujetSerializer(serializers.ModelSerializer):
             nom = (a.get_full_name() or a.username) if a else 'Ancien membre'
         except Exception:
             nom = 'Ancien membre'
-        return {'auteur': nom, 'cree_le': d.cree_le}
+        return {'auteur': nom, 'auteur_photo': photo_absolue(a), 'cree_le': d.cree_le}
 
     def get_espace_label(self, obj):
         if obj.espace == 'cellule' and getattr(obj, 'cellule_id', None):
@@ -483,13 +524,14 @@ class SujetSerializer(serializers.ModelSerializer):
         return 'Général'
 
 
-class MessageForumSerializer(serializers.ModelSerializer):
+class MessageForumSerializer(PhotoAuteurMixin, serializers.ModelSerializer):
     auteur_nom = serializers.SerializerMethodField()
+    auteur_photo = serializers.SerializerMethodField()
 
     class Meta:
         from apps.comms.models import MessageForum as _M
         model = _M
-        fields = ['id', 'sujet', 'auteur_nom', 'contenu', 'cree_le']
+        fields = ['id', 'sujet', 'auteur_nom', 'auteur_photo', 'contenu', 'cree_le']
         read_only_fields = ['id', 'cree_le']
 
     def get_auteur_nom(self, obj):
@@ -502,9 +544,10 @@ class MessageForumSerializer(serializers.ModelSerializer):
             return 'Ancien membre'
 
 
-class SondageSerializer(serializers.ModelSerializer):
+class SondageSerializer(PhotoAuteurMixin, serializers.ModelSerializer):
     """Sondage + options avec compteurs + mes votes (doc 00 bonus)."""
     auteur_nom = serializers.SerializerMethodField()
+    auteur_photo = serializers.SerializerMethodField()
     options = serializers.SerializerMethodField()
     mes_votes = serializers.SerializerMethodField()
     total_votes = serializers.SerializerMethodField()
@@ -513,7 +556,7 @@ class SondageSerializer(serializers.ModelSerializer):
     class Meta:
         from apps.comms.models import Sondage as _So
         model = _So
-        fields = ['id', 'titre', 'description', 'auteur_nom', 'cellule',
+        fields = ['id', 'titre', 'description', 'auteur_nom', 'auteur_photo', 'cellule',
                   'cellule_nom', 'choix_multiple', 'clos',
                   'options', 'mes_votes', 'total_votes', 'cree_le']
         read_only_fields = ['id', 'cree_le']

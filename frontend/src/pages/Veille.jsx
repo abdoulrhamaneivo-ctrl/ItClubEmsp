@@ -8,12 +8,13 @@ import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
 import MenuItem from '@mui/material/MenuItem'
 import Chip from '@mui/material/Chip'
+import Avatar from '@mui/material/Avatar'
 import CircularProgress from '@mui/material/CircularProgress'
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward'
 import OpenInNewIcon from '@mui/icons-material/OpenInNew'
 import DeleteIcon from '@mui/icons-material/Delete'
 import AddIcon from '@mui/icons-material/Add'
-import { api } from '../lib/api'
+import { api, urlMedia } from '../lib/api'
 import { useAuth } from '../stores/auth'
 import TitreSection from '../components/ui-components/TitreSection'
 import FondPropre from '../components/ui-components/FondPropre'
@@ -213,6 +214,9 @@ function CarteVeille({ v, index, user, onVote, onErreur, onSupprimer }) {
           <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', mt: 0.7, flexWrap: 'wrap' }}>
             <Chip label={donnees.theme_label ?? theme.label} size="small"
               sx={{ bgcolor: `${theme.couleur}14`, color: theme.couleur, fontWeight: 800, height: 22 }} />
+            <Avatar src={urlMedia(donnees.auteur_photo) ?? undefined} sx={{ width: 22, height: 22, bgcolor: `${theme.couleur}14`, color: theme.couleur, fontWeight: 800, fontSize: '0.65rem', flexShrink: 0 }}>
+              {(donnees.auteur || '?').slice(0, 1).toUpperCase()}
+            </Avatar>
             <Typography variant="caption" sx={{ color: '#6B7280' }}>
               par {donnees.auteur} · {new Date(donnees.cree_le).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}
             </Typography>

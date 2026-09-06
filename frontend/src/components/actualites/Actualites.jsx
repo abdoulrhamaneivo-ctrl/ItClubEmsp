@@ -4,6 +4,7 @@ import Box from '@mui/material/Box'
 import Container from '@mui/material/Container'
 import Typography from '@mui/material/Typography'
 import Chip from '@mui/material/Chip'
+import Avatar from '@mui/material/Avatar'
 import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
 import FondPropre from '../ui-components/FondPropre'
@@ -154,13 +155,12 @@ function CarteActu({ n, index }) {
                   )}
 
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 2, pt: 1.6, borderTop: '1px solid #EEF2F0' }}>
-                    <Box sx={{
-                      width: 26, height: 26, borderRadius: '50%', bgcolor: `${n.couleur}22`,
+                    <Avatar src={n.auteur_photo ?? undefined} sx={{
+                      width: 26, height: 26, bgcolor: `${n.couleur}22`,
                       color: n.couleur, fontWeight: 800, fontSize: '0.7rem',
-                      display: 'grid', placeItems: 'center',
                     }}>
                       {(n.auteur || 'B')[0]}
-                    </Box>
+                    </Avatar>
                     <Typography variant="caption" sx={{ color: '#374151', fontWeight: 700 }}>
                       {n.auteur || 'Le Bureau'}
                     </Typography>

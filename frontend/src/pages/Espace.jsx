@@ -437,7 +437,7 @@ export default function Espace() {
               }}>
               Chercher <Box component="span" sx={{ ml: 0.8, opacity: 0.6 }}>Ctrl·K</Box>
             </Button>
-            <Avatar sx={{ width: 32, height: 32, bgcolor: '#1FAF72', fontFamily: "'Orbitron',sans-serif", fontWeight: 800, fontSize: 14, border: '2px solid rgba(154,251,215,.4)' }}>
+            <Avatar src={urlMedia(user?.photo) ?? undefined} sx={{ width: 32, height: 32, bgcolor: '#1FAF72', fontFamily: "'Orbitron',sans-serif", fontWeight: 800, fontSize: 14, border: '2px solid rgba(154,251,215,.4)' }}>
               {initiale}
             </Avatar>
             <Tooltip title="Déconnexion" arrow enterDelay={400}>
@@ -536,7 +536,7 @@ export default function Espace() {
             }}>
               <Box sx={{ position: 'absolute', top: -70, right: '8%', width: 220, height: 220, borderRadius: '50%', background: 'radial-gradient(circle,rgba(31,175,114,.28),transparent 70%)', filter: 'blur(34px)' }} />
               <Box sx={{ position: 'relative', display: 'flex', alignItems: 'center', gap: { xs: 2.5, md: 4 }, flexWrap: 'wrap' }}>
-                <Avatar sx={{
+                <Avatar src={urlMedia(user?.photo) ?? undefined} sx={{
                   width: { xs: 72, md: 96 }, height: { xs: 72, md: 96 },
                   bgcolor: '#1FAF72', border: '3px solid rgba(154,251,215,.5)',
                   fontFamily: "'Orbitron',sans-serif", fontWeight: 800, fontSize: { xs: 30, md: 40 },
@@ -818,6 +818,9 @@ export default function Espace() {
                       <Typography sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 800, fontSize: '0.8rem', color: i === 0 ? '#B45309' : '#6B7280', width: 22 }}>
                         {i + 1}
                       </Typography>
+                      <Avatar src={urlMedia(j.photo) ?? undefined} sx={{ width: 26, height: 26, bgcolor: '#EDE9FE', color: '#5B21B6', fontWeight: 800, fontSize: '0.7rem', flexShrink: 0 }}>
+                        {(j.nom || '?').slice(0, 1).toUpperCase()}
+                      </Avatar>
                       <Typography variant="body2" sx={{ flex: 1, color: '#111827', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                         {j.nom}
                       </Typography>

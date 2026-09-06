@@ -8,12 +8,13 @@ import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
 import MenuItem from '@mui/material/MenuItem'
 import Chip from '@mui/material/Chip'
+import Avatar from '@mui/material/Avatar'
 import Switch from '@mui/material/Switch'
 import CircularProgress from '@mui/material/CircularProgress'
 import CheckIcon from '@mui/icons-material/Check'
 import AddIcon from '@mui/icons-material/Add'
 import DownloadIcon from '@mui/icons-material/Download'
-import { api } from '../lib/api'
+import { api, urlMedia } from '../lib/api'
 import { useAuth, hasRole } from '../stores/auth'
 import TitreSection from '../components/ui-components/TitreSection'
 import FondPropre from '../components/ui-components/FondPropre'
@@ -212,11 +213,16 @@ function CarteSondage({ s, index, onErreur }) {
         <Box sx={{ display: 'flex', gap: 1.2, alignItems: 'flex-start', flexWrap: 'wrap', mb: 0.5 }}>
           <Box sx={{ flex: 1, minWidth: 200 }}>
             <Typography sx={{ fontWeight: 800, color: '#111827', fontSize: '1rem' }}>{donnees.titre}</Typography>
-            <Typography variant="caption" sx={{ color: '#5A6B63' }}>
-              {donnees.auteur_nom}
-              {donnees.cellule_nom && ` · Cellule ${donnees.cellule_nom}`}
-              {` · ${donnees.total_votes} vote${donnees.total_votes > 1 ? 's' : ''}`}
-              {donnees.choix_multiple && ' · choix multiples'}
+            <Typography variant="caption" sx={{ color: '#5A6B63', display: 'flex', alignItems: 'center', gap: 0.8 }}>
+              <Avatar src={urlMedia(donnees.auteur_photo) ?? undefined} sx={{ width: 20, height: 20, bgcolor: '#0F5B3A14', color: '#0F5B3A', fontWeight: 800, fontSize: '0.62rem' }}>
+                {(donnees.auteur_nom || '?').slice(0, 1).toUpperCase()}
+              </Avatar>
+              <Box component="span">
+                {donnees.auteur_nom}
+                {donnees.cellule_nom && ` · Cellule ${donnees.cellule_nom}`}
+                {` · ${donnees.total_votes} vote${donnees.total_votes > 1 ? 's' : ''}`}
+                {donnees.choix_multiple && ' · choix multiples'}
+              </Box>
             </Typography>
           </Box>
           {donnees.clos

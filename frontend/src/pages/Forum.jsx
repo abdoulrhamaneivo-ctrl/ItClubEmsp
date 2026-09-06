@@ -8,13 +8,14 @@ import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
 import MenuItem from '@mui/material/MenuItem'
 import Chip from '@mui/material/Chip'
+import Avatar from '@mui/material/Avatar'
 import CircularProgress from '@mui/material/CircularProgress'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import PushPinIcon from '@mui/icons-material/PushPin'
 import LockIcon from '@mui/icons-material/Lock'
 import AddIcon from '@mui/icons-material/Add'
 import DeleteIcon from '@mui/icons-material/Delete'
-import { api } from '../lib/api'
+import { api, urlMedia } from '../lib/api'
 import { useForumLive } from '../lib/useForumLive'
 import { useAuth, hasRole } from '../stores/auth'
 import TitreSection from '../components/ui-components/TitreSection'
@@ -191,6 +192,9 @@ export default function Forum() {
                   }}>
                     {s.epingle && <PushPinIcon sx={{ color: '#B45309', fontSize: 18, flexShrink: 0 }} />}
                     {s.verrouille && <LockIcon sx={{ color: '#6B7280', fontSize: 18, flexShrink: 0 }} />}
+                    <Avatar src={urlMedia(s.auteur_photo) ?? undefined} sx={{ width: 34, height: 34, bgcolor: '#0F5B3A14', color: '#0F5B3A', fontWeight: 800, fontSize: '0.85rem', flexShrink: 0 }}>
+                      {(s.auteur_nom ?? '?').slice(0, 1).toUpperCase()}
+                    </Avatar>
                     <Box sx={{ flex: 1, minWidth: 0 }}>
                       <Typography sx={{ fontWeight: 800, color: '#111827', fontSize: '0.92rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                         {s.titre}
@@ -284,9 +288,14 @@ function FilSujet({ sujet, modo, onRetour, onMute, notify }) {
             </Box>
           )}
         </Box>
-        <Typography variant="caption" sx={{ color: '#5A6B63', display: 'block', mb: 2 }}>
-          Ouvert par {sujet.auteur_nom} · {sujet.messages_count ?? 0} message{(sujet.messages_count ?? 0) > 1 ? 's' : ''}
-          {sujet.verrouille && ' · verrouillé (modération uniquement)'}
+        <Typography variant="caption" sx={{ color: '#5A6B63', display: 'flex', alignItems: 'center', gap: 0.8, mb: 2 }}>
+          <Avatar src={urlMedia(sujet.auteur_photo) ?? undefined} sx={{ width: 20, height: 20, bgcolor: '#0F5B3A14', color: '#0F5B3A', fontWeight: 800, fontSize: '0.65rem' }}>
+            {(sujet.auteur_nom ?? '?').slice(0, 1).toUpperCase()}
+          </Avatar>
+          <Box component="span">
+            Ouvert par {sujet.auteur_nom} · {sujet.messages_count ?? 0} message{(sujet.messages_count ?? 0) > 1 ? 's' : ''}
+            {sujet.verrouille && ' · verrouillé (modération uniquement)'}
+          </Box>
           {tempsReel && (
             <Box component="span" sx={{
               display: 'inline-flex', alignItems: 'center', gap: 0.6, ml: 1.2,
@@ -306,9 +315,9 @@ function FilSujet({ sujet, modo, onRetour, onMute, notify }) {
           {messages.map((m) => (
             <motion.div key={m.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.22 }}>
               <Box sx={{ display: 'flex', gap: 1.4, py: 1.4, borderBottom: '1px solid #EEF2F0' }}>
-                <Box sx={{ width: 34, height: 34, borderRadius: '50%', bgcolor: '#0F5B3A14', display: 'grid', placeItems: 'center', color: '#0F5B3A', fontWeight: 800, flexShrink: 0 }}>
+                <Avatar src={urlMedia(m.auteur_photo) ?? undefined} sx={{ width: 34, height: 34, bgcolor: '#0F5B3A14', color: '#0F5B3A', fontWeight: 800, fontSize: '0.85rem', flexShrink: 0 }}>
                   {(m.auteur_nom ?? '?').slice(0, 1).toUpperCase()}
-                </Box>
+                </Avatar>
                 <Box sx={{ flex: 1, minWidth: 0 }}>
                   <Typography sx={{ fontWeight: 800, color: '#111827', fontSize: '0.82rem' }}>
                     {m.auteur_nom}{' '}

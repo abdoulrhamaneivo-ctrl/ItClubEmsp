@@ -208,3 +208,30 @@ class SondagesTests(TestCase):
         r = self.client.post(f"/api/v1/sondages/{s['id']}/voter/",
                              {'option': s['options'][0]['id']}, format='json')
         self.assertEqual(r.status_code, 400)
+
+
+class PhotoAuteurTests(TestCase):
+    """La photo d'un membre suit son profil partout (auteurs, classement)."""
+
+    client_class = APIClient
+
+    def setUp(self):
+        from django.contrib.auth import get_user_model
+        U = get_user_model()
+        self.membre = U.objects.create_user(username='ph', email='ph@x.com', password='x')
+        self.client.force_authenticate(self.membre)
+
+    def test_sujet_expose_auteur_photo(self):
+        from apps.comms.models import Sujet
+        s = Sujet.objects.create(titre='T', espace='general', auteur=self.membre)
+        r = self.client.get(f'/api/v1/forum/sujets/{s.pk}/')
+        self.assertEqual(r.status_code, 200)
+        self.assertIn('auteur_photo', r.data)
+        self.assertIsNone(r.data['auteur_photo'])
+
+    def test_classement_expose_photo(self):
+        self.membre.points = 10
+        self.membre.save(update_fields=['points'])
+        r = self.client.get('/api/v1/classement/')
+        self.assertEqual(r.status_code, 200)
+        self.assertIn('photo', r.data[0])

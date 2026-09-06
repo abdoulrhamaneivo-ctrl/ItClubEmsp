@@ -146,6 +146,7 @@ function adapterActu(a, slugParId) {
     titre: a.titre,
     extrait: a.extrait ?? '',
     auteur: a.auteur_nom ?? 'Le Bureau',
+    auteur_photo: urlMedia(a.auteur_photo),
     tag: a.tag_cellule_nom ? `Cellule ${a.tag_cellule_nom}` : 'Annonce officielle',
     cellule: a.tag_cellule != null ? (slugParId[a.tag_cellule] ?? 'general') : 'general',
     date: (a.date ?? '').slice(0, 10),
