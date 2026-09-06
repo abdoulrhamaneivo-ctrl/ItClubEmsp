@@ -33,7 +33,9 @@ const liens = [
 ]
 
 // Liens principaux (toujours visibles) et liens regroupés (menu déroulant)
-const LIENS_PRINCIPAUX = ['Le club', 'Activités', 'Galerie']
+// Sondages/Veille (membres) n'apparaissent que si connecté — à ce moment-là
+// le bouton Rejoindre est caché, donc la place est libre.
+const LIENS_PRINCIPAUX = ['Le club', 'Activités', 'Galerie', 'Sondages', 'Veille']
 const plusDe = (u) => liens.filter((l) => !LIENS_PRINCIPAUX.includes(l.label) && (!l.membres || u))
 
 export default function Navbar() {
@@ -93,7 +95,7 @@ export default function Navbar() {
         </motion.a>
 
         <Box sx={{ display: { xs: 'none', lg: 'flex' }, gap: 0.25, alignItems: 'center', flexShrink: 1, minWidth: 0 }}>
-          {liens.filter((l) => LIENS_PRINCIPAUX.includes(l.label)).map((l) => (
+          {liens.filter((l) => LIENS_PRINCIPAUX.includes(l.label) && (!l.membres || user)).map((l) => (
             <Button key={l.cible} color="inherit"
               href={l.route ? l.cible : `/#${l.cible}`}
               onClick={(e) => { e.preventDefault(); l.route ? navigate(l.cible) : allerVers(l.cible) }}
