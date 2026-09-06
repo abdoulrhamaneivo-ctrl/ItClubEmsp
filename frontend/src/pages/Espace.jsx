@@ -81,6 +81,7 @@ function Horloge() {
 
 /* ── Palette de commandes (Ctrl+K) — le « trouver facilement » ── */
 function Palette({ ouvert, fermer, user, estBureau, scrollTo, logout }) {
+  const navigate = useNavigate()
   const [q, setQ] = useState('')
   const [sel, setSel] = useState(0)
   const inputRef = useRef(null)
