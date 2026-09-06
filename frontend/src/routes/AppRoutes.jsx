@@ -158,7 +158,7 @@ export default function AppRoutes() {
     <BrowserRouter>
       <ScrollToTop />
       <Suspense fallback={<FallbackPage />}>
-      <FrontiereErreur>
+      <FrontiereAvecReset>
       <Routes>
         <Route path="/" element={<Vitrine />} />
         <Route path="*" element={<Page404 />} />
@@ -207,10 +207,17 @@ export default function AppRoutes() {
           }
         />
       </Routes>
-      </FrontiereErreur>
+      </FrontiereAvecReset>
           </Suspense>
     </BrowserRouter>
   )
+}
+
+// Réinitialise la page d'erreur à chaque navigation : une page qui a planté
+// une fois ne contamine plus les suivantes (avant, il fallait recharger tout le site).
+function FrontiereAvecReset({ children }) {
+  const { pathname } = useLocation()
+  return <FrontiereErreur key={pathname}>{children}</FrontiereErreur>
 }
 
 export { Vitrine }

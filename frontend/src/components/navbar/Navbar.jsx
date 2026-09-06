@@ -33,7 +33,7 @@ const liens = [
 ]
 
 // Liens principaux (toujours visibles) et liens regroupés (menu déroulant)
-const LIENS_PRINCIPAUX = ['Le club', 'Activités']
+const LIENS_PRINCIPAUX = ['Le club', 'Activités', 'Galerie']
 const plusDe = (u) => liens.filter((l) => !LIENS_PRINCIPAUX.includes(l.label) && (!l.membres || u))
 
 export default function Navbar() {
@@ -95,6 +95,7 @@ export default function Navbar() {
         <Box sx={{ display: { xs: 'none', lg: 'flex' }, gap: 0.25, alignItems: 'center', flexShrink: 1, minWidth: 0 }}>
           {liens.filter((l) => LIENS_PRINCIPAUX.includes(l.label)).map((l) => (
             <Button key={l.cible} color="inherit"
+              href={l.route ? l.cible : `/#${l.cible}`}
               onClick={(e) => { e.preventDefault(); l.route ? navigate(l.cible) : allerVers(l.cible) }}
               sx={{
                 position: 'relative', fontWeight: 600, fontSize: { lg: '0.82rem', xl: '0.9rem' }, px: { lg: 1, xl: 1.25 },

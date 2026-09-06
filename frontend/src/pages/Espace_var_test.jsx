@@ -43,15 +43,6 @@ const libellesRoles = {
 }
 
 /* Données de démonstration — contrat GET /api/v1/me/* (doc 04) */
-// Normalise une réponse API en tableau : l'API peut renvoyer un objet
-// ({detail}, {results}) en cas d'erreur/session expirée — sans ça, un .map
-// sur un objet fait planter toute la page (FrontiereErreur).
-const versTableau = (d) => {
-  if (d == null) return d
-  if (Array.isArray(d)) return d
-  if (Array.isArray(d?.results)) return d.results
-  return []
-}
 const MES_INSCRIPTIONS = [
   { id: 1, titre: 'Atelier Git & GitHub', date: '2026-10-12', lieu: 'Salle info 2', statut: 'Confirmé', couleur: '#1FAF72', couleurTexte: '#0E7A50' },
   { id: 2, titre: 'Hackathon interne — 48h', date: '2026-10-25', lieu: 'Amphi A', statut: 'En liste d’attente', couleur: '#2563EB', couleurTexte: '#1D4ED8' },
@@ -256,21 +247,21 @@ export default function Espace() {
 
   useEffect(() => {
     let stop = false
-    api.getNotifications().then((d) => { if (!stop) setNotifsApi(versTableau(d)) }).catch(() => {})
-    api.getMesInscriptions().then((d) => { if (!stop) setInscApi(versTableau(d)) }).catch(() => {})
-    api.getMesCellules().then((d) => { if (!stop) setCellulesApi(versTableau(d)) }).catch(() => {})
-    api.getMe().then((me) => { if (!stop && me && !me.detail) { setPoints(me.points ?? 0); setNiveau(me.niveau ?? null) } }).catch(() => {})
-    api.getClassement().then((d) => { if (!stop) setClassement(versTableau(d ?? []).slice(0, 5)) }).catch(() => {})
+    api.getNotifications().then((d) => { if (!stop) setNotifsApi(d) }).catch(() => {})
+    api.getMesInscriptions().then((d) => { if (!stop) setInscApi(d) }).catch(() => {})
+    api.getMesCellules().then((d) => { if (!stop) setCellulesApi(d) }).catch(() => {})
+    api.getMe().then((me) => { if (!stop && me) { setPoints(me.points ?? 0); setNiveau(me.niveau ?? null) } }).catch(() => {})
+    api.getClassement().then((d) => { if (!stop) setClassement((d ?? []).slice(0, 5)) }).catch(() => {})
     return () => { stop = true }
   }, [])
 
   const marquerLue = (id) => {
-    setNotifsApi((ns) => versTableau(ns ?? []).map((n) => (n.id === id ? { ...n, lu: true } : n)))
+    setNotifsApi((ns) => (ns ?? []).map((n) => (n.id === id ? { ...n, lu: true } : n)))
     api.marquerNotificationsLues([id]).catch(() => {})
   }
 
   const COULEURS_NOTIF = { annonce: '#1FAF72', inscription: '#2563EB', rappel: '#F5A623', convocation: '#7B61FF', satisfaction: '#0EA5E9', recap: '#64748B', promotion: '#F97316', candidature: '#0E7A50' }
-  const notifs = notifsApi === null ? null : versTableau(notifsApi).map((n) => ({
+  const notifs = notifsApi === null ? null : notifsApi.map((n) => ({
     id: n.id,
     titre: n.titre,
     date: n.cree_le ? new Date(n.cree_le).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' }) : '',
@@ -278,7 +269,7 @@ export default function Espace() {
     lu: !!n.lu,
   }))
 
-  const inscriptions = inscApi === null ? null : versTableau(inscApi).map((i) => ({
+  const inscriptions = inscApi === null ? null : inscApi.map((i) => ({
     id: i.id,
     evenementId: i.evenement?.id ?? null,
     titre: i.evenement?.titre ?? 'Événement',
