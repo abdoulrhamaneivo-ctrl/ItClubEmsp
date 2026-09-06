@@ -159,6 +159,9 @@ CORS_ALLOWED_ORIGINS = os.environ.get(
     'CORS_ALLOWED_ORIGINS',
     'http://localhost:5200,http://127.0.0.1:5200,https://it-club-emsp.vercel.app',
 ).split(',')
+# Requis car le front envoie credentials:'include' (fetchAuth) — sans ça,
+# le navigateur bloque toutes les requêtes authentifiées en dev.
+CORS_ALLOW_CREDENTIALS = True
 
 JWT_SETTINGS = {
     'ACCESS_TOKEN_LIFETIME_MINUTES': 30,

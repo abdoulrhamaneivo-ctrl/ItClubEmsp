@@ -7,9 +7,11 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff'
 
 /**
  * Champ mot de passe avec œil (afficher/masquer).
- * Même style que les autres champs : on lui passe toutes les props TextField.
+ * MUI v9 : les ornements passent par slotProps.input (InputProps n'est plus
+ * consommé par TextField et fuit vers le DOM → warning console).
+ * Accepte aussi l'ancien InputProps (startAdornment conservé).
  */
-export default function ChampMotDePasse({ value, onChange, label = 'Mot de passe', autoComplete = 'current-password', name = 'password', ...props }) {
+export default function ChampMotDePasse({ value, onChange, label = 'Mot de passe', autoComplete = 'current-password', name = 'password', slotProps, InputProps: anciens = {}, ...props }) {
   const [visible, setVisible] = useState(false)
   return (
     <TextField
@@ -20,20 +22,24 @@ export default function ChampMotDePasse({ value, onChange, label = 'Mot de passe
       value={value}
       onChange={onChange}
       autoComplete={autoComplete}
-      InputProps={{
-        ...props.InputProps,
-        endAdornment: (
-          <InputAdornment position="end">
-            <IconButton
-              onClick={() => setVisible((v) => !v)}
-              edge="end"
-              aria-label={visible ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}
-              sx={{ color: '#6B7280' }}
-            >
-              {visible ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}
-            </IconButton>
-          </InputAdornment>
-        ),
+      slotProps={{
+        ...slotProps,
+        input: {
+          ...anciens,
+          ...slotProps?.input,
+          endAdornment: (
+            <InputAdornment position="end">
+              <IconButton
+                onClick={() => setVisible((v) => !v)}
+                edge="end"
+                aria-label={visible ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}
+                sx={{ color: '#6B7280' }}
+              >
+                {visible ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}
+              </IconButton>
+            </InputAdornment>
+          ),
+        },
       }}
     />
   )

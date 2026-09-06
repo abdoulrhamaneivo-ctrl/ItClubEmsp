@@ -117,7 +117,7 @@ export default function Login() {
           <Box component="form" onSubmit={submit} sx={{ display: 'grid', gap: 2.5 }}>
             <TextField
               name="email" label="E-mail (@emsp.int)" type="email" required fullWidth autoComplete="email"
-              InputProps={{ startAdornment: <InputAdornment position="start"><EmailIcon fontSize="small" sx={{ color: '#1FAF72' }} /></InputAdornment> }}
+              slotProps={{ input: { startAdornment: <InputAdornment position="start"><EmailIcon fontSize="small" sx={{ color: '#1FAF72' }} /></InputAdornment> } }}
             />
             <ChampMotDePasse
               name="password" label="Mot de passe" required fullWidth autoComplete="current-password"
