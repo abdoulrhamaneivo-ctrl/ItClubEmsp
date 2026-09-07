@@ -54,7 +54,8 @@ class Commentaire(models.Model):
 
 class Sujet(models.Model):
     """Sujet de discussion du forum (doc 03 §4) : général, cellule ou projet."""
-    ESPACES = [('general', 'Général'), ('cellule', 'Cellule'), ('projet', 'Projet')]
+    ESPACES = [('general', 'Général'), ('cellule', 'Cellule'), ('projet', 'Projet'),
+               ('bureau', 'Bureau (privé)')]
     espace = models.CharField(max_length=10, choices=ESPACES, default='general')
     cellule = models.ForeignKey('accounts.Cellule', on_delete=models.CASCADE,
                                 null=True, blank=True, related_name='sujets')

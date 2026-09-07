@@ -489,7 +489,7 @@ export const api = {
     const data = await fetchJson('/api/v1/projets/')
     return data ?? []
   },
-  async sauverProjet({ id, nom, description, statut, lien, imageFile }) {
+  async sauverProjet({ id, nom, description, statut, lien, imageFile, video_url, image, statut_label, responsable, responsable_nom, cellule, cellule_nom, cree_le, maj_le }) {
     if (USE_MOCK) {
       await new Promise(r => setTimeout(r, 500))
       return { id: id ?? Date.now(), nom, statut }
@@ -499,6 +499,7 @@ export const api = {
     fd.append('description', description ?? '')
     fd.append('statut', statut ?? 'idee')
     fd.append('lien', lien ?? '')
+    if (video_url) fd.append('video_url', video_url)
     if (imageFile) fd.append('image', imageFile)
     return postForm(id ? `/api/v1/projets/${id}/` : '/api/v1/projets/', fd, id ? 'PATCH' : 'POST')
   },
@@ -520,13 +521,18 @@ export const api = {
     const data = await fetchJson('/api/v1/opportunites/')
     return data ?? []
   },
-  async sauverOpportunite(o) {
+  async sauverOpportunite({ id, imageFile, video_url, image, type_label, statut_label, responsable_nom, cree_le, maj_le, ...o }) {
     if (USE_MOCK) {
       await new Promise(r => setTimeout(r, 500))
-      return { id: o.id ?? Date.now(), ...o }
+      return { id: id ?? Date.now(), ...o }
     }
-    const { id, ...corps } = o
-    return postJson(id ? `/api/v1/opportunites/${id}/` : '/api/v1/opportunites/', corps, id ? 'PATCH' : 'POST')
+    const fd = new FormData()
+    for (const [k, v] of Object.entries(o)) {
+      if (v !== undefined && v !== null && v !== '') fd.append(k, v)
+    }
+    if (video_url) fd.append('video_url', video_url)
+    if (imageFile) fd.append('image', imageFile)
+    return postForm(id ? `/api/v1/opportunites/${id}/` : '/api/v1/opportunites/', fd, id ? 'PATCH' : 'POST')
   },
   async supprimerOpportunite(id) {
     if (USE_MOCK) {
@@ -603,15 +609,20 @@ export const api = {
     return postForm('/api/v1/evenements/', fd)
   },
   // Cellules (P4) — création, modification, chef par email
-  async sauverCellule({ id, slug, nom, description, couleur, chef_email }) {
+  async sauverCellule({ id, slug, nom, description, couleur, chef_email, imageFile }) {
     if (USE_MOCK) {
       await new Promise(r => setTimeout(r, 500))
       return { id: id ?? Date.now(), nom }
     }
-    const corps = { nom, description, couleur }
-    if (chef_email !== undefined) corps.chef_email = chef_email
-    if (id) return postJson(`/api/v1/cellules/${id}/`, corps, 'PATCH')
-    return postJson('/api/v1/cellules/', { slug, ...corps })
+    const fd = new FormData()
+    fd.append('nom', nom)
+    fd.append('description', description ?? '')
+    fd.append('couleur', couleur ?? '#1FAF72')
+    if (chef_email !== undefined) fd.append('chef_email', chef_email ?? '')
+    if (imageFile) fd.append('image', imageFile)
+    if (id) return postForm(`/api/v1/cellules/${id}/`, fd, 'PATCH')
+    fd.append('slug', slug)
+    return postForm('/api/v1/cellules/', fd, 'POST')
   },
   async supprimerCellule(id) {
     if (USE_MOCK) {

@@ -10,7 +10,7 @@ import IconButton from '@mui/material/IconButton'
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
 import AddIcon from '@mui/icons-material/Add'
-import { api } from '../../lib/api'
+import { api, urlMedia } from '../../lib/api'
 import { EnteteModule, MessageFlash, useFlash } from './_Commun'
 import DialogueSuppression from './DialogueSuppression'
 
@@ -31,7 +31,7 @@ export default function Projets() {
   const [message, notify] = useFlash()
   const [formOuvert, setFormOuvert] = useState(false)
   const [envoi, setEnvoi] = useState(false)
-  const [form, setForm] = useState({ id: null, nom: '', description: '', statut: 'idee', lien: '', imageFile: null })
+  const [form, setForm] = useState({ id: null, nom: '', description: '', statut: 'idee', lien: '', imageFile: null, video_url: '' })
   const client = useQueryClient()
 
   const { data: projets = [] } = useQuery({
@@ -39,7 +39,7 @@ export default function Projets() {
   })
 
   const set = (k, v) => setForm((f) => ({ ...f, [k]: v }))
-  const reset = () => { setForm({ id: null, nom: '', description: '', statut: 'idee', lien: '', imageFile: null }); setFormOuvert(false) }
+  const reset = () => { setForm({ id: null, nom: '', description: '', statut: 'idee', lien: '', imageFile: null, video_url: '' }); setFormOuvert(false) }
 
   const enregistrer = async () => {
     if (!form.nom.trim() || envoi) {
@@ -111,6 +111,7 @@ export default function Projets() {
           </Box>
           <TextField label="Description" value={form.description} onChange={(e) => set('description', e.target.value)} multiline rows={2} fullWidth sx={champSx} />
           <TextField label="Lien (repo, démo…)" value={form.lien} onChange={(e) => set('lien', e.target.value)} fullWidth sx={champSx} placeholder="https://…" />
+          <TextField label="Lien vidéo (démo, pitch…)" value={form.video_url} onChange={(e) => set('video_url', e.target.value)} fullWidth sx={champSx} placeholder="https://…" />
           <Box sx={{ display: 'flex', gap: 1.5, alignItems: 'center', flexWrap: 'wrap' }}>
             <Button variant="outlined" component="label" sx={{ borderColor: '#1FAF72', color: '#0E7A50', fontWeight: 800, borderRadius: '12px' }}>
               {form.imageFile ? 'Changer le visuel' : 'Ajouter un visuel (photo)'}
@@ -147,10 +148,12 @@ export default function Projets() {
                       {p.description}
                     </Typography>
                   )}
-                  {(p.responsable_nom || p.cellule_nom || p.lien) && (
+                  {(p.responsable_nom || p.cellule_nom || p.lien || p.video_url || p.image) && (
                     <Typography variant="caption" sx={{ display: 'block', color: '#6B7280', mt: 0.6 }}>
                       {[p.responsable_nom, p.cellule_nom ? `Cellule ${p.cellule_nom}` : null].filter(Boolean).join(' · ')}
                       {p.lien && (<> · <a href={p.lien} target="_blank" rel="noreferrer" style={{ color: '#0E7A50', fontWeight: 700 }}>lien</a></>)}
+                      {p.video_url && (<> · <a href={p.video_url} target="_blank" rel="noreferrer" style={{ color: '#0E7A50', fontWeight: 700 }}>vidéo</a></>)}
+                      {p.image && (<> · <a href={urlMedia(p.image)} target="_blank" rel="noreferrer" style={{ color: '#0E7A50', fontWeight: 700 }}>visuel</a></>)}
                     </Typography>
                   )}
                   <Box sx={{ display: 'flex', gap: 0.5, mt: 1, alignItems: 'center' }}>

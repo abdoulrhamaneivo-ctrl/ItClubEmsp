@@ -76,6 +76,10 @@ class CandidatureViewSet(viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
         qs = super().get_queryset()
         if a_role(self.request.user, ['P1', 'P3', 'P4', 'ADMIN']):
+            # ?statut=en_attente|validee|refusee (le front filtre aussi localement)
+            statut = self.request.query_params.get('statut')
+            if statut:
+                qs = qs.filter(statut=statut)
             return qs
         return qs.none()
 

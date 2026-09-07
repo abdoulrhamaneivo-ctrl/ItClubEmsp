@@ -36,6 +36,7 @@ function dateCourte(iso) {
 export default function Forum() {
   const user = useAuth((s) => s.user)
   const modo = hasRole(user, ['P1', 'P5', 'ADMIN'])
+  const bureau = hasRole(user, ['P1', 'P2', 'P3', 'P4', 'P5', 'P6', 'P7', 'P8', 'P9', 'P10', 'CHEF_CELLULE', 'ADMIN'])
   const [espace, setEspace] = useState('tous')
   const [sujetId, setSujetId] = useState(null)
   const [formOuvert, setFormOuvert] = useState(false)
@@ -58,10 +59,14 @@ export default function Forum() {
 
   const notify = (t, m) => { setMessage({ t, m }); setTimeout(() => setMessage(null), 4000) }
 
-  const nomEspace = (s) => s.espace_label ?? 'Général'
+  const nomEspace = (s) => {
+    if (s.espace === 'bureau') return 'Bureau (privé)'
+    return s.espace_label ?? 'Général'
+  }
   const filtres = sujets.filter((s) => {
     if (espace === 'tous') return true
     if (espace === 'general') return s.espace === 'general'
+    if (espace === 'bureau') return s.espace === 'bureau'
     if (espace.startsWith('cellule:')) return s.espace === 'cellule' && String(s.cellule) === espace.slice(8)
     if (espace.startsWith('projet:')) return s.espace === 'projet' && String(s.projet) === espace.slice(7)
     return true
@@ -125,6 +130,10 @@ export default function Forum() {
                 sx={{ fontWeight: 800, cursor: 'pointer', bgcolor: espace === 'tous' ? '#1FAF72' : '#fff', color: espace === 'tous' ? '#fff' : '#374151', border: '1px solid #E5E7EB' }} />
               <Chip label="Général" onClick={() => setEspace('general')}
                 sx={{ fontWeight: 800, cursor: 'pointer', bgcolor: espace === 'general' ? '#1FAF72' : '#fff', color: espace === 'general' ? '#fff' : '#374151', border: '1px solid #E5E7EB' }} />
+              {bureau && (
+                <Chip label="Bureau (privé)" onClick={() => setEspace('bureau')}
+                  sx={{ fontWeight: 800, cursor: 'pointer', bgcolor: espace === 'bureau' ? '#0D1B2A' : '#fff', color: espace === 'bureau' ? '#9AFBD7' : '#374151', border: '1px solid #E5E7EB' }} />
+              )}
               {cellules.filter((c) => c.slug).map((c) => {
                 const cle = `cellule:${c.id}`
                 return (
@@ -152,6 +161,7 @@ export default function Forum() {
                 <Box sx={{ display: 'grid', gap: 1.6, gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' } }}>
                   <TextField select label="Espace" value={nouvelEspace} onChange={(e) => { setNouvelEspace(e.target.value); setCible('') }} fullWidth sx={champSx}>
                     <MenuItem value="general">Général (tous les membres)</MenuItem>
+                    {bureau && <MenuItem value="bureau">Bureau (privé — réservé aux postes)</MenuItem>}
                     <MenuItem value="cellule">Cellule</MenuItem>
                     <MenuItem value="projet">Projet</MenuItem>
                   </TextField>

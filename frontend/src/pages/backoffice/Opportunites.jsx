@@ -10,7 +10,7 @@ import IconButton from '@mui/material/IconButton'
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
 import AddIcon from '@mui/icons-material/Add'
-import { api } from '../../lib/api'
+import { api, urlMedia } from '../../lib/api'
 import { EnteteModule, MessageFlash, useFlash } from './_Commun'
 import DialogueSuppression from './DialogueSuppression'
 
@@ -36,7 +36,7 @@ const COULEUR_STATUT = { veille: '#6B7280', interesse: '#B45309', inscrit: '#1D4
 
 const champSx = { '& .MuiOutlinedInput-root': { borderRadius: '12px', bgcolor: '#F8FAF9' } }
 
-const VIDE = { id: null, titre: '', type: 'hackathon', statut: 'veille', date_limite: '', lien: '', contact_nom: '', contact_email: '', notes: '' }
+const VIDE = { id: null, titre: '', type: 'hackathon', statut: 'veille', date_limite: '', lien: '', contact_nom: '', contact_email: '', notes: '', imageFile: null, video_url: '' }
 
 export default function Opportunites() {
   const [message, notify] = useFlash()
@@ -140,6 +140,16 @@ export default function Opportunites() {
             <TextField type="date" label="Date limite" value={form.date_limite} onChange={(e) => set('date_limite', e.target.value)} fullWidth sx={champSx} InputLabelProps={{ shrink: true }} />
           </Box>
           <TextField label="Lien externe" value={form.lien} onChange={(e) => set('lien', e.target.value)} fullWidth sx={champSx} placeholder="https://…" />
+          <TextField label="Lien vidéo (présentation…)" value={form.video_url} onChange={(e) => set('video_url', e.target.value)} fullWidth sx={champSx} placeholder="https://…" />
+          <Box sx={{ display: 'flex', gap: 1.5, alignItems: 'center', flexWrap: 'wrap' }}>
+            <Button variant="outlined" component="label" sx={{ borderColor: '#1FAF72', color: '#0E7A50', fontWeight: 800, borderRadius: '12px' }}>
+              {form.imageFile ? 'Changer le visuel' : 'Ajouter un visuel (affiche, capture…)'}
+              <input type="file" accept="image/*" hidden onChange={(e) => set('imageFile', e.target.files?.[0] ?? null)} />
+            </Button>
+            {form.imageFile && (
+              <Typography variant="caption" sx={{ color: '#374151', fontWeight: 700 }}>{form.imageFile.name}</Typography>
+            )}
+          </Box>
           <Box sx={{ display: 'grid', gap: 2, gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' } }}>
             <TextField label="Contact (nom)" value={form.contact_nom} onChange={(e) => set('contact_nom', e.target.value)} fullWidth sx={champSx} />
             <TextField label="Contact (email)" value={form.contact_email} onChange={(e) => set('contact_email', e.target.value)} fullWidth sx={champSx} />
@@ -170,6 +180,12 @@ export default function Opportunites() {
                 </Typography>
                 {o.notes && (
                   <Typography variant="body2" sx={{ color: '#374151', fontSize: '0.82rem', mt: 0.5 }}>{o.notes}</Typography>
+                )}
+                {(o.video_url || o.image) && (
+                  <Typography variant="caption" sx={{ display: 'block', mt: 0.5 }}>
+                    {o.video_url && <a href={o.video_url} target="_blank" rel="noreferrer" style={{ color: '#0E7A50', fontWeight: 700, marginRight: 12 }}>vidéo</a>}
+                    {o.image && <a href={urlMedia(o.image)} target="_blank" rel="noreferrer" style={{ color: '#0E7A50', fontWeight: 700 }}>visuel</a>}
+                  </Typography>
                 )}
               </Box>
               <TextField select size="small" value={o.statut} onChange={(e) => changerStatut(o, e.target.value)}

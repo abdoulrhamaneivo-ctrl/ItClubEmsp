@@ -38,7 +38,7 @@ function nomComplet(donnees = {}) {
 }
 
 export default function RegistreMembres() {
-  const [filtre, setFiltre] = useState('en_attente')
+  const [filtre, setFiltre] = useState('toutes')
   const [ouverte, setOuverte] = useState(null)
   const [actionEnCours, setActionEnCours] = useState(null)
   const [message, setMessage] = useState(null)

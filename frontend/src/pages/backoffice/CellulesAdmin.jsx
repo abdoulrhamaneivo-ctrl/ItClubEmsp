@@ -9,7 +9,7 @@ import IconButton from '@mui/material/IconButton'
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
 import AddIcon from '@mui/icons-material/Add'
-import { api } from '../../lib/api'
+import { api, urlMedia } from '../../lib/api'
 import { EnteteModule, MessageFlash, useFlash, BoutonExport } from './_Commun'
 import DialogueSuppression from './DialogueSuppression'
 
@@ -19,7 +19,7 @@ import DialogueSuppression from './DialogueSuppression'
  */
 
 const champSx = { '& .MuiOutlinedInput-root': { borderRadius: '12px', bgcolor: '#F8FAF9' } }
-const VIDE = { id: null, nom: '', slug: '', description: '', couleur: '#1FAF72', chef_email: '' }
+const VIDE = { id: null, nom: '', slug: '', description: '', couleur: '#1FAF72', chef_email: '', imageFile: null }
 
 export default function CellulesAdmin() {
   const [message, notify] = useFlash()
@@ -54,6 +54,7 @@ export default function CellulesAdmin() {
         description: form.description.trim(),
         couleur: form.couleur,
         chef_email: form.chef_email.trim(),
+        imageFile: form.imageFile,
       }
       if (form.id) {
         await api.sauverCellule({ id: form.id, ...corps })
@@ -112,6 +113,15 @@ export default function CellulesAdmin() {
             <TextField label="Couleur" type="color" value={form.couleur} onChange={(e) => set('couleur', e.target.value)} fullWidth sx={champSx} />
             <TextField label="Chef (email du compte)" value={form.chef_email} onChange={(e) => set('chef_email', e.target.value)} fullWidth sx={champSx} placeholder="prenom.nom@emsp.int" helperText="Vide = pas de chef nommé" />
           </Box>
+          <Box sx={{ display: 'flex', gap: 1.5, alignItems: 'center', flexWrap: 'wrap' }}>
+            <Button variant="outlined" component="label" sx={{ borderColor: '#1FAF72', color: '#0E7A50', fontWeight: 800, borderRadius: '12px' }}>
+              {form.imageFile ? 'Changer le visuel' : 'Ajouter un visuel (photo)'}
+              <input type="file" accept="image/*" hidden onChange={(e) => set('imageFile', e.target.files?.[0] ?? null)} />
+            </Button>
+            {form.imageFile && (
+              <Typography variant="caption" sx={{ color: '#374151', fontWeight: 700 }}>{form.imageFile.name}</Typography>
+            )}
+          </Box>
           <Box sx={{ display: 'flex', gap: 1.5, justifyContent: 'flex-end' }}>
             <Button onClick={reset} sx={{ color: '#5A6B63', fontWeight: 700 }}>Annuler</Button>
             <Button variant="contained" onClick={enregistrer} disabled={envoi}
@@ -128,7 +138,9 @@ export default function CellulesAdmin() {
           const sommeil = nb < 3
           return (
             <Box key={c.id} sx={{ bgcolor: '#fff', borderRadius: '14px', border: `1px solid ${sommeil ? '#F0B4B4' : '#E8ECEA'}`, px: 2.4, py: 1.8, display: 'flex', gap: 1.6, alignItems: 'center', flexWrap: 'wrap' }}>
-              <Box sx={{ width: 44, height: 44, borderRadius: '12px', flexShrink: 0, background: `linear-gradient(135deg,${c.couleur ?? '#1FAF72'},#0D1B2A)` }} />
+              <Box sx={{ width: 44, height: 44, borderRadius: '12px', flexShrink: 0, overflow: 'hidden', background: `linear-gradient(135deg,${c.couleur ?? '#1FAF72'},#0D1B2A)` }}>
+                {c.image && <Box component="img" src={urlMedia(c.image)} alt={c.nom} sx={{ width: '100%', height: '100%', objectFit: 'cover' }} />}
+              </Box>
               <Box sx={{ flex: 1, minWidth: 200 }}>
                 <Typography sx={{ fontWeight: 800, color: '#111827', fontSize: '0.92rem' }}>{c.nom}</Typography>
                 <Typography variant="caption" sx={{ color: '#5A6B63' }}>
@@ -140,7 +152,7 @@ export default function CellulesAdmin() {
               ) : (
                 <Chip label="Active" size="small" sx={{ bgcolor: '#E4F8EF', color: '#0B7A4B', fontWeight: 800 }} />
               )}
-              <IconButton size="small" aria-label="Modifier" onClick={() => { setForm({ id: c.id, nom: c.nom, slug: c.slug ?? '', description: c.description ?? '', couleur: c.couleur ?? '#1FAF72', chef_email: '' }); setFormOuvert(true) }} sx={{ color: '#2563EB' }}>
+              <IconButton size="small" aria-label="Modifier" onClick={() => { setForm({ id: c.id, nom: c.nom, slug: c.slug ?? '', description: c.description ?? '', couleur: c.couleur ?? '#1FAF72', chef_email: '', imageFile: null }); setFormOuvert(true) }} sx={{ color: '#2563EB' }}>
                 <EditIcon fontSize="small" />
               </IconButton>
               {c.slug && (

@@ -132,6 +132,7 @@ export default function Documentation() {
                           key={doc.id}
                           component="a"
                           href={doc.fichierUrl ?? `/documents/${doc.fichier}`}
+                          download
                           target="_blank"
                           rel="noopener"
                           sx={{

@@ -235,3 +235,33 @@ class PhotoAuteurTests(TestCase):
         r = self.client.get('/api/v1/classement/')
         self.assertEqual(r.status_code, 200)
         self.assertIn('photo', r.data[0])
+
+
+class BureauForumTests(TestCase):
+    """Espace privé 'bureau' : visible seulement des membres du Bureau."""
+
+    def setUp(self):
+        from rest_framework.test import APIClient
+        from django.contrib.auth import get_user_model
+        from apps.accounts.models import Role
+        U = get_user_model()
+        self.bureau = U.objects.create_user(username='bureau1', email='b1@x.com', password='x')
+        self.simple = U.objects.create_user(username='simple1', email='s1@x.com', password='x')
+        Role.objects.create(code='P3', titulaire=self.bureau)
+        self.client = APIClient()
+        self.client.force_authenticate(self.bureau)
+
+    def test_poste_bureau_peut_creer(self):
+        r = self.client.post('/api/v1/forum/sujets/', {'titre': 'Privé', 'espace': 'bureau'}, format='json')
+        self.assertEqual(r.status_code, 201, r.data)
+
+    def test_simple_membre_refuse_et_invisible(self):
+        from apps.comms.models import Sujet
+        s = Sujet.objects.create(titre='Privé', espace='bureau')
+        c = APIClient()
+        c.force_authenticate(self.simple)
+        r = c.post('/api/v1/forum/sujets/', {'titre': 'X', 'espace': 'bureau'}, format='json')
+        self.assertEqual(r.status_code, 403)
+        r2 = c.get('/api/v1/forum/sujets/')
+        ids = [x['id'] for x in r2.data.get('results', [])]
+        self.assertNotIn(s.id, ids)

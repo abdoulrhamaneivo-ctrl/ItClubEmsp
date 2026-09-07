@@ -57,7 +57,7 @@ class CelluleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cellule
         fields = ['id', 'nom', 'slug', 'description', 'programme', 'couleur',
-                  'couleurFonce', 'icone', 'membres', 'ordre',
+                  'couleurFonce', 'icone', 'image', 'membres', 'ordre',
                   'chef_nom', 'chef_email']
         read_only_fields = ['id']
 
@@ -201,7 +201,7 @@ class ActualiteSerializer(PhotoAuteurMixin, serializers.ModelSerializer):
 
 
 class DocumentSerializer(serializers.ModelSerializer):
-    famille_id = serializers.CharField(source='famille')
+    famille_id = serializers.CharField(source='famille', required=False)
     format = serializers.SerializerMethodField()
 
     class Meta:
@@ -337,7 +337,7 @@ class ProjetSerializer(serializers.ModelSerializer):
         model = _P
         fields = ['id', 'nom', 'description', 'statut', 'statut_label',
                   'responsable', 'responsable_nom', 'cellule', 'cellule_nom',
-                  'lien', 'image', 'cree_le', 'maj_le']
+                  'lien', 'image', 'video_url', 'cree_le', 'maj_le']
         read_only_fields = ['id', 'cree_le', 'maj_le']
 
     def get_responsable_nom(self, obj):
@@ -359,7 +359,8 @@ class OpportuniteSerializer(serializers.ModelSerializer):
         from apps.governance.models import Opportunite as _Op
         model = _Op
         fields = ['id', 'titre', 'type', 'type_label', 'statut', 'statut_label',
-                  'date_limite', 'lien', 'contact_nom', 'contact_email', 'notes',
+                  'date_limite', 'lien', 'image', 'video_url',
+                  'contact_nom', 'contact_email', 'notes',
                   'responsable_nom', 'cree_le']
         read_only_fields = ['id', 'cree_le', 'maj_le']
 

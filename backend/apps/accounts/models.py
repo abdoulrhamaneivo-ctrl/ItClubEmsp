@@ -66,6 +66,7 @@ class Cellule(models.Model):
     couleur = models.CharField('Couleur charte', max_length=9, default='#1FAF72')
     couleur_fonce = models.CharField('Couleur texte (WCAG)', max_length=9, default='#0E7A50')
     icone = models.CharField('Id icône front', max_length=30, default='web')
+    image = models.ImageField('Visuel de la cellule', upload_to='cellules/', blank=True, null=True, max_length=500)
     chef = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='cellules_dirigees')
     ordre = models.PositiveSmallIntegerField('Ordre d’affichage', default=0)
 

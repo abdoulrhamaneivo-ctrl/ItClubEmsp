@@ -28,6 +28,8 @@ class Projet(models.Model):
                                 null=True, blank=True, related_name='projets')
     lien = models.URLField('Lien (repo, démo…)', blank=True)
     image = models.ImageField('Visuel du projet', upload_to='projets/', blank=True, null=True, max_length=500)
+    video_url = models.URLField('Lien vidéo (démo, pitch…)', max_length=500, blank=True,
+                                help_text='Coller le lien — les fichiers lourds ne passent pas par le serveur.')
     cree_le = models.DateTimeField(auto_now_add=True)
     maj_le = models.DateTimeField(auto_now=True)
 
@@ -48,6 +50,9 @@ class Opportunite(models.Model):
     statut = models.CharField(max_length=10, choices=STATUTS, default='veille')
     date_limite = models.DateField('Date limite', null=True, blank=True)
     lien = models.URLField('Lien externe', blank=True)
+    image = models.ImageField("Visuel (affiche, capture…)", upload_to='opportunites/', blank=True, null=True, max_length=500)
+    video_url = models.URLField('Lien vidéo (présentation…)', max_length=500, blank=True,
+                                help_text='Coller le lien — les fichiers lourds ne passent pas par le serveur.')
     contact_nom = models.CharField('Contact (nom)', max_length=120, blank=True)
     contact_email = models.EmailField('Contact (email)', blank=True)
     notes = models.TextField(blank=True)

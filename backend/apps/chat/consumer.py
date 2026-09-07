@@ -32,6 +32,10 @@ class ChatForumConsumer(AsyncJsonWebsocketConsumer):
             await self.close(code=4404)
             return
         self.verrouille = verrouille
+        # Espace privé 'bureau' : refusé aux non-membres du Bureau
+        if await self._sujet_bureau() and not await self._est_bureau():
+            await self.close(code=4403)
+            return
         await self.channel_layer.group_add(self.group, self.channel_name)
         await self.accept()
         await self.send_json({'type': 'connected', 'sujet': int(self.sujet_id),
@@ -94,6 +98,28 @@ class ChatForumConsumer(AsyncJsonWebsocketConsumer):
             return get_user_model().objects.get(pk=user_id, is_active=True)
         except get_user_model().DoesNotExist:
             return None
+
+    @database_sync_to_async
+    def _sujet_bureau(self):
+        from apps.comms.models import Sujet
+        try:
+            return Sujet.objects.filter(pk=self.sujet_id).values_list('espace', flat=True).first() == 'bureau'
+        except (ValueError, TypeError):
+            return False
+
+    @database_sync_to_async
+    def _est_bureau(self):
+        from apps.views_core import CODES_BUREAU_FORUM
+        try:
+            from django.contrib.auth import get_user_model
+            from apps.accounts.models import Role
+            u = get_user_model().objects.get(pk=self.user.pk)
+            if getattr(u, 'is_staff', False):
+                return True
+            return Role.objects.filter(
+                code__in=CODES_BUREAU_FORUM, titulaire=u).exists()
+        except Exception:
+            return False
 
     @database_sync_to_async
     def _sujet_verrouille(self):

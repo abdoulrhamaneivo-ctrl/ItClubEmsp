@@ -38,6 +38,24 @@ def _est_modo(user):
         return False
 
 
+CODES_BUREAU_FORUM = ['P1', 'P2', 'P3', 'P4', 'P5', 'P6', 'P7', 'P8', 'P9',
+                      'P10', 'CHEF_CELLULE', 'ADMIN']
+
+
+def _est_bureau(user):
+    """Membre du Bureau (un poste P1-P10, chef de cellule, ADMIN) ou staff.
+    Ouvre l'espace privé 'bureau' du forum (doc 03 §4)."""
+    if not (user and user.is_authenticated):
+        return False
+    if getattr(user, 'is_staff', False):
+        return True
+    try:
+        return Role.objects.filter(
+            code__in=CODES_BUREAU_FORUM, titulaire=user).exists()
+    except Exception:
+        return False
+
+
 def _peut_rediger(user):
     """Rédaction CR : SG (P3), Président (P1), ADMIN ou staff."""
     if not (user and user.is_authenticated):
@@ -386,12 +404,19 @@ class SujetViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         from django.db.models import Prefetch
-        return super().get_queryset().prefetch_related(
+        qs = super().get_queryset().prefetch_related(
             Prefetch('messages',
                      queryset=MessageForum.objects.filter(modere=False).select_related('auteur')),
         )
+        # Espace privé 'bureau' : invisible aux non-membres du Bureau
+        if not _est_bureau(self.request.user):
+            qs = qs.exclude(espace='bureau')
+        return qs
 
     def perform_create(self, serializer):
+        if serializer.validated_data.get('espace') == 'bureau' and not _est_bureau(self.request.user):
+            from rest_framework.exceptions import PermissionDenied
+            raise PermissionDenied("L'espace Bureau est réservé aux membres du Bureau.")
         serializer.save(auteur=self.request.user)
 
     def perform_update(self, serializer):
@@ -422,14 +447,21 @@ class MessageForumViewSet(viewsets.ModelViewSet):
     http_method_names = ['get', 'post', 'delete', 'head', 'options']
 
     def get_queryset(self):
-        # Modérés invisibles (conservés en base pour l'audit)
-        return super().get_queryset().filter(modere=False)
+        # Modérés invisibles (conservés en base pour l'audit) ;
+        # espace privé 'bureau' : invisible aux non-membres du Bureau.
+        qs = super().get_queryset().filter(modere=False)
+        if not _est_bureau(self.request.user):
+            qs = qs.exclude(sujet__espace='bureau')
+        return qs
 
     def perform_create(self, serializer):
         sujet = serializer.validated_data['sujet']
         if sujet.verrouille and not _est_modo(self.request.user):
             from rest_framework.exceptions import PermissionDenied
             raise PermissionDenied('Sujet verrouillé.')
+        if sujet.espace == 'bureau' and not _est_bureau(self.request.user):
+            from rest_framework.exceptions import PermissionDenied
+            raise PermissionDenied("L'espace Bureau est réservé aux membres du Bureau.")
         contenu = (serializer.validated_data.get('contenu') or '').strip()
         if not contenu:
             from rest_framework.exceptions import ValidationError
