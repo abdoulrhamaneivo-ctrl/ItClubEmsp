@@ -407,29 +407,32 @@ export default function Espace() {
       }} aria-hidden />
 
       {/* ── Topbar flottante ─────────────────────────────────── */}
-      <motion.div
+      <Box
+        component={motion.div}
         initial={{ y: -60, opacity: 0 }} animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-        style={{ position: 'fixed', top: 14, left: 14, right: { xs: 14, md: 102 }, zIndex: 1200 }}
+        sx={{ position: 'fixed', top: 12, left: { xs: 10, md: 14 }, right: { xs: 10, md: 102 }, zIndex: 1200 }}
       >
         <Box sx={{
-          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1,
           bgcolor: 'rgba(13,27,42,.72)', backdropFilter: 'blur(14px)',
           border: '1px solid rgba(154,251,215,.18)', borderRadius: '16px',
-          px: { xs: 1.5, md: 2.2 }, py: 1,
+          px: { xs: 1.2, md: 2.2 }, py: 1,
           boxShadow: '0 10px 30px rgba(0,0,0,.35)',
+          maxWidth: '100%', overflow: 'hidden',
         }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.4, minWidth: 0 }}>
-            <Box component="img" src="/logo-itclub.webp" alt="" sx={{ width: 30, height: 30, borderRadius: 1, objectFit: 'cover' }} />
-            <Typography noWrap sx={{ color: '#fff', fontWeight: 800, fontSize: { xs: '0.78rem', md: '0.9rem' }, fontFamily: "'Orbitron',sans-serif" }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, minWidth: 0, flexShrink: 1 }}>
+            <Box component="img" src="/logo-itclub.webp" alt="" sx={{ width: 28, height: 28, borderRadius: 1, objectFit: 'cover', flexShrink: 0 }} />
+            <Typography noWrap sx={{ color: '#fff', fontWeight: 800, fontSize: { xs: '0.74rem', md: '0.9rem' }, fontFamily: "'Orbitron',sans-serif" }}>
               EMSP<span style={{ color: '#1FAF72' }}>://</span>
               <span style={{ color: '#9AFBD7', fontFamily: "'JetBrains Mono',monospace", fontWeight: 600, fontSize: '0.8rem' }}>espace</span>
             </Typography>
           </Box>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.2 }}>
-            {/* Bouton recherche — palette */}
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 0.8, md: 1.2 }, flexShrink: 0 }}>
+            {/* Bouton recherche — desktop only (mobile : icône dans le dock, pas de doublon) */}
             <Button onClick={() => setPalette(true)} size="small" startIcon={<SearchIcon sx={{ fontSize: 16 }} />}
               sx={{
+                display: { xs: 'none', sm: 'inline-flex' },
                 color: 'rgba(255,255,255,.6)', fontWeight: 600, fontSize: '0.74rem',
                 border: '1px solid rgba(154,251,215,.25)', borderRadius: '10px',
                 fontFamily: "'JetBrains Mono',monospace",
@@ -448,7 +451,7 @@ export default function Espace() {
           </Tooltip>
           </Box>
         </Box>
-      </motion.div>
+      </Box>
 
       {/* ── DOCK vertical (desktop) ──────────────────────────── */}
       <motion.div
@@ -619,7 +622,7 @@ export default function Espace() {
               viewport={{ once: true, margin: '0px' }}
               transition={{ delay: i * 0.05, duration: 0.28, ease: [0.22, 1, 0.36, 1] }}>
               <Box sx={{
-                display: 'flex', alignItems: 'center', gap: 2.2, p: { xs: 2, md: 2.4 }, mb: 1.4,
+                display: 'flex', alignItems: 'center', gap: { xs: 1.2, md: 2.2 }, p: { xs: 1.6, md: 2.4 }, mb: 1.4,
                 bgcolor: '#fff', borderRadius: '16px', border: '1px solid #E8ECEA',
                 boxShadow: '0 2px 10px rgba(13,27,42,.05)',
                 transition: 'box-shadow 200ms ease, border-color 200ms ease',
@@ -656,12 +659,13 @@ export default function Espace() {
                   bgcolor: insc.statut === 'Confirmé' ? '#E4F8EF' : '#FFF6E0',
                   color: insc.statut === 'Confirmé' ? '#0B7A4B' : '#B45309',
                   fontWeight: 800, fontSize: '0.66rem', flexShrink: 0,
+                  display: { xs: 'none', sm: 'inline-flex' },
                 }} />
               </Box>
               {/* Émargement : code à 6 chiffres affiché le jour J (+5 pts) */}
               {insc.statut === 'Confirmé' && insc.evenementId && (
                 <Box sx={{
-                  display: 'flex', alignItems: 'center', gap: 1.2, mt: -0.6, mb: 1.4, ml: { xs: 0, md: 9 },
+                  display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 1.2, mt: -0.6, mb: 1.4, ml: { xs: 0, md: 9 },
                   px: 2, py: 1.2, bgcolor: '#F6FBF9', borderRadius: '12px', border: '1px dashed #BFD8CC',
                 }}>
                   {String(etatsPresence[insc.id] ?? '').startsWith('present') ? (
@@ -869,10 +873,11 @@ export default function Espace() {
       </Container>
 
       {/* ── Barre de statut IDE (desktop) ────────────────────── */}
-      <motion.div
+      <Box
+        component={motion.div}
         initial={{ y: 40, opacity: 0 }} animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.3, duration: 0.4 }}
-        style={{ position: 'fixed', bottom: 14, left: 14, right: 102, zIndex: 1100 }}
+        sx={{ position: 'fixed', bottom: 14, left: 14, right: 102, zIndex: 1100, display: { xs: 'none', lg: 'block' } }}
       >
         <Box sx={{
           display: { xs: 'none', lg: 'flex' }, alignItems: 'center', gap: 2.5,
@@ -897,7 +902,7 @@ export default function Espace() {
             <Horloge /> · itclub@espace
           </Typography>
         </Box>
-      </motion.div>
+      </Box>
     </Box>
   )
 }
