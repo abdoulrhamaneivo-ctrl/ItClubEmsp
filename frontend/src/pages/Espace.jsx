@@ -509,6 +509,12 @@ export default function Espace() {
               {icone}
             </IconButton>
           ))}
+          {estBureau && (
+            <IconButton href="/backoffice" aria-label="Back-office"
+              sx={{ minWidth: 44, height: 44, borderRadius: '12px', flexShrink: 0, color: '#0D1B2A', bgcolor: '#9AFBD7', border: '1px solid rgba(154,251,215,.5)' }}>
+              <DashboardIcon fontSize="small" />
+            </IconButton>
+          )}
           <IconButton href="/" aria-label="Site"
             sx={{ minWidth: 44, height: 44, borderRadius: '12px', flexShrink: 0, color: '#9AFBD7', bgcolor: 'rgba(154,251,215,.08)', border: '1px solid rgba(154,251,215,.15)' }}>
             <HomeIcon fontSize="small" />
