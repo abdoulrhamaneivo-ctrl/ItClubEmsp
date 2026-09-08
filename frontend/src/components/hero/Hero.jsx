@@ -61,10 +61,9 @@ export default function Hero() {
         <Box
           sx={{
             position: 'absolute', inset: 0,
-            backgroundImage: 'radial-gradient(rgba(154,251,215,.1) 1px, transparent 1px)',
-            backgroundSize: '26px 26px',
-            maskImage: 'radial-gradient(ellipse at 30% 40%, black 30%, transparent 75%)',
-            WebkitMaskImage: 'radial-gradient(ellipse at 30% 40%, black 30%, transparent 75%)',
+            backgroundImage: 'repeating-linear-gradient(0deg, rgba(154,251,215,.05) 0 1px, transparent 1px 34px)',
+            maskImage: 'linear-gradient(180deg, black 0%, transparent 70%)',
+            WebkitMaskImage: 'linear-gradient(180deg, black 0%, transparent 70%)',
           }}
         />
         {/* Ligne d'horizon lumineuse */}
@@ -88,50 +87,42 @@ export default function Hero() {
           transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
           style={{ display: 'inline-flex', width: 'fit-content' }}
         >
-          <Box
-            sx={{
-              display: 'inline-flex', alignItems: 'center', gap: 1.2,
-              px: 2.2, py: 0.9, borderRadius: 9999,
-              bgcolor: 'rgba(255,255,255,.08)', border: '1px solid rgba(154,251,215,.16)',
-            }}
-          >
-            <motion.span
-              animate={reduit ? undefined : { opacity: [1, 0.55, 1] }}
-              transition={{ duration: 2.6, repeat: Infinity, ease: 'easeInOut' }}
-              style={{ width: 8, height: 8, borderRadius: '50%', background: '#1FAF72', display: 'inline-block' }}
-            />
-            <Typography sx={{ color: '#9AFBD7', fontWeight: 800, fontSize: '0.72rem', letterSpacing: '0.18em', textTransform: 'uppercase' }}>
-              Le club informatique — EMSP
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap' }}>
+            <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 1.2 }}>
+              <motion.span
+                animate={reduit ? undefined : { opacity: [1, 0.55, 1] }}
+                transition={{ duration: 2.6, repeat: Infinity, ease: 'easeInOut' }}
+                style={{ width: 8, height: 8, borderRadius: '50%', background: '#1FAF72', display: 'inline-block' }}
+              />
+              <Typography sx={{ color: '#9AFBD7', fontWeight: 800, fontSize: '0.812rem', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+                Le club informatique — EMSP
+              </Typography>
+            </Box>
+            <Box sx={{ width: 1, height: 16, bgcolor: 'rgba(154,251,215,.3)', display: { xs: 'none', sm: 'block' } }} />
+            <Typography sx={{ color: 'rgba(255,255,255,.55)', fontFamily: "'JetBrains Mono',monospace", fontSize: '0.812rem', display: { xs: 'none', sm: 'block' } }}>
+              Abidjan · depuis 2020
             </Typography>
           </Box>
         </motion.div>
 
-        {/* Titre — apparition sobre */}
+        {/* Titre — révélation d'un bloc, composition sur deux tons */}
         <Box
           component="h1"
           sx={{
             fontFamily: "'Orbitron', sans-serif", fontWeight: 800,
-            fontSize: { xs: '2.4rem', md: '4.4rem' }, lineHeight: 1.08,
+            fontSize: { xs: '2.4rem', md: '4.2rem' }, lineHeight: 1.12,
             my: 3, color: '#fff', maxWidth: 900,
           }}
         >
-          {['Construire', 'l’avenir numérique', 'ensemble.'].map((mot, i) => (
-            <motion.span
-              key={mot}
-              style={{ display: 'block' }}
-              initial={{ opacity: 0, y: 26 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.08 + i * 0.1, duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-            >
-              {i === 1 ? (
-                <>
-                  l’avenir <Box component="span" sx={{ color: '#6EE7B7' }}>numérique</Box>
-                </>
-              ) : (
-                mot
-              )}
-            </motion.span>
-          ))}
+          <motion.span
+            style={{ display: 'block' }}
+            initial={reduit ? { opacity: 1 } : { opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: reduit ? 0 : 0.3, ease: [0.22, 1, 0.36, 1] }}
+          >
+            Construire l’avenir
+            <Box component="span" sx={{ display: 'block', color: '#6EE7B7' }}>numérique, ensemble.</Box>
+          </motion.span>
         </Box>
 
         {/* Sous-titre */}
@@ -160,22 +151,24 @@ export default function Hero() {
             variant="contained" size="large" href={user ? '/espace' : '/adhesion'}
             sx={{
               bgcolor: '#1FAF72', color: '#fff', '&:hover': { bgcolor: '#179963' },
-              fontWeight: 800, px: 4.5, py: 1.6, borderRadius: 9999, fontSize: '1rem',
+              fontWeight: 800, px: 4.5, py: 1.6, borderRadius: '14px', fontSize: '1rem',
               boxShadow: '0 2px 8px rgba(13,27,42,.18)',
             }}
           >
             {user ? 'Mon espace' : 'Nous rejoindre'}
           </Button>
-          <Button
-            variant="contained" size="large" href="#activites"
+          <Box
+            component="a" href="#activites"
             sx={{
-              bgcolor: '#fff', color: '#0D1B2A', '&:hover': { bgcolor: '#E8F5EE' },
-              fontWeight: 800, px: 4.5, py: 1.6, borderRadius: 9999, fontSize: '1rem',
-              boxShadow: '0 4px 14px rgba(0,0,0,.25)',
+              color: '#9AFBD7', fontWeight: 700, fontSize: '1rem',
+              textDecoration: 'underline', textUnderlineOffset: '6px',
+              textDecorationColor: 'rgba(154,251,215,.4)',
+              '&:hover': { color: '#fff', textDecorationColor: '#fff' },
+              minHeight: 44, display: 'inline-flex', alignItems: 'center',
             }}
           >
-            Nos activités
-          </Button>
+            Voir les activités →
+          </Box>
         </motion.div>
       </Container>
 
