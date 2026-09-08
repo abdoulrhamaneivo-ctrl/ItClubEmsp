@@ -152,13 +152,13 @@ export default function CellulesAdmin() {
               ) : (
                 <Chip label="Active" size="small" sx={{ bgcolor: '#E4F8EF', color: '#0B7A4B', fontWeight: 800 }} />
               )}
-              <IconButton size="small" aria-label="Modifier" onClick={() => { setForm({ id: c.id, nom: c.nom, slug: c.slug ?? '', description: c.description ?? '', couleur: c.couleur ?? '#1FAF72', chef_email: '', imageFile: null }); setFormOuvert(true) }} sx={{ color: '#2563EB' }}>
+              <IconButton size="small" aria-label="Modifier" onClick={() => { setForm({ id: c.id, nom: c.nom, slug: c.slug ?? '', description: c.description ?? '', couleur: c.couleur ?? '#1FAF72', chef_email: '', imageFile: null }); setFormOuvert(true) }} sx={{ color: '#2563EB', width: 44, height: 44 }}>
                 <EditIcon fontSize="small" />
               </IconButton>
               {c.slug && (
                 <BoutonExport action={() => api.exporterMembresCellule(c.slug)} label="CSV" notify={notify} variant="contained" />
               )}
-              <IconButton size="small" aria-label="Supprimer" onClick={() => setASupprimer(c)} sx={{ color: '#B42318' }}>
+              <IconButton size="small" aria-label="Supprimer" onClick={() => setASupprimer(c)} sx={{ color: '#B42318', width: 44, height: 44 }}>
                 <DeleteIcon fontSize="small" />
               </IconButton>
             </Box>

@@ -80,7 +80,7 @@ export function BoutonExport({ action, label, notify, variant }) {
     <Button size="small" variant={variant ?? 'outlined'} startIcon={<DownloadIcon />}
       onClick={exporter} disabled={enCours}
       sx={{
-        fontWeight: 800, borderRadius: '12px',
+        fontWeight: 800, borderRadius: '12px', minHeight: 44, fontSize: '0.812rem',
         ...(variant === 'contained'
           ? { bgcolor: '#1FAF72', '&:hover': { bgcolor: '#179963' } }
           : { borderColor: 'rgba(255,255,255,.4)', color: '#fff', '&:hover': { borderColor: '#fff', bgcolor: 'rgba(255,255,255,.1)' } }),
