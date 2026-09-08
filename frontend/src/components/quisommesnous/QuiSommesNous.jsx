@@ -60,13 +60,13 @@ export default function QuiSommesNous() {
             <Typography variant="overline" sx={{ color: '#1FAF72', fontWeight: 800, letterSpacing: '0.05em', textTransform: 'uppercase', mb: 1.5, display: 'inline-block', borderBottom: '3px solid #1FAF72', paddingBottom: 0.5 }}>
               Identité
             </Typography>
-            <Typography component="h2" sx={{ fontFamily: "'Orbitron', sans-serif", fontWeight: 700, fontSize: { xs: '1.75rem', md: '2.5rem' }, lineHeight: 1.2, color: '#111827', mb: 2 }}>
+            <Typography component="h2" sx={{ fontFamily: "'Orbitron', sans-serif", fontWeight: 700, fontSize: { xs: '1.75rem', md: '2.5rem' }, lineHeight: 1.2, color: 'text.primary', mb: 2 }}>
               {titre}
             </Typography>
             <ParagrapheIntro maxWidth={620}>
               {intro}
             </ParagrapheIntro>
-            <Typography sx={{ mt: 1.5, color: '#374151', fontSize: { xs: '1rem', md: '1.08rem' }, lineHeight: 1.85, maxWidth: 620 }}>
+            <Typography sx={{ mt: 1.5, color: 'text.secondary', fontSize: { xs: '1rem', md: '1.08rem' }, lineHeight: 1.85, maxWidth: 620 }}>
               Notre conviction : au club, on ne regarde pas la tech — <MotFort couleur="#1FAF72">on la construit</MotFort>,
               <MotFort couleur="#2563EB"> ensemble</MotFort>, et <MotFort couleur="#F5A623">on la ramène au campus</MotFort>.
             </Typography>
@@ -120,7 +120,7 @@ export default function QuiSommesNous() {
           transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
         >
           <Box sx={{ mb: 8 }}>
-            <Typography component="h3" sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 700, fontSize: { xs: '1.25rem', md: '1.5rem' }, color: '#111827', mb: 3 }}>
+            <Typography component="h3" sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 700, fontSize: { xs: '1.25rem', md: '1.5rem' }, color: 'text.primary', mb: 3 }}>
               Notre histoire
             </Typography>
             <Box sx={{ maxWidth: 680, borderLeft: '3px solid #1FAF72', pl: { xs: 0, md: 4 }, position: 'relative' }}>
@@ -159,10 +159,10 @@ export default function QuiSommesNous() {
               >
                 <Box
                   sx={{
-                    bgcolor: '#fff',
+                    bgcolor: (theme) => theme.palette.background.paper,
                     borderRadius: 3,
                     p: { xs: 3, md: 4 },
-                    border: '1px solid #E5E7EB',
+                    border: '1px solid', borderColor: 'divider',
                     boxShadow: '0 2px 12px rgba(0,0,0,.04)',
                     height: '100%',
                     display: 'flex',
@@ -172,12 +172,12 @@ export default function QuiSommesNous() {
                   }}
                 >
                   <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2, mb: 3 }}>
-                    <Box sx={{ width: 56, height: 56, borderRadius: '16px', display: 'grid', placeItems: 'center', flexShrink: 0, bgcolor: '#F5F7F6', border: '1px solid #E5E9E7' }}>{(() => { const I = [IcFormation, IcEquipe, IcRocket][Number(p.numero) - 1] ?? IcFormation; return <I taille={28} couleur={p.couleur} /> })()}</Box>
+                    <Box sx={{ width: 56, height: 56, borderRadius: '16px', display: 'grid', placeItems: 'center', flexShrink: 0, bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(31,175,114,.12)' : '#F5F7F6', border: '1px solid', borderColor: (theme) => theme.palette.mode === 'dark' ? 'rgba(31,175,114,.3)' : '#E5E9E7' }}>{(() => { const I = [IcFormation, IcEquipe, IcRocket][Number(p.numero) - 1] ?? IcFormation; return <I taille={28} couleur={p.couleur} /> })()}</Box>
                     <Box>
                       <Typography variant="overline" sx={{ color: p.couleur, fontWeight: 800, letterSpacing: '0.05em', textTransform: 'uppercase', mb: 0.5 }}>
                         Pilier {p.numero}
                       </Typography>
-                      <Typography sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 700, fontSize: '1.15rem', color: '#111827', mb: 1 }}>
+                      <Typography sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 700, fontSize: '1.15rem', color: 'text.primary', mb: 1 }}>
                         {p.titre}
                       </Typography>
                     </Box>
@@ -289,7 +289,7 @@ function SquelettePresentation() {
         <Typography variant="overline" sx={{ color: '#1FAF72', fontWeight: 800, letterSpacing: '0.05em', textTransform: 'uppercase', mb: 1.5, display: 'inline-block', borderBottom: '3px solid #1FAF72', paddingBottom: 0.5 }}>
           Identité
         </Typography>
-        <Typography component="h2" sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 700, fontSize: { xs: '1.75rem', md: '2.5rem' }, color: '#111827', mb: 4 }}>
+        <Typography component="h2" sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 700, fontSize: { xs: '1.75rem', md: '2.5rem' }, color: 'text.primary', mb: 4 }}>
           Qui sommes-nous ?
         </Typography>
         <Box sx={{ display: 'grid', gap: 3, gridTemplateColumns: { xs: '1fr', md: 'repeat(3,1fr)' } }}>

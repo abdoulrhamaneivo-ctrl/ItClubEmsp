@@ -104,7 +104,7 @@ export default function Bureau() {
                     position: 'absolute', inset: 0,
                     transform: `translateX(${DECALE_PILE * (i + 1)}px) translateZ(${-18 * (i + 1)}px) scale(${1 - 0.035 * (i + 1)})`,
                     borderRadius: '20px', overflow: 'hidden',
-                    bgcolor: '#fff', border: '1px solid #E5E7EB',
+                    bgcolor: (theme) => theme.palette.background.paper, border: '1px solid', borderColor: 'divider',
                     boxShadow: '0 10px 26px rgba(13,27,42,.14)',
                     zIndex: 5 - i,
                     opacity: 1 - i * 0.12,
@@ -119,7 +119,7 @@ export default function Bureau() {
                 position: 'absolute', inset: 0,
                 transform: `translateX(${-DECALE_PILE}px) translateZ(-18px) scale(0.965)`,
                 borderRadius: '20px', overflow: 'hidden',
-                bgcolor: '#fff', border: '1px solid #E5E7EB',
+                bgcolor: (theme) => theme.palette.background.paper, border: '1px solid', borderColor: 'divider',
                 boxShadow: '0 10px 26px rgba(13,27,42,.12)',
                 zIndex: 1, opacity: 0.75,
               }}>
@@ -140,7 +140,7 @@ export default function Bureau() {
                     transformOrigin: 'left center',
                     transformStyle: 'preserve-3d',
                     borderRadius: '20px', overflow: 'hidden',
-                    bgcolor: '#fff',
+                    bgcolor: (theme) => theme.palette.background.paper,
                     boxShadow: '0 24px 54px rgba(13,27,42,.28)',
                   }}
                 >
@@ -159,7 +159,7 @@ export default function Bureau() {
                   exit={{ opacity: 0, x: -40 * sens }}
                   transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
                 >
-                  <Box sx={{ borderRadius: '18px', overflow: 'hidden', bgcolor: '#fff', border: '1px solid #E5E7EB', boxShadow: '0 16px 40px rgba(13,27,42,.18)' }}>
+                  <Box sx={{ borderRadius: '18px', overflow: 'hidden', bgcolor: (theme) => theme.palette.background.paper, border: '1px solid', borderColor: 'divider', boxShadow: '0 16px 40px rgba(13,27,42,.18)' }}>
                     <VisuelMembre membre={actuel} />
                   </Box>
                 </motion.div>
@@ -177,21 +177,21 @@ export default function Bureau() {
                 exit={{ opacity: 0, y: -14 }}
                 transition={{ duration: 0.26, ease: [0.22, 1, 0.36, 1] }}
               >
-                <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 1.2, px: 1.8, py: 0.6, borderRadius: 9999, bgcolor: '#F5F7F6', mb: 2 }}>
+                <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 1.2, px: 1.8, py: 0.6, borderRadius: 9999, bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(154,251,215,.1)' : '#F5F7F6', mb: 2 }}>
                   {(() => { const I = iconePoste(actuel.poste); return <I taille={15} couleur={actuel.couleur === '#1FAF72' ? '#0E7A50' : actuel.couleur} /> })()}
                   <Typography sx={{ color: actuel.couleur === '#1FAF72' ? '#0E7A50' : actuel.couleur, fontWeight: 800, fontSize: '0.7rem', letterSpacing: '0.16em', textTransform: 'uppercase' }}>
                     {actuel.poste}
                   </Typography>
                 </Box>
-                <Typography sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 800, fontSize: { xs: '1.5rem', md: '2rem' }, color: '#111827', lineHeight: 1.2, mb: 1.5 }}>
+                <Typography sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 800, fontSize: { xs: '1.5rem', md: '2rem' }, color: 'text.primary', lineHeight: 1.2, mb: 1.5 }}>
                   {actuel.nom}
                 </Typography>
-                <Typography variant="body1" sx={{ color: '#374151', lineHeight: 1.85, maxWidth: 480, mx: { xs: 'auto', md: 0 }, mb: 2.5 }}>
+                <Typography variant="body1" sx={{ color: 'text.secondary', lineHeight: 1.85, maxWidth: 480, mx: { xs: 'auto', md: 0 }, mb: 2.5 }}>
                   {actuel.mission}
                 </Typography>
                 <Chip
                   label={`Objectif : ${actuel.objectif}`}
-                  sx={{ bgcolor: '#fff', border: `1px solid ${actuel.couleur}45`, color: '#374151', fontWeight: 700, fontSize: '0.78rem', height: 'auto', py: 0.8, px: 0.5 }}
+                  sx={{ bgcolor: (theme) => theme.palette.background.paper, border: `1px solid ${actuel.couleur}45`, color: 'text.secondary', fontWeight: 700, fontSize: '0.78rem', height: 'auto', py: 0.8, px: 0.5 }}
                 />
               </motion.div>
             </AnimatePresence>
@@ -199,14 +199,14 @@ export default function Bureau() {
             {/* Contrôles */}
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mt: 4, justifyContent: { xs: 'center', md: 'flex-start' } }}>
               <IconButton aria-label="Membre précédent" onClick={(e) => { e.stopPropagation(); tourner(-1) }}
-                sx={{ bgcolor: '#fff', border: '1px solid #E5E7EB', width: 44, height: 44, transition: 'all 180ms ease', '&:hover': { bgcolor: '#0F5B3A', color: '#fff', borderColor: '#0F5B3A' }, '&:focus-visible': { outline: '2px solid #0F5B3A', outlineOffset: '2px' } }}>
+                sx={{ bgcolor: (theme) => theme.palette.background.paper, border: '1px solid', borderColor: 'divider', width: 44, height: 44, transition: 'all 180ms ease', '&:hover': { bgcolor: '#0F5B3A', color: '#fff', borderColor: '#0F5B3A' }, '&:focus-visible': { outline: '2px solid #0F5B3A', outlineOffset: '2px' } }}>
                 <ArrowBackIosNewIcon fontSize="small" />
               </IconButton>
               <IconButton aria-label="Membre suivant" onClick={(e) => { e.stopPropagation(); tourner(1) }}
                 sx={{ bgcolor: '#1FAF72', color: '#fff', width: 44, height: 44, transition: 'all 180ms ease', '&:hover': { bgcolor: '#179963' }, '&:focus-visible': { outline: '2px solid #fff', outlineOffset: '2px' } }}>
                 <ArrowForwardIosIcon fontSize="small" />
               </IconButton>
-              <Typography sx={{ color: '#5A6B63', fontWeight: 700, fontSize: '0.78rem', fontFamily: "'JetBrains Mono',monospace", ml: 1 }}>
+              <Typography sx={{ color: 'text.secondary', fontWeight: 700, fontSize: '0.78rem', fontFamily: "'JetBrains Mono',monospace", ml: 1 }}>
                 {String((index % n) + 1).padStart(2, '0')} / {String(n).padStart(2, '0')}
               </Typography>
             </Box>
@@ -250,8 +250,8 @@ function VisuelMembre({ membre: m, compact = false }) {
           </Box>
         )}
       </Box>
-      <Box sx={{ p: compact ? 1.2 : 2, bgcolor: '#fff', textAlign: 'center' }}>
-        <Typography sx={{ fontWeight: 800, color: '#111827', fontSize: compact ? '0.7rem' : '0.95rem', lineHeight: 1.3 }}>
+      <Box sx={{ p: compact ? 1.2 : 2, bgcolor: (theme) => theme.palette.background.paper, textAlign: 'center' }}>
+        <Typography sx={{ fontWeight: 800, color: 'text.primary', fontSize: compact ? '0.7rem' : '0.95rem', lineHeight: 1.3 }}>
           {m.nom}
         </Typography>
       </Box>
@@ -262,11 +262,11 @@ function VisuelMembre({ membre: m, compact = false }) {
 /* ── Stat rapide ────────────────────────────────────────────── */
 function StatRapide({ label, valeur, icone, couleur }) {
   return (
-    <Box sx={{ textAlign: 'center', p: { xs: 1.5, md: 3 }, minWidth: { xs: 108, sm: 130 }, bgcolor: '#fff', borderRadius: 3, border: '1px solid #E5E7EB', boxShadow: '0 2px 12px rgba(0,0,0,.04)' }}>
-      <Box sx={{ width: 46, height: 46, borderRadius: '12px', mx: 'auto', mb: 1, bgcolor: '#F5F7F6', display: 'grid', placeItems: 'center' }}>
+    <Box sx={{ textAlign: 'center', p: { xs: 1.5, md: 3 }, minWidth: { xs: 108, sm: 130 }, bgcolor: (theme) => theme.palette.background.paper, borderRadius: 3, border: '1px solid', borderColor: 'divider', boxShadow: '0 2px 12px rgba(0,0,0,.04)' }}>
+      <Box sx={{ width: 46, height: 46, borderRadius: '12px', mx: 'auto', mb: 1, bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(31,175,114,.12)' : '#F5F7F6', display: 'grid', placeItems: 'center' }}>
         {icone}
       </Box>
-      <Typography variant="h5" sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 800, color: '#111827', fontVariantNumeric: 'tabular-nums' }}>
+      <Typography variant="h5" sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 800, color: 'text.primary', fontVariantNumeric: 'tabular-nums' }}>
         {valeur}
       </Typography>
       <Typography variant="caption" color="textSecondary" sx={{ fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', fontSize: '0.62rem' }}>
@@ -281,7 +281,7 @@ function SqueletteBureau() {
   return (
     <Box sx={{ py: 8 }}>
       <Container>
-        <Typography component="h2" sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 700, fontSize: { xs: '1.75rem', md: '2.6rem' }, color: '#111827', mb: 4, textAlign: 'center' }}>
+        <Typography component="h2" sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 700, fontSize: { xs: '1.75rem', md: '2.6rem' }, color: 'text.primary', mb: 4, textAlign: 'center' }}>
           Le Bureau
         </Typography>
         <Box sx={{ display: 'grid', gap: 4, gridTemplateColumns: { xs: '1fr', md: '1.1fr 1fr' }, alignItems: 'center' }}>

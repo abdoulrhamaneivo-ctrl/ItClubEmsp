@@ -153,7 +153,7 @@ export default function Cellules() {
                   transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
                 >
                   <Box sx={{
-                    borderRadius: '22px', p: { xs: 2.5, md: 4 }, bgcolor: '#fff', overflowX: 'hidden',
+                    borderRadius: '22px', p: { xs: 2.5, md: 4 }, bgcolor: (theme) => theme.palette.background.paper, overflowX: 'hidden',
                     border: `1px solid ${actuelle.couleur}45`,
                     boxShadow: `0 18px 44px ${actuelle.couleur}2E`,
                     position: 'relative', overflow: 'hidden',
@@ -177,7 +177,7 @@ export default function Cellules() {
                             {actuelle.membres} membres actifs
                           </Typography>
                         </Box>
-                        <Typography sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 800, fontSize: { xs: '1.25rem', md: '1.5rem' }, color: '#111827' }}>
+                        <Typography sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 800, fontSize: { xs: '1.25rem', md: '1.5rem' }, color: 'text.primary' }}>
                           {actuelle.nom}
                         </Typography>
                       </Box>
@@ -196,7 +196,7 @@ export default function Cellules() {
                           sx={{ display: 'flex', gap: 1.2, alignItems: 'flex-start' }}
                         >
                           <Box sx={{ color: actuelle.couleur, fontWeight: 800, mt: '1px' }}>→</Box>
-                          <Typography variant="body2" sx={{ color: '#374151', lineHeight: 1.65 }}>
+                          <Typography variant="body2" sx={{ color: 'text.secondary', lineHeight: 1.65 }}>
                             {ligne.replace(/^[•\-\s]+/, '')}
                           </Typography>
                         </motion.div>
@@ -228,7 +228,7 @@ export default function Cellules() {
         {/* ── Contrôles : flèches + pastilles ────────────────────── */}
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 3, mt: 4 }}>
           <IconButton onClick={() => setIndex((index - 1 + n) % n)} aria-label="Cellule précédente"
-            sx={{ bgcolor: '#fff', border: '1px solid #E5E7EB', width: 44, height: 44, boxShadow: '0 4px 14px rgba(0,0,0,.08)', transition: 'all 180ms ease', '&:hover': { bgcolor: '#1FAF72', borderColor: '#1FAF72', color: '#fff', boxShadow: '0 4px 12px rgba(13,27,42,.22)' }, '&:active': { transform: 'scale(0.96)' }, '&:focus-visible': { outline: '2px solid #1FAF72', outlineOffset: '2px' } }}>
+            sx={{ bgcolor: (theme) => theme.palette.background.paper, border: '1px solid', borderColor: 'divider', width: 44, height: 44, boxShadow: '0 4px 14px rgba(0,0,0,.08)', transition: 'all 180ms ease', '&:hover': { bgcolor: '#1FAF72', borderColor: '#1FAF72', color: '#fff', boxShadow: '0 4px 12px rgba(13,27,42,.22)' }, '&:active': { transform: 'scale(0.96)' }, '&:focus-visible': { outline: '2px solid #1FAF72', outlineOffset: '2px' } }}>
             <ArrowBackIosNewIcon fontSize="small" />
           </IconButton>
           <Box sx={{ display: 'flex', gap: 1.6 }}>
@@ -250,7 +250,7 @@ export default function Cellules() {
             ))}
           </Box>
           <IconButton onClick={() => setIndex((index + 1) % n)} aria-label="Cellule suivante"
-            sx={{ bgcolor: '#fff', border: '1px solid #E5E7EB', width: 44, height: 44, boxShadow: '0 4px 14px rgba(0,0,0,.08)', transition: 'all 180ms ease', '&:hover': { bgcolor: '#1FAF72', borderColor: '#1FAF72', color: '#fff', boxShadow: '0 4px 12px rgba(13,27,42,.22)' }, '&:active': { transform: 'scale(0.96)' }, '&:focus-visible': { outline: '2px solid #1FAF72', outlineOffset: '2px' } }}>
+            sx={{ bgcolor: (theme) => theme.palette.background.paper, border: '1px solid', borderColor: 'divider', width: 44, height: 44, boxShadow: '0 4px 14px rgba(0,0,0,.08)', transition: 'all 180ms ease', '&:hover': { bgcolor: '#1FAF72', borderColor: '#1FAF72', color: '#fff', boxShadow: '0 4px 12px rgba(13,27,42,.22)' }, '&:active': { transform: 'scale(0.96)' }, '&:focus-visible': { outline: '2px solid #1FAF72', outlineOffset: '2px' } }}>
             <ArrowForwardIosIcon fontSize="small" />
           </IconButton>
         </Box>
@@ -279,7 +279,7 @@ export default function Cellules() {
 function CarteCellule({ card, active }) {
   return (
     <Box sx={{
-      height: '100%', borderRadius: '20px', overflow: 'hidden', bgcolor: '#fff',
+      height: '100%', borderRadius: '20px', overflow: 'hidden', bgcolor: (theme) => theme.palette.background.paper,
       border: active ? `2.5px solid ${card.couleur}` : '1px solid #E5E7EB',
       boxShadow: active ? `0 24px 54px ${card.couleur}44` : '0 10px 26px rgba(0,0,0,.1)',
       display: 'flex', flexDirection: 'column',
@@ -309,7 +309,7 @@ function CarteCellule({ card, active }) {
       </Box>
       {/* Nom */}
       <Box sx={{ p: 2, textAlign: 'center', flex: 1, display: 'grid', placeItems: 'center' }}>
-        <Typography sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 800, fontSize: '1rem', color: '#111827', lineHeight: 1.3 }}>
+        <Typography sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 800, fontSize: '1rem', color: 'text.primary', lineHeight: 1.3 }}>
           {card.nom}
         </Typography>
       </Box>
@@ -336,7 +336,7 @@ function ModaleCellule({ cellule, onClose }) {
         transition={{ type: 'spring', stiffness: 280, damping: 26 }}
         style={{ width: 'min(580px, 96vw)', maxHeight: '85vh', overflow: 'auto' }}
       >
-        <Box sx={{ bgcolor: '#fff', borderRadius: 4, overflow: 'hidden', boxShadow: '0 48px 96px rgba(0,0,0,.24)' }}>
+        <Box sx={{ bgcolor: (theme) => theme.palette.background.paper, borderRadius: 4, overflow: 'hidden', boxShadow: '0 48px 96px rgba(0,0,0,.24)' }}>
           <Box sx={{ bgcolor: cellule.couleur, color: '#fff', p: { xs: 3, md: 4 }, position: 'relative', overflow: 'hidden' }}>
             <Box sx={{ position: 'absolute', top: -50, right: -40, width: 150, height: 150, borderRadius: '50%', bgcolor: 'rgba(255,255,255,.14)' }} />
             <Typography variant="overline" sx={{ letterSpacing: '0.06em', textTransform: 'uppercase', opacity: 0.9 }}>
@@ -355,7 +355,7 @@ function ModaleCellule({ cellule, onClose }) {
                 Ce que tu y apprendras
               </Typography>
               {texteProgramme(cellule.programme).split('\n').filter((l) => l.trim()).map((ligne, j) => (
-                <Typography key={j} variant="body2" sx={{ color: '#374151', lineHeight: 1.8, display: 'flex', gap: 1 }}>
+                <Typography key={j} variant="body2" sx={{ color: 'text.secondary', lineHeight: 1.8, display: 'flex', gap: 1 }}>
                   <Box component="span" sx={{ color: cellule.couleur, fontWeight: 800 }}>→</Box>
                   {ligne.replace(/^[•\-\s]+/, '')}
                 </Typography>
@@ -378,11 +378,11 @@ function ModaleCellule({ cellule, onClose }) {
 
 function StatRapide({ label, valeur, icone, couleur }) {
   return (
-    <Box sx={{ textAlign: 'center', p: { xs: 1.5, md: 3 }, minWidth: { xs: 108, sm: 130 }, bgcolor: '#fff', borderRadius: 3, border: '1px solid #E5E7EB', boxShadow: '0 2px 12px rgba(0,0,0,.04)' }}>
-      <Box sx={{ width: 46, height: 46, borderRadius: '12px', mx: 'auto', mb: 1, bgcolor: '#F5F7F6', display: 'grid', placeItems: 'center', fontSize: 22 }}>
+    <Box sx={{ textAlign: 'center', p: { xs: 1.5, md: 3 }, minWidth: { xs: 108, sm: 130 }, bgcolor: (theme) => theme.palette.background.paper, borderRadius: 3, border: '1px solid', borderColor: 'divider', boxShadow: '0 2px 12px rgba(0,0,0,.04)' }}>
+      <Box sx={{ width: 46, height: 46, borderRadius: '12px', mx: 'auto', mb: 1, bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(31,175,114,.12)' : '#F5F7F6', display: 'grid', placeItems: 'center', fontSize: 22 }}>
         {icone}
       </Box>
-      <Typography variant="h5" sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 800, color: '#111827', fontVariantNumeric: 'tabular-nums' }}>
+      <Typography variant="h5" sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 800, color: 'text.primary', fontVariantNumeric: 'tabular-nums' }}>
         {valeur}
       </Typography>
       <Typography variant="caption" color="textSecondary" sx={{ fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', fontSize: '0.62rem' }}>
@@ -397,7 +397,7 @@ function SqueletteCellules() {
   return (
     <Box sx={{ py: 8 }}>
       <Container>
-        <Typography component="h2" sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 700, fontSize: { xs: '1.75rem', md: '2.5rem' }, color: '#111827', mb: 4 }}>
+        <Typography component="h2" sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 700, fontSize: { xs: '1.75rem', md: '2.5rem' }, color: 'text.primary', mb: 4 }}>
           Nos cellules
         </Typography>
         <Box sx={{ display: 'grid', gap: 3, gridTemplateColumns: { xs: '1fr', md: '1.15fr 1fr' } }}>
