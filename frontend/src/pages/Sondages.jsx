@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import Box from '@mui/material/Box'
 import Container from '@mui/material/Container'
 import Typography from '@mui/material/Typography'
@@ -50,7 +50,7 @@ export default function Sondages() {
           couleur="#7B61FF"
         />
         {message && (
-          <Box sx={{ mb: 2, p: 1.6, borderRadius: '12px', bgcolor: '#FDECEC', color: '#B42318', fontWeight: 700, fontSize: '0.86rem' }}>
+          <Box role="alert" aria-live="assertive" sx={{ mb: 2, p: 1.6, borderRadius: '12px', bgcolor: '#FDECEC', color: '#B42318', fontWeight: 700, fontSize: '0.875rem' }}>
             {message.m}
           </Box>
         )}
@@ -58,8 +58,9 @@ export default function Sondages() {
         <Box sx={{ display: 'flex', gap: 1, mb: 2.5, flexWrap: 'wrap', alignItems: 'center' }}>
           {['ouverts', 'clos'].map((f) => (
             <Chip key={f} label={f === 'ouverts' ? 'Ouverts' : 'Clôturés'} onClick={() => setFiltre(f)}
-              sx={{ fontWeight: 800, cursor: 'pointer', textTransform: 'capitalize',
-                bgcolor: filtre === f ? '#7B61FF' : '#fff', color: filtre === f ? '#fff' : '#374151', border: '1px solid #E5E7EB' }} />
+              sx={{ fontWeight: 800, cursor: 'pointer', textTransform: 'capitalize', fontSize: '0.875rem', height: 44,
+                bgcolor: filtre === f ? '#7B61FF' : '#fff', color: filtre === f ? '#fff' : '#374151', border: '1px solid #E5E7EB',
+                '&:focus-visible': { outline: '2px solid #7B61FF', outlineOffset: '2px' } }} />
           ))}
           <Box sx={{ flex: 1 }} />
           <Button variant="contained" startIcon={<AddIcon />} onClick={() => setFormOuvert(!formOuvert)}
@@ -136,7 +137,7 @@ function FormulaireSondage({ onFait, onErreur }) {
           fullWidth sx={champSx} />
       ))}
       {options.length < 10 && (
-        <Button size="small" onClick={() => setOptions((l) => [...l, ''])} sx={{ color: '#5B3FD6', fontWeight: 700, alignSelf: 'flex-start' }}>
+        <Button size="small" onClick={() => setOptions((l) => [...l, ''])} sx={{ color: '#5B3FD6', fontWeight: 700, alignSelf: 'flex-start', minHeight: 44 }}>
           + Ajouter une option
         </Button>
       )}
@@ -163,6 +164,7 @@ function FormulaireSondage({ onFait, onErreur }) {
 
 /* ── Carte + vote ───────────────────────────────────────────── */
 function CarteSondage({ s, index, onErreur }) {
+  const reduit = useReducedMotion()
   const [donnees, setDonnees] = useState(s)
   const [envoi, setEnvoi] = useState(false)
   const [exportEnCours, setExportEnCours] = useState(false)
@@ -208,7 +210,7 @@ function CarteSondage({ s, index, onErreur }) {
   }
 
   return (
-    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: Math.min(index * 0.04, 0.3), duration: 0.25 }}>
+    <motion.div initial={reduit ? false : { opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: reduit ? 0 : Math.min(index * 0.04, 0.3), duration: reduit ? 0 : 0.25 }}>
       <Box sx={{ bgcolor: '#fff', borderRadius: '16px', border: '1px solid #E8ECEA', p: { xs: 2.2, md: 2.8 } }}>
         <Box sx={{ display: 'flex', gap: 1.2, alignItems: 'flex-start', flexWrap: 'wrap', mb: 0.5 }}>
           <Box sx={{ flex: 1, minWidth: 200 }}>
@@ -240,23 +242,26 @@ function CarteSondage({ s, index, onErreur }) {
               return (
                 <Box key={o.id} component={donnees.clos ? 'div' : 'button'} onClick={donnees.clos ? undefined : () => voter(o.id)}
                   disabled={envoi}
+                  aria-pressed={donnees.clos ? undefined : mienne}
+                  aria-label={`Voter pour : ${o.texte}${mienne ? ' (voté)' : ''}`}
                   sx={{
                     display: 'flex', alignItems: 'center', gap: 1.2, textAlign: 'left', width: '100%',
                     border: '1px solid', borderColor: mienne ? '#7B61FF' : '#E5E7EB',
-                    bgcolor: mienne ? '#EDE9FE' : '#fff', borderRadius: '12px', px: 1.6, py: 1.1,
+                    bgcolor: mienne ? '#EDE9FE' : '#fff', borderRadius: '12px', px: 1.6, py: 1.1, minHeight: 44,
                     cursor: donnees.clos ? 'default' : 'pointer', fontFamily: 'inherit',
                     transition: 'border-color 160ms ease, background 160ms ease',
                     '&:hover': donnees.clos ? {} : { borderColor: '#7B61FF', bgcolor: '#F6F3FF' },
+                    '&:focus-visible': { outline: '2px solid #7B61FF', outlineOffset: '2px' },
                   }}>
                   {mienne && <CheckIcon sx={{ color: '#5B3FD6', fontSize: 18, flexShrink: 0 }} />}
-                  <Typography sx={{ fontWeight: 700, color: '#111827', fontSize: '0.86rem', minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  <Typography sx={{ fontWeight: 700, color: '#111827', fontSize: '0.875rem', minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {o.texte}
                   </Typography>
                   <Box sx={{ flex: 1, height: 8, borderRadius: 9999, bgcolor: '#EEF2F0', overflow: 'hidden', minWidth: 40 }}>
-                    <motion.div animate={{ width: `${pct}%` }} transition={{ duration: 0.35 }}
+                    <motion.div animate={{ width: `${pct}%` }} transition={{ duration: reduit ? 0 : 0.25 }}
                       style={{ height: '100%', borderRadius: 9999, background: mienne ? '#7B61FF' : '#B9A8F5' }} />
                   </Box>
-                  <Typography variant="caption" sx={{ color: '#111827', fontWeight: 800, width: 44, textAlign: 'right', flexShrink: 0 }}>
+                  <Typography sx={{ color: '#111827', fontWeight: 800, fontSize: '0.812rem', width: 48, textAlign: 'right', flexShrink: 0 }}>
                     {o.votes} · {donnees.total_votes > 0 ? Math.round((o.votes / donnees.total_votes) * 100) : 0}%
                   </Typography>
                 </Box>
@@ -264,14 +269,14 @@ function CarteSondage({ s, index, onErreur }) {
             })}
           </AnimatePresence>
         </Box>
-        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 1.2 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 1.2, flexWrap: 'wrap', gap: 0.5 }}>
           {estBureau && (
             <Button size="small" startIcon={<DownloadIcon />} onClick={exporter}
-              sx={{ color: '#5B3FD6', fontWeight: 700, fontSize: '0.74rem' }}>
+              sx={{ color: '#5B3FD6', fontWeight: 700, fontSize: '0.812rem', minHeight: 44 }}>
               {exportEnCours ? '…' : 'Exporter CSV'}
             </Button>
           )}
-          <Button size="small" onClick={clore} sx={{ color: '#5A6B63', fontWeight: 700, fontSize: '0.74rem' }}>
+          <Button size="small" onClick={clore} sx={{ color: '#5A6B63', fontWeight: 700, fontSize: '0.812rem', minHeight: 44 }}>
             {donnees.clos ? 'Rouvrir' : 'Clôturer'}
           </Button>
         </Box>
