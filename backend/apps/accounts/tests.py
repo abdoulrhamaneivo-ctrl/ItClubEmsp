@@ -50,6 +50,23 @@ class CandidatureTests(TestCase):
         self.assertEqual(r.status_code, 400)
         self.assertIn('déjà en cours', r.json()['detail'])
 
+    def test_mot_de_passe_jamais_stocke(self):
+        """Sécurité : le mdp du formulaire n'est ni stocké ni exposé via l'API."""
+        r = self.client.post('/api/v1/auth/register-candidature',
+                             {'donnees': {'prenom': 'S', 'nom': 'T', 'email': 'secu@x.com',
+                                          'mot_de_passe': 'SuperSecret99!'},
+                              'cellules_souhaitees': []}, format='json')
+        self.assertEqual(r.status_code, 201)
+        c = Candidature.objects.get()
+        self.assertNotIn('mot_de_passe', c.donnees)
+        # L'exposition via l'API Bureau ne doit pas contenir de secret
+        sg = membre('sg@x.com')
+        donner_role(sg, 'P3')
+        self.client.force_authenticate(sg)
+        r2 = self.client.get('/api/v1/candidatures/')
+        brut = r2.content.decode()
+        self.assertNotIn('SuperSecret99!', brut)
+
     def test_validation_cree_compte_et_cellules(self):
         sg = membre('sg@x.com')
         donner_role(sg, 'P3')

@@ -690,6 +690,10 @@ def register_candidature(request):
                     {'detail': 'Une candidature est déjà en cours pour cet email.'},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
+    # Sécurité : le mot de passe du formulaire n'est JAMAIS stocké — le compte
+    # est créé à la validation via un lien de définition (voir BureauViewSet.valider).
+    for k in ('mot_de_passe', 'password', 'mdp'):
+        donnees.pop(k, None)
     cellules_refs = (data.get('cellules_souhaitees')
                      or data.get('cellules') or [])
     if isinstance(cellules_refs, str):
