@@ -179,7 +179,7 @@ export default function Bureau() {
               >
                 <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 1.2, px: 1.8, py: 0.6, borderRadius: 9999, bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(154,251,215,.1)' : '#F5F7F6', mb: 2 }}>
                   {(() => { const I = iconePoste(actuel.poste); return <I taille={15} couleur={actuel.couleur === '#1FAF72' ? '#0E7A50' : actuel.couleur} /> })()}
-                  <Typography sx={{ color: actuel.couleur === '#1FAF72' ? '#0E7A50' : actuel.couleur, fontWeight: 800, fontSize: '0.7rem', letterSpacing: '0.16em', textTransform: 'uppercase' }}>
+                  <Typography sx={{ color: (theme) => actuel.couleur === '#1FAF72' ? (theme.palette.mode === 'dark' ? '#6EE7B7' : '#0E7A50') : actuel.couleur, fontWeight: 800, fontSize: '0.812rem', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
                     {actuel.poste}
                   </Typography>
                 </Box>

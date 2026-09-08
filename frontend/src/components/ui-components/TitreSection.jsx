@@ -29,7 +29,8 @@ export default function TitreSection({ badge, titre, sousTitre, couleur = '#1FAF
           sx={{
             fontFamily: "'JetBrains Mono',monospace", fontWeight: 700,
             fontSize: { xs: '0.812rem', md: '0.94rem' }, color: couleur,
-            border: `1px solid ${couleur}40`, borderRadius: '10px',
+            bgcolor: (theme) => `${couleur}14`,
+            border: `1px solid ${couleur}66`, borderRadius: '10px',
             px: 1, py: 0.5, mt: 0.5, lineHeight: 1.4,
           }}
         >

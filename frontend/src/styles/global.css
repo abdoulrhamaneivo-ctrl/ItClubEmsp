@@ -95,3 +95,8 @@ input:-webkit-autofill:focus {
     font-size: 16px !important;
   }
 }
+
+/* ── Mode sombre : scrollbar discrète ───────────────────────── */
+@media (prefers-color-scheme: dark) {
+  html { color-scheme: dark; }
+}

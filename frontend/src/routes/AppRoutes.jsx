@@ -67,7 +67,7 @@ function FallbackPage() {
   return (
     <Box sx={{
       minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center',
-      background: 'linear-gradient(140deg,#0A1628,#0D1B2A 42%,#0F5B3A)',
+      background: '#0A1628',
     }}>
       <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 0.9, ease: 'linear' }}
         style={{ width: 42, height: 42, borderRadius: '50%', border: '3px solid rgba(154,251,215,.16)', borderTopColor: '#1FAF72' }} />
@@ -144,7 +144,7 @@ class FrontiereErreur extends Component {
     if (!this.state.erreur) return this.props.children
     return (
       <Box sx={{ minHeight: '60vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 2, px: 3, textAlign: 'center' }}>
-        <Typography sx={{ fontWeight: 800, color: '#111827' }}>Oups — cette page a planté.</Typography>
+        <Typography sx={{ fontWeight: 800, color: 'text.primary' }}>Oups — cette page a planté.</Typography>
         <Typography variant="body2" color="textSecondary" sx={{ maxWidth: 480 }}>
           {String(this.state.erreur?.message ?? this.state.erreur).slice(0, 220)}
         </Typography>
