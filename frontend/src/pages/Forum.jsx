@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import Box from '@mui/material/Box'
 import Container from '@mui/material/Container'
 import Typography from '@mui/material/Typography'
@@ -35,6 +35,7 @@ function dateCourte(iso) {
 
 export default function Forum() {
   const user = useAuth((s) => s.user)
+  const reduit = useReducedMotion()
   const modo = hasRole(user, ['P1', 'P5', 'ADMIN'])
   const bureau = hasRole(user, ['P1', 'P2', 'P3', 'P4', 'P5', 'P6', 'P7', 'P8', 'P9', 'P10', 'CHEF_CELLULE', 'ADMIN'])
   const [espace, setEspace] = useState('tous')
@@ -118,7 +119,7 @@ export default function Forum() {
           couleur="#1FAF72"
         />
         {message && (
-          <Box sx={{ mb: 2, p: 1.6, borderRadius: '12px', bgcolor: message.t === 'error' ? '#FDECEC' : '#E4F8EF', color: message.t === 'error' ? '#B42318' : '#0B7A4B', fontWeight: 700, fontSize: '0.86rem' }}>
+          <Box role="status" aria-live="polite" sx={{ mb: 2, p: 1.6, borderRadius: '12px', bgcolor: message.t === 'error' ? '#FDECEC' : '#E4F8EF', color: message.t === 'error' ? '#B42318' : '#0B7A4B', fontWeight: 700, fontSize: '0.875rem' }}>
             {message.m}
           </Box>
         )}
@@ -127,30 +128,30 @@ export default function Forum() {
           <>
             <Box sx={{ display: 'flex', gap: 1, mb: 2.5, flexWrap: 'wrap', alignItems: 'center' }}>
               <Chip label="Tous" onClick={() => setEspace('tous')}
-                sx={{ fontWeight: 800, cursor: 'pointer', bgcolor: espace === 'tous' ? '#1FAF72' : '#fff', color: espace === 'tous' ? '#fff' : '#374151', border: '1px solid #E5E7EB' }} />
+                sx={{ fontWeight: 800, fontSize: '0.875rem', height: 44, cursor: 'pointer', bgcolor: espace === 'tous' ? '#1FAF72' : '#fff', color: espace === 'tous' ? '#fff' : '#374151', border: '1px solid #E5E7EB', '&:focus-visible': { outline: '2px solid #1FAF72', outlineOffset: '2px' } }} />
               <Chip label="Général" onClick={() => setEspace('general')}
-                sx={{ fontWeight: 800, cursor: 'pointer', bgcolor: espace === 'general' ? '#1FAF72' : '#fff', color: espace === 'general' ? '#fff' : '#374151', border: '1px solid #E5E7EB' }} />
+                sx={{ fontWeight: 800, fontSize: '0.875rem', height: 44, cursor: 'pointer', bgcolor: espace === 'general' ? '#1FAF72' : '#fff', color: espace === 'general' ? '#fff' : '#374151', border: '1px solid #E5E7EB', '&:focus-visible': { outline: '2px solid #1FAF72', outlineOffset: '2px' } }} />
               {bureau && (
-                <Chip label="Bureau (privé)" onClick={() => setEspace('bureau')}
-                  sx={{ fontWeight: 800, cursor: 'pointer', bgcolor: espace === 'bureau' ? '#0D1B2A' : '#fff', color: espace === 'bureau' ? '#9AFBD7' : '#374151', border: '1px solid #E5E7EB' }} />
+                <Chip icon={<LockIcon sx={{ fontSize: 18 }} />} label="Bureau (privé)" onClick={() => setEspace('bureau')}
+                  sx={{ fontWeight: 800, fontSize: '0.875rem', height: 44, cursor: 'pointer', bgcolor: espace === 'bureau' ? '#0D1B2A' : '#FFF7E6', color: espace === 'bureau' ? '#9AFBD7' : '#92400E', border: espace === 'bureau' ? '2px solid #1FAF72' : '2px solid #B45309', '& .MuiChip-icon': { color: 'inherit' }, '&:focus-visible': { outline: '2px solid #B45309', outlineOffset: '2px' } }} />
               )}
               {cellules.filter((c) => c.slug).map((c) => {
                 const cle = `cellule:${c.id}`
                 return (
                   <Chip key={cle} label={c.nom} onClick={() => setEspace(cle)}
-                    sx={{ fontWeight: 800, cursor: 'pointer', bgcolor: espace === cle ? (c.couleur ?? '#1FAF72') : '#fff', color: espace === cle ? '#fff' : '#374151', border: '1px solid #E5E7EB' }} />
+                    sx={{ fontWeight: 800, fontSize: '0.875rem', height: 44, cursor: 'pointer', bgcolor: espace === cle ? (c.couleur ?? '#1FAF72') : '#fff', color: espace === cle ? '#fff' : '#374151', border: '1px solid #E5E7EB', '&:focus-visible': { outline: '2px solid #1FAF72', outlineOffset: '2px' } }} />
                 )
               })}
               {projets.slice(0, 6).map((p) => {
                 const cle = `projet:${p.id}`
                 return (
                   <Chip key={cle} label={`⚙ ${p.nom}`} onClick={() => setEspace(cle)}
-                    sx={{ fontWeight: 800, cursor: 'pointer', bgcolor: espace === cle ? '#7B61FF' : '#fff', color: espace === cle ? '#fff' : '#374151', border: '1px solid #E5E7EB' }} />
+                    sx={{ fontWeight: 800, fontSize: '0.875rem', height: 44, cursor: 'pointer', bgcolor: espace === cle ? '#7B61FF' : '#fff', color: espace === cle ? '#fff' : '#374151', border: '1px solid #E5E7EB', '&:focus-visible': { outline: '2px solid #7B61FF', outlineOffset: '2px' } }} />
                 )
               })}
               <Box sx={{ flex: 1 }} />
               <Button variant="contained" startIcon={<AddIcon />} onClick={() => setFormOuvert(!formOuvert)}
-                sx={{ bgcolor: '#1FAF72', '&:hover': { bgcolor: '#179963' }, fontWeight: 800, borderRadius: '12px' }}>
+                sx={{ bgcolor: '#1FAF72', '&:hover': { bgcolor: '#179963' }, fontWeight: 800, borderRadius: '12px', minHeight: 44, fontSize: '0.875rem', '&:focus-visible': { outline: '2px solid #0E7A50', outlineOffset: '2px' } }}>
                 Nouveau sujet
               </Button>
             </Box>
@@ -178,7 +179,7 @@ export default function Forum() {
                 </Box>
                 <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
                   <Button variant="contained" onClick={creerSujet} disabled={envoi || !titre.trim()}
-                    sx={{ bgcolor: '#1FAF72', '&:hover': { bgcolor: '#179963' }, fontWeight: 800, borderRadius: '12px' }}>
+                    sx={{ bgcolor: '#1FAF72', '&:hover': { bgcolor: '#179963' }, fontWeight: 800, borderRadius: '12px', minHeight: 44, fontSize: '0.875rem', '&:focus-visible': { outline: '2px solid #0E7A50', outlineOffset: '2px' } }}>
                     {envoi ? 'Création…' : 'Ouvrir la discussion'}
                   </Button>
                 </Box>
@@ -193,28 +194,29 @@ export default function Forum() {
             )}
             <Box sx={{ display: 'grid', gap: 1.2 }}>
               {filtres.map((s, i) => (
-                <motion.div key={s.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: Math.min(i * 0.04, 0.3), duration: 0.25 }}>
-                  <Box onClick={() => setSujetId(s.id)} sx={{
-                    bgcolor: '#fff', borderRadius: '14px', border: '1px solid #E8ECEA',
-                    px: 2.4, py: 1.7, display: 'flex', gap: 1.5, alignItems: 'center', cursor: 'pointer',
+                <motion.div key={s.id} initial={reduit ? false : { opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: reduit ? 0 : Math.min(i * 0.04, 0.2), duration: reduit ? 0 : 0.25 }}>
+                  <Box component="button" type="button" onClick={() => setSujetId(s.id)} aria-label={s.titre} sx={{
+                    bgcolor: s.espace === 'bureau' ? '#FFFBEB' : '#fff', borderRadius: '14px', border: s.espace === 'bureau' ? '2px solid #B45309' : '1px solid #E8ECEA',
+                    px: 2.4, py: 1.7, display: 'flex', gap: 1.5, alignItems: 'center', cursor: 'pointer', width: '100%', textAlign: 'left', font: 'inherit',
                     transition: 'border-color 180ms ease, box-shadow 180ms ease',
                     '&:hover': { borderColor: '#BFD8CC', boxShadow: '0 6px 18px rgba(13,27,42,.08)' },
+                    '&:focus-visible': { outline: '2px solid #1FAF72', outlineOffset: '2px' },
                   }}>
                     {s.epingle && <PushPinIcon sx={{ color: '#B45309', fontSize: 18, flexShrink: 0 }} />}
-                    {s.verrouille && <LockIcon sx={{ color: '#6B7280', fontSize: 18, flexShrink: 0 }} />}
-                    <Avatar src={urlMedia(s.auteur_photo) ?? undefined} sx={{ width: 34, height: 34, bgcolor: '#0F5B3A14', color: '#0F5B3A', fontWeight: 800, fontSize: '0.85rem', flexShrink: 0 }}>
+                    {(s.verrouille || s.espace === 'bureau') && <LockIcon sx={{ color: s.espace === 'bureau' ? '#B45309' : '#6B7280', fontSize: 18, flexShrink: 0 }} />}
+                    <Avatar src={urlMedia(s.auteur_photo) ?? undefined} sx={{ width: 34, height: 34, bgcolor: '#0F5B3A14', color: '#0F5B3A', fontWeight: 800, fontSize: '0.875rem', flexShrink: 0 }}>
                       {(s.auteur_nom ?? '?').slice(0, 1).toUpperCase()}
                     </Avatar>
                     <Box sx={{ flex: 1, minWidth: 0 }}>
                       <Typography sx={{ fontWeight: 800, color: '#111827', fontSize: '0.92rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                         {s.titre}
                       </Typography>
-                      <Typography variant="caption" sx={{ color: '#5A6B63' }}>
+                      <Typography variant="caption" sx={{ color: '#5A6B63', fontSize: '0.875rem' }}>
                         {s.auteur_nom} · {s.messages_count ?? 0} message{(s.messages_count ?? 0) > 1 ? 's' : ''}
                         {s.dernier_message && ` · dernier par ${s.dernier_message.auteur}, ${dateCourte(s.dernier_message.cree_le)}`}
                       </Typography>
                     </Box>
-                    <Chip label={nomEspace(s)} size="small" sx={{ bgcolor: '#F0F5F2', color: '#374151', fontWeight: 700, height: 22, flexShrink: 0 }} />
+                    <Chip icon={s.espace === 'bureau' ? <LockIcon sx={{ fontSize: 16 }} /> : undefined} label={nomEspace(s)} size="small" sx={{ bgcolor: s.espace === 'bureau' ? '#0D1B2A' : '#F0F5F2', color: s.espace === 'bureau' ? '#9AFBD7' : '#374151', fontWeight: 700, fontSize: '0.875rem', height: 28, flexShrink: 0, border: s.espace === 'bureau' ? '1px solid #B45309' : 'none', '& .MuiChip-icon': { color: 'inherit' } }} />
                   </Box>
                 </motion.div>
               ))}
@@ -240,6 +242,8 @@ export default function Forum() {
 function FilSujet({ sujet, modo, onRetour, onMute, notify }) {
   const [texte, setTexte] = useState('')
   const [envoi, setEnvoi] = useState(false)
+  const reduit = useReducedMotion()
+  const estBureau = sujet.espace === 'bureau'
   const client = useQueryClient()
   // Direct : les messages des autres arrivent sans recharger
   const { connecte, envoyer, tempsReel } = useForumLive(sujet.id, {
@@ -277,29 +281,37 @@ function FilSujet({ sujet, modo, onRetour, onMute, notify }) {
 
   return (
     <Box>
-      <Button startIcon={<ArrowBackIcon />} onClick={onRetour} sx={{ color: '#5A6B63', fontWeight: 700, mb: 2 }}>
+      <Button startIcon={<ArrowBackIcon />} onClick={onRetour} sx={{ color: '#111827', fontWeight: 800, fontSize: '0.875rem', mb: 2, minHeight: 44, border: '1px solid #E5E7EB', borderRadius: '12px', bgcolor: '#fff', px: 2, '&:focus-visible': { outline: '2px solid #1FAF72', outlineOffset: '2px' } }}>
         Tous les sujets
       </Button>
-      <Box sx={{ bgcolor: '#fff', borderRadius: '18px', border: '1px solid #E8ECEA', p: { xs: 2.4, md: 3.2 } }}>
+      {estBureau && (
+        <Box role="note" aria-label="Conversation réservée au Bureau" sx={{ mb: 1.5, p: 1.6, borderRadius: '12px', bgcolor: '#0D1B2A', border: '2px solid #B45309', display: 'flex', gap: 1.2, alignItems: 'center' }}>
+          <LockIcon sx={{ color: '#F5A623', fontSize: 20, flexShrink: 0 }} />
+          <Typography sx={{ color: '#9AFBD7', fontWeight: 800, fontSize: '0.875rem' }}>
+            Conversation Bureau — visible uniquement par le Bureau
+          </Typography>
+        </Box>
+      )}
+      <Box sx={{ bgcolor: '#fff', borderRadius: '18px', border: estBureau ? '2px solid #B45309' : '1px solid #E8ECEA', p: { xs: 2.4, md: 3.2 } }}>
         <Box sx={{ display: 'flex', gap: 1.5, alignItems: 'flex-start', flexWrap: 'wrap', mb: 1 }}>
           <Typography sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 800, fontSize: '1.2rem', color: '#111827', flex: 1, minWidth: 220 }}>
             {sujet.titre}
           </Typography>
           {modo && (
-            <Box sx={{ display: 'flex', gap: 1 }}>
+            <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
               <Button size="small" variant="outlined" onClick={() => onMute(sujet, 'epingle')}
-                sx={{ borderColor: '#F5A623', color: '#B45309', fontWeight: 700 }}>
+                sx={{ borderColor: '#F5A623', color: '#B45309', fontWeight: 700, minHeight: 44, fontSize: '0.875rem' }}>
                 {sujet.epingle ? 'Désépingler' : 'Épingler'}
               </Button>
               <Button size="small" variant="outlined" onClick={() => onMute(sujet, 'verrouille')}
-                sx={{ borderColor: '#D1D5DB', color: '#374151', fontWeight: 700 }}>
+                sx={{ borderColor: '#D1D5DB', color: '#374151', fontWeight: 700, minHeight: 44, fontSize: '0.875rem' }}>
                 {sujet.verrouille ? 'Rouvrir' : 'Verrouiller'}
               </Button>
             </Box>
           )}
         </Box>
-        <Typography variant="caption" sx={{ color: '#5A6B63', display: 'flex', alignItems: 'center', gap: 0.8, mb: 2 }}>
-          <Avatar src={urlMedia(sujet.auteur_photo) ?? undefined} sx={{ width: 20, height: 20, bgcolor: '#0F5B3A14', color: '#0F5B3A', fontWeight: 800, fontSize: '0.65rem' }}>
+        <Typography variant="caption" sx={{ color: '#5A6B63', fontSize: '0.875rem', display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 0.8, mb: 2 }}>
+          <Avatar src={urlMedia(sujet.auteur_photo) ?? undefined} sx={{ width: 20, height: 20, bgcolor: '#0F5B3A14', color: '#0F5B3A', fontWeight: 800, fontSize: '0.875rem' }}>
             {(sujet.auteur_nom ?? '?').slice(0, 1).toUpperCase()}
           </Avatar>
           <Box component="span">
@@ -323,25 +335,25 @@ function FilSujet({ sujet, modo, onRetour, onMute, notify }) {
         {isLoading && <Box sx={{ display: 'flex', justifyContent: 'center', py: 3 }}><CircularProgress size={24} sx={{ color: '#1FAF72' }} /></Box>}
         <AnimatePresence initial={false}>
           {messages.map((m) => (
-            <motion.div key={m.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.22 }}>
+            <motion.div key={m.id} initial={reduit ? false : { opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: reduit ? 0 : 0.22 }}>
               <Box sx={{ display: 'flex', gap: 1.4, py: 1.4, borderBottom: '1px solid #EEF2F0' }}>
-                <Avatar src={urlMedia(m.auteur_photo) ?? undefined} sx={{ width: 34, height: 34, bgcolor: '#0F5B3A14', color: '#0F5B3A', fontWeight: 800, fontSize: '0.85rem', flexShrink: 0 }}>
+                <Avatar src={urlMedia(m.auteur_photo) ?? undefined} sx={{ width: 34, height: 34, bgcolor: '#0F5B3A14', color: '#0F5B3A', fontWeight: 800, fontSize: '0.875rem', flexShrink: 0 }}>
                   {(m.auteur_nom ?? '?').slice(0, 1).toUpperCase()}
                 </Avatar>
                 <Box sx={{ flex: 1, minWidth: 0 }}>
-                  <Typography sx={{ fontWeight: 800, color: '#111827', fontSize: '0.82rem' }}>
+                  <Typography sx={{ fontWeight: 800, color: '#111827', fontSize: '0.875rem' }}>
                     {m.auteur_nom}{' '}
-                    <Typography component="span" variant="caption" sx={{ color: '#6B7280', fontWeight: 600 }}>
+                    <Typography component="span" variant="caption" sx={{ color: '#6B7280', fontWeight: 600, fontSize: '0.875rem' }}>
                       {dateCourte(m.cree_le)}
                     </Typography>
                   </Typography>
-                  <Typography variant="body2" sx={{ color: '#374151', fontSize: '0.88rem', lineHeight: 1.65, whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
+                  <Typography variant="body2" sx={{ color: '#374151', fontSize: '0.875rem', lineHeight: 1.65, whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
                     {m.contenu}
                   </Typography>
                 </Box>
                 {modo && (
-                  <Button size="small" onClick={() => moderer(m.id)} title="Masquer (modération)"
-                    sx={{ color: '#B42318', minWidth: 0, flexShrink: 0 }}>
+                  <Button size="small" onClick={() => moderer(m.id)} title="Masquer (modération)" aria-label={`Masquer le message de ${m.auteur_nom}`}
+                    sx={{ color: '#B42318', minWidth: 44, minHeight: 44, width: 44, height: 44, flexShrink: 0, '&:focus-visible': { outline: '2px solid #B42318', outlineOffset: '2px' } }}>
                     <DeleteIcon fontSize="small" />
                   </Button>
                 )}
@@ -350,26 +362,31 @@ function FilSujet({ sujet, modo, onRetour, onMute, notify }) {
           ))}
         </AnimatePresence>
         {messages.length === 0 && !isLoading && (
-          <Typography variant="caption" sx={{ color: '#6B7280' }}>Aucun message — lance la discussion !</Typography>
+          <Typography variant="caption" sx={{ color: '#6B7280', fontSize: '0.875rem' }}>Aucun message — lance la discussion !</Typography>
         )}
 
         {sujet.verrouille && !modo ? (
           <Box sx={{ mt: 2, p: 1.6, borderRadius: '12px', bgcolor: '#F0F5F2', display: 'flex', gap: 1, alignItems: 'center' }}>
             <LockIcon sx={{ color: '#6B7280', fontSize: 18 }} />
-            <Typography variant="caption" sx={{ color: '#5A6B63', fontWeight: 700 }}>
+            <Typography variant="caption" sx={{ color: '#5A6B63', fontWeight: 700, fontSize: '0.875rem' }}>
               Sujet verrouillé par la modération — lecture seule.
             </Typography>
           </Box>
         ) : (
-          <Box sx={{ display: 'flex', gap: 1, mt: 2 }}>
+          <Box sx={{ mt: 2 }}>
+          <Box sx={{ display: 'flex', gap: 1 }}>
             <TextField size="small" fullWidth multiline maxRows={4} placeholder="Écris ton message…"
               value={texte} onChange={(e) => setTexte(e.target.value.slice(0, 2000))}
               onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); poster() } }}
               sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px', bgcolor: '#F8FAF9' } }} />
             <Button variant="contained" onClick={poster} disabled={!texte.trim() || envoi}
-              sx={{ bgcolor: '#1FAF72', '&:hover': { bgcolor: '#179963' }, fontWeight: 800, borderRadius: '12px', flexShrink: 0, alignSelf: 'flex-end' }}>
+              sx={{ bgcolor: '#1FAF72', '&:hover': { bgcolor: '#179963' }, fontWeight: 800, borderRadius: '12px', flexShrink: 0, alignSelf: 'flex-end', minHeight: 44, minWidth: 64, fontSize: '0.875rem', '&:focus-visible': { outline: '2px solid #0E7A50', outlineOffset: '2px' } }}>
               {envoi ? '…' : 'Envoyer'}
             </Button>
+          </Box>
+          <Typography variant="caption" sx={{ display: 'block', mt: 1, color: estBureau ? '#92400E' : '#5A6B63', fontWeight: 700, fontSize: '0.875rem' }}>
+            {estBureau ? 'Visible par : Bureau uniquement — ne partage pas de lien hors Bureau.' : 'Visible par : tous les membres du club.'}
+          </Typography>
           </Box>
         )}
       </Box>
