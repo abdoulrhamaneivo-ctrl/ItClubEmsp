@@ -69,7 +69,7 @@ export default function Veille() {
           couleur="#2563EB"
         />
         {message && (
-          <Box sx={{ mb: 2, p: 1.6, borderRadius: '12px', bgcolor: '#FDECEC', color: '#B42318', fontWeight: 700, fontSize: '0.86rem' }}>
+          <Box role="alert" aria-live="assertive" sx={{ mb: 2, p: 1.6, borderRadius: '12px', bgcolor: '#FDECEC', color: '#B42318', fontWeight: 700, fontSize: '0.875rem' }}>
             {message.m}
           </Box>
         )}
@@ -77,9 +77,10 @@ export default function Veille() {
         <Box sx={{ display: 'flex', gap: 1, mb: 2.5, flexWrap: 'wrap', alignItems: 'center' }}>
           {THEMES.map((t) => (
             <Chip key={t.id} label={t.label} onClick={() => setTheme(t.id)}
-              sx={{ fontWeight: 800, cursor: 'pointer',
+              sx={{ fontWeight: 800, cursor: 'pointer', fontSize: '0.875rem', height: 44,
                 bgcolor: theme === t.id ? t.couleur : '#fff',
-                color: theme === t.id ? '#fff' : '#374151', border: '1px solid #E5E7EB' }} />
+                color: theme === t.id ? '#fff' : '#374151', border: '1px solid #E5E7EB',
+                '&:focus-visible': { outline: '2px solid #2563EB', outlineOffset: '2px' } }} />
           ))}
           <Box sx={{ flex: 1 }} />
           <Button variant="contained" startIcon={<AddIcon />} onClick={() => setFormOuvert(!formOuvert)}
@@ -185,14 +186,15 @@ function CarteVeille({ v, index, user, onVote, onErreur, onSupprimer }) {
         px: 2.4, py: 1.8, display: 'flex', gap: 1.6, alignItems: 'flex-start',
       }}>
         {/* Bouton vote */}
-        <Box component="button" onClick={voter} disabled={envoi}
+        <Box component="button" onClick={voter} disabled={envoi} aria-label={`Voter pour ce lien (${donnees.votes_count} votes)`}
           sx={{
             display: 'grid', placeItems: 'center', gap: 0, flexShrink: 0, cursor: 'pointer',
-            width: 46, py: 0.8, borderRadius: '12px', border: '1px solid', fontFamily: 'inherit',
+            width: 46, minHeight: 46, py: 0.8, borderRadius: '12px', border: '1px solid', fontFamily: 'inherit',
             borderColor: donnees.jai_vote ? '#2563EB' : '#E5E7EB',
             bgcolor: donnees.jai_vote ? '#2563EB' : '#fff', color: donnees.jai_vote ? '#fff' : '#374151',
             transition: 'all 160ms ease',
             '&:hover': { borderColor: '#2563EB' },
+            '&:focus-visible': { outline: '2px solid #2563EB', outlineOffset: '2px' },
           }}>
           <ArrowUpwardIcon sx={{ fontSize: 18 }} />
           <Typography sx={{ fontWeight: 800, fontSize: '0.85rem', lineHeight: 1 }}>{donnees.votes_count}</Typography>
@@ -200,31 +202,33 @@ function CarteVeille({ v, index, user, onVote, onErreur, onSupprimer }) {
 
         <Box sx={{ flex: 1, minWidth: 0 }}>
           <Box component="a" href={donnees.lien} target="_blank" rel="noopener"
-            sx={{ display: 'flex', gap: 0.8, alignItems: 'center', textDecoration: 'none', minWidth: 0 }}>
+            aria-label={`${donnees.titre} (ouvre un nouvel onglet)`}
+            sx={{ display: 'inline-flex', gap: 0.8, alignItems: 'center', textDecoration: 'none', minWidth: 0, maxWidth: '100%', py: 0.5 }}>
             <Typography sx={{ fontWeight: 800, color: '#111827', fontSize: '0.94rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', '&:hover': { color: '#2563EB' } }}>
               {donnees.titre}
             </Typography>
             <OpenInNewIcon sx={{ fontSize: 15, color: '#9CA3AF', flexShrink: 0 }} />
           </Box>
           {donnees.resume && (
-            <Typography variant="body2" sx={{ color: '#5A6B63', fontSize: '0.82rem', lineHeight: 1.55, mt: 0.3 }}>
+            <Typography variant="body2" sx={{ color: '#5A6B63', fontSize: '0.875rem', lineHeight: 1.55, mt: 0.3 }}>
               {donnees.resume}
             </Typography>
           )}
           <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', mt: 0.7, flexWrap: 'wrap' }}>
             <Chip label={donnees.theme_label ?? theme.label} size="small"
-              sx={{ bgcolor: `${theme.couleur}14`, color: theme.couleur, fontWeight: 800, height: 22 }} />
-            <Avatar src={urlMedia(donnees.auteur_photo) ?? undefined} sx={{ width: 22, height: 22, bgcolor: `${theme.couleur}14`, color: theme.couleur, fontWeight: 800, fontSize: '0.65rem', flexShrink: 0 }}>
+              sx={{ bgcolor: `${theme.couleur}14`, color: theme.couleur, fontWeight: 800, height: 24, fontSize: '0.72rem' }} />
+            <Avatar src={urlMedia(donnees.auteur_photo) ?? undefined} sx={{ width: 24, height: 24, bgcolor: `${theme.couleur}14`, color: theme.couleur, fontWeight: 800, fontSize: '0.75rem', flexShrink: 0 }}>
               {(donnees.auteur || '?').slice(0, 1).toUpperCase()}
             </Avatar>
-            <Typography variant="caption" sx={{ color: '#6B7280' }}>
+            <Typography variant="body2" sx={{ color: '#6B7280', fontSize: '0.812rem' }}>
               par {donnees.auteur} · {new Date(donnees.cree_le).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}
             </Typography>
           </Box>
         </Box>
 
         {user && donnees.auteur === (user.prenom ? `${user.prenom} ${user.nom}` : user.username) && (
-          <Button size="small" onClick={() => onSupprimer(donnees.id)} sx={{ color: '#B42318', minWidth: 0, flexShrink: 0 }}>
+          <Button size="small" onClick={() => onSupprimer(donnees.id)} aria-label="Supprimer ce lien"
+            sx={{ color: '#B42318', minWidth: 44, minHeight: 44, flexShrink: 0 }}>
             <DeleteIcon fontSize="small" />
           </Button>
         )}
