@@ -34,7 +34,7 @@ const THEMES = [
   { id: 'autre', label: 'Autre', couleur: '#6B7280' },
 ]
 
-const champSx = { '& .MuiOutlinedInput-root': { borderRadius: '12px', bgcolor: '#F8FAF9' } }
+const champSx = { '& .MuiOutlinedInput-root': { borderRadius: '12px', bgcolor: (theme) => (theme.palette.mode === 'dark' ? theme.palette.background.default : '#F8FAF9') } }
 
 export default function Veille() {
   const user = useAuth((s) => s.user)
@@ -82,8 +82,8 @@ export default function Veille() {
           {THEMES.map((t) => (
             <Chip key={t.id} label={t.label} onClick={() => setTheme(t.id)}
               sx={{ fontWeight: 800, cursor: 'pointer', fontSize: '0.875rem', height: 44,
-                bgcolor: theme === t.id ? t.couleur : '#fff',
-                color: theme === t.id ? '#fff' : '#374151', border: '1px solid #E5E7EB',
+                bgcolor: theme === t.id ? t.couleur : (th) => th.palette.background.paper,
+                color: theme === t.id ? '#fff' : 'text.secondary', border: '1px solid', borderColor: 'divider',
                 '&:focus-visible': { outline: '2px solid #2563EB', outlineOffset: '2px' } }} />
           ))}
           <Box sx={{ flex: 1 }} />
@@ -102,7 +102,7 @@ export default function Veille() {
 
         {isLoading && <Box sx={{ display: 'flex', justifyContent: 'center', py: 5 }}><CircularProgress sx={{ color: '#2563EB' }} /></Box>}
         {!isLoading && visibles.length === 0 && (
-          <Typography sx={{ color: '#5A6B63', py: 4, textAlign: 'center' }}>
+          <Typography sx={{ color: 'text.secondary', py: 4, textAlign: 'center' }}>
             Aucun lien ici — partage le premier !
           </Typography>
         )}
@@ -143,7 +143,7 @@ function FormulaireVeille({ onFait, onErreur }) {
   }
 
   return (
-    <Box sx={{ bgcolor: '#fff', borderRadius: '16px', border: '1px solid #2563EB45', p: 2.4, display: 'grid', gap: 1.6, mb: 2 }}>
+    <Box sx={{ bgcolor: (theme) => theme.palette.background.paper, borderRadius: '16px', border: '1px solid #2563EB45', p: 2.4, display: 'grid', gap: 1.6, mb: 2 }}>
       <Box sx={{ display: 'grid', gap: 1.6, gridTemplateColumns: { xs: '1fr', md: '2fr 1fr' } }}>
         <TextField label="Titre *" value={titre} onChange={(e) => setTitre(e.target.value)} fullWidth sx={champSx} />
         <TextField select label="Thématique" value={theme} onChange={(e) => setTheme(e.target.value)} fullWidth sx={champSx}>
@@ -186,7 +186,7 @@ function CarteVeille({ v, index, user, onVote, onErreur, onSupprimer }) {
   return (
     <motion.div key={donnees.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ delay: Math.min(index * 0.04, 0.3), duration: 0.25 }}>
       <Box sx={{
-        bgcolor: '#fff', borderRadius: '14px', border: '1px solid #E8ECEA',
+        bgcolor: (theme) => theme.palette.background.paper, borderRadius: '14px', border: '1px solid', borderColor: 'divider',
         px: 2.4, py: 1.8, display: 'flex', gap: 1.6, alignItems: 'flex-start',
       }}>
         {/* Bouton vote */}
@@ -194,8 +194,8 @@ function CarteVeille({ v, index, user, onVote, onErreur, onSupprimer }) {
           sx={{
             display: 'grid', placeItems: 'center', gap: 0, flexShrink: 0, cursor: 'pointer',
             width: 46, minHeight: 46, py: 0.8, borderRadius: '12px', border: '1px solid', fontFamily: 'inherit',
-            borderColor: donnees.jai_vote ? '#2563EB' : '#E5E7EB',
-            bgcolor: donnees.jai_vote ? '#2563EB' : '#fff', color: donnees.jai_vote ? '#fff' : '#374151',
+            borderColor: donnees.jai_vote ? '#2563EB' : 'divider',
+            bgcolor: donnees.jai_vote ? '#2563EB' : (th) => th.palette.background.paper, color: donnees.jai_vote ? '#fff' : 'text.secondary',
             transition: 'all 160ms ease',
             '&:hover': { borderColor: '#2563EB' },
             '&:focus-visible': { outline: '2px solid #2563EB', outlineOffset: '2px' },
@@ -208,23 +208,23 @@ function CarteVeille({ v, index, user, onVote, onErreur, onSupprimer }) {
           <Box component="a" href={donnees.lien} target="_blank" rel="noopener"
             aria-label={`${donnees.titre} (ouvre un nouvel onglet)`}
             sx={{ display: 'inline-flex', gap: 0.8, alignItems: 'center', textDecoration: 'none', minWidth: 0, maxWidth: '100%', py: 0.5 }}>
-            <Typography sx={{ fontWeight: 800, color: '#111827', fontSize: '0.94rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', '&:hover': { color: '#2563EB' } }}>
+            <Typography sx={{ fontWeight: 800, color: 'text.primary', fontSize: '0.94rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', '&:hover': { color: '#2563EB' } }}>
               {donnees.titre}
             </Typography>
-            <OpenInNewIcon sx={{ fontSize: 15, color: '#9CA3AF', flexShrink: 0 }} />
+            <OpenInNewIcon sx={{ fontSize: 15, color: 'text.secondary', flexShrink: 0 }} />
           </Box>
           {donnees.resume && (
-            <Typography variant="body2" sx={{ color: '#5A6B63', fontSize: '0.875rem', lineHeight: 1.55, mt: 0.3 }}>
+            <Typography variant="body2" sx={{ color: 'text.secondary', fontSize: '0.875rem', lineHeight: 1.55, mt: 0.3 }}>
               {donnees.resume}
             </Typography>
           )}
           <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', mt: 0.7, flexWrap: 'wrap' }}>
             <Chip label={donnees.theme_label ?? theme.label} size="small"
-              sx={{ bgcolor: '#F5F7F6', color: theme.couleur, fontWeight: 800, height: 24, fontSize: '0.72rem' }} />
-            <Avatar src={urlMedia(donnees.auteur_photo) ?? undefined} sx={{ width: 24, height: 24, bgcolor: '#F5F7F6', color: theme.couleur, fontWeight: 800, fontSize: '0.75rem', flexShrink: 0 }}>
+              sx={{ bgcolor: (t) => (t.palette.mode === 'dark' ? t.palette.background.default : '#F5F7F6'), color: (t) => (t.palette.mode === 'dark' ? t.palette.text.primary : theme.couleur), fontWeight: 800, height: 24, fontSize: '0.72rem' }} />
+            <Avatar src={urlMedia(donnees.auteur_photo) ?? undefined} sx={{ width: 24, height: 24, bgcolor: (t) => (t.palette.mode === 'dark' ? t.palette.background.default : '#F5F7F6'), color: (t) => (t.palette.mode === 'dark' ? t.palette.text.primary : theme.couleur), fontWeight: 800, fontSize: '0.75rem', flexShrink: 0 }}>
               {(donnees.auteur || '?').slice(0, 1).toUpperCase()}
             </Avatar>
-            <Typography variant="body2" sx={{ color: '#6B7280', fontSize: '0.812rem' }}>
+            <Typography variant="body2" sx={{ color: 'text.secondary', fontSize: '0.812rem' }}>
               par {donnees.auteur} · {new Date(donnees.cree_le).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}
             </Typography>
           </Box>

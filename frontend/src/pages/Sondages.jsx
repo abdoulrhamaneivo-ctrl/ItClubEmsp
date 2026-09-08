@@ -25,7 +25,7 @@ import FondPropre from '../components/ui-components/FondPropre'
  * résultats en direct, clôture par l'auteur.
  */
 
-const champSx = { '& .MuiOutlinedInput-root': { borderRadius: '12px', bgcolor: '#F8FAF9' } }
+const champSx = { '& .MuiOutlinedInput-root': { borderRadius: '12px', bgcolor: (theme) => (theme.palette.mode === 'dark' ? theme.palette.background.default : '#F8FAF9') } }
 
 export default function Sondages() {
   const [filtre, setFiltre] = useState('ouverts')
@@ -63,7 +63,7 @@ export default function Sondages() {
           {['ouverts', 'clos'].map((f) => (
             <Chip key={f} label={f === 'ouverts' ? 'Ouverts' : 'Clôturés'} onClick={() => setFiltre(f)}
               sx={{ fontWeight: 800, cursor: 'pointer', textTransform: 'capitalize', fontSize: '0.875rem', height: 44,
-                bgcolor: filtre === f ? '#1FAF72' : '#fff', color: filtre === f ? '#fff' : '#374151', border: '1px solid #E5E7EB',
+                bgcolor: filtre === f ? '#1FAF72' : (theme) => theme.palette.background.paper, color: filtre === f ? (theme) => theme.palette.primary.contrastText : 'text.secondary', border: '1px solid', borderColor: 'divider',
                 '&:focus-visible': { outline: '2px solid #1FAF72', outlineOffset: '2px' } }} />
           ))}
           <Box sx={{ flex: 1 }} />
@@ -82,7 +82,7 @@ export default function Sondages() {
 
         {isLoading && <Box sx={{ display: 'flex', justifyContent: 'center', py: 5 }}><CircularProgress sx={{ color: '#1FAF72' }} /></Box>}
         {!isLoading && visibles.length === 0 && (
-          <Typography sx={{ color: '#5A6B63', py: 4, textAlign: 'center' }}>
+          <Typography sx={{ color: 'text.secondary', py: 4, textAlign: 'center' }}>
             Aucun sondage {filtre} — lance le premier !
           </Typography>
         )}
@@ -132,7 +132,7 @@ function FormulaireSondage({ onFait, onErreur }) {
   }
 
   return (
-    <Box sx={{ bgcolor: '#fff', borderRadius: '16px', border: '1px solid #1FAF7245', p: 2.4, display: 'grid', gap: 1.6, mb: 2 }}>
+    <Box sx={{ bgcolor: (theme) => theme.palette.background.paper, borderRadius: '16px', border: '1px solid #1FAF7245', p: 2.4, display: 'grid', gap: 1.6, mb: 2 }}>
       <TextField label="Question *" value={titre} onChange={(e) => setTitre(e.target.value)} fullWidth sx={champSx} />
       <TextField label="Contexte (optionnel)" value={description} onChange={(e) => setDescription(e.target.value)} fullWidth sx={champSx} />
       {options.map((o, i) => (
@@ -153,7 +153,7 @@ function FormulaireSondage({ onFait, onErreur }) {
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <Switch checked={multiple} onChange={() => setMultiple(!multiple)}
             sx={{ '& .MuiSwitch-switchBase.Mui-checked': { color: '#1FAF72' }, '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': { bgcolor: '#1FAF72' } }} />
-          <Typography variant="body2" sx={{ color: '#374151', fontWeight: 600 }}>Choix multiples</Typography>
+          <Typography variant="body2" sx={{ color: 'text.secondary', fontWeight: 600 }}>Choix multiples</Typography>
         </Box>
       </Box>
       <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
@@ -215,12 +215,12 @@ function CarteSondage({ s, index, onErreur }) {
 
   return (
     <motion.div initial={reduit ? false : { opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: reduit ? 0 : Math.min(index * 0.04, 0.3), duration: reduit ? 0 : 0.25 }}>
-      <Box sx={{ bgcolor: '#fff', borderRadius: '16px', border: '1px solid #E8ECEA', p: { xs: 2.2, md: 2.8 } }}>
+      <Box sx={{ bgcolor: (theme) => theme.palette.background.paper, borderRadius: '16px', border: '1px solid', borderColor: 'divider', p: { xs: 2.2, md: 2.8 } }}>
         <Box sx={{ display: 'flex', gap: 1.2, alignItems: 'flex-start', flexWrap: 'wrap', mb: 0.5 }}>
           <Box sx={{ flex: 1, minWidth: 200 }}>
-            <Typography sx={{ fontWeight: 800, color: '#111827', fontSize: '1rem' }}>{donnees.titre}</Typography>
-            <Typography variant="caption" sx={{ color: '#5A6B63', display: 'flex', alignItems: 'center', gap: 0.8 }}>
-              <Avatar src={urlMedia(donnees.auteur_photo) ?? undefined} sx={{ width: 20, height: 20, bgcolor: '#0F5B3A14', color: '#0F5B3A', fontWeight: 800, fontSize: '0.62rem' }}>
+            <Typography sx={{ fontWeight: 800, color: 'text.primary', fontSize: '1rem' }}>{donnees.titre}</Typography>
+            <Typography variant="caption" sx={{ color: 'text.secondary', display: 'flex', alignItems: 'center', gap: 0.8 }}>
+              <Avatar src={urlMedia(donnees.auteur_photo) ?? undefined} sx={{ width: 20, height: 20, bgcolor: (theme) => (theme.palette.mode === 'dark' ? 'rgba(154,251,215,.16)' : '#0F5B3A14'), color: (theme) => (theme.palette.mode === 'dark' ? '#9AFBD7' : '#0F5B3A'), fontWeight: 800, fontSize: '0.62rem' }}>
                 {(donnees.auteur_nom || '?').slice(0, 1).toUpperCase()}
               </Avatar>
               <Box component="span">
@@ -232,11 +232,11 @@ function CarteSondage({ s, index, onErreur }) {
             </Typography>
           </Box>
           {donnees.clos
-            ? <Chip label="Clôturé" size="small" sx={{ bgcolor: '#F0F5F2', color: '#5A6B63', fontWeight: 800 }} />
+            ? <Chip label="Clôturé" size="small" sx={{ bgcolor: (theme) => (theme.palette.mode === 'dark' ? theme.palette.background.default : '#F0F5F2'), color: 'text.secondary', fontWeight: 800 }} />
             : <Chip label="Ouvert" size="small" sx={{ bgcolor: '#E4F8EF', color: '#179963', fontWeight: 800 }} />}
         </Box>
         {donnees.description && (
-          <Typography variant="body2" sx={{ color: '#5A6B63', mb: 1.5 }}>{donnees.description}</Typography>
+          <Typography variant="body2" sx={{ color: 'text.secondary', mb: 1.5 }}>{donnees.description}</Typography>
         )}
         <Box sx={{ display: 'grid', gap: 0.8, mt: 1 }}>
           <AnimatePresence initial={false}>
@@ -250,22 +250,22 @@ function CarteSondage({ s, index, onErreur }) {
                   aria-label={`Voter pour : ${o.texte}${mienne ? ' (voté)' : ''}`}
                   sx={{
                     display: 'flex', alignItems: 'center', gap: 1.2, textAlign: 'left', width: '100%',
-                    border: '1px solid', borderColor: mienne ? '#1FAF72' : '#E5E7EB',
-                    bgcolor: mienne ? '#E4F8EF' : '#fff', borderRadius: '12px', px: 1.6, py: 1.1, minHeight: 44,
+                    border: '1px solid', borderColor: mienne ? '#1FAF72' : 'divider',
+                    bgcolor: mienne ? (theme) => (theme.palette.mode === 'dark' ? 'rgba(154,251,215,.16)' : '#E4F8EF') : (theme) => theme.palette.background.paper, borderRadius: '12px', px: 1.6, py: 1.1, minHeight: 44,
                     cursor: donnees.clos ? 'default' : 'pointer', fontFamily: 'inherit',
                     transition: 'border-color 160ms ease, background 160ms ease',
-                    '&:hover': donnees.clos ? {} : { borderColor: '#1FAF72', bgcolor: '#F3FBF7' },
+                    '&:hover': donnees.clos ? {} : { borderColor: '#1FAF72', bgcolor: (theme) => (theme.palette.mode === 'dark' ? 'rgba(154,251,215,.08)' : '#F3FBF7') },
                     '&:focus-visible': { outline: '2px solid #1FAF72', outlineOffset: '2px' },
                   }}>
                   {mienne && <CheckIcon sx={{ color: '#179963', fontSize: 18, flexShrink: 0 }} />}
-                  <Typography sx={{ fontWeight: 700, color: '#111827', fontSize: '0.875rem', minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  <Typography sx={{ fontWeight: 700, color: 'text.primary', fontSize: '0.875rem', minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {o.texte}
                   </Typography>
-                  <Box sx={{ flex: 1, height: 8, borderRadius: 9999, bgcolor: '#EEF2F0', overflow: 'hidden', minWidth: 40 }}>
+                  <Box sx={{ flex: 1, height: 8, borderRadius: 9999, bgcolor: (theme) => (theme.palette.mode === 'dark' ? theme.palette.background.default : '#EEF2F0'), overflow: 'hidden', minWidth: 40 }}>
                     <motion.div animate={{ width: `${pct}%` }} transition={{ duration: reduit ? 0 : 0.25 }}
                       style={{ height: '100%', borderRadius: 9999, background: mienne ? '#1FAF72' : '#A7E3C8' }} />
                   </Box>
-                  <Typography sx={{ color: '#111827', fontWeight: 800, fontSize: '0.812rem', width: 48, textAlign: 'right', flexShrink: 0 }}>
+                  <Typography sx={{ color: 'text.primary', fontWeight: 800, fontSize: '0.812rem', width: 48, textAlign: 'right', flexShrink: 0 }}>
                     {o.votes} · {donnees.total_votes > 0 ? Math.round((o.votes / donnees.total_votes) * 100) : 0}%
                   </Typography>
                 </Box>
@@ -280,7 +280,7 @@ function CarteSondage({ s, index, onErreur }) {
               {exportEnCours ? '…' : 'Exporter CSV'}
             </Button>
           )}
-          <Button size="small" onClick={clore} sx={{ color: '#5A6B63', fontWeight: 700, fontSize: '0.812rem', minHeight: 44 }}>
+          <Button size="small" onClick={clore} sx={{ color: 'text.secondary', fontWeight: 700, fontSize: '0.812rem', minHeight: 44 }}>
             {donnees.clos ? 'Rouvrir' : 'Clôturer'}
           </Button>
         </Box>
