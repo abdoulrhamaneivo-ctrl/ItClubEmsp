@@ -25,7 +25,7 @@ export default function BandeauDefilant({ items = [], vitesse = 30, sens = 'gauc
           }}>
             {it}
           </Typography>
-          <Box component="span" sx={{ px: 2, color: 'rgba(154,251,215,.35)', fontSize: '0.7rem' }}>
+          <Box component="span" sx={{ px: 2, color: 'rgba(154,251,215,.45)', fontSize: '0.875rem' }}>
             │
           </Box>
         </Box>

@@ -173,7 +173,7 @@ export default function Navbar() {
         </Box>
 
         <IconButton
-          sx={{ display: { xs: 'block', lg: 'none' }, color: 'inherit', border: '1px solid rgba(154,251,215,.45)', width: 44, height: 44 }}
+          sx={{ display: { xs: 'block', lg: 'none' }, color: 'inherit', border: '1px solid rgba(154,251,215,.16)', width: 44, height: 44 }}
           aria-label="Ouvrir le menu"
           onClick={() => setOpen(true)}
         >

@@ -67,7 +67,7 @@ function FallbackPage() {
       background: 'linear-gradient(140deg,#0A1628,#0D1B2A 42%,#0F5B3A)',
     }}>
       <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 0.9, ease: 'linear' }}
-        style={{ width: 42, height: 42, borderRadius: '50%', border: '3px solid rgba(154,251,215,.25)', borderTopColor: '#1FAF72' }} />
+        style={{ width: 42, height: 42, borderRadius: '50%', border: '3px solid rgba(154,251,215,.16)', borderTopColor: '#1FAF72' }} />
     </Box>
   )
 }

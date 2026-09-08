@@ -91,7 +91,7 @@ export default function Hero() {
             sx={{
               display: 'inline-flex', alignItems: 'center', gap: 1.2,
               px: 2.2, py: 0.9, borderRadius: 9999,
-              bgcolor: 'rgba(255,255,255,.08)', border: '1px solid rgba(154,251,215,.28)',
+              bgcolor: 'rgba(255,255,255,.08)', border: '1px solid rgba(154,251,215,.16)',
             }}
           >
             <Box sx={{ width: 8, height: 8, borderRadius: '50%', background: '#1FAF72' }} />
@@ -189,8 +189,8 @@ export default function Hero() {
         <Box
           sx={{
             bgcolor: 'rgba(10,22,40,.72)',
-            borderTop: '1px solid rgba(154,251,215,.2)',
-            borderBottom: '1px solid rgba(154,251,215,.2)',
+            borderTop: '1px solid rgba(154,251,215,.16)',
+            borderBottom: '1px solid rgba(154,251,215,.16)',
           }}
         >
           <Container

@@ -166,7 +166,7 @@ function Palette({ ouvert, fermer, user, estBureau, scrollTo, logout }) {
           >
             <Box sx={{
               bgcolor: 'rgba(13,27,42,.97)', borderRadius: '18px',
-              border: '1px solid rgba(154,251,215,.3)', overflow: 'hidden',
+              border: '1px solid rgba(154,251,215,.16)', overflow: 'hidden',
               boxShadow: '0 30px 80px rgba(0,0,0,.6)',
             }}>
               {/* Input */}
@@ -224,7 +224,7 @@ function Palette({ ouvert, fermer, user, estBureau, scrollTo, logout }) {
                 </Typography>
                 {[['↑↓', 'naviguer'], ['↵', 'ouvrir'], ['esc', 'fermer']].map(([touche, sens]) => (
                   <Box key={touche} sx={{ display: 'flex', alignItems: 'center', gap: 0.8 }}>
-                    <Typography sx={{ color: 'rgba(154,251,215,.7)', fontSize: '0.875rem', fontFamily: "'JetBrains Mono',monospace", border: '1px solid rgba(154,251,215,.25)', borderRadius: '5px', px: 0.7 }}>
+                    <Typography sx={{ color: 'rgba(154,251,215,.7)', fontSize: '0.875rem', fontFamily: "'JetBrains Mono',monospace", border: '1px solid rgba(154,251,215,.16)', borderRadius: '5px', px: 0.7 }}>
                       {touche}
                     </Typography>
                     <Typography sx={{ color: 'rgba(255,255,255,.6)', fontSize: '0.875rem' }}>{sens}</Typography>
@@ -442,7 +442,7 @@ export default function Espace() {
           </Box>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 0.8, md: 1.2 }, flexShrink: 0 }}>
             {/* Recherche unique dans les docks — pas de doublon topbar (audit mobile) */}
-            <Avatar src={urlMedia(user?.photo) ?? undefined} sx={{ width: 32, height: 32, bgcolor: '#1FAF72', fontFamily: "'Orbitron',sans-serif", fontWeight: 800, fontSize: 14, border: '2px solid rgba(154,251,215,.4)' }}>
+            <Avatar src={urlMedia(user?.photo) ?? undefined} sx={{ width: 32, height: 32, bgcolor: '#1FAF72', fontFamily: "'Orbitron',sans-serif", fontWeight: 800, fontSize: 14, border: '2px solid rgba(154,251,215,.16)' }}>
               {initiale}
             </Avatar>
             <Tooltip title="Déconnexion" arrow enterDelay={400}>
@@ -464,20 +464,20 @@ export default function Espace() {
         <Box sx={{
           display: { xs: 'none', md: 'flex' }, flexDirection: 'column', alignItems: 'center', gap: 1,
           bgcolor: 'rgba(13,27,42,.97)',
-          border: '1px solid rgba(154,251,215,.2)', borderRadius: '20px',
+          border: '1px solid rgba(154,251,215,.16)', borderRadius: '20px',
           px: 1.2, py: 1.8,
           boxShadow: '0 14px 40px rgba(0,0,0,.4)',
         }}>
           <BoutonDock label="Rechercher (Ctrl+K)" onClick={() => setPalette(true)}>
             <SearchIcon sx={{ fontSize: 20 }} />
           </BoutonDock>
-          <Box sx={{ width: 26, height: 1, bgcolor: 'rgba(154,251,215,.2)', my: 0.4 }} />
+          <Box sx={{ width: 26, height: 1, bgcolor: 'rgba(154,251,215,.16)', my: 0.4 }} />
           {dockSections.map(([id, icone, label]) => (
             <BoutonDock key={id} label={label} actif={sectionActive === id} onClick={() => scrollTo(id)}>
               {icone}
             </BoutonDock>
           ))}
-          <Box sx={{ width: 26, height: 1, bgcolor: 'rgba(154,251,215,.2)', my: 0.4 }} />
+          <Box sx={{ width: 26, height: 1, bgcolor: 'rgba(154,251,215,.16)', my: 0.4 }} />
           {estBureau && <BoutonDock label="Back-office" onClick={() => navigate('/backoffice')}><DashboardIcon sx={{ fontSize: 20 }} /></BoutonDock>}
           <BoutonDock label="Retour au site" onClick={() => navigate('/')}><HomeIcon sx={{ fontSize: 20 }} /></BoutonDock>
         </Box>
@@ -492,7 +492,7 @@ export default function Espace() {
         <Box sx={{
           display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1,
           bgcolor: 'rgba(13,27,42,.97)',
-          border: '1px solid rgba(154,251,215,.2)', borderRadius: '18px',
+          border: '1px solid rgba(154,251,215,.16)', borderRadius: '18px',
           px: 1.4, py: 1.1, boxShadow: '0 14px 40px rgba(0,0,0,.45)',
         }}>
           <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 0.8 }}>
@@ -545,14 +545,14 @@ export default function Espace() {
             <Box sx={{
               borderRadius: '22px', overflow: 'hidden', position: 'relative',
               background: 'linear-gradient(120deg,#0D1B2A 0%,#0F5B3A 100%)',
-              border: '1px solid rgba(154,251,215,.25)',
+              border: '1px solid rgba(154,251,215,.16)',
               boxShadow: '0 18px 44px rgba(0,0,0,.4)',
               px: { xs: 3, md: 5 }, py: { xs: 3.5, md: 4.5 }, mb: { xs: 5, md: 6 },
             }}>
               <Box sx={{ position: 'relative', display: 'flex', alignItems: 'center', gap: { xs: 2.5, md: 4 }, flexWrap: 'wrap' }}>
                 <Avatar src={urlMedia(user?.photo) ?? undefined} sx={{
                   width: { xs: 72, md: 96 }, height: { xs: 72, md: 96 },
-                  bgcolor: '#1FAF72', border: '3px solid rgba(154,251,215,.5)',
+                  bgcolor: '#1FAF72', border: '3px solid rgba(154,251,215,.16)',
                   fontFamily: "'Orbitron',sans-serif", fontWeight: 800, fontSize: { xs: 30, md: 40 },
                   boxShadow: '0 10px 26px rgba(0,0,0,.35)',
                 }}>
@@ -568,7 +568,7 @@ export default function Espace() {
                   <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mt: 1.4 }}>
                     {(user.roles ?? []).map((r) => (
                       <Chip key={r.code} label={libellesRoles[r.code] ?? r.code} size="small"
-                        sx={{ bgcolor: 'rgba(154,251,215,.16)', color: '#9AFBD7', fontWeight: 800, fontSize: '0.875rem', border: '1px solid rgba(154,251,215,.3)', height: 28 }} />
+                        sx={{ bgcolor: 'rgba(154,251,215,.16)', color: '#9AFBD7', fontWeight: 800, fontSize: '0.875rem', border: '1px solid rgba(154,251,215,.16)', height: 28 }} />
                     ))}
                   </Box>
                 </Box>
@@ -576,7 +576,7 @@ export default function Espace() {
                 <Box sx={{
                   display: { xs: 'none', md: 'flex' }, flexDirection: 'column', gap: 0.6,
                   px: 2.4, py: 1.8, borderRadius: '12px',
-                  bgcolor: 'rgba(0,0,0,.28)', border: '1px dashed rgba(154,251,215,.4)',
+                  bgcolor: 'rgba(0,0,0,.28)', border: '1px dashed rgba(154,251,215,.16)',
                   fontFamily: "'JetBrains Mono',monospace",
                 }}>
                   <Typography sx={{ color: 'rgba(154,251,215,.6)', fontSize: '0.875rem', letterSpacing: '0.2em' }}>

@@ -226,7 +226,7 @@ export default function Galerie() {
               transition={reduit ? { duration: 0 } : { type: 'spring', stiffness: 240, damping: 24 }}
               style={{ width: 'min(960px, 96vw)', maxHeight: '92vh', overflowY: 'auto' }}
             >
-              <Box sx={{ bgcolor: '#0D1B2A', borderRadius: '20px', overflow: 'hidden', border: '1px solid rgba(154,251,215,.25)' }}>
+              <Box sx={{ bgcolor: '#0D1B2A', borderRadius: '20px', overflow: 'hidden', border: '1px solid rgba(154,251,215,.16)' }}>
                 <Box sx={{ position: 'relative', background: '#000' }}>
                   {lightbox.type === 'video' ? (
                     <Box

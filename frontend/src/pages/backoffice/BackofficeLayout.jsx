@@ -143,7 +143,7 @@ export default function BackofficeLayout() {
               sx={{ color: '#9AFBD7', fontWeight: 700, fontSize: '0.78rem', display: { xs: 'none', sm: 'inline-flex' } }}>
               Site
             </Button>
-            <Avatar sx={{ width: 32, height: 32, bgcolor: '#1FAF72', fontFamily: "'Orbitron',sans-serif", fontWeight: 800, fontSize: 14, border: '2px solid rgba(154,251,215,.4)' }}>
+            <Avatar sx={{ width: 32, height: 32, bgcolor: '#1FAF72', fontFamily: "'Orbitron',sans-serif", fontWeight: 800, fontSize: 14, border: '2px solid rgba(154,251,215,.16)' }}>
               {(user?.nom || 'M')[0]}
             </Avatar>
             <IconButton size="small" onClick={() => { if (window.confirm('Se déconnecter du back-office ?')) logout() }} aria-label="Déconnexion"
@@ -164,7 +164,7 @@ export default function BackofficeLayout() {
         <Box sx={{
           display: { xs: 'none', md: 'flex' }, flexDirection: 'column', alignItems: 'center', gap: 1,
           bgcolor: 'rgba(13,27,42,.97)',
-          border: '1px solid rgba(154,251,215,.2)', borderRadius: '20px',
+          border: '1px solid rgba(154,251,215,.16)', borderRadius: '20px',
           px: 1.2, py: 2,
           boxShadow: '0 14px 40px rgba(0,0,0,.4)',
           maxHeight: '78vh', overflowY: 'auto',
@@ -184,7 +184,7 @@ export default function BackofficeLayout() {
         <Box sx={{
           display: { xs: 'flex', md: 'none' }, alignItems: 'center', gap: 1,
           bgcolor: 'rgba(13,27,42,.97)',
-          border: '1px solid rgba(154,251,215,.2)', borderRadius: '18px',
+          border: '1px solid rgba(154,251,215,.16)', borderRadius: '18px',
           px: 1.4, py: 1.1,
           boxShadow: '0 14px 40px rgba(0,0,0,.45)',
           overflowX: 'auto', '&::-webkit-scrollbar': { height: 0 },
@@ -219,7 +219,7 @@ export default function BackofficeLayout() {
               initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }}
               transition={{ type: 'spring', stiffness: 260, damping: 28 }}
               onClick={(e) => e.stopPropagation()}
-              style={{ position: 'absolute', right: 0, top: 0, bottom: 0, width: 'min(340px, 88vw)', background: '#0D1B2A', borderLeft: '1px solid rgba(154,251,215,.2)', overflowY: 'auto' }}
+              style={{ position: 'absolute', right: 0, top: 0, bottom: 0, width: 'min(340px, 88vw)', background: '#0D1B2A', borderLeft: '1px solid rgba(154,251,215,.16)', overflowY: 'auto' }}
             >
               <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', p: 2.5, borderBottom: '1px solid rgba(154,251,215,.15)' }}>
                 <Typography sx={{ color: '#9AFBD7', fontFamily: "'JetBrains Mono',monospace", fontSize: '0.8rem' }}>
@@ -376,7 +376,7 @@ function HubAccueil({ modules, user }) {
                 sx={{
                   justifyContent: 'flex-start', gap: 2, p: 2.4, borderRadius: '18px', textAlign: 'left',
                   bgcolor: 'rgba(255,255,255,.97)', color: '#111827', textTransform: 'none',
-                  border: '1px solid rgba(154,251,215,.3)', boxShadow: '0 12px 30px rgba(0,0,0,.3)',
+                  border: '1px solid rgba(255,255,255,.14)', boxShadow: '0 12px 30px rgba(0,0,0,.3)',
                   '&:hover': { bgcolor: '#fff', boxShadow: '0 16px 36px rgba(0,0,0,.4)' },
                 }}>
                 <Box sx={{
@@ -423,7 +423,7 @@ function PlaceholderModule({ module: m }) {
     >
       <Box sx={{
         p: { xs: 3, md: 5 }, bgcolor: 'rgba(255,255,255,.97)', borderRadius: '24px',
-        border: '1px solid rgba(154,251,215,.3)', boxShadow: '0 24px 60px rgba(0,0,0,.35)',
+        border: '1px solid rgba(255,255,255,.14)', boxShadow: '0 24px 60px rgba(0,0,0,.35)',
         position: 'relative', overflow: 'hidden',
       }}>
         {/* filigrane icône géante */}
@@ -457,7 +457,7 @@ function PlaceholderModule({ module: m }) {
           {/* Spec façon doc de code */}
           <Box sx={{
             mt: 3, p: 2.2, borderRadius: '12px', bgcolor: '#0D1B2A',
-            border: '1px solid rgba(154,251,215,.2)',
+            border: '1px solid rgba(154,251,215,.16)',
             fontFamily: "'JetBrains Mono',monospace", fontSize: '0.76rem', lineHeight: 2,
           }}>
             {[
