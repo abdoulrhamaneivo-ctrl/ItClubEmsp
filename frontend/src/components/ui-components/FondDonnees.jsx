@@ -83,16 +83,16 @@ export default function FondDonnees({ intensite = 1, sansSatellite = false, sans
         />
 
         {/* Paquets de données (masqués si fibresSeules) */}
-        !fibresSeules && <Paquet path={fibre1} duree={7} retard={0} couleur="#1FAF72" taille={4} />
-        !fibresSeules && <Paquet path={fibre1} duree={9} retard={2.4} couleur="#0F5B3A" taille={3} />
-        !fibresSeules && <Paquet path={fibre2} duree={8} retard={1} couleur="#2563EB" taille={3.5} />
-        !fibresSeules && <Paquet path={fibre2} duree={10} retard={4.2} couleur="#1FAF72" taille={3} />
-        !fibresSeules && <Paquet path={fibre3} duree={11} retard={2} couleur="#F5A623" taille={3.2} />
+        {!fibresSeules && <Paquet path={fibre1} duree={7} retard={0} couleur="#1FAF72" taille={4} />}
+        {!fibresSeules && <Paquet path={fibre1} duree={9} retard={2.4} couleur="#0F5B3A" taille={3} />}
+        {!fibresSeules && <Paquet path={fibre2} duree={8} retard={1} couleur="#2563EB" taille={3.5} />}
+        {!fibresSeules && <Paquet path={fibre2} duree={10} retard={4.2} couleur="#1FAF72" taille={3} />}
+        {!fibresSeules && <Paquet path={fibre3} duree={11} retard={2} couleur="#F5A623" taille={3.2} />}
 
         {/* Enveloppes qui dérivent */}
-        !sansEnveloppes && !fibresSeules && <Enveloppe x={1120} y={110} duree={9} retard={0} />
-        !sansEnveloppes && !fibresSeules && <Enveloppe x={260} y={150} taille={22} duree={11} retard={2.5} opacite={0.28} />
-        !sansEnveloppes && !fibresSeules && <Enveloppe x={980} y={420} taille={24} duree={10} retard={4.5} opacite={0.3} />
+        {!sansEnveloppes && !fibresSeules && <Enveloppe x={1120} y={110} duree={9} retard={0} />}
+        {!sansEnveloppes && !fibresSeules && <Enveloppe x={260} y={150} taille={22} duree={11} retard={2.5} opacite={0.28} />}
+        {!sansEnveloppes && !fibresSeules && <Enveloppe x={980} y={420} taille={24} duree={10} retard={4.5} opacite={0.3} />}
 
         {/* Satellite (optionnel) */}
         {!sansSatellite && <Satellite cx={1160} cy={130} />}
