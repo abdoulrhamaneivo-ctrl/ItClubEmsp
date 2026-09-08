@@ -42,7 +42,9 @@ function Vitrine() {
             "Adhésion ouverte — scanne le QR code du campus",
             '1er atelier Git & GitHub bientôt',
             'Rejoins la cellule IA, Web, Cybersécurité ou Design',
-            'Hackathon interne en préparation',
+            'Sondages : donne ton avis en un clic',
+            'Le forum des membres — les échanges du club',
+            'Veille techno : les liens qui comptent',
           ]}
           vitesse={32}
         />
