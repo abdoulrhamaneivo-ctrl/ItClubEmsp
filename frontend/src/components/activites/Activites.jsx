@@ -101,7 +101,7 @@ export default function Activites() {
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2.5, mb: 3.5, mt: mIdx === 0 ? 0 : 4, position: 'relative', zIndex: 2 }}>
                   <Box sx={{
                     width: { xs: 46, md: 52 }, height: { xs: 46, md: 52 },
-                    borderRadius: 3, bgcolor: '#111827',
+                    borderRadius: 3, bgcolor: 'text.primary',
                     color: '#fff', display: 'flex', flexDirection: 'column',
                     alignItems: 'center', justifyContent: 'center', flexShrink: 0,
                     boxShadow: '0 6px 16px rgba(13,27,42,.18)',
@@ -113,7 +113,7 @@ export default function Activites() {
                       {new Date(grouped[mois][0].date).getFullYear()}
                     </Typography>
                   </Box>
-                  <Typography component="h3" sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 700, fontSize: { xs: '1.1rem', md: '1.35rem' }, color: '#111827', textTransform: 'capitalize' }}>
+                  <Typography component="h3" sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 700, fontSize: { xs: '1.1rem', md: '1.35rem' }, color: 'text.primary', textTransform: 'capitalize' }}>
                     {mois}
                   </Typography>
                 </Box>
@@ -134,8 +134,8 @@ export default function Activites() {
                         <Box
                           sx={{
                             display: 'flex', gap: 2.5, p: 2.8,
-                            bgcolor: '#fff', borderRadius: 3,
-                            border: '1px solid #E8ECEA',
+                            bgcolor: (theme) => theme.palette.background.paper, borderRadius: 3,
+                            border: '1px solid', borderColor: 'divider',
                             boxShadow: '0 2px 10px rgba(13,27,42,.04)',
                             textDecoration: 'none', color: 'inherit',
                             transition: 'all 220ms ease',
@@ -144,7 +144,7 @@ export default function Activites() {
                         >
                           {/* Point timeline neutre */}
                           <Box sx={{
-                            width: 11, height: 11, borderRadius: '50%', bgcolor: '#fff',
+                            width: 11, height: 11, borderRadius: '50%', bgcolor: (theme) => theme.palette.background.paper,
                             border: '3px solid #C9D4CF', flexShrink: 0, mt: 2.6,
                             position: 'relative', zIndex: 1, ml: { xs: -0.5, md: -1.1 },
                           }} />
@@ -176,17 +176,17 @@ export default function Activites() {
                           {/* Contenu */}
                           <Box sx={{ flex: 1, minWidth: 0 }}>
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 0.8, flexWrap: 'wrap' }}>
-                              <Chip label={a.type_label ?? a.type} size="small" sx={{ bgcolor: '#F5F7F6', color: '#4B5563', fontWeight: 800, fontSize: '0.72rem', height: 24 }} />
+                              <Chip label={a.type_label ?? a.type} size="small" sx={{ bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(154,251,215,.08)' : '#F5F7F6', color: (theme) => theme.palette.mode === 'dark' ? '#9AFBD7' : '#4B5563', fontWeight: 800, fontSize: '0.72rem', height: 24 }} />
                               <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.6 }}>
                                 <IcLieu taille={13} couleur="#6B7280" />
-                                <Typography variant="caption" sx={{ color: '#374151', fontWeight: 600, fontSize: '0.78rem' }}>
+                                <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600, fontSize: '0.78rem' }}>
                                   {a.lieu}
                                 </Typography>
                               </Box>
                               {a.places ? (
                                 <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.6 }}>
                                   <IcMembres taille={13} couleur={a.places_disponibles === 0 ? '#B45309' : '#6B7280'} />
-                                  <Typography variant="caption" sx={{ color: a.places_disponibles === 0 ? '#B45309' : '#374151', fontWeight: 700, fontSize: '0.78rem' }}>
+                                  <Typography variant="caption" sx={{ color: (theme) => a.places_disponibles === 0 ? '#B45309' : (theme.palette.mode === 'dark' ? '#9DB4A8' : '#374151'), fontWeight: 700, fontSize: '0.78rem' }}>
                                     {a.places_disponibles === undefined || a.places_disponibles === null
                                       ? `${a.places} places`
                                       : a.places_disponibles === 0
@@ -197,13 +197,13 @@ export default function Activites() {
                               ) : (
                                 <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.6 }}>
                                   <IcMembres taille={13} couleur="#6B7280" />
-                                  <Typography variant="caption" sx={{ color: '#374151', fontWeight: 600, fontSize: '0.78rem' }}>
+                                  <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600, fontSize: '0.78rem' }}>
                                     Places illimitées
                                   </Typography>
                                 </Box>
                               )}
                             </Box>
-                            <Typography sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 700, fontSize: { xs: '1rem', md: '1.1rem' }, color: '#111827', mb: 0.8 }}>
+                            <Typography sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 700, fontSize: { xs: '1rem', md: '1.1rem' }, color: 'text.primary', mb: 0.8 }}>
                               {a.titre}
                             </Typography>
                             <Typography variant="body2" color="textSecondary" sx={{ lineHeight: 1.65, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
@@ -213,7 +213,7 @@ export default function Activites() {
                               <Box sx={{ display: 'flex', gap: 1.2, mt: 1, flexWrap: 'wrap', alignItems: 'center' }}>
                                 {a.image && (
                                   <Box component="img" src={urlMedia(a.image)} alt=""
-                                    sx={{ width: 'min(260px, 100%)', borderRadius: '10px', border: '1px solid #E5E7EB', objectFit: 'cover' }} />
+                                    sx={{ width: 'min(260px, 100%)', borderRadius: '10px', border: '1px solid', borderColor: 'divider', objectFit: 'cover' }} />
                                 )}
                                 {a.video_url && (
                                   <Button size="small" variant="text" href={a.video_url} target="_blank" rel="noreferrer"
@@ -229,7 +229,7 @@ export default function Activites() {
                               size="small" fullWidth onClick={() => reserver(a)}
                               disabled={inscriptions[a.id] === 'envoi' || (inscriptions[a.id] && inscriptions[a.id] !== 'erreur' && inscriptions[a.id] !== 'deja-inscrit')}
                               sx={{ mt: 1.2, fontWeight: 700, display: { xs: 'inline-flex', md: 'none' },
-                                ...(!(inscriptions[a.id] && inscriptions[a.id] !== 'erreur') && { borderColor: '#D1D5DB', color: '#374151' }),
+                                ...(!(inscriptions[a.id] && inscriptions[a.id] !== 'erreur') && { borderColor: '#D1D5DB', color: 'text.secondary' }),
                                 ...(inscriptions[a.id] === 'confirme' && { bgcolor: '#1FAF72', '&:hover': { bgcolor: '#179963' } }),
                               }}
                             >
@@ -247,7 +247,7 @@ export default function Activites() {
                             size="small" onClick={() => reserver(a)}
                             disabled={inscriptions[a.id] === 'envoi' || (inscriptions[a.id] && inscriptions[a.id] !== 'erreur' && inscriptions[a.id] !== 'deja-inscrit')}
                             sx={{ alignSelf: 'center', fontWeight: 700, flexShrink: 0, display: { xs: 'none', md: 'inline-flex' },
-                              ...(!(inscriptions[a.id] && inscriptions[a.id] !== 'erreur') && { borderColor: '#D1D5DB', color: '#374151' }),
+                              ...(!(inscriptions[a.id] && inscriptions[a.id] !== 'erreur') && { borderColor: '#D1D5DB', color: 'text.secondary' }),
                               ...(String(inscriptions[a.id] ?? '').startsWith('attente') && { bgcolor: '#F5A623', '&:hover': { bgcolor: '#D97706' } }),
                               ...(inscriptions[a.id] === 'confirme' && { bgcolor: '#1FAF72', '&:hover': { bgcolor: '#179963' } }),
                             }}
@@ -309,17 +309,17 @@ function BilansPasses() {
       transition={{ duration: 0.3 }}
     >
       <Box sx={{ mt: 7 }}>
-        <Typography sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 800, fontSize: '1.05rem', color: '#111827', mb: 2 }}>
+        <Typography sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 800, fontSize: '1.05rem', color: 'text.primary', mb: 2 }}>
           Après coup — les bilans
         </Typography>
         <Box sx={{ display: 'grid', gap: 2, gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' } }}>
           {visibles.map((e) => (
             <Box key={e.id} sx={{
-              bgcolor: '#fff', borderRadius: '16px', border: '1px solid #E8ECEA',
+              bgcolor: (theme) => theme.palette.background.paper, borderRadius: '16px', border: '1px solid', borderColor: 'divider',
               p: 2.6,
             }}>
               <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', flexWrap: 'wrap', mb: 0.8 }}>
-                <Typography sx={{ fontWeight: 800, color: '#111827', fontSize: '0.92rem', flex: 1, minWidth: 150 }}>
+                <Typography sx={{ fontWeight: 800, color: 'text.primary', fontSize: '0.92rem', flex: 1, minWidth: 150 }}>
                   {e.titre}
                 </Typography>
                 {e.note_moyenne && (
@@ -329,7 +329,7 @@ function BilansPasses() {
               </Box>
               {e.bilan && (
                 <>
-                  <Typography variant="body2" sx={{ color: '#374151', lineHeight: 1.7, fontSize: '0.86rem' }}>
+                  <Typography variant="body2" sx={{ color: 'text.secondary', lineHeight: 1.7, fontSize: '0.86rem' }}>
                     {e.bilan.texte}
                   </Typography>
                   {e.bilan.points_forts && (
@@ -357,7 +357,7 @@ function SqueletteActivites() {
   return (
     <Box sx={{ py: 8 }}>
       <Container>
-        <Typography component="h2" sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 700, fontSize: { xs: '1.75rem', md: '2.5rem' }, color: '#111827', mb: 4 }}>
+        <Typography component="h2" sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 700, fontSize: { xs: '1.75rem', md: '2.5rem' }, color: 'text.primary', mb: 4 }}>
           Activités à venir
         </Typography>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>

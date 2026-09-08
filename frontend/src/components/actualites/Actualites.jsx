@@ -111,8 +111,8 @@ function CarteActu({ n, index }) {
             >
               <Box sx={{
                 height: '100%', display: 'flex', flexDirection: 'column',
-                bgcolor: '#fff', borderRadius: '18px', overflow: 'hidden',
-                border: '1px solid #E8ECEA', boxShadow: '0 4px 16px rgba(13,27,42,.05)',
+                bgcolor: (theme) => theme.palette.background.paper, borderRadius: '18px', overflow: 'hidden',
+                border: '1px solid', borderColor: 'divider', boxShadow: '0 4px 16px rgba(13,27,42,.05)',
                 transition: 'box-shadow 220ms ease, transform 220ms ease',
                 '&:hover': { transform: 'translateY(-4px)', boxShadow: '0 12px 30px rgba(13,27,42,.1)', borderColor: '#BFD8CC' },
               }}>
@@ -134,17 +134,17 @@ function CarteActu({ n, index }) {
                     <Chip
                       label={CELLULES_TAGGABLES.find((c) => c.id === n.cellule)?.label ?? 'Général'}
                       size="small"
-                      sx={{ bgcolor: '#F0F5F2', color: '#374151', fontWeight: 700, fontSize: '0.64rem', height: 22 }}
+                      sx={{ bgcolor: '#F0F5F2', color: 'text.secondary', fontWeight: 700, fontSize: '0.64rem', height: 22 }}
                     />
                     <Typography variant="caption" sx={{ color: '#4B5563', fontWeight: 600, ml: 'auto' }}>
                       {new Date(n.date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
                     </Typography>
                   </Box>
 
-                  <Typography sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 700, fontSize: '1.08rem', color: '#111827', lineHeight: 1.4, mb: 1 }}>
+                  <Typography sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 700, fontSize: '1.08rem', color: 'text.primary', lineHeight: 1.4, mb: 1 }}>
                     {n.titre}
                   </Typography>
-                  <Typography variant="body2" sx={{ color: '#5A6B63', lineHeight: 1.75, flex: 1 }}>
+                  <Typography variant="body2" sx={{ color: 'text.secondary', lineHeight: 1.75, flex: 1 }}>
                     {n.extrait}
                   </Typography>
                   {n.video_url && (
@@ -161,7 +161,7 @@ function CarteActu({ n, index }) {
                     }}>
                       {(n.auteur || 'B')[0]}
                     </Avatar>
-                    <Typography variant="caption" sx={{ color: '#374151', fontWeight: 700 }}>
+                    <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 700 }}>
                       {n.auteur || 'Le Bureau'}
                     </Typography>
                     {/* Réactions */}
@@ -175,8 +175,8 @@ function CarteActu({ n, index }) {
                             aria-pressed={actif}
                             title={user ? 'Réagir' : 'Connecte-toi pour réagir'}
                             sx={{
-                              border: '1px solid', borderColor: actif ? '#1FAF72' : '#E5E7EB',
-                              bgcolor: actif ? '#E4F8EF' : '#fff', borderRadius: '9999px',
+                              border: '1px solid', borderColor: (theme) => actif ? '#1FAF72' : (theme.palette.mode === 'dark' ? 'rgba(255,255,255,.18)' : '#E5E7EB'),
+                              bgcolor: (theme) => actif ? '#E4F8EF' : (theme.palette.mode === 'dark' ? 'rgba(255,255,255,.06)' : '#fff'), borderRadius: '9999px',
                               px: 1, minWidth: 44, height: 44, fontSize: '0.95rem', cursor: 'pointer',
                               display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0.4,
                               transition: 'transform 140ms ease, background 140ms ease',
@@ -197,23 +197,23 @@ function CarteActu({ n, index }) {
 
                   {/* Commentaires */}
                   <Button size="small" onClick={basculerCommentaires}
-                    sx={{ alignSelf: 'flex-start', mt: 1, color: '#5A6B63', fontWeight: 700, fontSize: '0.812rem', minHeight: 44 }}>
+                    sx={{ alignSelf: 'flex-start', mt: 1, color: 'text.secondary', fontWeight: 700, fontSize: '0.812rem', minHeight: 44 }}>
                     {ouverts ? 'Masquer les commentaires' : `Commentaires${(n.commentaires_count ?? 0) > 0 ? ` (${n.commentaires_count})` : ''}`}
                   </Button>
                   {ouverts && (
-                    <Box sx={{ mt: 1, pt: 1.2, borderTop: '1px dashed #E5E7EB' }}>
+                    <Box sx={{ mt: 1, pt: 1.2, borderTop: (theme) => `1px dashed ${theme.palette.mode === 'dark' ? 'rgba(255,255,255,.14)' : '#E5E7EB'}` }}>
                       {commentaires === null && (
                         <Typography variant="caption" sx={{ color: '#6B7280' }}>Chargement…</Typography>
                       )}
                       {(commentaires ?? []).map((c) => (
                         <Box key={c.id} sx={{ mb: 1.2 }}>
-                          <Typography sx={{ fontWeight: 800, color: '#111827', fontSize: '0.78rem' }}>
+                          <Typography sx={{ fontWeight: 800, color: 'text.primary', fontSize: '0.78rem' }}>
                             {c.auteur}{' '}
                             <Typography component="span" variant="caption" sx={{ color: '#6B7280', fontWeight: 600 }}>
                               {c.cree_le ? new Date(c.cree_le).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' }) : ''}
                             </Typography>
                           </Typography>
-                          <Typography variant="body2" sx={{ color: '#374151', fontSize: '0.84rem', lineHeight: 1.6 }}>
+                          <Typography variant="body2" sx={{ color: 'text.secondary', fontSize: '0.84rem', lineHeight: 1.6 }}>
                             {c.contenu}
                           </Typography>
                         </Box>
