@@ -16,6 +16,7 @@ import AddIcon from '@mui/icons-material/Add'
 import DownloadIcon from '@mui/icons-material/Download'
 import { api, urlMedia } from '../lib/api'
 import { useAuth, hasRole } from '../stores/auth'
+import BoutonRetour from '../components/ui-components/BoutonRetour'
 import TitreSection from '../components/ui-components/TitreSection'
 import FondPropre from '../components/ui-components/FondPropre'
 
@@ -43,6 +44,9 @@ export default function Sondages() {
     <Box sx={{ pt: { xs: 11, md: 13 }, pb: { xs: 4, md: 6 }, position: 'relative', minHeight: '70vh' }}>
       <FondPropre variante="doux" />
       <Container maxWidth={false} sx={{ position: 'relative', maxWidth: '1100px !important', px: { xs: 2.5, md: 4 } }}>
+        <Box sx={{ mb: 2 }}>
+          <BoutonRetour variante="clair" />
+        </Box>
         <TitreSection
           badge="Membres"
           titre="Sondages"

@@ -12,6 +12,7 @@ import PlayArrowIcon from '@mui/icons-material/PlayArrow'
 import FondPropre from '../components/ui-components/FondPropre'
 import { BandeauAccent } from '../components/ui-components/FondPropre'
 import FondHalos from '../components/ui-components/FondHalos'
+import BoutonRetour from '../components/ui-components/BoutonRetour'
 import TitreSection from '../components/ui-components/TitreSection'
 import { IcTrophee, IcFormation, IcLieu, IcRocket, IcCube, IcMembres, IcPhoto, IcVideo } from '../components/ui-components/IconesClub'
 import { useContenu } from '../lib/contenu'
@@ -87,6 +88,9 @@ export default function Galerie() {
       <FondHalos couleurs={['rgba(31,175,114,.11)', 'rgba(37,99,235,.09)', 'rgba(245,166,35,.08)']} trame={false} />
 
       <Container maxWidth={false} sx={{ position: 'relative', maxWidth: '1440px !important', px: { xs: 2.5, md: 4 } }}>
+        <Box sx={{ mb: 2 }}>
+          <BoutonRetour variante="sombre" />
+        </Box>
         <TitreSection
           badge="Médias"
           titre="La galerie du club"
