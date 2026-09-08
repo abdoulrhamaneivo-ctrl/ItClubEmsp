@@ -24,7 +24,7 @@ export default function BarreProgression() {
           width: largeur, height: '100%',
           transformOrigin: 'left',
           background: 'linear-gradient(90deg,#0F5B3A,#1FAF72 55%,#9AFBD7)',
-          
+          boxShadow: '0 0 6px rgba(31,175,114,.35)',
         }}
       />
     </Box>

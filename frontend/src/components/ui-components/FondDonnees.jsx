@@ -2,9 +2,9 @@ import { motion, useReducedMotion } from 'framer-motion'
 import Box from '@mui/material/Box'
 
 /**
- * FondDonnees — fond sobre : fibres optiques dessinées une fois.
- * Props conservées pour compat (sansSatellite/sansEnveloppes/fibresSeules
- * n'ont plus d'effet : le décor est déjà minimal).
+ * FondDonnees — fibres optiques dessinées une fois + un paquet de données
+ * qui les parcourt lentement. Animations rares : la page respire.
+ * Props historiques conservées (sansSatellite etc. sans effet : déjà minimal).
  */
 export default function FondDonnees({ intensite = 1 }) {
   const reduit = useReducedMotion()
@@ -33,6 +33,13 @@ export default function FondDonnees({ intensite = 1 }) {
             transition={reduit ? { duration: 0 } : { duration: f.duree, ease: 'easeOut', delay: f.retard }}
           />
         ))}
+        {!reduit && (
+          <motion.circle r="3.5" fill="#1FAF72" opacity="0.5"
+            animate={{ offsetDistance: ['0%', '100%'] }}
+            transition={{ duration: 13, repeat: Infinity, ease: 'linear', delay: 3 }}
+            style={{ offsetPath: `path('${fibres[0].d}')` }}
+          />
+        )}
       </svg>
     </Box>
   )

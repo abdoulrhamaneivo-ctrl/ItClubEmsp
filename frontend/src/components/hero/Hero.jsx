@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
+import { motion, useReducedMotion } from 'framer-motion'
 import Box from '@mui/material/Box'
 import Container from '@mui/material/Container'
 import Typography from '@mui/material/Typography'
@@ -17,6 +17,7 @@ import FondDonnees from '../ui-components/FondDonnees'
 export default function Hero() {
   const ref = useRef(null)
   const theme = useTheme()
+  const reduit = useReducedMotion()
   const user = useAuth((s) => s.user)
 
   // Chiffres réels (API) — repli statique le temps du chargement
@@ -94,7 +95,11 @@ export default function Hero() {
               bgcolor: 'rgba(255,255,255,.08)', border: '1px solid rgba(154,251,215,.16)',
             }}
           >
-            <Box sx={{ width: 8, height: 8, borderRadius: '50%', background: '#1FAF72' }} />
+            <motion.span
+              animate={reduit ? undefined : { opacity: [1, 0.55, 1] }}
+              transition={{ duration: 2.6, repeat: Infinity, ease: 'easeInOut' }}
+              style={{ width: 8, height: 8, borderRadius: '50%', background: '#1FAF72', display: 'inline-block' }}
+            />
             <Typography sx={{ color: '#9AFBD7', fontWeight: 800, fontSize: '0.72rem', letterSpacing: '0.18em', textTransform: 'uppercase' }}>
               Le club informatique — EMSP
             </Typography>
