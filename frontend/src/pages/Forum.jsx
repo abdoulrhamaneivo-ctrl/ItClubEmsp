@@ -146,7 +146,7 @@ export default function Forum() {
                 const cle = `projet:${p.id}`
                 return (
                   <Chip key={cle} label={`⚙ ${p.nom}`} onClick={() => setEspace(cle)}
-                    sx={{ fontWeight: 800, fontSize: '0.875rem', height: 44, cursor: 'pointer', bgcolor: espace === cle ? '#7B61FF' : '#fff', color: espace === cle ? '#fff' : '#374151', border: '1px solid #E5E7EB', '&:focus-visible': { outline: '2px solid #7B61FF', outlineOffset: '2px' } }} />
+                    sx={{ fontWeight: 800, fontSize: '0.875rem', height: 44, cursor: 'pointer', bgcolor: espace === cle ? '#1FAF72' : '#fff', color: espace === cle ? '#fff' : '#374151', border: '1px solid #E5E7EB', '&:focus-visible': { outline: '2px solid #1FAF72', outlineOffset: '2px' } }} />
                 )
               })}
               <Box sx={{ flex: 1 }} />

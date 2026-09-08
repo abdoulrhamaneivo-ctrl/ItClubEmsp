@@ -47,7 +47,7 @@ export default function Sondages() {
           badge="Membres"
           titre="Sondages"
           sousTitre="L'avis du club en un clic — résultats en direct."
-          couleur="#7B61FF"
+          couleur="#1FAF72"
         />
         {message && (
           <Box role="alert" aria-live="assertive" sx={{ mb: 2, p: 1.6, borderRadius: '12px', bgcolor: '#FDECEC', color: '#B42318', fontWeight: 700, fontSize: '0.875rem' }}>
@@ -59,12 +59,12 @@ export default function Sondages() {
           {['ouverts', 'clos'].map((f) => (
             <Chip key={f} label={f === 'ouverts' ? 'Ouverts' : 'Clôturés'} onClick={() => setFiltre(f)}
               sx={{ fontWeight: 800, cursor: 'pointer', textTransform: 'capitalize', fontSize: '0.875rem', height: 44,
-                bgcolor: filtre === f ? '#7B61FF' : '#fff', color: filtre === f ? '#fff' : '#374151', border: '1px solid #E5E7EB',
-                '&:focus-visible': { outline: '2px solid #7B61FF', outlineOffset: '2px' } }} />
+                bgcolor: filtre === f ? '#1FAF72' : '#fff', color: filtre === f ? '#fff' : '#374151', border: '1px solid #E5E7EB',
+                '&:focus-visible': { outline: '2px solid #1FAF72', outlineOffset: '2px' } }} />
           ))}
           <Box sx={{ flex: 1 }} />
           <Button variant="contained" startIcon={<AddIcon />} onClick={() => setFormOuvert(!formOuvert)}
-            sx={{ bgcolor: '#7B61FF', '&:hover': { bgcolor: '#5B3FD6' }, fontWeight: 800, borderRadius: '12px' }}>
+            sx={{ bgcolor: '#1FAF72', '&:hover': { bgcolor: '#179963' }, fontWeight: 800, borderRadius: '12px' }}>
             Nouveau sondage
           </Button>
         </Box>
@@ -76,7 +76,7 @@ export default function Sondages() {
           />
         )}
 
-        {isLoading && <Box sx={{ display: 'flex', justifyContent: 'center', py: 5 }}><CircularProgress sx={{ color: '#7B61FF' }} /></Box>}
+        {isLoading && <Box sx={{ display: 'flex', justifyContent: 'center', py: 5 }}><CircularProgress sx={{ color: '#1FAF72' }} /></Box>}
         {!isLoading && visibles.length === 0 && (
           <Typography sx={{ color: '#5A6B63', py: 4, textAlign: 'center' }}>
             Aucun sondage {filtre} — lance le premier !
@@ -128,7 +128,7 @@ function FormulaireSondage({ onFait, onErreur }) {
   }
 
   return (
-    <Box sx={{ bgcolor: '#fff', borderRadius: '16px', border: '1px solid #7B61FF45', p: 2.4, display: 'grid', gap: 1.6, mb: 2 }}>
+    <Box sx={{ bgcolor: '#fff', borderRadius: '16px', border: '1px solid #1FAF7245', p: 2.4, display: 'grid', gap: 1.6, mb: 2 }}>
       <TextField label="Question *" value={titre} onChange={(e) => setTitre(e.target.value)} fullWidth sx={champSx} />
       <TextField label="Contexte (optionnel)" value={description} onChange={(e) => setDescription(e.target.value)} fullWidth sx={champSx} />
       {options.map((o, i) => (
@@ -137,7 +137,7 @@ function FormulaireSondage({ onFait, onErreur }) {
           fullWidth sx={champSx} />
       ))}
       {options.length < 10 && (
-        <Button size="small" onClick={() => setOptions((l) => [...l, ''])} sx={{ color: '#5B3FD6', fontWeight: 700, alignSelf: 'flex-start', minHeight: 44 }}>
+        <Button size="small" onClick={() => setOptions((l) => [...l, ''])} sx={{ color: '#179963', fontWeight: 700, alignSelf: 'flex-start', minHeight: 44 }}>
           + Ajouter une option
         </Button>
       )}
@@ -148,13 +148,13 @@ function FormulaireSondage({ onFait, onErreur }) {
         </TextField>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <Switch checked={multiple} onChange={() => setMultiple(!multiple)}
-            sx={{ '& .MuiSwitch-switchBase.Mui-checked': { color: '#7B61FF' }, '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': { bgcolor: '#7B61FF' } }} />
+            sx={{ '& .MuiSwitch-switchBase.Mui-checked': { color: '#1FAF72' }, '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': { bgcolor: '#1FAF72' } }} />
           <Typography variant="body2" sx={{ color: '#374151', fontWeight: 600 }}>Choix multiples</Typography>
         </Box>
       </Box>
       <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
         <Button variant="contained" onClick={creer} disabled={envoi}
-          sx={{ bgcolor: '#7B61FF', '&:hover': { bgcolor: '#5B3FD6' }, fontWeight: 800, borderRadius: '12px' }}>
+          sx={{ bgcolor: '#1FAF72', '&:hover': { bgcolor: '#179963' }, fontWeight: 800, borderRadius: '12px' }}>
           {envoi ? 'Création…' : 'Lancer le sondage'}
         </Button>
       </Box>
@@ -229,7 +229,7 @@ function CarteSondage({ s, index, onErreur }) {
           </Box>
           {donnees.clos
             ? <Chip label="Clôturé" size="small" sx={{ bgcolor: '#F0F5F2', color: '#5A6B63', fontWeight: 800 }} />
-            : <Chip label="Ouvert" size="small" sx={{ bgcolor: '#EDE9FE', color: '#5B3FD6', fontWeight: 800 }} />}
+            : <Chip label="Ouvert" size="small" sx={{ bgcolor: '#E4F8EF', color: '#179963', fontWeight: 800 }} />}
         </Box>
         {donnees.description && (
           <Typography variant="body2" sx={{ color: '#5A6B63', mb: 1.5 }}>{donnees.description}</Typography>
@@ -246,20 +246,20 @@ function CarteSondage({ s, index, onErreur }) {
                   aria-label={`Voter pour : ${o.texte}${mienne ? ' (voté)' : ''}`}
                   sx={{
                     display: 'flex', alignItems: 'center', gap: 1.2, textAlign: 'left', width: '100%',
-                    border: '1px solid', borderColor: mienne ? '#7B61FF' : '#E5E7EB',
-                    bgcolor: mienne ? '#EDE9FE' : '#fff', borderRadius: '12px', px: 1.6, py: 1.1, minHeight: 44,
+                    border: '1px solid', borderColor: mienne ? '#1FAF72' : '#E5E7EB',
+                    bgcolor: mienne ? '#E4F8EF' : '#fff', borderRadius: '12px', px: 1.6, py: 1.1, minHeight: 44,
                     cursor: donnees.clos ? 'default' : 'pointer', fontFamily: 'inherit',
                     transition: 'border-color 160ms ease, background 160ms ease',
-                    '&:hover': donnees.clos ? {} : { borderColor: '#7B61FF', bgcolor: '#F6F3FF' },
-                    '&:focus-visible': { outline: '2px solid #7B61FF', outlineOffset: '2px' },
+                    '&:hover': donnees.clos ? {} : { borderColor: '#1FAF72', bgcolor: '#F3FBF7' },
+                    '&:focus-visible': { outline: '2px solid #1FAF72', outlineOffset: '2px' },
                   }}>
-                  {mienne && <CheckIcon sx={{ color: '#5B3FD6', fontSize: 18, flexShrink: 0 }} />}
+                  {mienne && <CheckIcon sx={{ color: '#179963', fontSize: 18, flexShrink: 0 }} />}
                   <Typography sx={{ fontWeight: 700, color: '#111827', fontSize: '0.875rem', minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {o.texte}
                   </Typography>
                   <Box sx={{ flex: 1, height: 8, borderRadius: 9999, bgcolor: '#EEF2F0', overflow: 'hidden', minWidth: 40 }}>
                     <motion.div animate={{ width: `${pct}%` }} transition={{ duration: reduit ? 0 : 0.25 }}
-                      style={{ height: '100%', borderRadius: 9999, background: mienne ? '#7B61FF' : '#B9A8F5' }} />
+                      style={{ height: '100%', borderRadius: 9999, background: mienne ? '#1FAF72' : '#A7E3C8' }} />
                   </Box>
                   <Typography sx={{ color: '#111827', fontWeight: 800, fontSize: '0.812rem', width: 48, textAlign: 'right', flexShrink: 0 }}>
                     {o.votes} · {donnees.total_votes > 0 ? Math.round((o.votes / donnees.total_votes) * 100) : 0}%
@@ -272,7 +272,7 @@ function CarteSondage({ s, index, onErreur }) {
         <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 1.2, flexWrap: 'wrap', gap: 0.5 }}>
           {estBureau && (
             <Button size="small" startIcon={<DownloadIcon />} onClick={exporter}
-              sx={{ color: '#5B3FD6', fontWeight: 700, fontSize: '0.812rem', minHeight: 44 }}>
+              sx={{ color: '#179963', fontWeight: 700, fontSize: '0.812rem', minHeight: 44 }}>
               {exportEnCours ? '…' : 'Exporter CSV'}
             </Button>
           )}
