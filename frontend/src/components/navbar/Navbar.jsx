@@ -65,9 +65,8 @@ export default function Navbar() {
       position="fixed"
       elevation={scrolled ? 4 : 0}
       sx={{
-        bgcolor: scrolled ? 'rgba(255,255,255,.92)' : 'transparent',
+        bgcolor: scrolled ? 'rgba(255,255,255,.97)' : 'transparent',
         backgroundImage: scrolled ? 'none' : 'linear-gradient(180deg, rgba(13,27,42,.62) 0%, rgba(13,27,42,.28) 60%, rgba(13,27,42,0) 100%)',
-        backdropFilter: scrolled ? 'blur(12px)' : 'none',
         color: scrolled ? '#0D1B2A' : '#fff',
         transition: 'background .35s ease',
         py: scrolled ? 0 : 1,

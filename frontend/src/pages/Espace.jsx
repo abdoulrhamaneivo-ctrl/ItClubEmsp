@@ -155,7 +155,7 @@ function Palette({ ouvert, fermer, user, estBureau, scrollTo, logout }) {
           initial={reduit ? false : { opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
           transition={{ duration: reduit ? 0 : 0.16 }}
           onClick={fermer}
-          style={{ position: 'fixed', inset: 0, zIndex: 1500, background: 'rgba(5,12,22,.72)', backdropFilter: 'blur(8px)', display: 'flex', justifyContent: 'center', alignItems: 'flex-start', paddingTop: 'min(14vh, 110px)' }}
+          style={{ position: 'fixed', inset: 0, zIndex: 1500, background: 'rgba(5,12,22,.96)', display: 'flex', justifyContent: 'center', alignItems: 'flex-start', paddingTop: 'min(14vh, 110px)' }}
         >
           <motion.div
             initial={reduit ? false : { scale: 0.96, y: -12 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.97, y: -8 }}
@@ -427,7 +427,7 @@ export default function Espace() {
       >
         <Box sx={{
           display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1,
-          bgcolor: 'rgba(13,27,42,.72)', backdropFilter: 'blur(14px)',
+          bgcolor: 'rgba(13,27,42,.97)',
           border: '1px solid rgba(154,251,215,.18)', borderRadius: '16px',
           px: { xs: 1.2, md: 2.2 }, py: 1,
           boxShadow: '0 10px 30px rgba(0,0,0,.35)',
@@ -463,7 +463,7 @@ export default function Espace() {
       >
         <Box sx={{
           display: { xs: 'none', md: 'flex' }, flexDirection: 'column', alignItems: 'center', gap: 1,
-          bgcolor: 'rgba(13,27,42,.78)', backdropFilter: 'blur(16px)',
+          bgcolor: 'rgba(13,27,42,.97)',
           border: '1px solid rgba(154,251,215,.2)', borderRadius: '20px',
           px: 1.2, py: 1.8,
           boxShadow: '0 14px 40px rgba(0,0,0,.4)',
@@ -491,7 +491,7 @@ export default function Espace() {
       >
         <Box sx={{
           display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1,
-          bgcolor: 'rgba(13,27,42,.82)', backdropFilter: 'blur(16px)',
+          bgcolor: 'rgba(13,27,42,.97)',
           border: '1px solid rgba(154,251,215,.2)', borderRadius: '18px',
           px: 1.4, py: 1.1, boxShadow: '0 14px 40px rgba(0,0,0,.45)',
         }}>
@@ -897,7 +897,7 @@ export default function Espace() {
       >
         <Box sx={{
           display: { xs: 'none', lg: 'flex' }, alignItems: 'center', gap: 2.5,
-          bgcolor: 'rgba(13,27,42,.72)', backdropFilter: 'blur(14px)',
+          bgcolor: 'rgba(13,27,42,.97)',
           border: '1px solid rgba(154,251,215,.16)', borderRadius: '12px',
           px: 2, py: 0.9,
         }}>

@@ -326,7 +326,7 @@ function ModaleCellule({ cellule, onClose }) {
     <motion.div
       initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
       onClick={onClose}
-      style={{ position: 'fixed', inset: 0, zIndex: 1300, background: 'rgba(17,24,39,.7)', backdropFilter: 'blur(8px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}
+      style={{ position: 'fixed', inset: 0, zIndex: 1300, background: 'rgba(17,24,39,.7)',  display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}
     >
       <motion.div
         onClick={(e) => e.stopPropagation()}

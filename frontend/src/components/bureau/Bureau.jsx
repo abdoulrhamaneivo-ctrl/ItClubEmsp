@@ -241,11 +241,11 @@ function VisuelMembre({ membre: m, compact = false }) {
             {(m.nom || 'M')[0]}
           </Typography>
         )}
-        <Box sx={{ position: 'absolute', top: 12, left: 12, bgcolor: 'rgba(13,27,42,.55)', backdropFilter: 'blur(6px)', color: '#fff', px: 1.3, py: 0.45, borderRadius: 9999, fontSize: '0.6rem', fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase' }}>
+        <Box sx={{ position: 'absolute', top: 12, left: 12, bgcolor: 'rgba(13,27,42,.72)', color: '#fff', px: 1.3, py: 0.45, borderRadius: 9999, fontSize: '0.6rem', fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase' }}>
           {m.poste}
         </Box>
         {!compact && (
-          <Box sx={{ position: 'absolute', bottom: 12, right: 12, width: 38, height: 38, borderRadius: '12px', bgcolor: 'rgba(13,27,42,.5)', backdropFilter: 'blur(6px)', display: 'grid', placeItems: 'center' }}>
+          <Box sx={{ position: 'absolute', bottom: 12, right: 12, width: 38, height: 38, borderRadius: '12px', bgcolor: 'rgba(13,27,42,.72)', display: 'grid', placeItems: 'center' }}>
             <I taille={19} couleur="#9AFBD7" />
           </Box>
         )}

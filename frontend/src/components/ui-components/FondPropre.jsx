@@ -22,7 +22,6 @@ export default function FondPropre({ variante = 'clair' }) {
         position: 'absolute',
         inset: 0,
         background: fond,
-        backdropFilter: 'blur(1px)',
         // Texture ultra-subtile via CSS
         '&::before': {
           content: '""',

@@ -118,7 +118,7 @@ export default function BackofficeLayout() {
       >
         <Box sx={{
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          bgcolor: 'rgba(13,27,42,.72)', backdropFilter: 'blur(14px)',
+          bgcolor: 'rgba(13,27,42,.97)',
           border: '1px solid rgba(154,251,215,.18)', borderRadius: '16px',
           px: { xs: 1.5, md: 2.2 }, py: 1,
           boxShadow: '0 10px 30px rgba(0,0,0,.35)',
@@ -163,7 +163,7 @@ export default function BackofficeLayout() {
       >
         <Box sx={{
           display: { xs: 'none', md: 'flex' }, flexDirection: 'column', alignItems: 'center', gap: 1,
-          bgcolor: 'rgba(13,27,42,.78)', backdropFilter: 'blur(16px)',
+          bgcolor: 'rgba(13,27,42,.97)',
           border: '1px solid rgba(154,251,215,.2)', borderRadius: '20px',
           px: 1.2, py: 2,
           boxShadow: '0 14px 40px rgba(0,0,0,.4)',
@@ -183,7 +183,7 @@ export default function BackofficeLayout() {
       >
         <Box sx={{
           display: { xs: 'flex', md: 'none' }, alignItems: 'center', gap: 1,
-          bgcolor: 'rgba(13,27,42,.82)', backdropFilter: 'blur(16px)',
+          bgcolor: 'rgba(13,27,42,.97)',
           border: '1px solid rgba(154,251,215,.2)', borderRadius: '18px',
           px: 1.4, py: 1.1,
           boxShadow: '0 14px 40px rgba(0,0,0,.45)',
@@ -212,7 +212,7 @@ export default function BackofficeLayout() {
         {menuMobile && (
           <motion.div
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            style={{ position: 'fixed', inset: 0, zIndex: 1400, background: 'rgba(10,22,40,.92)', backdropFilter: 'blur(14px)' }}
+            style={{ position: 'fixed', inset: 0, zIndex: 1400, background: 'rgba(10,22,40,.97)' }}
             onClick={() => setMenuMobile(false)}
           >
             <motion.div
@@ -321,7 +321,7 @@ export default function BackofficeLayout() {
       >
         <Box sx={{
           display: { xs: 'none', lg: 'flex' }, alignItems: 'center', gap: 2.5,
-          bgcolor: 'rgba(13,27,42,.72)', backdropFilter: 'blur(14px)',
+          bgcolor: 'rgba(13,27,42,.97)',
           border: '1px solid rgba(154,251,215,.16)', borderRadius: '12px',
           px: 2, py: 0.9,
         }}>

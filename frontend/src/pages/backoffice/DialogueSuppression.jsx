@@ -41,7 +41,7 @@ export default function DialogueSuppression({ demande, nom, enCours, onAnnuler, 
           onClick={() => !tache && onAnnuler()}
           style={{
             position: 'fixed', inset: 0, zIndex: 1500,
-            background: 'rgba(10,22,40,.55)', backdropFilter: 'blur(6px)',
+            background: 'rgba(10,22,40,.8)',
             display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20,
           }}
         >
