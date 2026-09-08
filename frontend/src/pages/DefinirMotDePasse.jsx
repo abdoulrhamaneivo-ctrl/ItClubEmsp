@@ -1,6 +1,6 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { Link as RouterLink, useSearchParams } from 'react-router-dom'
-import { motion } from 'framer-motion'
+import { motion, useReducedMotion } from 'framer-motion'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Container from '@mui/material/Container'
@@ -25,6 +25,10 @@ export default function DefinirMotDePasse() {
 
   const uid = params.get('uid') ?? ''
   const token = params.get('token') ?? ''
+  const lienIncomplet = !uid || !token
+  const reduit = useReducedMotion()
+  const alerteRef = useRef(null)
+  useEffect(() => { if (erreur) alerteRef.current?.focus() }, [erreur])
 
   const submit = async (e) => {
     e.preventDefault()
@@ -63,38 +67,47 @@ export default function DefinirMotDePasse() {
       </Box>
 
       <Container maxWidth="xs" sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', py: 6 }}>
-        <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }}>
+        <motion.div initial={reduit ? false : { opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: reduit ? 0 : 0.25 }}>
+          <Box sx={{ display: { xs: 'flex', md: 'none' }, justifyContent: 'center', mb: 3 }}>
+            <Box component="img" src="/logo-itclub.webp" alt="Logo IT-CLUB EMSP" sx={{ width: 64, height: 64, borderRadius: 3, border: '2px solid #1FAF72' }} />
+          </Box>
           <Typography sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 800, fontSize: '1.5rem', color: '#111827' }}>
             {ok ? 'C’est noté !' : 'Définis ton mot de passe'}
           </Typography>
-          <Typography variant="body2" color="textSecondary" sx={{ mt: 1, mb: 3, lineHeight: 1.7 }}>
+          <Typography variant="body2" color="textSecondary" sx={{ mt: 1, mb: 3, lineHeight: 1.7, fontSize: '0.875rem' }}>
             {ok
               ? 'Ton compte est prêt — connecte-toi pour rejoindre ta cellule.'
               : '8 caractères minimum. Le lien ne sert qu’une fois.'}
           </Typography>
 
-          {erreur && <Alert severity="error" sx={{ mb: 2.5, borderRadius: 2 }}>{erreur}</Alert>}
+          {lienIncomplet && !ok && (
+            <Alert severity="warning" sx={{ mb: 2.5, borderRadius: 2, fontSize: '0.875rem' }}>
+              Lien incomplet — reprends celui reçu par e-mail. Besoin d'aide ? Contacte la Secrétaire Générale du club.
+            </Alert>
+          )}
+
+          {erreur && <Alert ref={alerteRef} tabIndex={-1} severity="error" sx={{ mb: 2.5, borderRadius: 2, fontSize: '0.875rem', '&:focus': { outline: '2px solid #B42318', outlineOffset: '2px' } }}>{erreur}</Alert>}
 
           {ok ? (
             <Box sx={{ display: 'grid', gap: 2, justifyItems: 'start' }}>
               <CheckCircleIcon sx={{ color: '#1FAF72', fontSize: 44 }} />
               <Button component={RouterLink} to="/login" variant="contained" size="large"
-                sx={{ bgcolor: '#1FAF72', '&:hover': { bgcolor: '#179963' }, fontWeight: 800, borderRadius: '12px', px: 4 }}>
+                sx={{ bgcolor: '#1FAF72', '&:hover': { bgcolor: '#179963' }, fontWeight: 800, borderRadius: '12px', px: 4, minHeight: 44, fontSize: '0.875rem' }}>
                 Me connecter →
               </Button>
             </Box>
           ) : (
             <Box component="form" onSubmit={submit} sx={{ display: 'grid', gap: 2 }}>
-              <ChampMotDePasse label="Mot de passe *" value={mdp}
+              <ChampMotDePasse label="Nouveau mot de passe *" placeholder="8 caractères minimum" value={mdp}
                 onChange={(e) => setMdp(e.target.value)} fullWidth autoComplete="new-password" sx={champSx} />
-              <ChampMotDePasse label="Confirme *" value={mdp2}
+              <ChampMotDePasse label="Confirme ton mot de passe *" placeholder="Retape le même mot de passe" value={mdp2}
                 onChange={(e) => setMdp2(e.target.value)} fullWidth autoComplete="new-password" sx={champSx} />
-              <Button type="submit" variant="contained" size="large" disabled={envoi || mdp.length < 8}
-                sx={{ bgcolor: '#1FAF72', '&:hover': { bgcolor: '#179963' }, fontWeight: 800, borderRadius: '12px', mt: 1 }}>
+              <Button type="submit" variant="contained" size="large" disabled={envoi || mdp.length < 8 || lienIncomplet}
+                sx={{ bgcolor: '#1FAF72', '&:hover': { bgcolor: '#179963' }, fontWeight: 800, borderRadius: '12px', mt: 1, minHeight: 44, fontSize: '0.875rem' }}>
                 {envoi ? 'Enregistrement…' : 'Activer mon compte →'}
               </Button>
-              <Typography variant="body2" sx={{ textAlign: 'center' }}>
-                <RouterLink to="/login" style={{ color: '#0E7A50', fontWeight: 700 }}>Retour à la connexion</RouterLink>
+              <Typography variant="body2" sx={{ textAlign: 'center', fontSize: '0.875rem' }}>
+                <RouterLink to="/login" style={{ color: '#0E7A50', fontWeight: 700, display: 'inline-flex', alignItems: 'center', minHeight: 44 }}>Retour à la connexion</RouterLink>
               </Typography>
             </Box>
           )}

@@ -33,7 +33,7 @@ export default function ChampMotDePasse({ value, onChange, label = 'Mot de passe
                 onClick={() => setVisible((v) => !v)}
                 edge="end"
                 aria-label={visible ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}
-                sx={{ color: '#6B7280' }}
+                sx={{ color: '#6B7280', width: 44, height: 44 }}
               >
                 {visible ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}
               </IconButton>

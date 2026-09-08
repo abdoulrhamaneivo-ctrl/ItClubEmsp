@@ -1,6 +1,6 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useNavigate, Link as RouterLink } from 'react-router-dom'
-import { motion } from 'framer-motion'
+import { motion, useReducedMotion } from 'framer-motion'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Container from '@mui/material/Container'
@@ -20,6 +20,9 @@ export default function Login() {
   const [erreur, setErreur] = useState(null)
   const [chargement, setChargement] = useState(false)
   const [reveil, setReveil] = useState(false)
+  const reduit = useReducedMotion()
+  const alerteRef = useRef(null)
+  useEffect(() => { if (erreur) alerteRef.current?.focus() }, [erreur])
 
   const submit = async (e) => {
     e.preventDefault()
@@ -42,7 +45,7 @@ export default function Login() {
       } else if (msg.includes('Failed to fetch') || msg.includes('Network') || msg.includes('fetch')) {
         setErreur('Serveur injoignable — vérifie ta connexion, puis réessaie (le serveur gratuit met ~50s à se réveiller).')
       } else {
-        setErreur(`Connexion impossible (${msg.slice(0, 120) || 'erreur inconnue'}) — réessaie.`)
+        setErreur('Connexion impossible — vérifie ta connexion puis réessaie. Si ça persiste, contacte la Secrétaire Générale du club.')
       }
       setChargement(false)
     }
@@ -53,7 +56,7 @@ export default function Login() {
       {/* Panneau de marque (gauche) — fond animé charte */}
       <Box sx={{ display: { xs: 'none', md: 'flex' }, position: 'relative', overflow: 'hidden', alignItems: 'center' }}>
         <Box sx={{ position: 'absolute', inset: 0, background: 'linear-gradient(160deg,#0D1B2A 0%,#0F5B3A 100%)' }} />
-        {[...Array(5)].map((_, i) => (
+        {!reduit && [...Array(5)].map((_, i) => (
           <motion.span
             key={i}
             style={{
@@ -65,6 +68,7 @@ export default function Login() {
             transition={{ duration: 6 + i * 1.7, repeat: Infinity, ease: 'easeInOut' }}
           />
         ))}
+        {!reduit && (
         <motion.svg width="100%" height="100%" style={{ position: 'absolute', opacity: 0.22 }} initial={{ pathLength: 0 }} animate={{ pathLength: 1 }}>
           <motion.path
             d="M-40,180 C240,80 480,300 820,160 S1200,260 1400,140"
@@ -73,8 +77,9 @@ export default function Login() {
             transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut' }}
           />
         </motion.svg>
+        )}
         <Box sx={{ position: 'relative', p: 8 }}>
-          <motion.div initial={{ opacity: 0, y: 26 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.38 }}>
+          <motion.div initial={reduit ? false : { opacity: 0, y: 26 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: reduit ? 0 : 0.25 }}>
             <Box component="img" src="/logo-itclub.webp" alt="Logo IT-CLUB EMSP" sx={{ width: 74, height: 74, borderRadius: 3, border: '2px solid #1FAF72', mb: 3 }} />
             <Typography sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 800, fontSize: '1.9rem', color: '#fff' }}>
               IT-CLUB <span style={{ color: '#9AFBD7' }}>EMSP</span>
@@ -89,17 +94,17 @@ export default function Login() {
       {/* Formulaire (droite) */}
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', p: 3 }}>
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={reduit ? false : { opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.38, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: reduit ? 0 : 0.25, ease: [0.22, 1, 0.36, 1] }}
           style={{ width: 'min(400px, 100%)' }}
         >
           <Box sx={{ display: { xs: 'flex', md: 'none' }, justifyContent: 'center', mb: 3 }}>
             <Box component="img" src="/logo-itclub.webp" alt="Logo" sx={{ width: 64, height: 64, borderRadius: 3, border: '2px solid #1FAF72' }} />
           </Box>
 
-          <Typography sx={{ fontFamily: "'JetBrains Mono',monospace", color: '#0E7A50', fontWeight: 700, fontSize: '0.78rem', mb: 0.8 }}>
-            $ ssh membre@itclub-emsp
+          <Typography sx={{ color: '#0E7A50', fontWeight: 700, fontSize: '0.875rem', mb: 0.8 }}>
+            Connexion à ton espace membre
           </Typography>
           <Typography sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 800, fontSize: { xs: '1.6rem', md: '2rem' }, color: '#111827', mb: 1 }}>
             Espace membre
@@ -109,31 +114,36 @@ export default function Login() {
           </Typography>
 
           {erreur && (
-            <motion.div initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1, x: 0 }}>
-              <Alert severity="error" sx={{ mb: 2 }}>{erreur}</Alert>
+            <motion.div initial={reduit ? false : { opacity: 0, x: -12 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: reduit ? 0 : 0.2 }}>
+              <Alert ref={alerteRef} tabIndex={-1} severity="error" sx={{ mb: 2, fontSize: '0.875rem', '&:focus': { outline: '2px solid #B42318', outlineOffset: '2px' } }}>{erreur}</Alert>
             </motion.div>
           )}
 
           <Box component="form" onSubmit={submit} sx={{ display: 'grid', gap: 2.5 }}>
             <TextField
-              name="email" label="E-mail (@emsp.int)" type="email" required fullWidth autoComplete="email"
+              name="email" label="E-mail du club" placeholder="prenom.nom@emsp.int" type="email" required fullWidth autoComplete="email"
               slotProps={{ input: { startAdornment: <InputAdornment position="start"><EmailIcon fontSize="small" sx={{ color: '#1FAF72' }} /></InputAdornment> } }}
             />
+            <Box>
             <ChampMotDePasse
-              name="password" label="Mot de passe" required fullWidth autoComplete="current-password"
+              name="password" label="Mot de passe" placeholder="Celui reçu par e-mail" required fullWidth autoComplete="current-password"
               InputProps={{ startAdornment: <InputAdornment position="start"><LockIcon fontSize="small" sx={{ color: '#1FAF72' }} /></InputAdornment> }}
             />
+            <Typography variant="body2" sx={{ mt: 1, color: '#5A6B63', fontSize: '0.875rem' }}>
+              Mot de passe perdu ? Contacte la Secrétaire Générale du club.
+            </Typography>
+            </Box>
             <motion.div whileHover={{ scale: 1.015 }} whileTap={{ scale: 0.985 }}>
               <Button type="submit" variant="contained" size="large" fullWidth disabled={chargement}
                 sx={{ bgcolor: '#1FAF72', '&:hover': { bgcolor: '#179963', boxShadow: '0 8px 22px rgba(31,175,114,.4)' }, py: 1.4, fontWeight: 800, borderRadius: '14px', transition: 'background 200ms ease, box-shadow 200ms ease' }}>
                 {chargement ? 'Connexion…' : 'Se connecter'}
               </Button>
             </motion.div>
-            <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', lineHeight: 1.8 }}>
-              Pas encore membre ? <RouterLink to="/adhesion" style={{ color: '#0E7A50', fontWeight: 700 }}>Remplis le formulaire d'adhésion</RouterLink>.
+            <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', lineHeight: 1.8, fontSize: '0.875rem' }}>
+              Pas encore membre ? <RouterLink to="/adhesion" style={{ color: '#0E7A50', fontWeight: 700, display: 'inline-flex', alignItems: 'center', minHeight: 44 }}>Remplis le formulaire d'adhésion</RouterLink>.
             </Typography>
             {reveil && chargement && (
-              <Typography variant="caption" sx={{ textAlign: 'center', color: '#B45309', display: 'block', fontWeight: 700 }}>
+              <Typography variant="caption" sx={{ textAlign: 'center', color: '#B45309', display: 'block', fontWeight: 700, fontSize: '0.875rem' }}>
                 Le serveur gratuit se réveille (~50s après inactivité) — laisse la page ouverte…
               </Typography>
             )}
