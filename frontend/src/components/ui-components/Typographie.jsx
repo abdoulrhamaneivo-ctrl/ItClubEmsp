@@ -77,30 +77,12 @@ export function LabelLigne({ children, couleur = '#1FAF72' }) {
   )
 }
 
-/** Séparateur de sections — trait fin animé avec losange central. */
+/** Séparateur de sections — trait fin et discret. */
 export function Separateur({ couleur = '#1FAF72' }) {
   return (
-    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1.5, my: 0.5 }}>
-      <motion.span
-        initial={{ scaleX: 0 }}
-        whileInView={{ scaleX: 1 }}
-        viewport={{ once: true, margin: '-60px' }}
-        transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-        style={{ width: 90, height: 1, background: `linear-gradient(90deg,transparent,${couleur}88)`, transformOrigin: 'right' }}
-      />
-      <motion.span
-        initial={{ scale: 0, rotate: 45 }}
-        whileInView={{ scale: 1, rotate: 45 }}
-        viewport={{ once: true, margin: '-60px' }}
-        transition={{ delay: 0.15, duration: 0.3, type: 'spring', stiffness: 300, damping: 18 }}
-        style={{ width: 7, height: 7, background: couleur, borderRadius: 1.5 }}
-      />
-      <motion.span
-        initial={{ scaleX: 0 }}
-        whileInView={{ scaleX: 1 }}
-        viewport={{ once: true, margin: '-60px' }}
-        transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-        style={{ width: 90, height: 1, background: `linear-gradient(90deg,${couleur}88,transparent)`, transformOrigin: 'left' }}
+    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', my: 0.5 }}>
+      <Box
+        sx={{ width: 120, height: 1, background: `${couleur}55`, borderRadius: 1 }}
       />
     </Box>
   )
