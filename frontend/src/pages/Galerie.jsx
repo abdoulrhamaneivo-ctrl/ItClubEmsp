@@ -1,5 +1,5 @@
-import { useMemo, useState, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { useMemo, useState, useEffect, useRef } from 'react'
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import Box from '@mui/material/Box'
 import Container from '@mui/material/Container'
 import Typography from '@mui/material/Typography'
@@ -30,6 +30,9 @@ function dateCourte(iso) {
 
 export default function Galerie() {
   const medias = useContenu('medias')
+  const reduit = useReducedMotion()
+  const dialogueRef = useRef(null)
+  const fermerRef = useRef(null)
   const [filtre, setFiltre] = useState('tous')
   const [filtreType, setFiltreType] = useState('tous')
   const [lightbox, setLightbox] = useState(null)
@@ -49,16 +52,27 @@ export default function Galerie() {
     })
   }
 
-  // Lightbox : Escape ferme, flèches naviguent (convention universelle)
+  // Lightbox : Escape ferme, flèches naviguent, focus piégé, scroll fond verrouillé
   useEffect(() => {
     if (!lightbox) return
+    const precedent = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    fermerRef.current?.focus()
     const h = (e) => {
       if (e.key === 'Escape') setLightbox(null)
       else if (e.key === 'ArrowRight') naviguer(1)
       else if (e.key === 'ArrowLeft') naviguer(-1)
+      else if (e.key === 'Tab') {
+        const cibles = dialogueRef.current?.querySelectorAll('button')
+        if (!cibles || cibles.length === 0) return
+        const premiere = cibles[0]
+        const derniere = cibles[cibles.length - 1]
+        if (e.shiftKey && document.activeElement === premiere) { e.preventDefault(); derniere.focus() }
+        else if (!e.shiftKey && document.activeElement === derniere) { e.preventDefault(); premiere.focus() }
+      }
     }
     window.addEventListener('keydown', h)
-    return () => window.removeEventListener('keydown', h)
+    return () => { window.removeEventListener('keydown', h); document.body.style.overflow = precedent }
   }, [lightbox, liste])
 
   const IconeDe = (m) => {
@@ -81,7 +95,7 @@ export default function Galerie() {
         />
 
         {/* Filtres — barre flottante */}
-        <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08, duration: 0.35 }}>
+        <motion.div initial={reduit ? false : { opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: reduit ? 0 : 0.25, delay: reduit ? 0 : 0.08 }}>
           <Box sx={{
             display: 'flex', flexWrap: 'wrap', gap: 1.4, justifyContent: 'center',
             mx: 'auto', mb: 2, width: 'fit-content', maxWidth: '100%',
@@ -92,10 +106,11 @@ export default function Galerie() {
               <Chip
                 key={e.id} label={e.label} onClick={() => setFiltre(e.id)}
                 sx={{
-                  fontWeight: 800, cursor: 'pointer', height: 34,
+                  fontWeight: 800, fontSize: '0.875rem', cursor: 'pointer', height: 44,
                   bgcolor: filtre === e.id ? '#0F5B3A' : 'transparent',
                   color: filtre === e.id ? '#fff' : '#374151',
                   '&:hover': { bgcolor: filtre === e.id ? '#0c4a2f' : '#F0F5F2' },
+                  '&:focus-visible': { outline: '2px solid #0F5B3A', outlineOffset: '2px' },
                 }}
               />
             ))}
@@ -121,19 +136,25 @@ export default function Galerie() {
               <motion.div
                 key={m.id}
                 layout
-                initial={{ opacity: 0, y: 22 }}
+                initial={reduit ? false : { opacity: 0, y: 22 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.92 }}
-                transition={{ delay: Math.min(i * 0.03, 0.3), duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-                whileHover={{ y: -5 }}
-                onClick={() => setLightbox(m)}
+                transition={{ delay: reduit ? 0 : Math.min(i * 0.03, 0.3), duration: reduit ? 0 : 0.25, ease: [0.22, 1, 0.36, 1] }}
+                whileHover={reduit ? undefined : { y: -5 }}
                 style={{ cursor: 'pointer' }}
               >
-                <Box sx={{
+                <Box
+                  component="button"
+                  type="button"
+                  onClick={() => setLightbox(m)}
+                  aria-label={`Ouvrir : ${m.titre}`}
+                  sx={{
                   borderRadius: '18px', overflow: 'hidden', border: '1px solid #E8ECEA',
                   boxShadow: '0 4px 14px rgba(13,27,42,.06)', background: '#fff',
                   transition: 'box-shadow 220ms ease, border-color 220ms ease',
                   '&:hover': { borderColor: '#C9D4CF', boxShadow: '0 10px 26px rgba(13,27,42,.1)' },
+                  '&:focus-visible': { outline: '2px solid #0F5B3A', outlineOffset: '2px' },
+                  width: '100%', textAlign: 'left', padding: 0, border: '1px solid #E8ECEA', font: 'inherit',
                 }}>
                   {m.image ? (
                     <Box component="img" src={m.image} alt={m.titre} loading="lazy" decoding="async" sx={{ width: '100%', minHeight: 180, objectFit: 'cover', display: 'block' }} />
@@ -158,15 +179,15 @@ export default function Galerie() {
                   )}
                   <Box sx={{ p: { xs: 1.4, md: 2 }, position: 'relative' }}>
                     <Box sx={{ position: 'absolute', top: -12, left: 12, display: 'flex', gap: 0.8 }}>
-                      <Box sx={{ bgcolor: 'rgba(13,27,42,.72)', color: '#fff', px: 1.1, py: 0.3, borderRadius: 9999, fontSize: '0.6rem', fontWeight: 800, letterSpacing: '0.08em' }}>
+                      <Box sx={{ bgcolor: 'rgba(13,27,42,.72)', color: '#fff', px: 1.1, py: 0.4, borderRadius: 9999, fontSize: '0.72rem', fontWeight: 800, letterSpacing: '0.08em' }}>
                         {m.type === 'video' ? 'VIDÉO' : 'PHOTO'}
                       </Box>
-                      <Box sx={{ bgcolor: 'rgba(13,27,42,.72)', color: '#fff', px: 1.1, py: 0.3, borderRadius: 9999, fontSize: '0.6rem', fontWeight: 800 }}>
+                      <Box sx={{ bgcolor: 'rgba(13,27,42,.72)', color: '#fff', px: 1.1, py: 0.4, borderRadius: 9999, fontSize: '0.72rem', fontWeight: 800 }}>
                         {dateCourte(m.date)}
                       </Box>
                     </Box>
-                    <Typography sx={{ fontWeight: 800, color: '#111827', fontSize: { xs: '0.8rem', md: '0.92rem' }, lineHeight: 1.35, mt: 1.2 }}>{m.titre}</Typography>
-                    <Typography variant="caption" color="textSecondary" sx={{ display: { xs: 'none', sm: 'block' }, mt: 0.4, lineHeight: 1.5 }}>{m.legende}</Typography>
+                    <Typography sx={{ fontWeight: 800, color: '#111827', fontSize: { xs: '0.875rem', md: '0.95rem' }, lineHeight: 1.35, mt: 1.2 }}>{m.titre}</Typography>
+                    <Typography variant="body2" color="textSecondary" sx={{ display: { xs: 'block', sm: 'block' }, mt: 0.4, lineHeight: 1.5, fontSize: '0.812rem' }}>{m.legende}</Typography>
                   </Box>
                 </Box>
               </motion.div>
@@ -186,16 +207,22 @@ export default function Galerie() {
         {lightbox && (
           <motion.div
             key="lightbox"
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            role="dialog"
+            aria-modal="true"
+            aria-label={lightbox.titre}
+            ref={dialogueRef}
+            initial={reduit ? { opacity: 1 } : { opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
             onClick={() => setLightbox(null)}
             style={{ position: 'fixed', inset: 0, zIndex: 1300, background: 'rgba(13,27,42,.92)', backdropFilter: 'blur(10px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}
           >
             <motion.div
               onClick={(e) => e.stopPropagation()}
-              initial={{ opacity: 0, scale: 0.92, y: 30 }}
+              initial={reduit ? { opacity: 1 } : { opacity: 0, scale: 0.92, y: 30 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.94, y: 20 }}
-              transition={{ type: 'spring', stiffness: 240, damping: 24 }}
+              transition={reduit ? { duration: 0 } : { type: 'spring', stiffness: 240, damping: 24 }}
               style={{ width: 'min(960px, 96vw)', maxHeight: '92vh', overflowY: 'auto' }}
             >
               <Box sx={{ bgcolor: '#0D1B2A', borderRadius: '20px', overflow: 'hidden', border: '1px solid rgba(154,251,215,.25)' }}>
@@ -217,7 +244,7 @@ export default function Galerie() {
                       {IconeDe({ ...lightbox, taille: 92 })}
                     </Box>
                   )}
-                  <IconButton onClick={() => setLightbox(null)} sx={{ position: 'absolute', top: 10, right: 10, color: '#fff', bgcolor: 'rgba(13,27,42,.6)', '&:hover': { bgcolor: 'rgba(13,27,42,.85)' } }}>
+                  <IconButton onClick={() => setLightbox(null)} aria-label="Fermer" ref={fermerRef} sx={{ position: 'absolute', top: 10, right: 10, color: '#fff', bgcolor: 'rgba(13,27,42,.6)', width: 44, height: 44, '&:hover': { bgcolor: 'rgba(13,27,42,.85)' } }}>
                     <CloseIcon />
                   </IconButton>
                 </Box>
@@ -231,8 +258,8 @@ export default function Galerie() {
                     </Typography>
                   </Box>
                   <Box sx={{ display: 'flex', gap: 1 }}>
-                    <IconButton onClick={() => naviguer(-1)} sx={{ color: '#fff', border: '1px solid rgba(255,255,255,.3)' }}><ArrowBackIosNewIcon fontSize="small" /></IconButton>
-                    <IconButton onClick={() => naviguer(1)} sx={{ color: '#fff', border: '1px solid rgba(255,255,255,.3)' }}><ArrowForwardIosIcon fontSize="small" /></IconButton>
+                    <IconButton onClick={() => naviguer(-1)} aria-label="Média précédent" sx={{ color: '#fff', border: '1px solid rgba(255,255,255,.3)', width: 44, height: 44 }}><ArrowBackIosNewIcon fontSize="small" /></IconButton>
+                    <IconButton onClick={() => naviguer(1)} aria-label="Média suivant" sx={{ color: '#fff', border: '1px solid rgba(255,255,255,.3)', width: 44, height: 44 }}><ArrowForwardIosIcon fontSize="small" /></IconButton>
                   </Box>
                 </Box>
               </Box>
