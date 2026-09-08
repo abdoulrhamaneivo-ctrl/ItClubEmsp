@@ -104,13 +104,13 @@ export default function Navbar() {
           </Box>
         </motion.a>
 
-        <Box sx={{ display: { xs: 'none', lg: 'flex' }, gap: 0.25, alignItems: 'center', flexShrink: 1, minWidth: 0 }}>
+        <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 0.25, alignItems: 'center', flexShrink: 1, minWidth: 0 }}>
           {liens.filter((l) => LIENS_PRINCIPAUX.includes(l.label) && (!l.membres || user)).map((l) => (
             <Button key={l.cible} color="inherit"
               href={l.route ? l.cible : `/#${l.cible}`}
               onClick={(e) => { e.preventDefault(); l.route ? navigate(l.cible) : allerVers(l.cible) }}
               sx={{
-                position: 'relative', fontWeight: 600, fontSize: { lg: '0.82rem', xl: '0.9rem' }, px: { lg: 1, xl: 1.25 },
+                position: 'relative', fontWeight: 600, fontSize: { md: '0.78rem', lg: '0.82rem', xl: '0.9rem' }, px: { md: 0.8, lg: 1, xl: 1.25 },
                 whiteSpace: 'nowrap',
                 '&::after': {
                   content: '""', position: 'absolute', bottom: 4, left: '50%',
@@ -127,7 +127,7 @@ export default function Navbar() {
             onClick={(e) => setMenuPlus(e.currentTarget)}
             endIcon={<ExpandMoreIcon sx={{ transition: 'transform 200ms ease', rotate: menuPlus ? '180deg' : '0deg' }} />}
             sx={{
-              fontWeight: 600, fontSize: { lg: '0.82rem', xl: '0.9rem' }, px: { lg: 1, xl: 1.25 },
+              fontWeight: 600, fontSize: { md: '0.78rem', lg: '0.82rem', xl: '0.9rem' }, px: { md: 0.8, lg: 1, xl: 1.25 },
               whiteSpace: 'nowrap',
               color: plusDe(user).some((l) => actif(l)) ? '#1FAF72' : 'inherit',
             }}>
@@ -139,26 +139,35 @@ export default function Navbar() {
             onClose={() => setMenuPlus(null)}
             anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
             transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-            slotProps={{ paper: { sx: { mt: 1, borderRadius: '14px', border: '1px solid #E8ECEA', boxShadow: '0 16px 40px rgba(13,27,42,.14)', minWidth: 210, py: 0.6 } } }}
+            slotProps={{ paper: { sx: {
+              mt: 1, borderRadius: '14px', minWidth: 210, py: 0.6,
+              bgcolor: (theme) => theme.palette.mode === 'dark' ? '#10202F' : theme.palette.background.paper,
+              border: '1px solid', borderColor: 'divider',
+              boxShadow: (theme) => theme.palette.mode === 'dark' ? '0 16px 40px rgba(0,0,0,.5)' : '0 16px 40px rgba(13,27,42,.14)',
+            } } }}
           >
             {plusDe(user).map((l) => (
               <MenuItem key={l.cible}
                 onClick={() => { setMenuPlus(null); l.route ? navigate(l.cible) : allerVers(l.cible) }}
                 sx={{
                   fontWeight: 600, fontSize: '0.88rem', py: 1,
-                  color: actif(l) ? '#0E7A50' : '#111827',
-                  bgcolor: actif(l) ? '#E4F8EF' : 'transparent',
-                  '&:hover': { bgcolor: '#F6FBF9' },
+                  color: (theme) => actif(l) ? (theme.palette.mode === 'dark' ? '#6EE7B7' : '#0E7A50') : 'text.primary',
+                  bgcolor: (theme) => actif(l) ? (theme.palette.mode === 'dark' ? 'rgba(31,175,114,.14)' : '#E4F8EF') : 'transparent',
+                  '&:hover': { bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(154,251,215,.08)' : '#F6FBF9' },
                 }}>
                 {l.label}
               </MenuItem>
             ))}
           </Menu>
+        </Box>
+
+        {/* CTA à droite — groupe autonome */}
+        <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', gap: 1, flexShrink: 0 }}>
           {!user && (
             <Button
               variant="contained"
               href="/adhesion"
-              sx={{ bgcolor: '#1FAF72', color: '#fff', '&:hover': { bgcolor: '#179963' }, ml: { lg: 0.5, xl: 1 }, transition: 'background 200ms ease, box-shadow 200ms ease', whiteSpace: 'nowrap', px: { lg: 1.4, xl: 2 } }}
+              sx={{ bgcolor: '#1FAF72', color: '#fff', '&:hover': { bgcolor: '#179963' }, transition: 'background 200ms ease', whiteSpace: 'nowrap', px: { md: 1.1, lg: 1.4, xl: 2 } }}
             >
               Rejoindre le club
             </Button>
@@ -169,13 +178,17 @@ export default function Navbar() {
               href={user ? '/espace' : '/login'}
               startIcon={<LoginIcon />}
               sx={{
-                color: scrolled ? '#0F5B3A' : '#9AFBD7',
+                color: (theme) => scrolled
+                  ? (theme.palette.mode === 'dark' ? '#6EE7B7' : '#0F5B3A')
+                  : '#9AFBD7',
                 fontWeight: 800,
                 border: '1.5px solid',
-                borderColor: scrolled ? 'rgba(15,91,58,.35)' : 'rgba(154,251,215,.5)',
+                borderColor: (theme) => scrolled
+                  ? (theme.palette.mode === 'dark' ? 'rgba(110,231,183,.5)' : 'rgba(15,91,58,.35)')
+                  : 'rgba(154,251,215,.5)',
                 borderRadius: 6,
                 whiteSpace: 'nowrap',
-                px: { lg: 1.2, xl: 1.6 },
+                px: { md: 1, lg: 1.2, xl: 1.6 },
               }}
             >
               {user ? 'Mon espace' : 'Connexion'}
@@ -191,7 +204,7 @@ export default function Navbar() {
           {sombreActif ? <LightModeIcon /> : <DarkModeIcon />}
         </IconButton>
         <IconButton
-          sx={{ display: { xs: 'block', lg: 'none' }, color: 'inherit', border: '1px solid rgba(154,251,215,.16)', width: 44, height: 44 }}
+          sx={{ display: { xs: 'block', md: 'none' }, color: 'inherit', border: '1px solid rgba(154,251,215,.16)', width: 44, height: 44 }}
           aria-label="Ouvrir le menu"
           onClick={() => setOpen(true)}
         >
