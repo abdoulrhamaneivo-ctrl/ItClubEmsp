@@ -199,11 +199,11 @@ export default function Bureau() {
             {/* Contrôles */}
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mt: 4, justifyContent: { xs: 'center', md: 'flex-start' } }}>
               <IconButton aria-label="Membre précédent" onClick={(e) => { e.stopPropagation(); tourner(-1) }}
-                sx={{ bgcolor: '#fff', border: '1px solid #E5E7EB', transition: 'all 180ms ease', '&:hover': { bgcolor: '#0F5B3A', color: '#fff', borderColor: '#0F5B3A' } }}>
+                sx={{ bgcolor: '#fff', border: '1px solid #E5E7EB', width: 44, height: 44, transition: 'all 180ms ease', '&:hover': { bgcolor: '#0F5B3A', color: '#fff', borderColor: '#0F5B3A' }, '&:focus-visible': { outline: '2px solid #0F5B3A', outlineOffset: '2px' } }}>
                 <ArrowBackIosNewIcon fontSize="small" />
               </IconButton>
               <IconButton aria-label="Membre suivant" onClick={(e) => { e.stopPropagation(); tourner(1) }}
-                sx={{ bgcolor: '#1FAF72', color: '#fff', transition: 'all 180ms ease', '&:hover': { bgcolor: '#179963', boxShadow: '0 6px 18px rgba(31,175,114,.4)' } }}>
+                sx={{ bgcolor: '#1FAF72', color: '#fff', width: 44, height: 44, transition: 'all 180ms ease', '&:hover': { bgcolor: '#179963', boxShadow: '0 6px 18px rgba(31,175,114,.4)' }, '&:focus-visible': { outline: '2px solid #fff', outlineOffset: '2px' } }}>
                 <ArrowForwardIosIcon fontSize="small" />
               </IconButton>
               <Typography sx={{ color: '#5A6B63', fontWeight: 700, fontSize: '0.78rem', fontFamily: "'JetBrains Mono',monospace", ml: 1 }}>

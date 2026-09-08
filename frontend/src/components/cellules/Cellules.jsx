@@ -206,14 +206,14 @@ export default function Cellules() {
                       <Button
                         variant="contained"
                         href="/adhesion"
-                        sx={{ bgcolor: actuelle.couleur, '&:hover': { filter: 'brightness(.9)' }, fontWeight: 800, borderRadius: '9999px', px: 3 }}
+                        sx={{ bgcolor: actuelle.couleur, '&:hover': { filter: 'brightness(.9)' }, fontWeight: 800, borderRadius: '9999px', px: 3, minHeight: 44 }}
                       >
                         Rejoindre cette cellule
                       </Button>
                       <Button
                         variant="outlined"
                         onClick={() => setOpenModal(true)}
-                        sx={{ borderColor: actuelle.couleur, color: actuelle.couleur, fontWeight: 700, borderRadius: '9999px', px: 3 }}
+                        sx={{ borderColor: actuelle.couleur, color: actuelle.couleur, fontWeight: 700, borderRadius: '9999px', px: 3, minHeight: 44 }}
                       >
                         Détails
                       </Button>
@@ -227,8 +227,8 @@ export default function Cellules() {
 
         {/* ── Contrôles : flèches + pastilles ────────────────────── */}
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 3, mt: 4 }}>
-          <IconButton onClick={() => setIndex((index - 1 + n) % n)}
-            sx={{ bgcolor: '#fff', border: '1px solid #E5E7EB', boxShadow: '0 4px 14px rgba(0,0,0,.08)', transition: 'all 180ms ease', '&:hover': { bgcolor: '#1FAF72', borderColor: '#1FAF72', color: '#fff', boxShadow: '0 6px 18px rgba(31,175,114,.4)', transform: 'scale(1.06)' }, '&:active': { transform: 'scale(0.96)' } }}>
+          <IconButton onClick={() => setIndex((index - 1 + n) % n)} aria-label="Cellule précédente"
+            sx={{ bgcolor: '#fff', border: '1px solid #E5E7EB', width: 44, height: 44, boxShadow: '0 4px 14px rgba(0,0,0,.08)', transition: 'all 180ms ease', '&:hover': { bgcolor: '#1FAF72', borderColor: '#1FAF72', color: '#fff', boxShadow: '0 6px 18px rgba(31,175,114,.4)' }, '&:active': { transform: 'scale(0.96)' }, '&:focus-visible': { outline: '2px solid #1FAF72', outlineOffset: '2px' } }}>
             <ArrowBackIosNewIcon fontSize="small" />
           </IconButton>
           <Box sx={{ display: 'flex', gap: 1.6 }}>
@@ -249,8 +249,8 @@ export default function Cellules() {
               </motion.div>
             ))}
           </Box>
-          <IconButton onClick={() => setIndex((index + 1) % n)}
-            sx={{ bgcolor: '#fff', border: '1px solid #E5E7EB', boxShadow: '0 4px 14px rgba(0,0,0,.08)', transition: 'all 180ms ease', '&:hover': { bgcolor: '#1FAF72', borderColor: '#1FAF72', color: '#fff', boxShadow: '0 6px 18px rgba(31,175,114,.4)', transform: 'scale(1.06)' }, '&:active': { transform: 'scale(0.96)' } }}>
+          <IconButton onClick={() => setIndex((index + 1) % n)} aria-label="Cellule suivante"
+            sx={{ bgcolor: '#fff', border: '1px solid #E5E7EB', width: 44, height: 44, boxShadow: '0 4px 14px rgba(0,0,0,.08)', transition: 'all 180ms ease', '&:hover': { bgcolor: '#1FAF72', borderColor: '#1FAF72', color: '#fff', boxShadow: '0 6px 18px rgba(31,175,114,.4)' }, '&:active': { transform: 'scale(0.96)' }, '&:focus-visible': { outline: '2px solid #1FAF72', outlineOffset: '2px' } }}>
             <ArrowForwardIosIcon fontSize="small" />
           </IconButton>
         </Box>
