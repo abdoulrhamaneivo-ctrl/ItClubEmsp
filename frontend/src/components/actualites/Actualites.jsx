@@ -171,18 +171,21 @@ function CarteActu({ n, index }) {
                         const nb = reactions[emoji] ?? 0
                         return (
                           <Box key={emoji} component="button" onClick={() => reagir(emoji)}
+                            aria-label={`Réagir ${emoji}${nb > 0 ? ` (${nb})` : ''}`}
+                            aria-pressed={actif}
                             title={user ? 'Réagir' : 'Connecte-toi pour réagir'}
                             sx={{
                               border: '1px solid', borderColor: actif ? '#1FAF72' : '#E5E7EB',
                               bgcolor: actif ? '#E4F8EF' : '#fff', borderRadius: '9999px',
-                              px: 1, py: 0.2, fontSize: '0.8rem', cursor: 'pointer',
-                              display: 'flex', alignItems: 'center', gap: 0.4,
+                              px: 1, minWidth: 44, height: 36, fontSize: '0.95rem', cursor: 'pointer',
+                              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0.4,
                               transition: 'transform 140ms ease, background 140ms ease',
-                              '&:hover': { transform: 'scale(1.08)', bgcolor: '#F6FBF9' },
+                              '&:hover': { bgcolor: '#F6FBF9' },
+                              '&:focus-visible': { outline: '2px solid #1FAF72', outlineOffset: '2px' },
                             }}>
                             <span>{emoji}</span>
                             {nb > 0 && (
-                              <span style={{ fontSize: '0.7rem', fontWeight: 800, color: actif ? '#0B7A4B' : '#6B7280' }}>
+                              <span style={{ fontSize: '0.75rem', fontWeight: 800, color: actif ? '#0B7A4B' : '#6B7280' }}>
                                 {nb}
                               </span>
                             )}
@@ -194,7 +197,7 @@ function CarteActu({ n, index }) {
 
                   {/* Commentaires */}
                   <Button size="small" onClick={basculerCommentaires}
-                    sx={{ alignSelf: 'flex-start', mt: 1, color: '#5A6B63', fontWeight: 700, fontSize: '0.76rem', p: 0, minWidth: 0 }}>
+                    sx={{ alignSelf: 'flex-start', mt: 1, color: '#5A6B63', fontWeight: 700, fontSize: '0.812rem', minHeight: 44 }}>
                     {ouverts ? 'Masquer les commentaires' : `Commentaires${(n.commentaires_count ?? 0) > 0 ? ` (${n.commentaires_count})` : ''}`}
                   </Button>
                   {ouverts && (
