@@ -130,7 +130,7 @@ export default function Login() {
               InputProps={{ startAdornment: <InputAdornment position="start"><LockIcon fontSize="small" sx={{ color: '#1FAF72' }} /></InputAdornment> }}
             />
             <Typography variant="body2" sx={{ mt: 1, color: '#5A6B63', fontSize: '0.875rem' }}>
-              Mot de passe perdu ? Contacte la Secrétaire Générale du club.
+              Mot de passe perdu ? <RouterLink to="/mot-de-passe-oublie" style={{ color: '#1FAF72', fontWeight: 700 }}>Recevoir un lien</RouterLink>.
             </Typography>
             </Box>
             <motion.div whileHover={{ scale: 1.015 }} whileTap={{ scale: 0.985 }}>

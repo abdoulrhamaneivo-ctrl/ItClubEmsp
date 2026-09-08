@@ -7,6 +7,8 @@ import Toolbar from '@mui/material/Toolbar'
 import Button from '@mui/material/Button'
 import IconButton from '@mui/material/IconButton'
 import MenuIcon from '@mui/icons-material/Menu'
+import DarkModeIcon from '@mui/icons-material/DarkMode'
+import LightModeIcon from '@mui/icons-material/LightMode'
 import LoginIcon from '@mui/icons-material/Login'
 import Drawer from '@mui/material/Drawer'
 import List from '@mui/material/List'
@@ -17,6 +19,7 @@ import MenuItem from '@mui/material/MenuItem'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import useScrollTrigger from '@mui/material/useScrollTrigger'
 import { useAuth } from '../../stores/auth'
+import { useThemeMode } from '../../hooks/useThemeMode.jsx'
 
 const liens = [
   { label: 'Le club', cible: 'club' },
@@ -46,6 +49,7 @@ export default function Navbar() {
   const [menuPlus, setMenuPlus] = useState(null)
   const scrolled = useScrollTrigger({ disableHysteresis: true, threshold: 80 })
   const user = useAuth((s) => s.user)
+  const { sombre: sombreActif, basculer: basculerTheme } = useThemeMode()
   const actif = (l) => (l.route ? location.pathname.startsWith(l.cible) : false)
 
   // Ancres : depuis une autre page, naviguer vers / puis scroller après rendu
@@ -172,6 +176,13 @@ export default function Navbar() {
           </motion.div>
         </Box>
 
+        <IconButton
+          onClick={basculerTheme}
+          aria-label={sombreActif ? 'Passer en thème clair' : 'Passer en thème sombre'}
+          sx={{ color: 'inherit', border: '1px solid rgba(154,251,215,.16)', width: 44, height: 44, mr: 1 }}
+        >
+          {sombreActif ? <LightModeIcon /> : <DarkModeIcon />}
+        </IconButton>
         <IconButton
           sx={{ display: { xs: 'block', lg: 'none' }, color: 'inherit', border: '1px solid rgba(154,251,215,.16)', width: 44, height: 44 }}
           aria-label="Ouvrir le menu"

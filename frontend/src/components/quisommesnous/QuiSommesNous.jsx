@@ -82,12 +82,9 @@ export default function QuiSommesNous() {
         >
           <Box sx={{
             mb: 8, borderRadius: '26px', overflow: 'hidden', position: 'relative',
-            background: 'linear-gradient(135deg,#0D1B2A 0%,#0F5B3A 120%)',
+            background: '#0D1B2A',
             boxShadow: '0 20px 48px rgba(15,91,58,.25)',
           }}>
-            {/* Cercles décoratifs */}
-            <Box sx={{ position: 'absolute', top: -70, right: -50, width: 220, height: 220, borderRadius: '50%', bgcolor: 'rgba(31,175,114,.18)' }} />
-            <Box sx={{ position: 'absolute', bottom: -90, left: '30%', width: 260, height: 260, borderRadius: '50%', bgcolor: 'rgba(154,251,215,.07)' }} />
             <Box sx={{
               position: 'relative', display: 'flex', flexWrap: 'wrap',
               justifyContent: 'space-around', py: { xs: 4, md: 5 }, px: { xs: 2, md: 6 }, gap: { xs: 3, md: 0 },
@@ -95,17 +92,17 @@ export default function QuiSommesNous() {
               {[
                 { valeur: statsReelles ? String(statsReelles.membres_bureau) : '10', label: 'Membres du Bureau' },
                 { valeur: statsReelles ? String(statsReelles.cellules) : '4', label: 'Cellules thématiques' },
-                { valeur: '100%', label: 'Bénévolat & entraide' },
-                { valeur: '48h', label: 'Réponse à ta candidature' },
+                { valeur: '0 FCFA', label: 'Cotisation — tout est gratuit' },
+                { valeur: '48 h', label: 'Délai de réponse du Bureau' },
               ].map((s, i) => (
                 <Box key={s.label} sx={{
                   textAlign: 'center', px: { xs: 2, md: 4 },
                   borderLeft: i === 0 ? 'none' : '1px solid rgba(255,255,255,.18)',
                 }}>
-                  <Typography sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 800, fontSize: { xs: '2rem', md: '2.6rem' }, color: '#fff', lineHeight: 1.1, fontVariantNumeric: 'tabular-nums' }}>
+                  <Typography sx={{ fontFamily: "'JetBrains Mono',monospace", fontWeight: 700, fontSize: { xs: '1.9rem', md: '2.4rem' }, color: '#fff', lineHeight: 1.1, fontVariantNumeric: 'tabular-nums' }}>
                     {s.valeur}
                   </Typography>
-                  <Typography sx={{ color: 'rgba(255,255,255,.66)', fontSize: '0.68rem', fontWeight: 800, letterSpacing: '0.2em', textTransform: 'uppercase', mt: 0.5 }}>
+                  <Typography sx={{ color: 'rgba(255,255,255,.66)', fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', mt: 0.5 }}>
                     {s.label}
                   </Typography>
                 </Box>

@@ -14,7 +14,7 @@ from apps.views_emails import (
     stats_publiques,
     admin_roles, admin_role_passation,
     donner_retour, retours_liste, bilan_evenement,
-    lien_definition_mdp, definir_mot_de_passe, changer_mot_de_passe,
+    lien_definition_mdp, definir_mot_de_passe, mot_de_passe_oublie, changer_mot_de_passe,
     export_membres_csv, export_cellule_csv, export_sondage_csv,
     export_crs_csv, export_retours_csv,
 )
@@ -60,6 +60,7 @@ urlpatterns = [
     path('api/v1/presentation/', presentation),
     path('api/v1/auth/token', TokenAvecUserView.as_view()),
     path('api/v1/auth/token/refresh', TokenRefreshView.as_view()),
+    path('api/v1/auth/mot-de-passe-oublie', mot_de_passe_oublie),
     path('api/v1/auth/definir-mot-de-passe', definir_mot_de_passe),
     path('api/v1/evenements/<int:pk>/inscrire', inscrire),
     path('api/v1/evenements/<int:pk>/desinscrire', desinscrire),

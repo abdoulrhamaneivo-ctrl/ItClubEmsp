@@ -329,6 +329,9 @@ export const api = {
     return postJson(endpoint, payload)
   },
   // Invitation : le membre choisit son mot de passe (lien email)
+  async demanderReinitialisation(email) {
+    return postJson('/api/v1/auth/mot-de-passe-oublie', { email })
+  },
   async definirMotDePasse(uid, token, password) {
     return postJson('/api/v1/auth/definir-mot-de-passe', { uid, token, password })
   },

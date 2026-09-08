@@ -1,29 +1,28 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { ThemeProvider, CssBaseline } from '@mui/material'
-import { useMediaQuery } from '@mui/material'
 import theme from './theme'
 import themeSombre from './themeSombre'
+import { FournisseurTheme, useThemeMode } from './hooks/useThemeMode.jsx'
 
 import AppRoutes from './routes/AppRoutes'
 
 /**
- * Mode sombre : suit le réglage du système d'exploitation
- * (prefers-color-scheme). Les pages à fond nuit assumé (vitrine, Espace,
- * Login) ont déjà leur propre identité sombre et ignorent ce thème.
+ * Thème : bouton clair/sombre dans la navbar (choix mémorisé),
+ * sinon réglage du système d'exploitation.
  */
+function ThemeActif({ children }) {
+  const { sombre } = useThemeMode()
+  const themeCourant = useMemo(() => (sombre ? themeSombre : theme), [sombre])
+  return <ThemeProvider theme={themeCourant}>{children}</ThemeProvider>
+}
+
 export default function App() {
-  const preferSombre = useMediaQuery('(prefers-color-scheme: dark)')
-  const [sombre, setSombre] = useState(preferSombre)
-
-  // useMediaQuery est synchrone après le premier rendu — resynchronise si l'OS change
-  useEffect(() => { setSombre(preferSombre) }, [preferSombre])
-
-  const themeActif = useMemo(() => (sombre ? themeSombre : theme), [sombre])
-
   return (
-    <ThemeProvider theme={themeActif}>
-      <CssBaseline />
-      <AppRoutes />
-    </ThemeProvider>
+    <FournisseurTheme>
+      <ThemeActif>
+        <CssBaseline />
+        <AppRoutes />
+      </ThemeActif>
+    </FournisseurTheme>
   )
 }

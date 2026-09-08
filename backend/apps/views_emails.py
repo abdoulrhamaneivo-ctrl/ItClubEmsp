@@ -828,6 +828,32 @@ class InvitationThrottle(AnonRateThrottle):
 @api_view(['POST'])
 @permission_classes([permissions.AllowAny])
 @throttle_classes([InvitationThrottle])
+def mot_de_passe_oublie(request):
+    """POST /api/v1/auth/mot-de-passe-oublie {email}.
+
+    Envoie un lien de réinitialisation si le compte existe. Répond toujours
+    200 avec le même message (on ne révèle pas qu'un email est inscrit).
+    """
+    from django.contrib.auth import get_user_model
+    User = get_user_model()
+    email = (request.data.get('email') or '').strip().lower()
+    if not email:
+        return Response({'detail': 'Email requis.'}, status=400)
+    user = User.objects.filter(email__iexact=email, is_active=True).first()
+    if user:
+        lien = lien_definition_mdp(user)
+        prenom = (user.first_name or 'membre').capitalize()
+        _fail_open('mot_de_passe_oublie', mail.send_email,
+                   email, '[IT-CLUB EMSP] Nouveau mot de passe',
+                   'mot_de_passe_oublie.html',
+                   {'prenom': prenom, 'lien': lien},
+                   notif_type='systeme', user=user)
+    return Response({'detail': 'Si cet email correspond à un compte membre, un lien vient de partir. Vérifie ta boîte (et les spams).'})
+
+
+@api_view(['POST'])
+@permission_classes([permissions.AllowAny])
+@throttle_classes([InvitationThrottle])
 def definir_mot_de_passe(request):
     """POST /api/v1/auth/definir-mot-de-passe {uid, token, password}."""
     from django.contrib.auth import get_user_model

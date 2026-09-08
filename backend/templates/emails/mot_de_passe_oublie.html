@@ -1,0 +1,7 @@
+{% extends "emails/base.html" %}
+{% block contenu %}
+<h2 style="color:#0D1B2A;margin:0 0 12px;">Nouveau mot de passe, {{ prenom }}</h2>
+<p style="color:#374151;line-height:1.7;">Tu as demandé la réinitialisation du mot de passe de ton espace membre IT-CLUB EMSP. Clique sur le bouton ci-dessous pour en choisir un nouveau — ce lien est valable <strong>une seule fois</strong> et pendant une durée limitée.</p>
+<p style="text-align:center;margin:22px 0 6px;"><a href="{{ lien }}" style="display:inline-block;background:#0F5B3A;color:#fff;font-weight:800;text-decoration:none;padding:13px 30px;border-radius:9999px;">Choisir un nouveau mot de passe →</a></p>
+<p style="color:#5A6B63;font-size:13px;line-height:1.6;">Si tu n'es pas à l'origine de cette demande, ignore ce message : ton mot de passe actuel reste valable.</p>
+{% endblock %}
