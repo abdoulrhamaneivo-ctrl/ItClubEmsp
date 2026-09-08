@@ -80,7 +80,7 @@ export default function Documentation() {
               >
                 {/* Carte famille (accordéon) */}
                 <Box sx={{
-                  bgcolor: '#fff', borderRadius: '16px',
+                  bgcolor: (theme) => theme.palette.background.paper, borderRadius: '16px',
                   border: `1px solid ${ouverte ? fam.couleur + '40' : '#E8ECEA'}`,
                   boxShadow: ouverte ? `0 8px 24px ${fam.couleur}12` : '0 4px 14px rgba(13,27,42,.05)',
                   overflow: 'hidden',
@@ -108,10 +108,10 @@ export default function Documentation() {
                       <Icone taille={20} couleur={fam.couleur === '#1FAF72' ? '#0E7A50' : fam.couleur} />
                     </Box>
                     <Box sx={{ flex: 1, minWidth: 0 }}>
-                      <Typography sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 800, fontSize: '0.98rem', color: '#111827', lineHeight: 1.3 }}>
+                      <Typography sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 800, fontSize: '0.98rem', color: 'text.primary', lineHeight: 1.3 }}>
                         {fam.titre}
                       </Typography>
-                      <Typography variant="caption" sx={{ color: '#5A6B63', fontWeight: 600, fontSize: '0.7rem' }}>
+                      <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600, fontSize: '0.7rem' }}>
                         {fam.sousTitre} · {docsFamille.length} doc{docsFamille.length > 1 ? 's' : ''}
                       </Typography>
                     </Box>
@@ -153,17 +153,17 @@ export default function Documentation() {
                             <IcDocument taille={18} couleur={doc.couleur === '#F5A623' ? '#B45309' : doc.couleur} />
                           </Box>
                           <Box sx={{ flex: 1, minWidth: 0 }}>
-                            <Typography sx={{ fontWeight: 800, color: '#111827', fontSize: '0.86rem', lineHeight: 1.35 }}>
+                            <Typography sx={{ fontWeight: 800, color: 'text.primary', fontSize: '0.86rem', lineHeight: 1.35 }}>
                               {doc.titre}
                             </Typography>
-                            <Typography variant="caption" sx={{ color: '#5A6B63', fontWeight: 600, fontSize: '0.72rem', display: 'block', lineHeight: 1.5 }}>
+                            <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600, fontSize: '0.72rem', display: 'block', lineHeight: 1.5 }}>
                               {doc.description}
                             </Typography>
                           </Box>
                           <Chip
                             label={doc.format ?? 'PDF'} size="small"
                             sx={{
-                              bgcolor: '#F5F7F6', color: doc.couleur === '#F5A623' ? '#B45309' : doc.couleur,
+                              bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(154,251,215,.08)' : '#F5F7F6', color: doc.couleur === '#F5A623' ? '#F59E0B' : doc.couleur,
                               fontWeight: 800, fontSize: '0.6rem', flexShrink: 0, height: 22,
                             }}
                           />
@@ -189,9 +189,9 @@ export default function Documentation() {
         {/* ═══ Comptes rendus publiés (membres connectés) ═══ */}
         {user && !api.isMockMode() && publies.length > 0 && (
           <Box sx={{ mt: 3 }}>
-            <Typography sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 800, fontSize: '1rem', color: '#111827', mb: 1.2 }}>
+            <Typography sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 800, fontSize: '1rem', color: 'text.primary', mb: 1.2 }}>
               Comptes rendus de réunions
-              <Typography component="span" variant="caption" sx={{ color: '#5A6B63', fontWeight: 600, ml: 1 }}>
+              <Typography component="span" variant="caption" sx={{ color: 'text.secondary', fontWeight: 600, ml: 1 }}>
                 {publies.length} publié{publies.length > 1 ? 's' : ''} · réservé aux membres
               </Typography>
             </Typography>
@@ -199,17 +199,17 @@ export default function Documentation() {
               {publies.map((cr) => {
                 const ouvert = crOuvert === cr.id
                 return (
-                  <Box key={cr.id} sx={{ bgcolor: '#fff', borderRadius: '14px', border: '1px solid #E8ECEA', overflow: 'hidden' }}>
+                  <Box key={cr.id} sx={{ bgcolor: (theme) => theme.palette.background.paper, borderRadius: '14px', border: '1px solid', borderColor: 'divider', overflow: 'hidden' }}>
                     <Box onClick={() => setCrOuvert(ouvert ? null : cr.id)}
                       sx={{ display: 'flex', gap: 1.4, alignItems: 'center', px: 2.2, py: 1.5, cursor: 'pointer', '&:hover': { bgcolor: '#F6FBF9' } }}>
                       <Box sx={{ width: 38, height: 38, borderRadius: '10px', flexShrink: 0, bgcolor: '#7B61FF12', border: '1px solid #7B61FF30', display: 'grid', placeItems: 'center' }}>
                         <IcMembres taille={18} couleur="#7B61FF" />
                       </Box>
                       <Box sx={{ flex: 1, minWidth: 0 }}>
-                        <Typography sx={{ fontWeight: 800, color: '#111827', fontSize: '0.86rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        <Typography sx={{ fontWeight: 800, color: 'text.primary', fontSize: '0.86rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                           {cr.titre}
                         </Typography>
-                        <Typography variant="caption" sx={{ color: '#5A6B63' }}>
+                        <Typography variant="caption" sx={{ color: 'text.secondary' }}>
                           Réunion du {(cr.reunion_date ?? '').slice(0, 10).split('-').reverse().join('/')}
                           {cr.valide_par_nom && ` · validé par ${cr.valide_par_nom}`}
                         </Typography>
@@ -219,11 +219,11 @@ export default function Documentation() {
                     <Collapse in={ouvert} timeout={240} unmountOnExit>
                       <Box sx={{ px: 2.2, pb: 2, pt: 0.5, borderTop: '1px solid #EEF2F0' }}>
                         {cr.ordre_du_jour && (
-                          <Typography variant="body2" sx={{ color: '#374151', fontSize: '0.82rem', mb: 1, whiteSpace: 'pre-wrap' }}>
+                          <Typography variant="body2" sx={{ color: 'text.secondary', fontSize: '0.82rem', mb: 1, whiteSpace: 'pre-wrap' }}>
                             <strong>Ordre du jour —</strong> {cr.ordre_du_jour}
                           </Typography>
                         )}
-                        <Typography variant="body2" sx={{ color: '#111827', fontSize: '0.86rem', lineHeight: 1.7, whiteSpace: 'pre-wrap' }}>
+                        <Typography variant="body2" sx={{ color: 'text.primary', fontSize: '0.86rem', lineHeight: 1.7, whiteSpace: 'pre-wrap' }}>
                           {cr.contenu}
                         </Typography>
                       </Box>

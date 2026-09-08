@@ -110,7 +110,7 @@ export default function Adhesion() {
 
   const rendreChamp = (c) => {
     const labelMaj = (
-      <Box component="span" sx={{ fontSize: '0.68rem', fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#374151' }}>
+      <Box component="span" sx={{ fontSize: '0.68rem', fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'text.secondary' }}>
         {c.label} {c.requis && <Box component="span" sx={{ color: '#B42318' }}>*</Box>}
       </Box>
     )
@@ -143,7 +143,7 @@ export default function Adhesion() {
             <Typography variant="overline" sx={{ color: '#B45309', fontWeight: 800, letterSpacing: '0.15em', textTransform: 'uppercase', mb: 1.5, display: 'inline-block', borderBottom: '3px solid #F5A623', paddingBottom: 0.5 }}>
               Nous rejoindre
             </Typography>
-            <Typography component="h2" sx={{ fontFamily: "'Orbitron', sans-serif", fontWeight: 700, fontSize: { xs: '1.75rem', md: '2.5rem' }, lineHeight: 1.2, color: '#111827', mb: 2 }}>
+            <Typography component="h2" sx={{ fontFamily: "'Orbitron', sans-serif", fontWeight: 700, fontSize: { xs: '1.75rem', md: '2.5rem' }, lineHeight: 1.2, color: 'text.primary', mb: 2 }}>
               Rejoins le club en 3 étapes
             </Typography>
             <Typography color="textSecondary" maxWidth={580} sx={{ lineHeight: 1.7 }}>
@@ -162,7 +162,7 @@ export default function Adhesion() {
             transition={{ duration: 0.38, delay: 0.06, ease: [0.22, 1, 0.36, 1] }}
           >
             <Box sx={{
-              bgcolor: '#fff', borderRadius: '22px', border: '1px solid #E5E7EB',
+              bgcolor: (theme) => theme.palette.background.paper, borderRadius: '22px', border: '1px solid', borderColor: 'divider',
               boxShadow: '0 16px 44px rgba(15,91,58,.10)', overflow: 'hidden',
             }}>
               {/* ── Bandeau d'en-tête du formulaire (style image 9) ── */}
@@ -197,7 +197,7 @@ export default function Adhesion() {
                         <motion.div
                           animate={{
                             scale: etape === i ? 1.12 : 1,
-                            backgroundColor: etape > i ? '#1FAF72' : etape === i ? '#0F5B3A' : '#E5E7EB',
+                            backgroundColor: (theme) => etape > i ? '#1FAF72' : etape === i ? '#0F5B3A' : (theme.palette.mode === 'dark' ? 'rgba(255,255,255,.16)' : '#E5E7EB'),
                             color: etape >= i ? '#fff' : '#9CA3AF',
                           }}
                           transition={{ type: 'spring', stiffness: 300, damping: 22 }}
@@ -221,7 +221,7 @@ export default function Adhesion() {
                       </Box>
                       {i < ETAPES.length - 1 && (
                         <Box sx={{ flex: 1, mx: 1.5, mb: 2.6 }}>
-                          <Box sx={{ height: 3, borderRadius: 2, bgcolor: '#E5E7EB', overflow: 'hidden' }}>
+                          <Box sx={{ height: 3, borderRadius: 2, bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,.14)' : '#E5E7EB', overflow: 'hidden' }}>
                             <motion.div
                               animate={{ width: etape > i ? '100%' : '0%' }}
                               transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
@@ -247,7 +247,7 @@ export default function Adhesion() {
                     exit="sortie"
                     transition={{ duration: 0.38, ease: [0.22, 1, 0.36, 1] }}
                   >
-                    <Typography sx={{ fontWeight: 800, color: '#111827', fontSize: '1.15rem', mb: 0.4 }}>
+                    <Typography sx={{ fontWeight: 800, color: 'text.primary', fontSize: '1.15rem', mb: 0.4 }}>
                       {ETAPES[etape].titre}
                     </Typography>
                     <Typography variant="body2" color="textSecondary" sx={{ mb: 3 }}>
@@ -285,9 +285,9 @@ export default function Adhesion() {
                             whileTap={{ scale: 0.97 }}
                             style={{
                               position: 'relative', textAlign: 'left', cursor: 'pointer',
-                              border: `2px solid ${choix[c.id] ? c.couleur : '#E5E7EB'}`,
+                              border: (theme) => `2px solid ${choix[c.id] ? c.couleur : (theme.palette.mode === 'dark' ? 'rgba(255,255,255,.2)' : '#E5E7EB')}`,
                               borderRadius: 16, padding: '18px 18px 15px',
-                              background: choix[c.id] ? `${c.couleur}0D` : '#fff',
+                              background: (theme) => choix[c.id] ? `${c.couleur}0D` : (theme.palette.mode === 'dark' ? 'rgba(255,255,255,.06)' : '#fff'),
                               boxShadow: choix[c.id] ? `0 10px 26px ${c.couleur}33` : '0 2px 10px rgba(0,0,0,.04)',
                               fontFamily: 'inherit',
                             }}
@@ -310,8 +310,8 @@ export default function Adhesion() {
                               )}
                             </AnimatePresence>
                             <Box sx={{ color: c.couleur, mb: 0.8, display: 'flex' }}><c.Icone taille={30} couleur={c.couleur} /></Box>
-                            <Typography sx={{ fontWeight: 800, color: '#111827', fontSize: '0.98rem' }}>{c.nom}</Typography>
-                            <Typography variant="caption" sx={{ color: '#5A6B63', display: 'block', mt: 0.4 }}>{c.tag}</Typography>
+                            <Typography sx={{ fontWeight: 800, color: 'text.primary', fontSize: '0.98rem' }}>{c.nom}</Typography>
+                            <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block', mt: 0.4 }}>{c.tag}</Typography>
                           </motion.button>
                         ))}
                       </Box>
@@ -321,7 +321,7 @@ export default function Adhesion() {
                       <Box sx={{ display: 'grid', gap: 2.5 }}>
                         {/* Récap animé */}
                         <Box sx={{
-                          p: 2.5, borderRadius: '14px', bgcolor: '#F6FBF9', border: '1px solid #E3EEE8',
+                          p: 2.5, borderRadius: '14px', bgcolor: '#F6FBF9', border: '1px solid', borderColor: 'divider',
                           display: 'flex', flexWrap: 'wrap', gap: 1.5, alignItems: 'center',
                         }}>
                           <Chip label={`${donnees.prenom || ''} ${donnees.nom || ''}`.trim() || 'Candidat'} sx={{ bgcolor: '#0F5B3A', color: '#fff', fontWeight: 700 }} />
@@ -375,7 +375,7 @@ export default function Adhesion() {
                 px: { xs: 2, sm: 2.5, md: 5 }, py: 2.5, borderTop: '1px solid #EEF2F0',
                 display: 'flex', justifyContent: 'space-between', alignItems: 'center', bgcolor: '#FBFDFC',
               }}>
-                <Button onClick={() => allerA(etape - 1)} disabled={etape === 0} sx={{ color: '#5A6B63', fontWeight: 700, visibility: etape === 0 ? 'hidden' : 'visible' }}>
+                <Button onClick={() => allerA(etape - 1)} disabled={etape === 0} sx={{ color: 'text.secondary', fontWeight: 700, visibility: etape === 0 ? 'hidden' : 'visible' }}>
                   ← Retour
                 </Button>
 
@@ -427,7 +427,7 @@ function QrAdhesion() {
         Fais passer le mot — scanne pour adhérer
       </Typography>
       <Box component="img" src={src} alt="QR code du formulaire d'adhésion"
-        sx={{ width: 150, height: 150, borderRadius: '14px', border: '1px solid #E3EEE8', bgcolor: '#fff', p: 1 }} />
+        sx={{ width: 150, height: 150, borderRadius: '14px', border: '1px solid', borderColor: 'divider', bgcolor: (theme) => theme.palette.background.paper, p: 1 }} />
       <Box sx={{ mt: 1 }}>
         <Typography component="a" href={src} download="qr-adhesion-itclub.png"
           sx={{ color: '#0E7A50', fontWeight: 700, fontSize: '0.82rem' }}>
@@ -444,7 +444,7 @@ function EcranSucces({ prenom }) {
   }))
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-      <Box sx={{ position: 'relative', p: { xs: 4, md: 6 }, bgcolor: '#fff', borderRadius: '22px', border: '1px solid #E3EEE8', textAlign: 'center', overflow: 'hidden', boxShadow: '0 16px 44px rgba(15,91,58,.12)' }}>
+      <Box sx={{ position: 'relative', p: { xs: 4, md: 6 }, bgcolor: (theme) => theme.palette.background.paper, borderRadius: '22px', border: '1px solid', borderColor: 'divider', textAlign: 'center', overflow: 'hidden', boxShadow: '0 16px 44px rgba(15,91,58,.12)' }}>
         {confettis.map((cf, i) => (
           <motion.span
             key={i}
