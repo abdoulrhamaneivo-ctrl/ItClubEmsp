@@ -103,10 +103,10 @@ export default function Login() {
             <Box component="img" src="/logo-itclub.webp" alt="Logo" sx={{ width: 64, height: 64, borderRadius: 3, border: '2px solid #1FAF72' }} />
           </Box>
 
-          <Typography sx={{ color: '#0E7A50', fontWeight: 700, fontSize: '0.875rem', mb: 0.8 }}>
+          <Typography sx={{ color: (theme) => (theme.palette.mode === 'dark' ? '#6EE7B7' : '#0E7A50'), fontWeight: 700, fontSize: '0.875rem', mb: 0.8 }}>
             Connexion à ton espace membre
           </Typography>
-          <Typography sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 800, fontSize: { xs: '1.6rem', md: '2rem' }, color: '#111827', mb: 1 }}>
+          <Typography sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 800, fontSize: { xs: '1.6rem', md: '2rem' }, color: 'text.primary', mb: 1 }}>
             Espace membre
           </Typography>
           <Typography color="text.secondary" mb={4} sx={{ lineHeight: 1.8 }}>
@@ -140,7 +140,7 @@ export default function Login() {
               </Button>
             </motion.div>
             <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', lineHeight: 1.8, fontSize: '0.875rem' }}>
-              Pas encore membre ? <RouterLink to="/adhesion" style={{ color: '#0E7A50', fontWeight: 700, display: 'inline-flex', alignItems: 'center', minHeight: 44 }}>Remplis le formulaire d'adhésion</RouterLink>.
+              Pas encore membre ? <RouterLink to="/adhesion" style={{ color: '#1FAF72', fontWeight: 700, display: 'inline-flex', alignItems: 'center', minHeight: 44 }}>Remplis le formulaire d'adhésion</RouterLink>.
             </Typography>
             {reveil && chargement && (
               <Typography variant="caption" sx={{ textAlign: 'center', color: '#B45309', display: 'block', fontWeight: 700, fontSize: '0.875rem' }}>
