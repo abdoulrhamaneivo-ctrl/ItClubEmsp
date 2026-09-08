@@ -106,7 +106,7 @@ export default function Activites() {
                     alignItems: 'center', justifyContent: 'center', flexShrink: 0,
                     boxShadow: '0 6px 16px rgba(13,27,42,.18)',
                   }}>
-                    <Typography variant="caption" sx={{ textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: 800, fontSize: '0.56rem', opacity: 0.75 }}>
+                    <Typography variant="caption" sx={{ textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: 800, fontSize: '0.68rem', opacity: 0.75 }}>
                       {mois.split(' ')[0].slice(0, 3)}
                     </Typography>
                     <Typography sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 800, fontSize: '1.2rem', lineHeight: 1 }}>
@@ -176,7 +176,7 @@ export default function Activites() {
                           {/* Contenu */}
                           <Box sx={{ flex: 1, minWidth: 0 }}>
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 0.8, flexWrap: 'wrap' }}>
-                              <Chip label={a.type_label ?? a.type} size="small" sx={{ bgcolor: '#F5F7F6', color: '#4B5563', fontWeight: 800, fontSize: '0.66rem', height: 22 }} />
+                              <Chip label={a.type_label ?? a.type} size="small" sx={{ bgcolor: '#F5F7F6', color: '#4B5563', fontWeight: 800, fontSize: '0.72rem', height: 24 }} />
                               <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.6 }}>
                                 <IcLieu taille={13} couleur="#6B7280" />
                                 <Typography variant="caption" sx={{ color: '#374151', fontWeight: 600, fontSize: '0.78rem' }}>
