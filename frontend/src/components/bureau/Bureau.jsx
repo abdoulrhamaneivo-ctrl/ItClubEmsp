@@ -134,7 +134,7 @@ export default function Bureau() {
                   initial={{ rotateY: 0, x: 0, zIndex: 10 }}
                   animate={{ rotateY: 0, x: 0 }}
                   exit={{ rotateY: sens === 1 ? -95 : 95, x: sens === 1 ? -30 : 30, opacity: 0.6, zIndex: 20 }}
-                  transition={{ duration: 0.55, ease: [0.36, 0.03, 0.24, 1] }}
+                  transition={{ duration: 0.25, ease: [0.36, 0.03, 0.24, 1] }}
                   style={{
                     position: 'absolute', inset: 0,
                     transformOrigin: 'left center',
@@ -157,7 +157,7 @@ export default function Bureau() {
                   initial={{ opacity: 0, x: 40 * sens }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -40 * sens }}
-                  transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                  transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
                 >
                   <Box sx={{ borderRadius: '18px', overflow: 'hidden', bgcolor: '#fff', border: '1px solid #E5E7EB', boxShadow: '0 16px 40px rgba(13,27,42,.18)' }}>
                     <VisuelMembre membre={actuel} />

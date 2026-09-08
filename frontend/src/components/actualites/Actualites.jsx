@@ -106,7 +106,7 @@ function CarteActu({ n, index }) {
               initial={{ opacity: 0, y: 22 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-60px' }}
-              transition={{ duration: 0.35, delay: Math.min(index * 0.05, 0.3), ease: [0.22, 1, 0.36, 1] }}
+              transition={{ duration: 0.25, delay: Math.min(index * 0.05, 0.3), ease: [0.22, 1, 0.36, 1] }}
               style={{ height: '100%' }}
             >
               <Box sx={{

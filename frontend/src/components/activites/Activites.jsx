@@ -83,7 +83,7 @@ export default function Activites() {
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-60px' }}
-          transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
         >
           {/* ── Timeline journal — ligne neutre fine ──────────────── */}
           <Box sx={{ position: 'relative', paddingLeft: { xs: 0, md: 2 } }}>
@@ -95,7 +95,7 @@ export default function Activites() {
                 initial={{ opacity: 0, y: 18 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-60px' }}
-                transition={{ duration: 0.35, delay: mIdx * 0.06, ease: [0.22, 1, 0.36, 1] }}
+                transition={{ duration: 0.25, delay: mIdx * 0.06, ease: [0.22, 1, 0.36, 1] }}
               >
                 {/* En-tête du mois */}
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2.5, mb: 3.5, mt: mIdx === 0 ? 0 : 4, position: 'relative', zIndex: 2 }}>
@@ -129,7 +129,7 @@ export default function Activites() {
                         initial={{ opacity: 0, y: 16 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true, margin: '-60px' }}
-                        transition={{ duration: 0.32, delay: (mIdx + aIdx) * 0.04, ease: [0.22, 1, 0.36, 1] }}
+                        transition={{ duration: 0.25, delay: (mIdx + aIdx) * 0.04, ease: [0.22, 1, 0.36, 1] }}
                       >
                         <Box
                           sx={{
@@ -274,7 +274,7 @@ export default function Activites() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-60px' }}
-          transition={{ duration: 0.3, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 0.25, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
         >
           <Box sx={{ mt: 8, textAlign: 'center' }}>
             <Typography variant="body2" color="textSecondary" sx={{ mb: 2 }}>
@@ -316,7 +316,7 @@ function BilansPasses() {
           {visibles.map((e) => (
             <Box key={e.id} sx={{
               bgcolor: '#fff', borderRadius: '16px', border: '1px solid #E8ECEA',
-              p: 2.6, borderLeft: `4px solid ${e.couleur ?? '#2563EB'}`,
+              p: 2.6,
             }}>
               <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', flexWrap: 'wrap', mb: 0.8 }}>
                 <Typography sx={{ fontWeight: 800, color: '#111827', fontSize: '0.92rem', flex: 1, minWidth: 150 }}>
