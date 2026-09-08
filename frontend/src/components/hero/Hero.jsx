@@ -120,7 +120,7 @@ export default function Hero() {
             >
               {i === 1 ? (
                 <>
-                  l’avenir <Box component="span" sx={{ color: '#1FAF72' }}>numérique</Box>
+                  l’avenir <Box component="span" sx={{ color: '#6EE7B7' }}>numérique</Box>
                 </>
               ) : (
                 mot
