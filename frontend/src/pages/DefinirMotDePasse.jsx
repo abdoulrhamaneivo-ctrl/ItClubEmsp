@@ -55,7 +55,7 @@ export default function DefinirMotDePasse() {
     <Box sx={{ minHeight: '100vh', display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' } }}>
       {/* Panneau de marque — desktop uniquement */}
       <Box sx={{ display: { xs: 'none', md: 'flex' }, position: 'relative', overflow: 'hidden', alignItems: 'center' }}>
-        <Box sx={{ position: 'absolute', inset: 0, background: 'linear-gradient(160deg,#0D1B2A 0%,#0F5B3A 100%)' }} />
+        <Box sx={{ position: 'absolute', inset: 0, background: '#0D1B2A' }} />
         <Box sx={{ position: 'relative', p: 8 }}>
           <Typography sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 800, fontSize: '2rem', color: '#fff', lineHeight: 1.25 }}>
             Bienvenue dans le club.

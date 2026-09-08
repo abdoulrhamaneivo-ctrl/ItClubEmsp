@@ -406,7 +406,7 @@ export default function Espace() {
   )
 
   return (
-    <Box sx={{ minHeight: '100vh', position: 'relative', background: 'linear-gradient(160deg,#0A1628 0%,#0D1B2A 55%,#0F5B3A 140%)' }}>
+    <Box sx={{ minHeight: '100vh', position: 'relative', background: '#0B1622' }}>
       <FondGlobalDonnees intensite={0.5} />
 
       {/* Grille tech */}
@@ -442,7 +442,7 @@ export default function Espace() {
           </Box>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 0.8, md: 1.2 }, flexShrink: 0 }}>
             {/* Recherche unique dans les docks — pas de doublon topbar (audit mobile) */}
-            <Avatar src={urlMedia(user?.photo) ?? undefined} sx={{ width: 32, height: 32, bgcolor: '#1FAF72', fontFamily: "'Orbitron',sans-serif", fontWeight: 800, fontSize: 14, border: '2px solid rgba(154,251,215,.16)' }}>
+            <Avatar src={urlMedia(user?.photo) ?? undefined} sx={{ width: 32, height: 32, bgcolor: '#1FAF72', fontWeight: 800, fontSize: 14, border: '2px solid rgba(154,251,215,.16)' }}>
               {initiale}
             </Avatar>
             <Tooltip title="Déconnexion" arrow enterDelay={400}>
@@ -544,7 +544,7 @@ export default function Espace() {
           <motion.div initial={reduit ? false : { opacity: 0, y: 22 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: reduit ? 0 : 0.25, ease: [0.22, 1, 0.36, 1] }}>
             <Box sx={{
               borderRadius: '22px', overflow: 'hidden', position: 'relative',
-              background: 'linear-gradient(120deg,#0D1B2A 0%,#0F5B3A 100%)',
+              background: '#0D1B2A',
               border: '1px solid rgba(154,251,215,.16)',
               boxShadow: '0 18px 44px rgba(0,0,0,.4)',
               px: { xs: 3, md: 5 }, py: { xs: 3.5, md: 4.5 }, mb: { xs: 5, md: 6 },
@@ -582,10 +582,10 @@ export default function Espace() {
                   <Typography sx={{ color: 'rgba(154,251,215,.6)', fontSize: '0.875rem', letterSpacing: '0.2em' }}>
                     MEMBRE-ID
                   </Typography>
-                  <Typography sx={{ color: '#9AFBD7', fontWeight: 700, fontSize: '0.875rem', letterSpacing: '0.08em' }}>
+                  <Typography sx={{ color: '#9AFBD7', fontWeight: 700, fontSize: '0.875rem', letterSpacing: '0.05em' }}>
                     IT-EMSP-{String(user.nom?.length || 5).padStart(3, '0')}-{(user.roles ?? [])[0]?.code ?? 'M'}
                   </Typography>
-                  <Typography sx={{ color: 'rgba(255,255,255,.62)', fontSize: '0.875rem', letterSpacing: '0.14em' }}>
+                  <Typography sx={{ color: 'rgba(255,255,255,.62)', fontSize: '0.875rem', letterSpacing: '0.07em' }}>
                     VALIDE · 2026-2027
                   </Typography>
                 </Box>
@@ -652,7 +652,7 @@ export default function Espace() {
                   <Typography sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 800, fontSize: '1.15rem', lineHeight: 1, color: insc.couleur }}>
                     {new Date(insc.date).getDate()}
                   </Typography>
-                  <Typography sx={{ fontWeight: 800, fontSize: '0.875rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: insc.couleur }}>
+                  <Typography sx={{ fontWeight: 800, fontSize: '0.875rem', letterSpacing: '0.06em', textTransform: 'uppercase', color: insc.couleur }}>
                     {new Date(insc.date).toLocaleDateString('fr-FR', { month: 'short' }).replace('.', '')}
                   </Typography>
                 </Box>
@@ -699,7 +699,7 @@ export default function Espace() {
                         inputProps={{ inputMode: 'numeric', maxLength: 6, 'aria-label': 'Code de présence à 6 chiffres' }}
                         sx={{
                           width: 110, minHeight: 44, height: 44, bgcolor: '#fff', borderRadius: '8px', border: '1px solid #D1D5DB',
-                          px: 1.2, fontFamily: "'Orbitron',sans-serif", fontWeight: 800, display: 'flex', alignItems: 'center',
+                          px: 1.2, fontFamily: "'JetBrains Mono',monospace", fontWeight: 800, letterSpacing: '0.06em', display: 'flex', alignItems: 'center',
                           letterSpacing: '0.2em', fontSize: '0.875rem', textAlign: 'center',
                           '&:focus-within': { borderColor: '#1FAF72', outline: '2px solid #1FAF72', outlineOffset: '1px' },
                         }}
@@ -750,7 +750,7 @@ export default function Espace() {
                   <IcCube taille={28} couleur="#fff" />
                 </Box>
                 <Box>
-                  <Typography sx={{ color: (cellule ?? MA_CELLULE).couleurFonce, fontWeight: 800, fontSize: '0.875rem', letterSpacing: '0.14em', textTransform: 'uppercase' }}>
+                  <Typography sx={{ color: (cellule ?? MA_CELLULE).couleurFonce, fontWeight: 800, fontSize: '0.875rem', letterSpacing: '0.07em', textTransform: 'uppercase' }}>
                     {(cellule ?? MA_CELLULE).role ?? 'Membre actif'}
                   </Typography>
                   <Typography sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 800, fontSize: '1.25rem', color: '#111827' }}>
@@ -796,7 +796,7 @@ export default function Espace() {
                       <Typography sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 800, fontSize: '1.4rem', color: '#111827', lineHeight: 1.2 }}>
                         {s.valeur}
                       </Typography>
-                      <Typography variant="caption" sx={{ color: '#5A6B63', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', fontSize: '0.875rem' }}>
+                      <Typography variant="caption" sx={{ color: '#5A6B63', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', fontSize: '0.875rem' }}>
                         {s.label}
                       </Typography>
                     </Box>

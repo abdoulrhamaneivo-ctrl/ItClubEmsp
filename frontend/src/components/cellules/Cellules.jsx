@@ -159,7 +159,7 @@ export default function Cellules() {
                     position: 'relative', overflow: 'hidden',
                   }}>
                     {/* Liseré coloré à gauche */}
-                    <Box sx={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: 5, background: `linear-gradient(180deg,${actuelle.couleur},${actuelle.couleur}55)` }} />
+                    <Box sx={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: 4, background: actuelle.couleur }} />
                     {/* Grande pastille icône (line art) */}
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 2.5, mb: 2 }}>
                       <Box sx={{
@@ -173,7 +173,7 @@ export default function Cellules() {
                       <Box>
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8 }}>
                           <IcMembres taille={13} couleur={actuelle.couleur} />
-                          <Typography sx={{ color: actuelle.couleurFonce ?? actuelle.couleur, fontWeight: 800, fontSize: '0.7rem', letterSpacing: '0.16em', textTransform: 'uppercase' }}>
+                          <Typography sx={{ color: actuelle.couleurFonce ?? actuelle.couleur, fontWeight: 800, fontSize: '0.7rem', letterSpacing: '0.05em', textTransform: 'uppercase' }}>
                             {actuelle.membres} membres actifs
                           </Typography>
                         </Box>
@@ -295,7 +295,7 @@ function CarteCellule({ card, active }) {
         <Box sx={{
           position: 'absolute', top: 10, left: 10, bgcolor: 'rgba(13,27,42,.6)',
           color: '#fff', px: 1.2, py: 0.35, borderRadius: 9999,
-          fontSize: '0.62rem', fontWeight: 800, letterSpacing: '0.1em',
+          fontSize: '0.62rem', fontWeight: 800, letterSpacing: '0.06em',
         }}>
           {card.membres} MEMBRES
         </Box>
@@ -339,7 +339,7 @@ function ModaleCellule({ cellule, onClose }) {
         <Box sx={{ bgcolor: '#fff', borderRadius: 4, overflow: 'hidden', boxShadow: '0 48px 96px rgba(0,0,0,.24)' }}>
           <Box sx={{ bgcolor: cellule.couleur, color: '#fff', p: { xs: 3, md: 4 }, position: 'relative', overflow: 'hidden' }}>
             <Box sx={{ position: 'absolute', top: -50, right: -40, width: 150, height: 150, borderRadius: '50%', bgcolor: 'rgba(255,255,255,.14)' }} />
-            <Typography variant="overline" sx={{ letterSpacing: '0.12em', textTransform: 'uppercase', opacity: 0.9 }}>
+            <Typography variant="overline" sx={{ letterSpacing: '0.06em', textTransform: 'uppercase', opacity: 0.9 }}>
               Programme de la cellule
             </Typography>
             <Typography variant="h5" sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 700, fontSize: { xs: '1.3rem', md: '1.6rem' }, display: 'flex', alignItems: 'center', gap: 1.2 }}>

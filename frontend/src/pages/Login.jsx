@@ -55,7 +55,7 @@ export default function Login() {
     <Box sx={{ minHeight: '100vh', display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' } }}>
       {/* Panneau de marque (gauche) — fond animé charte */}
       <Box sx={{ display: { xs: 'none', md: 'flex' }, position: 'relative', overflow: 'hidden', alignItems: 'center' }}>
-        <Box sx={{ position: 'absolute', inset: 0, background: 'linear-gradient(160deg,#0D1B2A 0%,#0F5B3A 100%)' }} />
+        <Box sx={{ position: 'absolute', inset: 0, background: '#0D1B2A' }} />
         {!reduit && [...Array(5)].map((_, i) => (
           <motion.span
             key={i}

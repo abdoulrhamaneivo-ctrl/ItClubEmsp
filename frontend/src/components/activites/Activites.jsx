@@ -106,7 +106,7 @@ export default function Activites() {
                     alignItems: 'center', justifyContent: 'center', flexShrink: 0,
                     boxShadow: '0 6px 16px rgba(13,27,42,.18)',
                   }}>
-                    <Typography variant="caption" sx={{ textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: 800, fontSize: '0.68rem', opacity: 0.75 }}>
+                    <Typography variant="caption" sx={{ textTransform: 'uppercase', letterSpacing: '0.06em', fontWeight: 800, fontSize: '0.68rem', opacity: 0.75 }}>
                       {mois.split(' ')[0].slice(0, 3)}
                     </Typography>
                     <Typography sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 800, fontSize: '1.2rem', lineHeight: 1 }}>
@@ -160,7 +160,7 @@ export default function Activites() {
                             <Typography sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 800, fontSize: '1.35rem', lineHeight: 1, color: a.couleur }}>
                               {d.getDate()}
                             </Typography>
-                            <Typography sx={{ fontWeight: 800, fontSize: '0.6rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: a.couleur }}>
+                            <Typography sx={{ fontWeight: 800, fontSize: '0.6rem', letterSpacing: '0.06em', textTransform: 'uppercase', color: a.couleur }}>
                               {d.toLocaleDateString('fr-FR', { month: 'short' }).replace('.', '')}
                             </Typography>
                           </Box>

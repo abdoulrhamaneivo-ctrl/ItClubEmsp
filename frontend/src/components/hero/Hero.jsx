@@ -44,7 +44,7 @@ export default function Hero() {
         position: 'relative',
         minHeight: { xs: 'auto', sm: '94vh', md: '100vh' },
         overflow: 'hidden',
-        background: 'linear-gradient(140deg,#0A1628 0%,#0D1B2A 42%,#0F5B3A 135%)',
+        background: '#0A1628',
       }}
     >
       {/* ── Décor : halo unique discret (pas d'orbes flottants IA) ── */}
@@ -207,7 +207,7 @@ export default function Hero() {
                     textAlign: 'center',
                   }}
                 >
-                  <Typography sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 800, fontSize: { xs: '1.75rem', md: '2.15rem' }, color: '#fff', fontVariantNumeric: 'tabular-nums', lineHeight: 1.2 }}>
+                  <Typography sx={{ fontFamily: "'JetBrains Mono',monospace", fontWeight: 700, fontSize: { xs: '1.75rem', md: '2.15rem' }, color: '#fff', fontVariantNumeric: 'tabular-nums', lineHeight: 1.2 }}>
                     {s.valeur}
                   </Typography>
                   <Typography sx={{ color: 'rgba(255,255,255,.85)', fontSize: { xs: '0.66rem', md: '0.74rem' }, fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', lineHeight: 1.5 }}>

@@ -61,7 +61,7 @@ export default function Bureau() {
     <Box id="bureau" sx={{ py: { xs: 6, md: 8 }, position: 'relative', overflow: 'hidden' }}>
       <FondPropre variante="gris" />
       <BandeauAccent couleur="#1FAF72" />
-      <FondDonnees intensite={0.85} />
+      <FondDonnees intensite={0.85} sansSatellite sansEnveloppes fibresSeules />
 
       <Container maxWidth={false} sx={{ position: 'relative', maxWidth: '1440px !important', px: { xs: 2.5, md: 4 } }}>
         <TitreSection

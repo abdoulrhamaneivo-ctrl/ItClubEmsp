@@ -98,7 +98,7 @@ export default function BackofficeLayout() {
   return (
     <Box sx={{
       minHeight: '100vh', position: 'relative',
-      background: 'linear-gradient(160deg,#0A1628 0%,#0D1B2A 55%,#0F5B3A 140%)',
+      background: '#0B1622',
     }}>
       {/* ── Grille tech de fond ─────────────────────────────── */}
       <Box sx={{
