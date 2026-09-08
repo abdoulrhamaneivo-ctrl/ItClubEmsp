@@ -154,9 +154,9 @@ export default function Hero() {
           <Button
             variant="contained" size="large" href={user ? '/espace' : '/adhesion'}
             sx={{
-              bgcolor: '#1FAF72', color: '#fff', '&:hover': { bgcolor: '#179963', boxShadow: '0 6px 18px rgba(31,175,114,.35)' },
+              bgcolor: '#1FAF72', color: '#fff', '&:hover': { bgcolor: '#179963' },
               fontWeight: 800, px: 4.5, py: 1.6, borderRadius: 9999, fontSize: '1rem',
-              boxShadow: '0 4px 14px rgba(31,175,114,.3)',
+              boxShadow: '0 2px 8px rgba(13,27,42,.18)',
             }}
           >
             {user ? 'Mon espace' : 'Nous rejoindre'}

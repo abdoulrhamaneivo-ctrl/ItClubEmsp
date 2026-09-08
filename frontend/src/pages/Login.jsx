@@ -135,7 +135,7 @@ export default function Login() {
             </Box>
             <motion.div whileHover={{ scale: 1.015 }} whileTap={{ scale: 0.985 }}>
               <Button type="submit" variant="contained" size="large" fullWidth disabled={chargement}
-                sx={{ bgcolor: '#1FAF72', '&:hover': { bgcolor: '#179963', boxShadow: '0 8px 22px rgba(31,175,114,.4)' }, py: 1.4, fontWeight: 800, borderRadius: '14px', transition: 'background 200ms ease, box-shadow 200ms ease' }}>
+                sx={{ bgcolor: '#1FAF72', '&:hover': { bgcolor: '#179963' }, py: 1.4, fontWeight: 800, borderRadius: '14px', transition: 'background 200ms ease, box-shadow 200ms ease' }}>
                 {chargement ? 'Connexion…' : 'Se connecter'}
               </Button>
             </motion.div>

@@ -81,7 +81,7 @@ export default function BackofficeLayout() {
                   color: actif ? '#fff' : '#9AFBD7',
                   bgcolor: actif ? '#1FAF72' : 'rgba(154,251,215,.08)',
                   border: actif ? '1px solid rgba(255,255,255,.35)' : '1px solid rgba(154,251,215,.18)',
-                  boxShadow: actif ? '0 6px 18px rgba(31,175,114,.45)' : 'none',
+                  boxShadow: actif ? '0 4px 12px rgba(13,27,42,.22)' : 'none',
                   transition: 'background 200ms ease, box-shadow 200ms ease',
                   '&:hover': { bgcolor: actif ? '#25C482' : 'rgba(154,251,215,.18)' },
                 }}
@@ -441,7 +441,7 @@ function PlaceholderModule({ module: m }) {
               width: 58, height: 58, borderRadius: '16px',
               background: 'linear-gradient(135deg,#1FAF72,#0F5B3A)',
               display: 'grid', placeItems: 'center',
-              boxShadow: '0 10px 24px rgba(31,175,114,.4)',
+              boxShadow: '0 4px 14px rgba(13,27,42,.22)',
             }}>
               <I size={28} color="#fff" strokeWidth={1.8} />
             </Box>

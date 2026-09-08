@@ -175,7 +175,7 @@ export default function QuiSommesNous() {
                   }}
                 >
                   <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2, mb: 3 }}>
-                    <Box sx={{ width: 56, height: 56, borderRadius: '16px', display: 'grid', placeItems: 'center', flexShrink: 0, bgcolor: `${p.couleur}14`, border: `1px solid ${p.couleur}30` }}>{(() => { const I = [IcFormation, IcEquipe, IcRocket][Number(p.numero) - 1] ?? IcFormation; return <I taille={28} couleur={p.couleur} /> })()}</Box>
+                    <Box sx={{ width: 56, height: 56, borderRadius: '16px', display: 'grid', placeItems: 'center', flexShrink: 0, bgcolor: '#F5F7F6', border: '1px solid #E5E9E7' }}>{(() => { const I = [IcFormation, IcEquipe, IcRocket][Number(p.numero) - 1] ?? IcFormation; return <I taille={28} couleur={p.couleur} /> })()}</Box>
                     <Box>
                       <Typography variant="overline" sx={{ color: p.couleur, fontWeight: 800, letterSpacing: '0.08em', textTransform: 'uppercase', mb: 0.5 }}>
                         Pilier {p.numero}
@@ -230,7 +230,7 @@ export default function QuiSommesNous() {
                   display: 'inline-flex', alignItems: 'center', gap: 1.2,
                   bgcolor: '#1FAF72', color: '#fff', fontWeight: 800,
                   borderRadius: 9999, px: 3.5, py: 1.5, fontSize: '0.95rem',
-                  boxShadow: '0 8px 22px rgba(31,175,114,.45)',
+                  boxShadow: '0 4px 14px rgba(13,27,42,.2)',
                 }}>
                   Explorer la galerie <ArrowRight size={18} color="#fff" />
                 </Box>
@@ -267,7 +267,7 @@ export default function QuiSommesNous() {
               </Typography>
               <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', flexWrap: 'wrap' }}>
                 <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}>
-                  <Button variant="contained" size="large" href="/adhesion" sx={{ bgcolor: '#1FAF72', color: '#fff', '&:hover': { bgcolor: '#25C482' }, px: 4.5, py: 1.5, fontWeight: 800, borderRadius: 9999, boxShadow: '0 8px 24px rgba(31,175,114,.5)' }}>
+                  <Button variant="contained" size="large" href="/adhesion" sx={{ bgcolor: '#1FAF72', color: '#fff', '&:hover': { bgcolor: '#25C482' }, px: 4.5, py: 1.5, fontWeight: 800, borderRadius: 9999, boxShadow: '0 4px 14px rgba(13,27,42,.2)' }}>
                     Rejoins-nous
                   </Button>
                 </motion.div>

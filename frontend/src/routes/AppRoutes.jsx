@@ -99,7 +99,7 @@ function Page404() {
       <Button variant="contained" href="/" size="large" sx={{
         bgcolor: '#1FAF72', color: '#fff', '&:hover': { bgcolor: '#25C482' },
         fontWeight: 800, borderRadius: 9999, px: 4, py: 1.4, mt: 1.5,
-        boxShadow: '0 8px 24px rgba(31,175,114,.45)',
+        boxShadow: '0 4px 14px rgba(13,27,42,.22)',
       }}>
         ← Retour à l'accueil
       </Button>

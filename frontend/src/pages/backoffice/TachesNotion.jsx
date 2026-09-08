@@ -42,7 +42,7 @@ function Kpi({ valeur, label, couleur, icone, delai }) {
       }}>
         <Box sx={{
           width: 46, height: 46, borderRadius: '12px', display: 'grid', placeItems: 'center',
-          bgcolor: `${couleur}14`, color: couleur, flexShrink: 0,
+          bgcolor: '#F5F7F6', color: couleur, flexShrink: 0,
         }}>{icone}</Box>
         <Box>
           <Typography sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 800, fontSize: '1.55rem', lineHeight: 1, color: '#0D1B2A' }}>
@@ -211,7 +211,7 @@ export default function TachesNotion() {
                         bgcolor: COULEURS_STATUT[t.statut]?.bg ?? '#EEE',
                         borderRadius: '10px', cursor: 'pointer',
                         transition: 'box-shadow 160ms ease, transform 120ms ease',
-                        '&:hover': { boxShadow: '0 0 0 3px rgba(31,175,114,.15)' },
+                        '&:focus-visible': { outline: '2px solid #1FAF72', outlineOffset: '2px' },
                         '& .MuiOutlinedInput-notchedOutline': { border: 'none' },
                         '& .MuiSelect-select': { py: 0.8, color: COULEURS_STATUT[t.statut]?.fg ?? '#555' },
                       }}

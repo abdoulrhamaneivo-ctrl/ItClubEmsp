@@ -306,7 +306,7 @@ function OngletCR({ notify }) {
                   </Typography>
                 </Box>
                 <Chip label={LABEL_CR[cr.statut] ?? cr.statut} size="small"
-                  sx={{ bgcolor: `${COULEUR_CR[cr.statut] ?? '#6B7280'}14`, color: COULEUR_CR[cr.statut] ?? '#6B7280', fontWeight: 800, flexShrink: 0 }} />
+                  sx={{ bgcolor: '#F5F7F6', color: COULEUR_CR[cr.statut] ?? '#6B7280', fontWeight: 800, flexShrink: 0 }} />
               </Box>
               {estOuvert && (
                 <Box sx={{ px: 2.2, pb: 2, pt: 0.5, borderTop: '1px solid #EEF2F0' }}>

@@ -507,7 +507,7 @@ function Formulaire({ titre, onAnnuler, onEnregistrer, enCours, children }) {
     <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.28 }}>
       <Paper elevation={0} sx={{
         p: 3, borderRadius: '16px', border: '1px solid #1FAF7245', bgcolor: '#FBFDFC',
-        boxShadow: '0 10px 30px rgba(31,175,114,.08)',
+        boxShadow: '0 4px 14px rgba(13,27,42,.06)',
       }}>
         <Typography sx={{ fontWeight: 800, color: '#0F5B3A', mb: 2.5, fontFamily: "'Orbitron',sans-serif", fontSize: '1.05rem' }}>
           {titre}

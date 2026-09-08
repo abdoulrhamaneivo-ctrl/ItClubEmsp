@@ -147,7 +147,7 @@ export default function Navbar() {
             <Button
               variant="contained"
               href="/adhesion"
-              sx={{ bgcolor: '#1FAF72', color: '#fff', '&:hover': { bgcolor: '#179963', boxShadow: '0 6px 18px rgba(31,175,114,.45)' }, ml: { lg: 0.5, xl: 1 }, transition: 'background 200ms ease, box-shadow 200ms ease', whiteSpace: 'nowrap', px: { lg: 1.4, xl: 2 } }}
+              sx={{ bgcolor: '#1FAF72', color: '#fff', '&:hover': { bgcolor: '#179963' }, ml: { lg: 0.5, xl: 1 }, transition: 'background 200ms ease, box-shadow 200ms ease', whiteSpace: 'nowrap', px: { lg: 1.4, xl: 2 } }}
             >
               Rejoindre le club
             </Button>

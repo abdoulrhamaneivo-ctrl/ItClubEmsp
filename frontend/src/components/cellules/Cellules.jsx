@@ -228,7 +228,7 @@ export default function Cellules() {
         {/* ── Contrôles : flèches + pastilles ────────────────────── */}
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 3, mt: 4 }}>
           <IconButton onClick={() => setIndex((index - 1 + n) % n)} aria-label="Cellule précédente"
-            sx={{ bgcolor: '#fff', border: '1px solid #E5E7EB', width: 44, height: 44, boxShadow: '0 4px 14px rgba(0,0,0,.08)', transition: 'all 180ms ease', '&:hover': { bgcolor: '#1FAF72', borderColor: '#1FAF72', color: '#fff', boxShadow: '0 6px 18px rgba(31,175,114,.4)' }, '&:active': { transform: 'scale(0.96)' }, '&:focus-visible': { outline: '2px solid #1FAF72', outlineOffset: '2px' } }}>
+            sx={{ bgcolor: '#fff', border: '1px solid #E5E7EB', width: 44, height: 44, boxShadow: '0 4px 14px rgba(0,0,0,.08)', transition: 'all 180ms ease', '&:hover': { bgcolor: '#1FAF72', borderColor: '#1FAF72', color: '#fff', boxShadow: '0 4px 12px rgba(13,27,42,.22)' }, '&:active': { transform: 'scale(0.96)' }, '&:focus-visible': { outline: '2px solid #1FAF72', outlineOffset: '2px' } }}>
             <ArrowBackIosNewIcon fontSize="small" />
           </IconButton>
           <Box sx={{ display: 'flex', gap: 1.6 }}>
@@ -250,7 +250,7 @@ export default function Cellules() {
             ))}
           </Box>
           <IconButton onClick={() => setIndex((index + 1) % n)} aria-label="Cellule suivante"
-            sx={{ bgcolor: '#fff', border: '1px solid #E5E7EB', width: 44, height: 44, boxShadow: '0 4px 14px rgba(0,0,0,.08)', transition: 'all 180ms ease', '&:hover': { bgcolor: '#1FAF72', borderColor: '#1FAF72', color: '#fff', boxShadow: '0 6px 18px rgba(31,175,114,.4)' }, '&:active': { transform: 'scale(0.96)' }, '&:focus-visible': { outline: '2px solid #1FAF72', outlineOffset: '2px' } }}>
+            sx={{ bgcolor: '#fff', border: '1px solid #E5E7EB', width: 44, height: 44, boxShadow: '0 4px 14px rgba(0,0,0,.08)', transition: 'all 180ms ease', '&:hover': { bgcolor: '#1FAF72', borderColor: '#1FAF72', color: '#fff', boxShadow: '0 4px 12px rgba(13,27,42,.22)' }, '&:active': { transform: 'scale(0.96)' }, '&:focus-visible': { outline: '2px solid #1FAF72', outlineOffset: '2px' } }}>
             <ArrowForwardIosIcon fontSize="small" />
           </IconButton>
         </Box>
@@ -379,7 +379,7 @@ function ModaleCellule({ cellule, onClose }) {
 function StatRapide({ label, valeur, icone, couleur }) {
   return (
     <Box sx={{ textAlign: 'center', p: { xs: 1.5, md: 3 }, minWidth: { xs: 108, sm: 130 }, bgcolor: '#fff', borderRadius: 3, border: '1px solid #E5E7EB', boxShadow: '0 2px 12px rgba(0,0,0,.04)' }}>
-      <Box sx={{ width: 46, height: 46, borderRadius: '12px', mx: 'auto', mb: 1, bgcolor: `${couleur}14`, display: 'grid', placeItems: 'center', fontSize: 22 }}>
+      <Box sx={{ width: 46, height: 46, borderRadius: '12px', mx: 'auto', mb: 1, bgcolor: '#F5F7F6', display: 'grid', placeItems: 'center', fontSize: 22 }}>
         {icone}
       </Box>
       <Typography variant="h5" sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 800, color: '#111827', fontVariantNumeric: 'tabular-nums' }}>

@@ -163,7 +163,7 @@ export default function Documentation() {
                           <Chip
                             label={doc.format ?? 'PDF'} size="small"
                             sx={{
-                              bgcolor: `${doc.couleur}14`, color: doc.couleur === '#F5A623' ? '#B45309' : doc.couleur,
+                              bgcolor: '#F5F7F6', color: doc.couleur === '#F5A623' ? '#B45309' : doc.couleur,
                               fontWeight: 800, fontSize: '0.6rem', flexShrink: 0, height: 22,
                             }}
                           />

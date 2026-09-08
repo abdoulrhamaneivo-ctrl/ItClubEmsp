@@ -260,7 +260,7 @@ export const ButtonStyles = {
     py: 1.5,
     borderRadius: radius.md,
     fontSize: '1rem',
-    boxShadow: '0 4px 16px rgba(31,175,114,.3)',
+    boxShadow: '0 4px 14px rgba(13,27,42,.15)',
   },
   secondary: {
     bgcolor: colors.neutral.card,

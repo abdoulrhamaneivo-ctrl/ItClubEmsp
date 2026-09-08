@@ -130,7 +130,7 @@ function CarteActu({ n, index }) {
 
                 <Box sx={{ p: 2.8, flex: 1, display: 'flex', flexDirection: 'column' }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap', mb: 1.2 }}>
-                    {n.image && <Chip label={n.tag} size="small" sx={{ bgcolor: `${n.couleur}14`, color: n.couleur, fontWeight: 800, fontSize: '0.66rem', height: 22 }} />}
+                    {n.image && <Chip label={n.tag} size="small" sx={{ bgcolor: '#F5F7F6', color: n.couleur, fontWeight: 800, fontSize: '0.66rem', height: 22 }} />}
                     <Chip
                       label={CELLULES_TAGGABLES.find((c) => c.id === n.cellule)?.label ?? 'Général'}
                       size="small"

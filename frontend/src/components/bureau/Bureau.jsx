@@ -177,7 +177,7 @@ export default function Bureau() {
                 exit={{ opacity: 0, y: -14 }}
                 transition={{ duration: 0.26, ease: [0.22, 1, 0.36, 1] }}
               >
-                <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 1.2, px: 1.8, py: 0.6, borderRadius: 9999, bgcolor: `${actuel.couleur}14`, mb: 2 }}>
+                <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 1.2, px: 1.8, py: 0.6, borderRadius: 9999, bgcolor: '#F5F7F6', mb: 2 }}>
                   {(() => { const I = iconePoste(actuel.poste); return <I taille={15} couleur={actuel.couleur === '#1FAF72' ? '#0E7A50' : actuel.couleur} /> })()}
                   <Typography sx={{ color: actuel.couleur === '#1FAF72' ? '#0E7A50' : actuel.couleur, fontWeight: 800, fontSize: '0.7rem', letterSpacing: '0.16em', textTransform: 'uppercase' }}>
                     {actuel.poste}
@@ -203,7 +203,7 @@ export default function Bureau() {
                 <ArrowBackIosNewIcon fontSize="small" />
               </IconButton>
               <IconButton aria-label="Membre suivant" onClick={(e) => { e.stopPropagation(); tourner(1) }}
-                sx={{ bgcolor: '#1FAF72', color: '#fff', width: 44, height: 44, transition: 'all 180ms ease', '&:hover': { bgcolor: '#179963', boxShadow: '0 6px 18px rgba(31,175,114,.4)' }, '&:focus-visible': { outline: '2px solid #fff', outlineOffset: '2px' } }}>
+                sx={{ bgcolor: '#1FAF72', color: '#fff', width: 44, height: 44, transition: 'all 180ms ease', '&:hover': { bgcolor: '#179963' }, '&:focus-visible': { outline: '2px solid #fff', outlineOffset: '2px' } }}>
                 <ArrowForwardIosIcon fontSize="small" />
               </IconButton>
               <Typography sx={{ color: '#5A6B63', fontWeight: 700, fontSize: '0.78rem', fontFamily: "'JetBrains Mono',monospace", ml: 1 }}>
@@ -263,7 +263,7 @@ function VisuelMembre({ membre: m, compact = false }) {
 function StatRapide({ label, valeur, icone, couleur }) {
   return (
     <Box sx={{ textAlign: 'center', p: { xs: 1.5, md: 3 }, minWidth: { xs: 108, sm: 130 }, bgcolor: '#fff', borderRadius: 3, border: '1px solid #E5E7EB', boxShadow: '0 2px 12px rgba(0,0,0,.04)' }}>
-      <Box sx={{ width: 46, height: 46, borderRadius: '12px', mx: 'auto', mb: 1, bgcolor: `${couleur}14`, display: 'grid', placeItems: 'center' }}>
+      <Box sx={{ width: 46, height: 46, borderRadius: '12px', mx: 'auto', mb: 1, bgcolor: '#F5F7F6', display: 'grid', placeItems: 'center' }}>
         {icone}
       </Box>
       <Typography variant="h5" sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 800, color: '#111827', fontVariantNumeric: 'tabular-nums' }}>

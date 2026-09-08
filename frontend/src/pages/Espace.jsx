@@ -393,7 +393,7 @@ export default function Espace() {
             color: actif ? '#fff' : '#9AFBD7',
             bgcolor: actif ? '#1FAF72' : 'rgba(154,251,215,.08)',
             border: actif ? '1px solid rgba(255,255,255,.35)' : '1px solid rgba(154,251,215,.18)',
-            boxShadow: actif ? '0 6px 18px rgba(31,175,114,.45)' : 'none',
+            boxShadow: actif ? '0 4px 12px rgba(13,27,42,.22)' : 'none',
             transition: 'background 200ms ease, box-shadow 200ms ease',
             '&:hover': { bgcolor: actif ? '#25C482' : 'rgba(154,251,215,.18)' },
             '&:focus-visible': { outline: '2px solid #fff', outlineOffset: '2px' },
@@ -646,7 +646,7 @@ export default function Espace() {
               }}>
                 <Box sx={{
                   width: 54, flexShrink: 0, borderRadius: '12px', py: 1.2,
-                  bgcolor: `${insc.couleur}14`, border: `1px solid ${insc.couleur}30`,
+                  bgcolor: '#F5F7F6', border: '1px solid #E5E9E7',
                   display: 'flex', flexDirection: 'column', alignItems: 'center',
                 }}>
                   <Typography sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 800, fontSize: '1.15rem', lineHeight: 1, color: insc.couleur }}>
@@ -789,7 +789,7 @@ export default function Espace() {
                   viewport={{ once: true, margin: '0px' }}
                   transition={{ delay: reduit ? 0 : Math.min(0.1 + i * 0.06, 0.2), duration: reduit ? 0 : 0.25 }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, p: 2.2, bgcolor: '#fff', borderRadius: '16px', border: '1px solid #E8ECEA' }}>
-                    <Box sx={{ width: 46, height: 46, borderRadius: '12px', bgcolor: `${s.couleur}14`, display: 'grid', placeItems: 'center' }}>
+                    <Box sx={{ width: 46, height: 46, borderRadius: '12px', bgcolor: '#F5F7F6', display: 'grid', placeItems: 'center' }}>
                       {s.icone}
                     </Box>
                     <Box>

@@ -152,7 +152,7 @@ export default function Activites() {
                           {/* Badge date — LA couleur est ici, fonctionnelle */}
                           <Box sx={{
                             width: { xs: 50, sm: 58 }, flexShrink: 0, borderRadius: '14px', py: 1.4,
-                            bgcolor: `${a.couleur}14`, border: `1px solid ${a.couleur}30`,
+                            bgcolor: '#F5F7F6', border: '1px solid #E5E9E7',
                             display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 0.2,
                             alignSelf: 'flex-start',
                             transition: 'transform 200ms ease',
