@@ -22,7 +22,7 @@ export function ParagrapheIntro({ children, couleur = '#1FAF72', maxWidth = 640,
         sx={{
           fontSize: { xs: '1.02rem', md: '1.12rem' },
           lineHeight: 1.85,
-          color: '#374151',
+          color: 'text.secondary',
           maxWidth,
           mx: centre ? 'auto' : 0,
           letterSpacing: '0.005em',
@@ -39,7 +39,7 @@ export function MotFort({ children, couleur = '#1FAF72' }) {
   return (
     <Box
       component="span"
-      sx={{ position: 'relative', display: 'inline-block', px: 0.3, color: '#111827', fontWeight: 700 }}
+      sx={{ position: 'relative', display: 'inline-block', px: 0.3, color: 'text.primary', fontWeight: 700 }}
     >
       {/* Surlignage derrière le texte */}
       <motion.span

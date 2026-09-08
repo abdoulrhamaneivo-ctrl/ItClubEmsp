@@ -49,13 +49,13 @@ export default function TitreSection({ badge, titre, sousTitre, couleur = '#1FAF
             sx={{
               fontFamily: "'Orbitron', sans-serif", fontWeight: 700,
               fontSize: { xs: '1.55rem', md: '2.2rem' }, lineHeight: 1.2,
-              color: '#111827', mb: sousTitre ? 1.5 : 0,
+              color: 'text.primary', mb: sousTitre ? 1.5 : 0,
             }}
           >
             {titre}
           </Typography>
           {sousTitre && (
-            <Typography sx={{ color: '#4B5563', maxWidth: maxWidthTexte, lineHeight: 1.75, fontSize: { xs: '0.94rem', md: '1.02rem' } }}>
+            <Typography sx={{ color: 'text.secondary', maxWidth: maxWidthTexte, lineHeight: 1.75, fontSize: { xs: '0.94rem', md: '1.02rem' } }}>
               {sousTitre}
             </Typography>
           )}

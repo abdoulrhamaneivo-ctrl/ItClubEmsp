@@ -1,13 +1,21 @@
-import { useRef } from 'react'
 import Box from '@mui/material/Box'
+import { useTheme } from '@mui/material/styles'
 
 /**
  * Fond neutre PROPRE — voiles semi-transparents laissant deviner
  * le fond de données global (fixé derrière toute la page).
  * Lisibilité préservée : voiles à 78-92% d'opacité.
+ * En mode sombre, les voiles suivent le fond nuit du thème.
  */
 export default function FondPropre({ variante = 'clair' }) {
-  const fonds = {
+  const theme = useTheme()
+  const sombre = theme.palette.mode === 'dark'
+  const fonds = sombre ? {
+    clair: 'rgba(10,20,32,.6)',    // Nuit translucide (background.default)
+    blanc: 'rgba(16,32,47,.55)',   // Nuit papier translucide (background.paper)
+    gris: 'rgba(10,20,32,.72)',    // Nuit (un peu plus couvrant)
+    doux: 'rgba(10,20,32,.78)',    // Nuit (le plus couvrant)
+  } : {
     clair: 'rgba(250,250,250,.6)',   // Blanc cassé translucide
     blanc: 'rgba(255,255,255,.55)',   // Blanc pur translucide
     gris: 'rgba(245,245,245,.72)',    // Gris très clair (un peu plus couvrant)

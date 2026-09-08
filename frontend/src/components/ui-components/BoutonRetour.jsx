@@ -17,9 +17,9 @@ export default function BoutonRetour({ variante = 'clair', label = 'Retour au si
       sx={{
         minHeight: 44, px: 2, borderRadius: '12px', fontWeight: 800, fontSize: '0.875rem',
         color: sombre ? '#9AFBD7' : '#0F5B3A',
-        border: '1px solid', borderColor: sombre ? 'rgba(154,251,215,.16)' : '#E8ECEA',
-        bgcolor: sombre ? 'rgba(154,251,215,.06)' : '#fff',
-        '&:hover': { bgcolor: sombre ? 'rgba(154,251,215,.12)' : '#F0F5F2' },
+        border: '1px solid', borderColor: sombre ? 'rgba(154,251,215,.16)' : 'divider',
+        bgcolor: sombre ? 'rgba(154,251,215,.06)' : (theme) => theme.palette.background.paper,
+        '&:hover': { bgcolor: sombre ? 'rgba(154,251,215,.12)' : (theme) => (theme.palette.mode === 'dark' ? theme.palette.background.default : '#F0F5F2') },
         '&:focus-visible': { outline: '2px solid #1FAF72', outlineOffset: '2px' },
       }}
     >

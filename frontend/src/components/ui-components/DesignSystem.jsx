@@ -123,11 +123,12 @@ export function CarteUnifiee({
     >
       <Box
         sx={{
-          bgcolor: colors.neutral.card,
+          bgcolor: (theme) => theme.palette.background.paper,
           borderRadius: borderRadius,
           p: padding,
           boxShadow: shadowValue,
-          border: border ? `1px solid ${colors.neutral.border}` : 'none',
+          border: border ? '1px solid' : 'none',
+          borderColor: 'divider',
           height: '100%',
           display: 'flex',
           flexDirection: 'column',
@@ -184,7 +185,7 @@ export function StatCard({ valeur, label, icone, couleur = colors.accent.primary
           sx={{
             fontFamily: "'Orbitron', sans-serif",
             fontWeight: 800,
-            color: colors.neutral.text,
+            color: 'text.primary',
             fontVariantNumeric: 'tabular-nums',
           }}
         >
@@ -228,7 +229,7 @@ export function SectionTitleUnifiee({ overline, titre, description, align = 'lef
           fontWeight: 700,
           fontSize: { xs: '1.75rem', md: '2.5rem' },
           lineHeight: 1.2,
-          color: colors.neutral.text,
+          color: 'text.primary',
           mb: description ? 2 : 0,
         }}
       >
@@ -253,7 +254,7 @@ export function SectionTitleUnifiee({ overline, titre, description, align = 'lef
 export const ButtonStyles = {
   primary: {
     bgcolor: colors.accent.primary,
-    color: '#fff',
+    color: (theme) => theme.palette.primary.contrastText,
     '&:hover': { bgcolor: '#179963' },
     fontWeight: 700,
     px: 4,
@@ -263,7 +264,7 @@ export const ButtonStyles = {
     boxShadow: '0 4px 14px rgba(13,27,42,.15)',
   },
   secondary: {
-    bgcolor: colors.neutral.card,
+    bgcolor: (theme) => theme.palette.background.paper,
     color: colors.accent.primary,
     border: `2px solid ${colors.accent.primary}`,
     '&:hover': { bgcolor: 'rgba(31,175,114,.08)' },
@@ -274,9 +275,10 @@ export const ButtonStyles = {
     fontSize: '1rem',
   },
   outline: {
-    border: `1px solid ${colors.neutral.border}`,
-    color: colors.neutral.text,
-    '&:hover': { bgcolor: colors.neutral.bgAlt, borderColor: colors.accent.primary },
+    border: '1px solid',
+    borderColor: 'divider',
+    color: 'text.primary',
+    '&:hover': { bgcolor: (theme) => (theme.palette.mode === 'dark' ? theme.palette.background.default : colors.neutral.bgAlt), borderColor: colors.accent.primary },
     fontWeight: 600,
     px: 3,
     py: 1,
@@ -284,8 +286,8 @@ export const ButtonStyles = {
     fontSize: '0.9rem',
   },
   ghost: {
-    color: colors.neutral.textSecondary,
-    '&:hover': { bgcolor: colors.neutral.bgAlt, color: colors.accent.primary },
+    color: 'text.secondary',
+    '&:hover': { bgcolor: (theme) => (theme.palette.mode === 'dark' ? theme.palette.background.default : colors.neutral.bgAlt), color: colors.accent.primary },
     fontWeight: 600,
     px: 2,
     py: 0.5,

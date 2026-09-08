@@ -103,7 +103,7 @@ export default function Galerie() {
           <Box sx={{
             display: 'flex', flexWrap: 'wrap', gap: 1.4, justifyContent: 'center',
             mx: 'auto', mb: 2, width: 'fit-content', maxWidth: '100%',
-            bgcolor: '#fff', border: '1px solid #E8ECEA', borderRadius: 9999,
+            bgcolor: (theme) => theme.palette.background.paper, border: '1px solid', borderColor: 'divider', borderRadius: 9999,
             px: 2, py: 1.2, boxShadow: '0 4px 16px rgba(13,27,42,.06)',
           }}>
             {EVENEMENTS.map((e) => (
@@ -112,8 +112,8 @@ export default function Galerie() {
                 sx={{
                   fontWeight: 800, fontSize: '0.875rem', cursor: 'pointer', height: 44,
                   bgcolor: filtre === e.id ? '#0F5B3A' : 'transparent',
-                  color: filtre === e.id ? '#fff' : '#374151',
-                  '&:hover': { bgcolor: filtre === e.id ? '#0c4a2f' : '#F0F5F2' },
+                  color: filtre === e.id ? '#fff' : 'text.secondary',
+                  '&:hover': { bgcolor: filtre === e.id ? '#0c4a2f' : (theme) => (theme.palette.mode === 'dark' ? theme.palette.background.default : '#F0F5F2') },
                   '&:focus-visible': { outline: '2px solid #0F5B3A', outlineOffset: '2px' },
                 }}
               />
@@ -125,8 +125,8 @@ export default function Galerie() {
                 key={t.id} label={t.label} onClick={() => setFiltreType(t.id)}
                 sx={{
                   fontWeight: 700, cursor: 'pointer', fontSize: '0.875rem', height: 44,
-                  bgcolor: filtreType === t.id ? '#1FAF72' : '#F0F5F2',
-                  color: filtreType === t.id ? '#fff' : '#5A6B63',
+                  bgcolor: filtreType === t.id ? '#1FAF72' : (theme) => (theme.palette.mode === 'dark' ? theme.palette.background.default : '#F0F5F2'),
+                  color: filtreType === t.id ? (theme) => theme.palette.primary.contrastText : 'text.secondary',
                   '&:focus-visible': { outline: '2px solid #1FAF72', outlineOffset: '2px' },
                 }}
               />
@@ -154,12 +154,12 @@ export default function Galerie() {
                   onClick={() => setLightbox(m)}
                   aria-label={`Ouvrir : ${m.titre}`}
                   sx={{
-                  borderRadius: '18px', overflow: 'hidden', border: '1px solid #E8ECEA',
-                  boxShadow: '0 4px 14px rgba(13,27,42,.06)', background: '#fff',
+                  borderRadius: '18px', overflow: 'hidden', border: '1px solid', borderColor: 'divider',
+                  boxShadow: '0 4px 14px rgba(13,27,42,.06)', background: (theme) => theme.palette.background.paper,
                   transition: 'box-shadow 220ms ease, border-color 220ms ease',
                   '&:hover': { borderColor: '#C9D4CF', boxShadow: '0 10px 26px rgba(13,27,42,.1)' },
                   '&:focus-visible': { outline: '2px solid #0F5B3A', outlineOffset: '2px' },
-                  width: '100%', textAlign: 'left', padding: 0, border: '1px solid #E8ECEA', font: 'inherit',
+                  width: '100%', textAlign: 'left', padding: 0, font: 'inherit',
                 }}>
                   {m.image ? (
                     <Box component="img" src={m.image} alt={m.titre} loading="lazy" decoding="async" sx={{ width: '100%', minHeight: 180, objectFit: 'cover', display: 'block' }} />
@@ -191,7 +191,7 @@ export default function Galerie() {
                         {dateCourte(m.date)}
                       </Box>
                     </Box>
-                    <Typography sx={{ fontWeight: 800, color: '#111827', fontSize: { xs: '0.875rem', md: '0.95rem' }, lineHeight: 1.35, mt: 1.2 }}>{m.titre}</Typography>
+                    <Typography sx={{ fontWeight: 800, color: 'text.primary', fontSize: { xs: '0.875rem', md: '0.95rem' }, lineHeight: 1.35, mt: 1.2 }}>{m.titre}</Typography>
                     <Typography variant="body2" color="textSecondary" sx={{ display: { xs: 'block', sm: 'block' }, mt: 0.4, lineHeight: 1.5, fontSize: '0.812rem' }}>{m.legende}</Typography>
                   </Box>
                 </Box>
