@@ -118,11 +118,12 @@ export default function Galerie() {
           <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1.2, justifyContent: 'center', mb: 5 }}>
             {[{ id: 'tous', label: 'Tout type' }, { id: 'photo', label: 'Photos' }, { id: 'video', label: 'Vidéos' }].map((t) => (
               <Chip
-                key={t.id} label={t.label} onClick={() => setFiltreType(t.id)} size="small"
+                key={t.id} label={t.label} onClick={() => setFiltreType(t.id)}
                 sx={{
-                  fontWeight: 700, cursor: 'pointer',
+                  fontWeight: 700, cursor: 'pointer', fontSize: '0.875rem', height: 44,
                   bgcolor: filtreType === t.id ? '#1FAF72' : '#F0F5F2',
                   color: filtreType === t.id ? '#fff' : '#5A6B63',
+                  '&:focus-visible': { outline: '2px solid #1FAF72', outlineOffset: '2px' },
                 }}
               />
             ))}

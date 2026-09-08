@@ -177,7 +177,7 @@ function CarteActu({ n, index }) {
                             sx={{
                               border: '1px solid', borderColor: actif ? '#1FAF72' : '#E5E7EB',
                               bgcolor: actif ? '#E4F8EF' : '#fff', borderRadius: '9999px',
-                              px: 1, minWidth: 44, height: 36, fontSize: '0.95rem', cursor: 'pointer',
+                              px: 1, minWidth: 44, height: 44, fontSize: '0.95rem', cursor: 'pointer',
                               display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0.4,
                               transition: 'transform 140ms ease, background 140ms ease',
                               '&:hover': { bgcolor: '#F6FBF9' },
