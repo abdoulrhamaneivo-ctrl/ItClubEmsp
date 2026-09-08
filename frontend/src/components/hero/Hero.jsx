@@ -17,8 +17,6 @@ import FondDonnees from '../ui-components/FondDonnees'
 export default function Hero() {
   const ref = useRef(null)
   const theme = useTheme()
-  // Mobile : orbes figés (un flou animé = repeint plein écran à chaque frame)
-  const reduit = useMediaQuery(theme.breakpoints.down('sm'))
   const user = useAuth((s) => s.user)
 
   // Chiffres réels (API) — repli statique le temps du chargement
@@ -35,7 +33,7 @@ export default function Hero() {
     { valeur: statsReelles ? String(statsReelles.cellules) : '4', label: 'Domaines tech' },
     { valeur: statsReelles ? String(statsReelles.activites_a_venir) : '—', label: 'Activités à venir' },
     { valeur: statsReelles ? String(statsReelles.documents) : '—', label: 'Ressources' },
-    { valeur: '0', label: 'Frais d’adhésion' },
+    { valeur: '0 FCFA', label: 'Adhésion gratuite' },
   ]
 
   return (
@@ -49,31 +47,20 @@ export default function Hero() {
         background: 'linear-gradient(140deg,#0A1628 0%,#0D1B2A 42%,#0F5B3A 135%)',
       }}
     >
-      {/* ── Décor : fibres de données discrètes + orbes ── */}
+      {/* ── Décor : halo unique discret (pas d'orbes flottants IA) ── */}
       <FondDonnees intensite={0.45} sansSatellite sansEnveloppes fibresSeules />
       <Box sx={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
-        <motion.div
-          animate={reduit ? {} : { x: [0, 40, 0], y: [0, -30, 0] }}
-          transition={{ duration: 16, repeat: Infinity, ease: 'easeInOut' }}
-          style={{
-            position: 'absolute', top: '-12%', left: '-8%', width: { xs: 280, md: 480 }, height: { xs: 280, md: 480 },
-            borderRadius: '50%', background: 'radial-gradient(circle,#1FAF72 0%,transparent 65%)',
-            opacity: 0.28, filter: 'blur(70px)',
-          }}
-        />
-        <motion.div
-          animate={reduit ? {} : { x: [0, -50, 0], y: [0, 40, 0] }}
-          transition={{ duration: 20, repeat: Infinity, ease: 'easeInOut' }}
-          style={{
-            position: 'absolute', bottom: '6%', right: '-6%', width: { xs: 320, md: 560 }, height: { xs: 320, md: 560 },
-            borderRadius: '50%', background: 'radial-gradient(circle,#2563EB 0%,transparent 65%)',
-            opacity: 0.2, filter: 'blur(80px)',
+        <Box
+          sx={{
+            position: 'absolute', top: '-14%', left: '-6%', width: { xs: 300, md: 460 }, height: { xs: 300, md: 460 },
+            borderRadius: '50%', background: 'radial-gradient(circle,rgba(31,175,114,.16),transparent 65%)',
+            filter: 'blur(60px)',
           }}
         />
         <Box
           sx={{
             position: 'absolute', inset: 0,
-            backgroundImage: 'radial-gradient(rgba(154,251,215,.14) 1px, transparent 1px)',
+            backgroundImage: 'radial-gradient(rgba(154,251,215,.1) 1px, transparent 1px)',
             backgroundSize: '26px 26px',
             maskImage: 'radial-gradient(ellipse at 30% 40%, black 30%, transparent 75%)',
             WebkitMaskImage: 'radial-gradient(ellipse at 30% 40%, black 30%, transparent 75%)',
@@ -105,37 +92,31 @@ export default function Hero() {
               display: 'inline-flex', alignItems: 'center', gap: 1.2,
               px: 2.2, py: 0.9, borderRadius: 9999,
               bgcolor: 'rgba(255,255,255,.08)', border: '1px solid rgba(154,251,215,.28)',
-              backdropFilter: 'blur(10px)',
             }}
           >
-            <motion.span
-              animate={{ opacity: [1, 0.4, 1], scale: [1, 0.85, 1] }}
-              transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
-              style={{ width: 8, height: 8, borderRadius: '50%', background: '#1FAF72', boxShadow: '0 0 10px #1FAF72' }}
-            />
+            <Box sx={{ width: 8, height: 8, borderRadius: '50%', background: '#1FAF72' }} />
             <Typography sx={{ color: '#9AFBD7', fontWeight: 800, fontSize: '0.72rem', letterSpacing: '0.18em', textTransform: 'uppercase' }}>
               Le club informatique — EMSP
             </Typography>
           </Box>
         </motion.div>
 
-        {/* Titre — apparition mot à mot */}
+        {/* Titre — apparition sobre */}
         <Box
           component="h1"
           sx={{
             fontFamily: "'Orbitron', sans-serif", fontWeight: 800,
             fontSize: { xs: '2.4rem', md: '4.4rem' }, lineHeight: 1.08,
             my: 3, color: '#fff', maxWidth: 900,
-            textShadow: '0 4px 30px rgba(0,0,0,.35)',
           }}
         >
           {['Construire', 'l’avenir numérique', 'ensemble.'].map((mot, i) => (
             <motion.span
               key={mot}
               style={{ display: 'block' }}
-              initial={{ opacity: 0, y: 34 }}
+              initial={{ opacity: 0, y: 26 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.08 + i * 0.13, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ delay: 0.08 + i * 0.1, duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
             >
               {i === 1 ? (
                 <>
@@ -150,9 +131,9 @@ export default function Hero() {
 
         {/* Sous-titre */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.0628, duration: 0.38, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ delay: 0.36, duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
         >
           <Typography sx={{ color: 'rgba(255,255,255,.82)', fontSize: { xs: '1.05rem', md: '1.22rem' }, lineHeight: 1.8, maxWidth: 640, mb: 4 }}>
             Le IT-CLUB EMSP, c’est l’endroit où les étudiants de l’École Multinationale
@@ -165,35 +146,31 @@ export default function Hero() {
 
         {/* CTA */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.0668, duration: 0.38, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ delay: 0.44, duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
           style={{ display: 'flex', gap: 16, flexWrap: 'wrap', alignItems: 'center' }}
         >
-          <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
-            <Button
-              variant="contained" size="large" href={user ? '/espace' : '/adhesion'}
-              sx={{
-                bgcolor: '#1FAF72', color: '#fff', '&:hover': { bgcolor: '#179963' },
-                fontWeight: 800, px: 4.5, py: 1.6, borderRadius: 9999, fontSize: '1rem',
-                boxShadow: '0 8px 28px rgba(31,175,114,.45)',
-              }}
-            >
-              {user ? 'Mon espace' : 'Nous rejoindre'}
-            </Button>
-          </motion.div>
-          <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
-            <Button
-              variant="contained" size="large" href="#activites"
-              sx={{
-                bgcolor: '#fff', color: '#0D1B2A', '&:hover': { bgcolor: '#E8F5EE' },
-                fontWeight: 800, px: 4.5, py: 1.6, borderRadius: 9999, fontSize: '1rem',
-                boxShadow: '0 8px 28px rgba(0,0,0,.3)',
-              }}
-            >
-              Nos activités
-            </Button>
-          </motion.div>
+          <Button
+            variant="contained" size="large" href={user ? '/espace' : '/adhesion'}
+            sx={{
+              bgcolor: '#1FAF72', color: '#fff', '&:hover': { bgcolor: '#179963', boxShadow: '0 6px 18px rgba(31,175,114,.35)' },
+              fontWeight: 800, px: 4.5, py: 1.6, borderRadius: 9999, fontSize: '1rem',
+              boxShadow: '0 4px 14px rgba(31,175,114,.3)',
+            }}
+          >
+            {user ? 'Mon espace' : 'Nous rejoindre'}
+          </Button>
+          <Button
+            variant="contained" size="large" href="#activites"
+            sx={{
+              bgcolor: '#fff', color: '#0D1B2A', '&:hover': { bgcolor: '#E8F5EE' },
+              fontWeight: 800, px: 4.5, py: 1.6, borderRadius: 9999, fontSize: '1rem',
+              boxShadow: '0 4px 14px rgba(0,0,0,.25)',
+            }}
+          >
+            Nos activités
+          </Button>
         </motion.div>
       </Container>
 
@@ -205,13 +182,13 @@ export default function Hero() {
         mt: { xs: 4, md: 0 }, pb: { xs: 4, md: 0 },
       }}>
       <motion.div
-        initial={{ opacity: 0, y: 24 }}
+        initial={{ opacity: 0, y: 18 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.5, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+        transition={{ delay: 0.5, duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
       >
         <Box
           sx={{
-            bgcolor: 'rgba(10,22,40,.62)', backdropFilter: 'blur(14px)',
+            bgcolor: 'rgba(10,22,40,.72)',
             borderTop: '1px solid rgba(154,251,215,.2)',
             borderBottom: '1px solid rgba(154,251,215,.2)',
           }}
