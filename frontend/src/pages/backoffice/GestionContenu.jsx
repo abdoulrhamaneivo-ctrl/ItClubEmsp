@@ -273,7 +273,7 @@ function OngletDocuments({ notify }) {
 
   const supprimer = async (d) => {
     if (!REEL) {
-      supprimerDocument(d.id)
+      supprimerDocument(d.slug ?? d.id)
       notify('info', 'Document supprimé.')
       return
     }

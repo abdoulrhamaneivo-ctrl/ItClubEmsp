@@ -393,6 +393,7 @@ class DocumentViewSet(NettoyageFichiersMixin, PublicReadOrStaffWrite):
     queryset = Document.objects.all()
     serializer_class = DocumentSerializer
     filterset_fields = ['famille']
+    lookup_field = 'slug'  # le serializer n'expose pas l'id : le slug EST l'identifiant public
 
 
 class SujetViewSet(viewsets.ModelViewSet):
