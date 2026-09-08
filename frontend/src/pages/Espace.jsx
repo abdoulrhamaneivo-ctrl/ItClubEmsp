@@ -9,6 +9,7 @@ import Avatar from '@mui/material/Avatar'
 import Divider from '@mui/material/Divider'
 import IconButton from '@mui/material/IconButton'
 import Tooltip from '@mui/material/Tooltip'
+import { useTheme } from '@mui/material/styles'
 import Switch from '@mui/material/Switch'
 import TextField from '@mui/material/TextField'
 import InputBase from '@mui/material/InputBase'
@@ -245,6 +246,7 @@ export default function Espace() {
   const logout = useAuth((s) => s.logout)
   const navigate = useNavigate()
   const reduit = useReducedMotion()
+  const sombre = useTheme().palette.mode === 'dark'
   // Déconnexion unique avec confirmation — utilisée par la topbar et la palette
   const demanderDeconnexion = useCallback(() => {
     if (window.confirm('Se déconnecter de ton espace ?')) logout()
@@ -607,10 +609,10 @@ export default function Espace() {
               onKeyDown={(e) => { if ((e.key === 'Enter' || e.key === ' ') && notifsApi !== null && !n.lu) { e.preventDefault(); marquerLue(n.id) } }}
               sx={{
               display: 'flex', gap: 1.8, px: 2.6, py: 2.1,
-              borderBottom: i < arr.length - 1 ? '1px solid #F0F4F2' : 'none',
+              borderBottom: i < arr.length - 1 ? '1px solid' : 'none', borderColor: 'divider',
               transition: 'background 160ms ease',
-              '&:hover': { bgcolor: '#F6FBF9' }, cursor: notifsApi !== null ? 'pointer' : 'default',
-              '&:focus-visible': { outline: '2px solid #1FAF72', outlineOffset: '-2px', bgcolor: '#F6FBF9' },
+              '&:hover': { bgcolor: (theme) => theme.palette.background.paper }, cursor: notifsApi !== null ? 'pointer' : 'default',
+              '&:focus-visible': { outline: '2px solid #1FAF72', outlineOffset: '-2px', bgcolor: (theme) => theme.palette.background.paper },
               ...(n.lu && { opacity: 0.62 }),
             }}>
               <Box sx={{
@@ -618,13 +620,13 @@ export default function Espace() {
                 ...(i === 0 && !n.lu && { boxShadow: `0 0 0 4px ${n.couleur}22` }),
               }} />
               <Box sx={{ flex: 1, minWidth: 0 }}>
-                <Typography sx={{ fontWeight: n.lu ? 600 : 700, color: '#111827', fontSize: '0.875rem', lineHeight: 1.5 }}>{n.titre}</Typography>
-                <Typography variant="caption" sx={{ color: '#5A6B63', fontWeight: 600, fontSize: '0.875rem' }}>{n.date}</Typography>
+                <Typography sx={{ fontWeight: n.lu ? 600 : 700, color: 'text.primary', fontSize: '0.875rem', lineHeight: 1.5 }}>{n.titre}</Typography>
+                <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600, fontSize: '0.875rem' }}>{n.date}</Typography>
               </Box>
             </Box>
           ))}
           {notifs !== null && notifs.length === 0 && (
-            <Typography sx={{ px: 2.6, py: 3, color: '#5A6B63', fontSize: '0.88rem' }}>
+            <Typography sx={{ px: 2.6, py: 3, color: 'text.secondary', fontSize: '0.88rem' }}>
               Rien pour le moment — les annonces, rappels et promotions arrivent ici.
             </Typography>
           )}
@@ -639,14 +641,14 @@ export default function Espace() {
               transition={{ delay: reduit ? 0 : Math.min(i * 0.05, 0.1), duration: reduit ? 0 : 0.25, ease: [0.22, 1, 0.36, 1] }}>
               <Box sx={{
                 display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: { xs: 1.2, md: 2.2 }, p: { xs: 1.6, md: 2.4 }, mb: 1.4,
-                bgcolor: '#fff', borderRadius: '16px', border: '1px solid #E8ECEA',
+                bgcolor: (theme) => theme.palette.background.paper, borderRadius: '16px', border: '1px solid', borderColor: 'divider',
                 boxShadow: '0 2px 10px rgba(13,27,42,.05)',
                 transition: 'box-shadow 200ms ease, border-color 200ms ease',
                 '&:hover': { boxShadow: '0 8px 22px rgba(13,27,42,.1)', borderColor: '#C9DED4' },
               }}>
                 <Box sx={{
                   width: 54, flexShrink: 0, borderRadius: '12px', py: 1.2,
-                  bgcolor: '#F5F7F6', border: '1px solid #E5E9E7',
+                  bgcolor: (theme) => (theme.palette.mode === 'dark' ? theme.palette.background.default : '#F5F7F6'), border: '1px solid', borderColor: 'divider',
                   display: 'flex', flexDirection: 'column', alignItems: 'center',
                 }}>
                   <Typography sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 800, fontSize: '1.15rem', lineHeight: 1, color: insc.couleur }}>
@@ -657,15 +659,15 @@ export default function Espace() {
                   </Typography>
                 </Box>
                 <Box sx={{ flex: 1, minWidth: 0 }}>
-                  <Typography sx={{ fontWeight: 800, color: '#111827', fontSize: '0.95rem', lineHeight: 1.35 }}>{insc.titre}</Typography>
+                  <Typography sx={{ fontWeight: 800, color: 'text.primary', fontSize: '0.95rem', lineHeight: 1.35 }}>{insc.titre}</Typography>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8, mt: 0.4, flexWrap: 'wrap' }}>
-                    <Typography variant="caption" sx={{ color: '#4B5563', fontWeight: 600, fontSize: '0.875rem', textTransform: 'capitalize' }}>
+                    <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600, fontSize: '0.875rem', textTransform: 'capitalize' }}>
                       {new Date(insc.date).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })} · {insc.lieu}
                     </Typography>
                     {insc.evenementId && import.meta.env.VITE_API_URL && (
                       <Typography component="a" variant="caption"
                         href={`${import.meta.env.VITE_API_URL}/api/v1/evenements/${insc.evenementId}.ics`}
-                        sx={{ color: '#0E7A50', fontWeight: 800, fontSize: '0.875rem', textDecoration: 'none', minHeight: 44, display: 'inline-flex', alignItems: 'center', '&:hover': { textDecoration: 'underline' } }}>
+                        sx={{ color: (theme) => (theme.palette.mode === 'dark' ? '#6EE7B7' : '#0E7A50'), fontWeight: 800, fontSize: '0.875rem', textDecoration: 'none', minHeight: 44, display: 'inline-flex', alignItems: 'center', '&:hover': { textDecoration: 'underline' } }}>
                         · Agenda (.ics)
                       </Typography>
                     )}
@@ -681,15 +683,15 @@ export default function Espace() {
               {insc.statut === 'Confirmé' && insc.evenementId && (
                 <Box sx={{
                   display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 1.2, mt: -0.6, mb: 1.4, ml: { xs: 0, md: 9 },
-                  px: 2, py: 1.2, bgcolor: '#F6FBF9', borderRadius: '12px', border: '1px dashed #BFD8CC',
+                  px: 2, py: 1.2, bgcolor: (theme) => (theme.palette.mode === 'dark' ? theme.palette.background.default : '#F6FBF9'), borderRadius: '12px', border: '1px dashed #BFD8CC',
                 }}>
                   {String(etatsPresence[insc.id] ?? '').startsWith('present') ? (
-                    <Typography sx={{ fontWeight: 800, color: '#0B7A4B', fontSize: '0.875rem' }}>
+                    <Typography sx={{ fontWeight: 800, color: (theme) => (theme.palette.mode === 'dark' ? '#6EE7B7' : '#0B7A4B'), fontSize: '0.875rem' }}>
                       Présent ✓ {etatsPresence[insc.id].split(':')[1] ? `· ${etatsPresence[insc.id].split(':')[1]} pts` : ''}
                     </Typography>
                   ) : (
                     <>
-                      <Typography variant="caption" sx={{ color: '#5A6B63', fontWeight: 700, flexShrink: 0, fontSize: '0.875rem' }}>
+                      <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 700, flexShrink: 0, fontSize: '0.875rem' }}>
                         J'y étais — code :
                       </Typography>
                       <InputBase
@@ -698,8 +700,8 @@ export default function Espace() {
                         placeholder="——————"
                         inputProps={{ inputMode: 'numeric', maxLength: 6, 'aria-label': 'Code de présence à 6 chiffres' }}
                         sx={{
-                          width: 110, minHeight: 44, height: 44, bgcolor: '#fff', borderRadius: '8px', border: '1px solid #D1D5DB',
-                          px: 1.2, fontFamily: "'JetBrains Mono',monospace", fontWeight: 800, letterSpacing: '0.06em', display: 'flex', alignItems: 'center',
+                          width: 110, minHeight: 44, height: 44, bgcolor: (theme) => (theme.palette.mode === 'dark' ? theme.palette.background.paper : '#fff'), borderRadius: '8px', border: '1px solid', borderColor: 'divider',
+                          px: 1.2, fontFamily: "'JetBrains Mono',monospace", fontWeight: 800, display: 'flex', alignItems: 'center',
                           letterSpacing: '0.2em', fontSize: '0.875rem', textAlign: 'center',
                           '&:focus-within': { borderColor: '#1FAF72', outline: '2px solid #1FAF72', outlineOffset: '1px' },
                         }}
@@ -710,7 +712,7 @@ export default function Espace() {
                         {etatsPresence[insc.id] === 'envoi' ? '…' : 'OK'}
                       </Button>
                       {etatsPresence[insc.id] === 'erreur' && (
-                        <Typography variant="caption" sx={{ color: '#B42318', fontWeight: 700, fontSize: '0.875rem' }}>
+                        <Typography variant="caption" sx={{ color: (theme) => (theme.palette.mode === 'dark' ? '#EF4444' : '#B42318'), fontWeight: 700, fontSize: '0.875rem' }}>
                           Code incorrect
                         </Typography>
                       )}
@@ -722,7 +724,7 @@ export default function Espace() {
           ))}
           {inscriptions !== null && inscriptions.length === 0 && (
             <Box sx={{ textAlign: 'center', py: 3 }}>
-              <Typography sx={{ color: '#5A6B63', fontSize: '0.9rem', mb: 1.5 }}>
+              <Typography sx={{ color: 'text.secondary', fontSize: '0.9rem', mb: 1.5 }}>
                 Aucune inscription pour le moment.
               </Typography>
               <Button variant="contained" onClick={() => allerVers('activites')} sx={{ bgcolor: '#1FAF72', '&:hover': { bgcolor: '#179963' }, fontWeight: 800, borderRadius: 9999, minHeight: 44, fontSize: '0.875rem' }}>
@@ -736,7 +738,7 @@ export default function Espace() {
         <Section refE={refs.cellule} id="cellule" titre="ma-cellule" sousTitre="Ton équipe au quotidien" icone={<IcCube taille={17} couleur="#0F5B3A" />}>
           <Box sx={{ display: 'grid', gap: 3, gridTemplateColumns: { xs: '1fr', md: '1.2fr 1fr' }, alignItems: 'start' }}>
             <Box sx={{
-              p: { xs: 2.8, md: 3.2 }, bgcolor: '#fff', borderRadius: '18px',
+              p: { xs: 2.8, md: 3.2 }, bgcolor: (theme) => theme.palette.background.paper, borderRadius: '18px',
               border: `1.5px solid ${(cellule ?? MA_CELLULE).couleur}45`,
               boxShadow: `0 12px 30px ${(cellule ?? MA_CELLULE).couleur}1E`,
             }}>
@@ -750,16 +752,16 @@ export default function Espace() {
                   <IcCube taille={28} couleur="#fff" />
                 </Box>
                 <Box>
-                  <Typography sx={{ color: (cellule ?? MA_CELLULE).couleurFonce, fontWeight: 800, fontSize: '0.875rem', letterSpacing: '0.07em', textTransform: 'uppercase' }}>
+                  <Typography sx={{ color: (theme) => (theme.palette.mode === 'dark' ? (cellule ?? MA_CELLULE).couleur : (cellule ?? MA_CELLULE).couleurFonce), fontWeight: 800, fontSize: '0.875rem', letterSpacing: '0.07em', textTransform: 'uppercase' }}>
                     {(cellule ?? MA_CELLULE).role ?? 'Membre actif'}
                   </Typography>
-                  <Typography sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 800, fontSize: '1.25rem', color: '#111827' }}>
+                  <Typography sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 800, fontSize: '1.25rem', color: 'text.primary' }}>
                     {(cellule ?? MA_CELLULE).nom}
                   </Typography>
                 </Box>
               </Box>
               <Divider sx={{ my: 2 }} />
-              <Typography sx={{ fontWeight: 800, color: '#111827', fontSize: '0.9rem', mb: 1.5 }}>
+              <Typography sx={{ fontWeight: 800, color: 'text.primary', fontSize: '0.9rem', mb: 1.5 }}>
                 {cellule ? `À propos — ${cellule.membres} membres` : 'Prochaines sessions'}
               </Typography>
               <Box sx={{ display: 'grid', gap: 1.2 }}>
@@ -767,11 +769,11 @@ export default function Espace() {
                   ? [{ date: `${cellule.membres} membres actifs`, sujet: cellule.description }]
                   : MA_CELLULE.prochainesSessions
                 ).map((s, i) => (
-                  <Box key={i} sx={{ display: 'flex', gap: 1.4, alignItems: 'flex-start', p: 1.6, bgcolor: '#F6FBF9', borderRadius: '12px', border: '1px solid #E3EEE8' }}>
-                    <IcCalendrier taille={15} couleur={(cellule ?? MA_CELLULE).couleurFonce} />
+                  <Box key={i} sx={{ display: 'flex', gap: 1.4, alignItems: 'flex-start', p: 1.6, bgcolor: (theme) => theme.palette.background.paper, borderRadius: '12px', border: '1px solid', borderColor: 'divider' }}>
+                    <IcCalendrier taille={15} couleur={sombre ? '#9AFBD7' : (cellule ?? MA_CELLULE).couleurFonce} />
                     <Box>
-                      <Typography sx={{ fontWeight: 800, color: '#0F5B3A', fontSize: '0.875rem' }}>{s.date}</Typography>
-                      <Typography variant="body2" sx={{ color: '#5A6B63', lineHeight: 1.6, fontSize: '0.875rem' }}>{s.sujet}</Typography>
+                      <Typography sx={{ fontWeight: 800, color: (theme) => (theme.palette.mode === 'dark' ? '#9AFBD7' : '#0F5B3A'), fontSize: '0.875rem' }}>{s.date}</Typography>
+                      <Typography variant="body2" sx={{ color: 'text.secondary', lineHeight: 1.6, fontSize: '0.875rem' }}>{s.sujet}</Typography>
                     </Box>
                   </Box>
                 ))}
@@ -788,15 +790,15 @@ export default function Espace() {
                   initial={reduit ? false : { opacity: 0, y: 14 }} whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: '0px' }}
                   transition={{ delay: reduit ? 0 : Math.min(0.1 + i * 0.06, 0.2), duration: reduit ? 0 : 0.25 }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, p: 2.2, bgcolor: '#fff', borderRadius: '16px', border: '1px solid #E8ECEA' }}>
-                    <Box sx={{ width: 46, height: 46, borderRadius: '12px', bgcolor: '#F5F7F6', display: 'grid', placeItems: 'center' }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, p: 2.2, bgcolor: (theme) => theme.palette.background.paper, borderRadius: '16px', border: '1px solid', borderColor: 'divider' }}>
+                    <Box sx={{ width: 46, height: 46, borderRadius: '12px', bgcolor: (theme) => (theme.palette.mode === 'dark' ? theme.palette.background.default : '#F5F7F6'), display: 'grid', placeItems: 'center' }}>
                       {s.icone}
                     </Box>
                     <Box>
-                      <Typography sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 800, fontSize: '1.4rem', color: '#111827', lineHeight: 1.2 }}>
+                      <Typography sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 800, fontSize: '1.4rem', color: 'text.primary', lineHeight: 1.2 }}>
                         {s.valeur}
                       </Typography>
-                      <Typography variant="caption" sx={{ color: '#5A6B63', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', fontSize: '0.875rem' }}>
+                      <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', fontSize: '0.875rem' }}>
                         {s.label}
                       </Typography>
                     </Box>
@@ -810,8 +812,8 @@ export default function Espace() {
         {/* ═══ MON PROFIL ════════════════════════════════════════ */}
         <Section refE={refs.profil} id="profil" titre="mon-profil" sousTitre="Tes informations" icone={<IcMembres taille={17} couleur="#0F5B3A" />}>
           <Box sx={{ display: 'grid', gap: 3, gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, alignItems: 'start' }}>
-            <Box sx={{ p: { xs: 2.8, md: 3.2 }, bgcolor: '#fff', borderRadius: '18px', border: '1px solid #E8ECEA' }}>
-              <Typography sx={{ fontWeight: 800, color: '#111827', fontSize: '1rem', mb: 2 }}>
+            <Box sx={{ p: { xs: 2.8, md: 3.2 }, bgcolor: (theme) => theme.palette.background.paper, borderRadius: '18px', border: '1px solid', borderColor: 'divider' }}>
+              <Typography sx={{ fontWeight: 800, color: 'text.primary', fontSize: '1rem', mb: 2 }}>
                 Mes informations
               </Typography>
               <PhotoProfil />
@@ -820,37 +822,37 @@ export default function Espace() {
                 ['Email', user.email || 'prenom.nom@emsp.int'],
                 ['Points de participation', points === null ? '—' : `${points} pts${niveau ? ` · ${niveau}` : ''}`],
               ].map(([label, valeur]) => (
-                <Box key={label} sx={{ display: 'flex', justifyContent: 'space-between', gap: 2, py: 1.4, borderBottom: '1px solid #EEF2F0' }}>
-                  <Typography variant="body2" sx={{ color: '#5A6B63', fontWeight: 600 }}>{label}</Typography>
-                  <Typography variant="body2" sx={{ color: '#111827', fontWeight: 700, textAlign: 'right', wordBreak: 'break-word' }}>{valeur}</Typography>
+                <Box key={label} sx={{ display: 'flex', justifyContent: 'space-between', gap: 2, py: 1.4, borderBottom: '1px solid', borderColor: 'divider' }}>
+                  <Typography variant="body2" sx={{ color: 'text.secondary', fontWeight: 600 }}>{label}</Typography>
+                  <Typography variant="body2" sx={{ color: 'text.primary', fontWeight: 700, textAlign: 'right', wordBreak: 'break-word' }}>{valeur}</Typography>
                 </Box>
               ))}
-              <Typography variant="caption" sx={{ display: 'block', mt: 2, color: '#5A6B63', lineHeight: 1.7, fontSize: '0.875rem' }}>
+              <Typography variant="caption" sx={{ display: 'block', mt: 2, color: 'text.secondary', lineHeight: 1.7, fontSize: '0.875rem' }}>
                 Pour corriger une information, contacte la Secrétaire Générale — les données viennent de l'annuaire du club.
               </Typography>
               {classement.length > 0 && (
-                <Box sx={{ mt: 2, pt: 2, borderTop: '1px solid #EEF2F0' }}>
-                  <Typography sx={{ fontWeight: 800, color: '#111827', fontSize: '0.875rem', mb: 1 }}>
+                <Box sx={{ mt: 2, pt: 2, borderTop: '1px solid', borderColor: 'divider' }}>
+                  <Typography sx={{ fontWeight: 800, color: 'text.primary', fontSize: '0.875rem', mb: 1 }}>
                     Top membres du club
                   </Typography>
                   {classement.map((j, i) => (
                     <Box key={`${j.nom}-${i}`} sx={{ display: 'flex', alignItems: 'center', gap: 1.2, py: 0.6 }}>
-                      <Typography sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 800, fontSize: '0.875rem', color: i === 0 ? '#B45309' : '#6B7280', width: 22 }}>
+                      <Typography sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 800, fontSize: '0.875rem', color: i === 0 ? '#B45309' : 'text.secondary', width: 22 }}>
                         {i + 1}
                       </Typography>
                       <Avatar src={urlMedia(j.photo) ?? undefined} sx={{ width: 26, height: 26, bgcolor: '#EDE9FE', color: '#5B21B6', fontWeight: 800, fontSize: '0.875rem', flexShrink: 0 }}>
                         {(j.nom || '?').slice(0, 1).toUpperCase()}
                       </Avatar>
-                      <Typography variant="body2" sx={{ flex: 1, color: '#111827', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      <Typography variant="body2" sx={{ flex: 1, color: 'text.primary', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                         {j.nom}
                       </Typography>
                       <Chip label={j.niveau} size="small" sx={{ bgcolor: '#EDE9FE', color: '#5B21B6', fontWeight: 700, fontSize: '0.875rem', height: 28 }} />
-                      <Typography variant="caption" sx={{ color: '#0B7A4B', fontWeight: 800, fontSize: '0.875rem' }}>
+                      <Typography variant="caption" sx={{ color: (theme) => (theme.palette.mode === 'dark' ? '#6EE7B7' : '#0B7A4B'), fontWeight: 800, fontSize: '0.875rem' }}>
                         {j.points} pts
                       </Typography>
                     </Box>
                   ))}
-                  <Typography variant="caption" sx={{ display: 'block', mt: 1, color: '#5A6B63', fontSize: '0.875rem' }}>
+                  <Typography variant="caption" sx={{ display: 'block', mt: 1, color: 'text.secondary', fontSize: '0.875rem' }}>
                     Bienvenue +10 · présence +5 · Niveaux : Actif (5), Pilier (20), Légende (50).
                   </Typography>
                 </Box>
@@ -859,23 +861,23 @@ export default function Espace() {
             <PreferencesNotifications />
             <ChangementMotDePasse />
 
-            <Box sx={{ p: { xs: 2.8, md: 3.2 }, bgcolor: '#fff', borderRadius: '18px', border: '1px solid #E8ECEA' }}>
-              <Typography sx={{ fontWeight: 800, color: '#111827', fontSize: '1rem', mb: 2 }}>
+            <Box sx={{ p: { xs: 2.8, md: 3.2 }, bgcolor: (theme) => theme.palette.background.paper, borderRadius: '18px', border: '1px solid', borderColor: 'divider' }}>
+              <Typography sx={{ fontWeight: 800, color: 'text.primary', fontSize: '1rem', mb: 2 }}>
                 Mes rôles & permissions
               </Typography>
               <Box sx={{ display: 'grid', gap: 1.2 }}>
                 {(user.roles ?? []).map((r) => {
                   const I = iconePoste(libellesRoles[r.code] ?? '')
                   return (
-                    <Box key={r.code} sx={{ display: 'flex', alignItems: 'center', gap: 1.6, p: 1.6, bgcolor: '#F6FBF9', borderRadius: '12px', border: '1px solid #E3EEE8' }}>
-                      <Box sx={{ width: 38, height: 38, borderRadius: '10px', bgcolor: '#0F5B3A14', display: 'grid', placeItems: 'center' }}>
-                        <I taille={18} couleur="#0F5B3A" />
+                    <Box key={r.code} sx={{ display: 'flex', alignItems: 'center', gap: 1.6, p: 1.6, bgcolor: (theme) => theme.palette.background.paper, borderRadius: '12px', border: '1px solid', borderColor: 'divider' }}>
+                      <Box sx={{ width: 38, height: 38, borderRadius: '10px', bgcolor: (theme) => (theme.palette.mode === 'dark' ? 'rgba(154,251,215,.16)' : '#0F5B3A14'), display: 'grid', placeItems: 'center' }}>
+                        <I taille={18} couleur={sombre ? '#9AFBD7' : '#0F5B3A'} />
                       </Box>
                       <Box>
-                        <Typography sx={{ fontWeight: 800, color: '#111827', fontSize: '0.875rem' }}>
+                        <Typography sx={{ fontWeight: 800, color: 'text.primary', fontSize: '0.875rem' }}>
                           {libellesRoles[r.code] ?? r.code}
                         </Typography>
-                        <Typography variant="caption" sx={{ color: '#5A6B63', fontWeight: 600, fontFamily: "'JetBrains Mono',monospace", fontSize: '0.875rem' }}>
+                        <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600, fontFamily: "'JetBrains Mono',monospace", fontSize: '0.875rem' }}>
                           role: {r.code}
                         </Typography>
                       </Box>
@@ -950,25 +952,25 @@ function PreferencesNotifications() {
   ]
 
   return (
-    <Box sx={{ p: { xs: 2.8, md: 3.2 }, bgcolor: '#fff', borderRadius: '18px', border: '1px solid #E8ECEA', gridColumn: { md: '1 / -1' } }}>
-      <Typography sx={{ fontWeight: 800, color: '#111827', fontSize: '1rem', mb: 0.5 }}>
+    <Box sx={{ p: { xs: 2.8, md: 3.2 }, bgcolor: (theme) => theme.palette.background.paper, borderRadius: '18px', border: '1px solid', borderColor: 'divider', gridColumn: { md: '1 / -1' } }}>
+      <Typography sx={{ fontWeight: 800, color: 'text.primary', fontSize: '1rem', mb: 0.5 }}>
         Notifications par email
       </Typography>
-      <Typography variant="caption" sx={{ color: '#5A6B63', display: 'block', mb: 1.5, fontSize: '0.875rem' }}>
+      <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block', mb: 1.5, fontSize: '0.875rem' }}>
         {prefs === null ? 'Chargement…' : 'Choisis ce que tu veux recevoir — le reste reste visible ici.'}
       </Typography>
       {LIGNES.map(([cle, titre, aide]) => (
-        <Box key={cle} sx={{ display: 'flex', alignItems: 'center', gap: 2, py: 1.2, borderBottom: '1px solid #EEF2F0' }}>
+        <Box key={cle} sx={{ display: 'flex', alignItems: 'center', gap: 2, py: 1.2, borderBottom: '1px solid', borderColor: 'divider' }}>
           <Box sx={{ flex: 1 }}>
-            <Typography sx={{ fontWeight: 700, color: '#111827', fontSize: '0.875rem' }}>{titre}</Typography>
-            <Typography variant="caption" sx={{ color: '#5A6B63', fontSize: '0.875rem' }}>{aide}</Typography>
+            <Typography sx={{ fontWeight: 700, color: 'text.primary', fontSize: '0.875rem' }}>{titre}</Typography>
+            <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '0.875rem' }}>{aide}</Typography>
           </Box>
           <Switch checked={prefs?.[cle] ?? true} onChange={() => basculer(cle)} disabled={prefs === null}
             sx={{ '& .MuiSwitch-switchBase.Mui-checked': { color: '#1FAF72' }, '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': { bgcolor: '#1FAF72' } }} />
         </Box>
       ))}
       {sauve && (
-        <Typography variant="caption" sx={{ display: 'block', mt: 1.5, color: sauve.startsWith('Hors') ? '#B45309' : '#0E7A50', fontWeight: 700, fontSize: '0.875rem' }}>
+        <Typography variant="caption" sx={{ display: 'block', mt: 1.5, color: sauve.startsWith('Hors') ? (theme) => (theme.palette.mode === 'dark' ? '#F5A623' : '#B45309') : (theme) => (theme.palette.mode === 'dark' ? '#6EE7B7' : '#0E7A50'), fontWeight: 700, fontSize: '0.875rem' }}>
           {sauve}
         </Typography>
       )}
@@ -1012,18 +1014,18 @@ function PhotoProfil() {
   }
 
   return (
-    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2, pb: 2, borderBottom: '1px solid #EEF2F0' }}>
+    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2, pb: 2, borderBottom: '1px solid', borderColor: 'divider' }}>
       <Avatar src={urlMedia(user?.photo) ?? undefined} sx={{ width: 64, height: 64, bgcolor: '#0F5B3A', fontWeight: 800, fontSize: '1.4rem' }}>
         {(user?.nom || 'M')[0]}
       </Avatar>
       <Box>
         <Button variant="outlined" component="label" size="small" disabled={envoi}
-          sx={{ borderColor: '#1FAF72', color: '#0E7A50', fontWeight: 800, borderRadius: '10px', minHeight: 44, fontSize: '0.875rem' }}>
+          sx={{ borderColor: '#1FAF72', color: (theme) => (theme.palette.mode === 'dark' ? '#6EE7B7' : '#0E7A50'), fontWeight: 800, borderRadius: '10px', minHeight: 44, fontSize: '0.875rem' }}>
           {envoi ? 'Envoi…' : 'Changer la photo'}
           <input type="file" accept="image/*" hidden onChange={choisir} />
         </Button>
         {retour && (
-          <Typography variant="caption" sx={{ display: 'block', mt: 0.6, color: retour.includes('✓') ? '#0B7A4B' : '#B42318', fontWeight: 700, fontSize: '0.875rem' }}>
+          <Typography variant="caption" sx={{ display: 'block', mt: 0.6, color: retour.includes('✓') ? (theme) => (theme.palette.mode === 'dark' ? '#6EE7B7' : '#0B7A4B') : (theme) => (theme.palette.mode === 'dark' ? '#EF4444' : '#B42318'), fontWeight: 700, fontSize: '0.875rem' }}>
             {retour}
           </Typography>
         )}
@@ -1057,14 +1059,14 @@ function ChangementMotDePasse() {
     }
   }
 
-  const champSx = { '& .MuiOutlinedInput-root': { borderRadius: '12px', bgcolor: '#F8FAF9' } }
+  const champSx = { '& .MuiOutlinedInput-root': { borderRadius: '12px', bgcolor: (theme) => (theme.palette.mode === 'dark' ? theme.palette.background.default : '#F8FAF9') } }
 
   return (
-    <Box sx={{ p: { xs: 2.8, md: 3.2 }, bgcolor: '#fff', borderRadius: '18px', border: '1px solid #E8ECEA' }}>
-      <Typography sx={{ fontWeight: 800, color: '#111827', fontSize: '1rem', mb: 0.5 }}>
+    <Box sx={{ p: { xs: 2.8, md: 3.2 }, bgcolor: (theme) => theme.palette.background.paper, borderRadius: '18px', border: '1px solid', borderColor: 'divider' }}>
+      <Typography sx={{ fontWeight: 800, color: 'text.primary', fontSize: '1rem', mb: 0.5 }}>
         Mot de passe
       </Typography>
-      <Typography variant="caption" sx={{ color: '#5A6B63', display: 'block', mb: 1.5, fontSize: '0.875rem' }}>
+      <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block', mb: 1.5, fontSize: '0.875rem' }}>
         Change le mot de passe temporaire reçu à la création du compte.
       </Typography>
       <Box sx={{ display: 'grid', gap: 1.4 }}>
@@ -1077,7 +1079,7 @@ function ChangementMotDePasse() {
           {envoi ? '…' : 'Changer'}
         </Button>
         {retour && (
-          <Typography variant="caption" sx={{ color: retour.includes('✓') ? '#0B7A4B' : '#B42318', fontWeight: 700, fontSize: '0.875rem' }}>
+          <Typography variant="caption" sx={{ color: retour.includes('✓') ? (theme) => (theme.palette.mode === 'dark' ? '#6EE7B7' : '#0B7A4B') : (theme) => (theme.palette.mode === 'dark' ? '#EF4444' : '#B42318'), fontWeight: 700, fontSize: '0.875rem' }}>
             {retour}
           </Typography>
         )}
@@ -1102,7 +1104,7 @@ function Section({ refE, id, titre, sousTitre, icone, children }) {
         </Typography>
       </Box>
       <Box sx={{
-        bgcolor: '#fff', borderRadius: '18px', border: '1px solid #E8ECEA',
+        bgcolor: (theme) => theme.palette.background.paper, borderRadius: '18px', border: '1px solid', borderColor: 'divider',
         boxShadow: '0 10px 30px rgba(0,0,0,.3)', overflow: 'hidden',
       }}>
         {children}
