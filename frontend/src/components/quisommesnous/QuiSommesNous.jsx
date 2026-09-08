@@ -213,8 +213,6 @@ export default function QuiSommesNous() {
               '&:hover': { transform: 'translateY(-3px)', boxShadow: '0 20px 48px rgba(15,91,58,.3)' },
             }}
           >
-            <Box sx={{ position: 'absolute', top: -60, right: '12%', width: 180, height: 180, borderRadius: '50%', background: 'radial-gradient(circle,rgba(154,251,215,.16),transparent 70%)', filter: 'blur(30px)' }} />
-            <Box sx={{ position: 'absolute', bottom: -70, left: '8%', width: 200, height: 200, borderRadius: '50%', background: 'radial-gradient(circle,rgba(31,175,114,.2),transparent 70%)', filter: 'blur(34px)' }} />
             <Box sx={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 3, flexWrap: 'wrap' }}>
               <Box>
                 <Typography sx={{ color: '#9AFBD7', fontWeight: 800, fontSize: '0.7rem', letterSpacing: '0.22em', textTransform: 'uppercase', mb: 1 }}>
@@ -257,8 +255,6 @@ export default function QuiSommesNous() {
             textAlign: 'center',
           }}>
             {/* Orbes subtils */}
-            <Box sx={{ position: 'absolute', top: -70, left: '10%', width: 200, height: 200, borderRadius: '50%', background: 'radial-gradient(circle,rgba(31,175,114,.25),transparent 70%)', filter: 'blur(36px)' }} />
-            <Box sx={{ position: 'absolute', bottom: -80, right: '6%', width: 230, height: 230, borderRadius: '50%', background: 'radial-gradient(circle,rgba(154,251,215,.14),transparent 70%)', filter: 'blur(40px)' }} />
             <Box sx={{ position: 'relative' }}>
               <Typography sx={{ color: '#9AFBD7', fontWeight: 800, fontSize: '0.7rem', letterSpacing: '0.22em', textTransform: 'uppercase', mb: 1.5 }}>
                 Prêt à faire partie de l'aventure ?

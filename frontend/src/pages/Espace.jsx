@@ -549,7 +549,6 @@ export default function Espace() {
               boxShadow: '0 18px 44px rgba(0,0,0,.4)',
               px: { xs: 3, md: 5 }, py: { xs: 3.5, md: 4.5 }, mb: { xs: 5, md: 6 },
             }}>
-              <Box sx={{ position: 'absolute', top: -70, right: '8%', width: 220, height: 220, borderRadius: '50%', background: 'radial-gradient(circle,rgba(31,175,114,.28),transparent 70%)', filter: 'blur(34px)' }} />
               <Box sx={{ position: 'relative', display: 'flex', alignItems: 'center', gap: { xs: 2.5, md: 4 }, flexWrap: 'wrap' }}>
                 <Avatar src={urlMedia(user?.photo) ?? undefined} sx={{
                   width: { xs: 72, md: 96 }, height: { xs: 72, md: 96 },
