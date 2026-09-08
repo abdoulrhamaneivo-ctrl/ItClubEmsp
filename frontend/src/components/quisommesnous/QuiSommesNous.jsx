@@ -298,7 +298,7 @@ function SquelettePresentation() {
         <Box sx={{ display: 'grid', gap: 3, gridTemplateColumns: { xs: '1fr', md: 'repeat(3,1fr)' } }}>
           {[1,2,3].map(i => (
             <Box key={i} sx={{ p: 3, bgcolor: '#F5F5F5', borderRadius: 3 }}>
-              <motion.div animate={{ opacity: [0.4, 1, 0.4] }} transition={{ duration: 1.2, repeat: Infinity }} sx={{ height: 120, borderRadius: 3, bgcolor: 'linear-gradient(90deg,#E5E7EB,#D1D5DB)' }} />
+              <motion.div animate={{ opacity: [0.4, 1, 0.4] }} transition={{ duration: 1.2, repeat: Infinity }} sx={{ height: 120, borderRadius: 3, background: 'linear-gradient(90deg,#E5E7EB,#D1D5DB)' }} />
               <Box sx={{ mt: 2, height: 24, bgcolor: '#D1D5DB', borderRadius: 2 }} />
               <Box sx={{ mt: 1, height: 16, width: '70%', bgcolor: '#D1D5DB', borderRadius: 2 }} />
             </Box>
