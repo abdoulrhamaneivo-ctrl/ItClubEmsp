@@ -39,6 +39,10 @@ export function useActualites(params = {}) {
   return requete(['actualites', params], () => api.getActualites(params))
 }
 
+export function useProjets() {
+  return useApi(() => api.getProjets())
+}
+
 export function usePresentation() {
   return requete(['presentation'], () => api.getPresentation())
 }

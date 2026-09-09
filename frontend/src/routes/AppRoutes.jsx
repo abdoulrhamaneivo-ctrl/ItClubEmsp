@@ -22,6 +22,7 @@ import Documentation from '../components/documentation/Documentation'
 const Login = lazy(() => import('../pages/Login'))
 const DefinirMotDePasse = lazy(() => import('../pages/DefinirMotDePasse'))
 const MotDePasseOublie = lazy(() => import('../pages/MotDePasseOublie'))
+const PageProjets = lazy(() => import('../pages/Projets'))
 const Espace = lazy(() => import('../pages/Espace'))
 import RequireAuth from '../pages/RequireAuth'
 const Galerie = lazy(() => import('../pages/Galerie'))
@@ -127,6 +128,7 @@ function ScrollToTop() {
       '/login': 'Connexion — IT-CLUB EMSP',
       '/definir-mot-de-passe': 'Activer mon compte — IT-CLUB EMSP',
       '/mot-de-passe-oublie': 'Mot de passe oublié — IT-CLUB EMSP',
+      '/projets': 'Projets du club — IT-CLUB EMSP',
       '/espace': 'Mon espace — IT-CLUB EMSP',
       '/backoffice': 'Back-office — IT-CLUB EMSP',
     }
@@ -195,6 +197,7 @@ export default function AppRoutes() {
         <Route path="/login" element={<Login />} />
         <Route path="/definir-mot-de-passe" element={<DefinirMotDePasse />} />
       <Route path="/mot-de-passe-oublie" element={<MotDePasseOublie />} />
+      <Route path="/projets" element={<PageProjets />} />
         <Route
           path="/espace"
           element={

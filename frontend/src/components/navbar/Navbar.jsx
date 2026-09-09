@@ -30,6 +30,7 @@ const liens = [
   { label: 'Activités', cible: 'activites' },
   { label: 'Actualités', cible: 'actualites' },
   { label: 'Documentation', cible: 'documentation' },
+  { label: 'Projets', cible: '/projets', route: true },
   { label: 'Galerie', cible: '/galerie', route: true },
   { label: 'Forum', cible: '/forum', route: true, membres: true },
   { label: 'Sondages', cible: '/sondages', route: true, membres: true },
