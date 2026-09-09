@@ -838,7 +838,7 @@ export default function Espace() {
                 {[
                   { label: 'Mes inscriptions', valeur: inscriptions === null ? '—' : inscriptions.length, icone: <IcCalendrier taille={20} couleur="#1FAF72" />, couleur: '#1FAF72' },
                   { label: 'Points', valeur: points === null ? '—' : points, icone: <IcTrophee taille={20} couleur="#2563EB" />, couleur: '#2563EB' },
-                  { label: 'Non lues', valeur: notifs === null ? '—' : notifs.filter((n) => !n.lu).length, icone: <IcDocument taille={20} couleur="#7B61FF" />, couleur: '#7B61FF' },
+                  { label: 'Non lues', valeur: notifs === null ? '—' : notifs.filter((n) => !n.lu).length, icone: <NotificationsIcon sx={{ fontSize: 20 }} />, couleur: '#7B61FF' },
                 ].map((s, i) => (
                   <motion.div key={s.label}
                     initial={reduit ? false : { opacity: 0, y: 14 }} whileInView={{ opacity: 1, y: 0 }}

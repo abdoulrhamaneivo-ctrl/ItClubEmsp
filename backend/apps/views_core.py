@@ -19,7 +19,7 @@ from apps.core_serializers import (
     DocumentSerializer, MediaSerializer, EvenementSerializer, CandidatureSerializer,
     ProjetSerializer, OpportuniteSerializer, ParametreSerializer,
     SujetSerializer, MessageForumSerializer, SondageSerializer,
-    CompteRenduSerializer, OpportuniteSerializer, VeilleSerializer,
+    CompteRenduSerializer, VeilleSerializer,
 )
 
 User = get_user_model()
