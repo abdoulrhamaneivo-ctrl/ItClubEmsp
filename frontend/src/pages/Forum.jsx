@@ -21,6 +21,7 @@ import { useAuth, hasRole } from '../stores/auth'
 import BoutonRetour from '../components/ui-components/BoutonRetour'
 import TitreSection from '../components/ui-components/TitreSection'
 import FondPropre from '../components/ui-components/FondPropre'
+import DialogueSuppression from './backoffice/DialogueSuppression'
 
 /**
  * Forum des membres (doc 03 §4) : espaces Général / Cellule / Projet,
@@ -273,18 +274,26 @@ function FilSujet({ sujet, modo, onRetour, onMute, notify }) {
     }
   }
 
-  const moderer = async (id) => {
+  const [aModerer, setAModerer] = useState(null)
+  const confirmerModeration = async () => {
+    if (!aModerer) return
     try {
-      await api.modererMessage(id)
+      await api.modererMessage(aModerer.id)
       client.invalidateQueries({ queryKey: ['forum-messages', sujet.id] })
       client.invalidateQueries({ queryKey: ['forum-sujets'] })
+      notify('info', 'Message masqué.')
     } catch (e) {
       notify('error', e.message ?? 'Modération impossible')
+    } finally {
+      setAModerer(null)
     }
   }
 
   return (
     <Box>
+      <DialogueSuppression demande={aModerer} nom={aModerer ? `Message de ${aModerer.auteur_nom ?? 'un membre'}` : ''}
+        onAnnuler={() => setAModerer(null)}
+        onConfirmer={confirmerModeration} />
       <Button startIcon={<ArrowBackIcon />} onClick={onRetour} sx={{ color: 'text.primary', fontWeight: 800, fontSize: '0.875rem', mb: 2, minHeight: 44, border: '1px solid', borderColor: 'divider', borderRadius: '12px', bgcolor: (theme) => theme.palette.background.paper, px: 2, '&:focus-visible': { outline: '2px solid #1FAF72', outlineOffset: '2px' } }}>
         Tous les sujets
       </Button>
@@ -356,7 +365,7 @@ function FilSujet({ sujet, modo, onRetour, onMute, notify }) {
                   </Typography>
                 </Box>
                 {modo && (
-                  <Button size="small" onClick={() => moderer(m.id)} title="Masquer (modération)" aria-label={`Masquer le message de ${m.auteur_nom}`}
+                  <Button size="small" onClick={() => setAModerer(m)} title="Masquer (modération)" aria-label={`Masquer le message de ${m.auteur_nom}`}
                     sx={{ color: '#B42318', minWidth: 44, minHeight: 44, width: 44, height: 44, flexShrink: 0, '&:focus-visible': { outline: '2px solid #B42318', outlineOffset: '2px' } }}>
                     <DeleteIcon fontSize="small" />
                   </Button>

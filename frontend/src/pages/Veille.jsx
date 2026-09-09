@@ -19,6 +19,7 @@ import { useAuth } from '../stores/auth'
 import BoutonRetour from '../components/ui-components/BoutonRetour'
 import TitreSection from '../components/ui-components/TitreSection'
 import FondPropre from '../components/ui-components/FondPropre'
+import DialogueSuppression from './backoffice/DialogueSuppression'
 
 /**
  * Veille technologique (P7, doc 02 D8) : liens partagés par les membres,
@@ -50,12 +51,17 @@ export default function Veille() {
   const notify = (t, m) => { setMessage({ t, m }); setTimeout(() => setMessage(null), 4000) }
   const visibles = theme === 'tous' ? veilles : veilles.filter((v) => v.theme === theme)
 
-  const supprimer = async (id) => {
+  const [aSupprimer, setASupprimer] = useState(null)
+  const confirmerSuppression = async () => {
+    if (!aSupprimer) return
     try {
-      await api.supprimerVeille(id)
+      await api.supprimerVeille(aSupprimer.id)
       client.invalidateQueries({ queryKey: ['veille'] })
+      notify('success', 'Lien supprimé.')
     } catch (e) {
       notify('error', e.message ?? 'Suppression impossible')
+    } finally {
+      setASupprimer(null)
     }
   }
 
@@ -73,10 +79,13 @@ export default function Veille() {
           couleur="#2563EB"
         />
         {message && (
-          <Box role="alert" aria-live="assertive" sx={{ mb: 2, p: 1.6, borderRadius: '12px', bgcolor: '#FDECEC', color: '#B42318', fontWeight: 700, fontSize: '0.875rem' }}>
+          <Box role={message.t === 'error' ? 'alert' : 'status'} aria-live={message.t === 'error' ? 'assertive' : 'polite'} sx={{ mb: 2, p: 1.6, borderRadius: '12px', bgcolor: message.t === 'success' ? '#E4F8EF' : '#FDECEC', color: message.t === 'success' ? '#0B7A4B' : '#B42318', fontWeight: 700, fontSize: '0.875rem' }}>
             {message.m}
           </Box>
         )}
+        <DialogueSuppression demande={aSupprimer} nom={aSupprimer?.titre}
+          onAnnuler={() => setASupprimer(null)}
+          onConfirmer={confirmerSuppression} />
 
         <Box sx={{ display: 'flex', gap: 1, mb: 2.5, flexWrap: 'wrap', alignItems: 'center' }}>
           {THEMES.map((t) => (
@@ -109,7 +118,7 @@ export default function Veille() {
         <Box sx={{ display: 'grid', gap: 1.4 }}>
           <AnimatePresence initial={false}>
             {visibles.map((v, i) => (
-              <CarteVeille key={v.id} v={v} index={i} user={user} onVote={() => client.invalidateQueries({ queryKey: ['veille'] })} onErreur={notify} onSupprimer={supprimer} />
+              <CarteVeille key={v.id} v={v} index={i} user={user} onVote={() => client.invalidateQueries({ queryKey: ['veille'] })} onErreur={notify} onSupprimer={setASupprimer} />
             ))}
           </AnimatePresence>
         </Box>
@@ -231,7 +240,7 @@ function CarteVeille({ v, index, user, onVote, onErreur, onSupprimer }) {
         </Box>
 
         {user && donnees.auteur === (user.prenom ? `${user.prenom} ${user.nom}` : user.username) && (
-          <Button size="small" onClick={() => onSupprimer(donnees.id)} aria-label="Supprimer ce lien"
+          <Button size="small" onClick={() => onSupprimer(donnees)} aria-label="Supprimer ce lien"
             sx={{ color: '#B42318', minWidth: 44, minHeight: 44, flexShrink: 0 }}>
             <DeleteIcon fontSize="small" />
           </Button>

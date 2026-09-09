@@ -57,14 +57,19 @@ function CarteActu({ n, index }) {
   const [commentaires, setCommentaires] = useState(null)
   const [texte, setTexte] = useState('')
   const [envoi, setEnvoi] = useState(false)
+  const [erreurReaction, setErreurReaction] = useState(null)
 
   const reagir = async (emoji) => {
     if (!user) { window.location.href = '/login'; return }
+    setErreurReaction(null)
     try {
       const res = await api.reagir(n.id, emoji)
       setReactions(res.reactions ?? reactions)
       setMaReaction(res.ma_reaction ?? null)
-    } catch { /* silencieux : le compteur reste */ }
+    } catch {
+      setErreurReaction('Réaction impossible — vérifie ta connexion puis réessaie.')
+      setTimeout(() => setErreurReaction(null), 4000)
+    }
   }
 
   const basculerCommentaires = async () => {
@@ -194,6 +199,11 @@ function CarteActu({ n, index }) {
                       })}
                     </Box>
                   </Box>
+                  {erreurReaction && (
+                    <Typography role="alert" sx={{ color: '#B42318', fontWeight: 700, fontSize: '0.78rem', mt: 1 }}>
+                      {erreurReaction}
+                    </Typography>
+                  )}
 
                   {/* Commentaires */}
                   <Button size="small" onClick={basculerCommentaires}

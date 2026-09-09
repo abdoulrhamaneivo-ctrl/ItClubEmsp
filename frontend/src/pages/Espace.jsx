@@ -42,7 +42,6 @@ const libellesRoles = {
   P10: 'Responsable des Ateliers', CHEF_CELLULE: 'Chef de cellule', ADMIN: 'Administrateur',
 }
 
-/* Données de démonstration — contrat GET /api/v1/me/* (doc 04) */
 // Normalise une réponse API en tableau : l'API peut renvoyer un objet
 // ({detail}, {results}) en cas d'erreur/session expirée — sans ça, un .map
 // sur un objet fait planter toute la page (FrontiereErreur).
@@ -51,20 +50,6 @@ const versTableau = (d) => {
   if (Array.isArray(d)) return d
   if (Array.isArray(d?.results)) return d.results
   return []
-}
-const MES_INSCRIPTIONS = [
-  { id: 1, titre: 'Atelier Git & GitHub', date: '2026-10-12', lieu: 'Salle info 2', statut: 'Confirmé', couleur: '#1FAF72', couleurTexte: '#0E7A50' },
-  { id: 2, titre: 'Hackathon interne — 48h', date: '2026-10-25', lieu: 'Amphi A', statut: 'En liste d’attente', couleur: '#2563EB', couleurTexte: '#1D4ED8' },
-  { id: 3, titre: 'Sortie culturelle — Grand-Bassam', date: '2026-11-08', lieu: 'Rendez-vous campus', statut: 'Confirmé', couleur: '#F5A623', couleurTexte: '#B45309' },
-]
-
-const MA_CELLULE = {
-  id: 'web', nom: 'Cellule Web', couleur: '#1FAF72', couleurFonce: '#0E7A50', membres: 14,
-  role: 'Membre actif',
-  prochainesSessions: [
-    { date: 'Ven 18 Oct — 15h', sujet: 'Revue de code : la plateforme du club' },
-    { date: 'Ven 25 Oct — 15h', sujet: 'Atelier Django REST — suite' },
-  ],
 }
 
 /* ── Horloge live ───────────────────────────────────────────── */
@@ -596,133 +581,79 @@ export default function Espace() {
           </motion.div>
         </Box>
 
-        {/* ═══ NOTIFICATIONS ════════════════════════════════════ */}
+{/* ═══ NOTIFICATIONS ════════════════════════════════════ */}
         <Section refE={refs.notifications} id="notifications" titre="notifications" sousTitre="Ce que tu as manqué" icone={<NotificationsIcon sx={{ fontSize: 18 }} />}>
-          {(notifs ?? [
-            { id: 1, titre: 'Ta place au Hackathon est en liste d’attente', date: 'il y a 2h', couleur: '#2563EB', lu: false },
-            { id: 2, titre: 'Session Cellule Web — vendredi 15h, salle info 2', date: 'il y a 1j', couleur: '#1FAF72', lu: false },
-            { id: 3, titre: 'Le PV du 7 mai est disponible dans la Documentation', date: 'il y a 3j', couleur: '#F5A623', lu: true },
-          ]).map((n, i, arr) => (
-            <Box key={n.id} role={notifsApi !== null ? 'button' : undefined} tabIndex={notifsApi !== null ? 0 : undefined}
-              aria-label={notifsApi !== null && !n.lu ? `Marquer comme lue : ${n.titre}` : n.titre}
-              onClick={() => { if (notifsApi !== null && !n.lu) marquerLue(n.id) }}
-              onKeyDown={(e) => { if ((e.key === 'Enter' || e.key === ' ') && notifsApi !== null && !n.lu) { e.preventDefault(); marquerLue(n.id) } }}
-              sx={{
-              display: 'flex', gap: 1.8, px: 2.6, py: 2.1,
-              borderBottom: i < arr.length - 1 ? '1px solid' : 'none', borderColor: 'divider',
-              transition: 'background 160ms ease',
-              '&:hover': { bgcolor: (theme) => theme.palette.background.paper }, cursor: notifsApi !== null ? 'pointer' : 'default',
-              '&:focus-visible': { outline: '2px solid #1FAF72', outlineOffset: '-2px', bgcolor: (theme) => theme.palette.background.paper },
-              ...(n.lu && { opacity: 0.62 }),
-            }}>
-              <Box sx={{
-                width: 8, height: 8, borderRadius: '50%', bgcolor: n.couleur, mt: 1, flexShrink: 0,
-                ...(i === 0 && !n.lu && { boxShadow: `0 0 0 4px ${n.couleur}22` }),
-              }} />
-              <Box sx={{ flex: 1, minWidth: 0 }}>
-                <Typography sx={{ fontWeight: n.lu ? 600 : 700, color: 'text.primary', fontSize: '0.875rem', lineHeight: 1.5 }}>{n.titre}</Typography>
-                <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600, fontSize: '0.875rem' }}>{n.date}</Typography>
-              </Box>
+          {notifsApi === null ? (
+            <Box sx={{ px: 2.6, py: 3 }}>
+              {[1, 2, 3].map((i) => (
+                <Box key={i} sx={{ display: 'flex', gap: 1.8, px: 2.6, py: 2.1, borderBottom: '1px solid', borderColor: 'divider' }}>
+                  <Box sx={{ width: 8, height: 8, borderRadius: '50%', mt: 1, flexShrink: 0, bgcolor: 'action.hover' }} />
+                  <Box sx={{ flex: 1, minWidth: 0 }}>
+                    <Box sx={{ height: 16, borderRadius: 8, bgcolor: 'action.hover', mb: 0.5, width: '70%' }} />
+                    <Box sx={{ height: 12, borderRadius: 6, bgcolor: 'action.hover', width: '40%' }} />
+                  </Box>
+                </Box>
+              ))}
             </Box>
-          ))}
-          {notifs !== null && notifs.length === 0 && (
+          ) : notifs.length === 0 ? (
             <Typography sx={{ px: 2.6, py: 3, color: 'text.secondary', fontSize: '0.88rem' }}>
               Rien pour le moment — les annonces, rappels et promotions arrivent ici.
             </Typography>
+          ) : (
+            notifs.map((n, i, arr) => (
+              <Box key={n.id} role={notifsApi !== null ? 'button' : undefined} tabIndex={notifsApi !== null ? 0 : undefined}
+                aria-label={notifsApi !== null && !n.lu ? `Marquer comme lue : ${n.titre}` : n.titre}
+                onClick={() => { if (notifsApi !== null && !n.lu) marquerLue(n.id) }}
+                onKeyDown={(e) => { if ((e.key === 'Enter' || e.key === ' ') && notifsApi !== null && !n.lu) { e.preventDefault(); marquerLue(n.id) } }}
+                sx={{
+                display: 'flex', gap: 1.8, px: 2.6, py: 2.1,
+                borderBottom: i < arr.length - 1 ? '1px solid' : 'none', borderColor: 'divider',
+                transition: 'background 160ms ease',
+                '&:hover': { bgcolor: (theme) => theme.palette.background.paper }, cursor: notifsApi !== null ? 'pointer' : 'default',
+                '&:focus-visible': { outline: '2px solid #1FAF72', outlineOffset: '-2px', bgcolor: (theme) => theme.palette.background.paper },
+                ...(n.lu && { opacity: 0.62 }),
+              }}>
+                <Box sx={{
+                  width: 8, height: 8, borderRadius: '50%', bgcolor: n.couleur, mt: 1, flexShrink: 0,
+                  ...(i === 0 && !n.lu && { boxShadow: `0 0 0 4px ${n.couleur}22` }),
+                }} />
+                <Box sx={{ flex: 1, minWidth: 0 }}>
+                  <Typography sx={{ fontWeight: n.lu ? 600 : 700, color: 'text.primary', fontSize: '0.875rem', lineHeight: 1.5 }}>{n.titre}</Typography>
+                  <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600, fontSize: '0.875rem' }}>{n.date}</Typography>
+                </Box>
+              </Box>
+            ))
           )}
         </Section>
 
         {/* ═══ INSCRIPTIONS ═════════════════════════════════════ */}
         <Section refE={refs.inscriptions} id="inscriptions" titre="mes-inscriptions" sousTitre="Où tu es attendu" icone={<IcCalendrier taille={17} couleur="#0F5B3A" />}>
-          {(inscriptions ?? MES_INSCRIPTIONS).map((insc, i) => (
-            <motion.div key={insc.id}
-              initial={reduit ? false : { opacity: 0, y: 14 }} whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '0px' }}
-              transition={{ delay: reduit ? 0 : Math.min(i * 0.05, 0.1), duration: reduit ? 0 : 0.25, ease: [0.22, 1, 0.36, 1] }}>
-              <Box sx={{
-                display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: { xs: 1.2, md: 2.2 }, p: { xs: 1.6, md: 2.4 }, mb: 1.4,
-                bgcolor: (theme) => theme.palette.background.paper, borderRadius: '16px', border: '1px solid', borderColor: 'divider',
-                boxShadow: '0 2px 10px rgba(13,27,42,.05)',
-                transition: 'box-shadow 200ms ease, border-color 200ms ease',
-                '&:hover': { boxShadow: '0 8px 22px rgba(13,27,42,.1)', borderColor: '#C9DED4' },
-              }}>
-                <Box sx={{
-                  width: 54, flexShrink: 0, borderRadius: '12px', py: 1.2,
-                  bgcolor: (theme) => (theme.palette.mode === 'dark' ? theme.palette.background.default : '#F5F7F6'), border: '1px solid', borderColor: 'divider',
-                  display: 'flex', flexDirection: 'column', alignItems: 'center',
-                }}>
-                  <Typography sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 800, fontSize: '1.15rem', lineHeight: 1, color: insc.couleur }}>
-                    {new Date(insc.date).getDate()}
-                  </Typography>
-                  <Typography sx={{ fontWeight: 800, fontSize: '0.875rem', letterSpacing: '0.06em', textTransform: 'uppercase', color: insc.couleur }}>
-                    {new Date(insc.date).toLocaleDateString('fr-FR', { month: 'short' }).replace('.', '')}
-                  </Typography>
-                </Box>
-                <Box sx={{ flex: 1, minWidth: 0 }}>
-                  <Typography sx={{ fontWeight: 800, color: 'text.primary', fontSize: '0.95rem', lineHeight: 1.35 }}>{insc.titre}</Typography>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8, mt: 0.4, flexWrap: 'wrap' }}>
-                    <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600, fontSize: '0.875rem', textTransform: 'capitalize' }}>
-                      {new Date(insc.date).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })} · {insc.lieu}
-                    </Typography>
-                    {insc.evenementId && import.meta.env.VITE_API_URL && (
-                      <Typography component="a" variant="caption"
-                        href={`${import.meta.env.VITE_API_URL}/api/v1/evenements/${insc.evenementId}.ics`}
-                        sx={{ color: (theme) => (theme.palette.mode === 'dark' ? '#6EE7B7' : '#0E7A50'), fontWeight: 800, fontSize: '0.875rem', textDecoration: 'none', minHeight: 44, display: 'inline-flex', alignItems: 'center', '&:hover': { textDecoration: 'underline' } }}>
-                        · Agenda (.ics)
-                      </Typography>
-                    )}
+          {inscApi === null ? (
+            <Box sx={{ px: 2.6, py: 3 }}>
+              {[1, 2, 3].map((i) => (
+                <motion.div key={i} initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05, duration: 0.25 }}>
+                  <Box sx={{
+                    display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: { xs: 1.2, md: 2.2 }, p: { xs: 1.6, md: 2.4 }, mb: 1.4,
+                    bgcolor: (theme) => theme.palette.background.paper, borderRadius: '16px', border: '1px solid', borderColor: 'divider',
+                  }}>
+                    <Box sx={{
+                      width: 54, flexShrink: 0, borderRadius: '12px', py: 1.2,
+                      bgcolor: (theme) => (theme.palette.mode === 'dark' ? theme.palette.background.default : '#F5F7F6'), border: '1px solid', borderColor: 'divider',
+                      display: 'flex', flexDirection: 'column', alignItems: 'center',
+                    }}>
+                      <Box sx={{ height: 24, width: 30, borderRadius: 4, bgcolor: 'action.hover' }} />
+                      <Box sx={{ height: 12, width: 40, borderRadius: 4, bgcolor: 'action.hover', mt: 0.5 }} />
+                    </Box>
+                    <Box sx={{ flex: 1, minWidth: 0 }}>
+                      <Box sx={{ height: 20, borderRadius: 8, bgcolor: 'action.hover', mb: 0.5, width: '60%' }} />
+                      <Box sx={{ height: 14, borderRadius: 6, bgcolor: 'action.hover', width: '40%' }} />
+                    </Box>
+                    <Box sx={{ height: 28, width: 80, borderRadius: 14, bgcolor: 'action.hover' }} />
                   </Box>
-                </Box>
-                <Chip label={insc.statut} size="small" sx={{
-                  bgcolor: insc.statut === 'Confirmé' ? '#E4F8EF' : '#FFF6E0',
-                  color: insc.statut === 'Confirmé' ? '#0B7A4B' : '#B45309',
-                  fontWeight: 800, fontSize: '0.875rem', flexShrink: 0, height: 28,
-                }} />
-              </Box>
-              {/* Émargement : code à 6 chiffres affiché le jour J (+5 pts) */}
-              {insc.statut === 'Confirmé' && insc.evenementId && (
-                <Box sx={{
-                  display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 1.2, mt: -0.6, mb: 1.4, ml: { xs: 0, md: 9 },
-                  px: 2, py: 1.2, bgcolor: (theme) => (theme.palette.mode === 'dark' ? theme.palette.background.default : '#F6FBF9'), borderRadius: '12px', border: '1px dashed #BFD8CC',
-                }}>
-                  {String(etatsPresence[insc.id] ?? '').startsWith('present') ? (
-                    <Typography sx={{ fontWeight: 800, color: (theme) => (theme.palette.mode === 'dark' ? '#6EE7B7' : '#0B7A4B'), fontSize: '0.875rem' }}>
-                      Présent ✓ {etatsPresence[insc.id].split(':')[1] ? `· ${etatsPresence[insc.id].split(':')[1]} pts` : ''}
-                    </Typography>
-                  ) : (
-                    <>
-                      <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 700, flexShrink: 0, fontSize: '0.875rem' }}>
-                        J'y étais — code :
-                      </Typography>
-                      <InputBase
-                        value={codesPresence[insc.id] ?? ''}
-                        onChange={(e) => setCodesPresence((c) => ({ ...c, [insc.id]: e.target.value.replace(/\D/g, '').slice(0, 6) }))}
-                        placeholder="——————"
-                        inputProps={{ inputMode: 'numeric', maxLength: 6, 'aria-label': 'Code de présence à 6 chiffres' }}
-                        sx={{
-                          width: 110, minHeight: 44, height: 44, bgcolor: (theme) => (theme.palette.mode === 'dark' ? theme.palette.background.paper : '#fff'), borderRadius: '8px', border: '1px solid', borderColor: 'divider',
-                          px: 1.2, fontFamily: "'JetBrains Mono',monospace", fontWeight: 800, display: 'flex', alignItems: 'center',
-                          letterSpacing: '0.2em', fontSize: '0.875rem', textAlign: 'center',
-                          '&:focus-within': { borderColor: '#1FAF72', outline: '2px solid #1FAF72', outlineOffset: '1px' },
-                        }}
-                      />
-                      <Button size="small" variant="contained" onClick={() => marquerPresent(insc)}
-                        disabled={(codesPresence[insc.id] ?? '').length !== 6 || etatsPresence[insc.id] === 'envoi'}
-                        sx={{ bgcolor: '#1FAF72', '&:hover': { bgcolor: '#179963' }, fontWeight: 800, borderRadius: '8px', minWidth: 64, minHeight: 44, height: 44, px: 2, fontSize: '0.875rem', '&:focus-visible': { outline: '2px solid #0E7A50', outlineOffset: '2px' } }}>
-                        {etatsPresence[insc.id] === 'envoi' ? '…' : 'OK'}
-                      </Button>
-                      {etatsPresence[insc.id] === 'erreur' && (
-                        <Typography variant="caption" sx={{ color: (theme) => (theme.palette.mode === 'dark' ? '#EF4444' : '#B42318'), fontWeight: 700, fontSize: '0.875rem' }}>
-                          Code incorrect
-                        </Typography>
-                      )}
-                    </>
-                  )}
-                </Box>
-              )}
-            </motion.div>
-          ))}
-          {inscriptions !== null && inscriptions.length === 0 && (
+                </motion.div>
+              ))}
+            </Box>
+          ) : inscriptions.length === 0 ? (
             <Box sx={{ textAlign: 'center', py: 3 }}>
               <Typography sx={{ color: 'text.secondary', fontSize: '0.9rem', mb: 1.5 }}>
                 Aucune inscription pour le moment.
@@ -731,82 +662,215 @@ export default function Espace() {
                 Découvrir les activités
               </Button>
             </Box>
+          ) : (
+            inscriptions.map((insc, i) => (
+              <motion.div key={insc.id}
+                initial={reduit ? false : { opacity: 0, y: 14 }} whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '0px' }}
+                transition={{ delay: reduit ? 0 : Math.min(i * 0.05, 0.1), duration: reduit ? 0 : 0.25, ease: [0.22, 1, 0.36, 1] }}>
+                <Box sx={{
+                  display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: { xs: 1.2, md: 2.2 }, p: { xs: 1.6, md: 2.4 }, mb: 1.4,
+                  bgcolor: (theme) => theme.palette.background.paper, borderRadius: '16px', border: '1px solid', borderColor: 'divider',
+                  boxShadow: '0 2px 10px rgba(13,27,42,.05)',
+                  transition: 'box-shadow 200ms ease, border-color 200ms ease',
+                  '&:hover': { boxShadow: '0 8px 22px rgba(13,27,42,.1)', borderColor: '#C9DED4' },
+                }}>
+                  <Box sx={{
+                    width: 54, flexShrink: 0, borderRadius: '12px', py: 1.2,
+                    bgcolor: (theme) => (theme.palette.mode === 'dark' ? theme.palette.background.default : '#F5F7F6'), border: '1px solid', borderColor: 'divider',
+                    display: 'flex', flexDirection: 'column', alignItems: 'center',
+                  }}>
+                    <Typography sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 800, fontSize: '1.15rem', lineHeight: 1, color: insc.couleur }}>
+                      {new Date(insc.date).getDate()}
+                    </Typography>
+                    <Typography sx={{ fontWeight: 800, fontSize: '0.875rem', letterSpacing: '0.06em', textTransform: 'uppercase', color: insc.couleur }}>
+                      {new Date(insc.date).toLocaleDateString('fr-FR', { month: 'short' }).replace('.', '')}
+                    </Typography>
+                  </Box>
+                  <Box sx={{ flex: 1, minWidth: 0 }}>
+                    <Typography sx={{ fontWeight: 800, color: 'text.primary', fontSize: '0.95rem', lineHeight: 1.35 }}>{insc.titre}</Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8, mt: 0.4, flexWrap: 'wrap' }}>
+                      <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600, fontSize: '0.875rem', textTransform: 'capitalize' }}>
+                        {new Date(insc.date).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })} · {insc.lieu}
+                      </Typography>
+                      {insc.evenementId && import.meta.env.VITE_API_URL && (
+                        <Typography component="a" variant="caption"
+                          href={`${import.meta.env.VITE_API_URL}/api/v1/evenements/${insc.evenementId}.ics`}
+                          sx={{ color: (theme) => (theme.palette.mode === 'dark' ? '#6EE7B7' : '#0E7A50'), fontWeight: 800, fontSize: '0.875rem', textDecoration: 'none', minHeight: 44, display: 'inline-flex', alignItems: 'center', '&:hover': { textDecoration: 'underline' } }}>
+                          · Agenda (.ics)
+                        </Typography>
+                      )}
+                    </Box>
+                  </Box>
+                  <Chip label={insc.statut} size="small" sx={{
+                    bgcolor: insc.statut === 'Confirmé' ? '#E4F8EF' : '#FFF6E0',
+                    color: insc.statut === 'Confirmé' ? '#0B7A4B' : '#B45309',
+                    fontWeight: 800, fontSize: '0.875rem', flexShrink: 0, height: 28,
+                  }} />
+                </Box>
+                {/* Émargement : code à 6 chiffres affiché le jour J (+5 pts) */}
+                {insc.statut === 'Confirmé' && insc.evenementId && (
+                  <Box sx={{
+                    display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 1.2, mt: -0.6, mb: 1.4, ml: { xs: 0, md: 9 },
+                    px: 2, py: 1.2, bgcolor: (theme) => (theme.palette.mode === 'dark' ? theme.palette.background.default : '#F6FBF9'), borderRadius: '12px', border: '1px dashed #BFD8CC',
+                  }}>
+                    {String(etatsPresence[insc.id] ?? '').startsWith('present') ? (
+                      <Typography sx={{ fontWeight: 800, color: (theme) => (theme.palette.mode === 'dark' ? '#6EE7B7' : '#0B7A4B'), fontSize: '0.875rem' }}>
+                        Présent ✓ {etatsPresence[insc.id].split(':')[1] ? `· ${etatsPresence[insc.id].split(':')[1]} pts` : ''}
+                      </Typography>
+                    ) : (
+                      <>
+                        <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 700, flexShrink: 0, fontSize: '0.875rem' }}>
+                          J'y étais — code :
+                        </Typography>
+                        <InputBase
+                          value={codesPresence[insc.id] ?? ''}
+                          onChange={(e) => setCodesPresence((c) => ({ ...c, [insc.id]: e.target.value.replace(/\D/g, '').slice(0, 6) }))}
+                          placeholder="——————"
+                          inputProps={{ inputMode: 'numeric', maxLength: 6, 'aria-label': 'Code de présence à 6 chiffres' }}
+                          sx={{
+                            width: 110, minHeight: 44, height: 44, bgcolor: (theme) => (theme.palette.mode === 'dark' ? theme.palette.background.paper : '#fff'), borderRadius: '8px', border: '1px solid', borderColor: 'divider',
+                            px: 1.2, fontFamily: "'JetBrains Mono',monospace", fontWeight: 800, display: 'flex', alignItems: 'center',
+                            letterSpacing: '0.2em', fontSize: '0.875rem', textAlign: 'center',
+                            '&:focus-within': { borderColor: '#1FAF72', outline: '2px solid #1FAF72', outlineOffset: '1px' },
+                          }}
+                        />
+                        <Button size="small" variant="contained" onClick={() => marquerPresent(insc)}
+                          disabled={(codesPresence[insc.id] ?? '').length !== 6 || etatsPresence[insc.id] === 'envoi'}
+                          sx={{ bgcolor: '#1FAF72', '&:hover': { bgcolor: '#179963' }, fontWeight: 800, borderRadius: '8px', minWidth: 64, minHeight: 44, height: 44, px: 2, fontSize: '0.875rem', '&:focus-visible': { outline: '2px solid #0E7A50', outlineOffset: '2px' } }}>
+                          {etatsPresence[insc.id] === 'envoi' ? '…' : 'OK'}
+                        </Button>
+                        {etatsPresence[insc.id] === 'erreur' && (
+                          <Typography variant="caption" sx={{ color: (theme) => (theme.palette.mode === 'dark' ? '#EF4444' : '#B42318'), fontWeight: 700, fontSize: '0.875rem' }}>
+                            Code incorrect
+                          </Typography>
+                        )}
+                      </>
+                    )}
+                  </Box>
+                )}
+              </motion.div>
+            ))
           )}
         </Section>
 
-        {/* ═══ MA CELLULE ════════════════════════════════════════ */}
+{/* ═══ MA CELLULE ════════════════════════════════════════ */}
         <Section refE={refs.cellule} id="cellule" titre="ma-cellule" sousTitre="Ton équipe au quotidien" icone={<IcCube taille={17} couleur="#0F5B3A" />}>
-          <Box sx={{ display: 'grid', gap: 3, gridTemplateColumns: { xs: '1fr', md: '1.2fr 1fr' }, alignItems: 'start' }}>
-            <Box sx={{
-              p: { xs: 2.8, md: 3.2 }, bgcolor: (theme) => theme.palette.background.paper, borderRadius: '18px',
-              border: `1.5px solid ${(cellule ?? MA_CELLULE).couleur}45`,
-              boxShadow: `0 12px 30px ${(cellule ?? MA_CELLULE).couleur}1E`,
-            }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
+          {cellulesApi === null ? (
+            <Box sx={{ px: 2.6, py: 3 }}>
+              <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }}>
                 <Box sx={{
-                  width: 56, height: 56, borderRadius: '16px',
-                  background: `linear-gradient(135deg,${(cellule ?? MA_CELLULE).couleur},${(cellule ?? MA_CELLULE).couleur}CC 60%,#0D1B2A)`,
-                  display: 'grid', placeItems: 'center',
-                  boxShadow: `0 8px 20px ${(cellule ?? MA_CELLULE).couleur}44`,
+                  p: { xs: 2.8, md: 3.2 }, bgcolor: (theme) => theme.palette.background.paper, borderRadius: '18px',
+                  border: '1px solid', borderColor: 'divider',
                 }}>
-                  <IcCube taille={28} couleur="#fff" />
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
+                  <Box sx={{
+                    width: 56, height: 56, borderRadius: '16px',
+                    bgcolor: 'action.hover',
+                    display: 'grid', placeItems: 'center',
+                  }}>
+                    <IcCube taille={28} couleur="rgba(255,255,255,0.3)" />
+                  </Box>
+                  <Box sx={{ flex: 1, minWidth: 0 }}>
+                    <Box sx={{ height: 16, borderRadius: 8, bgcolor: 'action.hover', mb: 0.5, width: '40%' }} />
+                    <Box sx={{ height: 24, borderRadius: 8, bgcolor: 'action.hover', width: '60%' }} />
+                  </Box>
                 </Box>
-                <Box>
-                  <Typography sx={{ color: (theme) => (theme.palette.mode === 'dark' ? (cellule ?? MA_CELLULE).couleur : (cellule ?? MA_CELLULE).couleurFonce), fontWeight: 800, fontSize: '0.875rem', letterSpacing: '0.07em', textTransform: 'uppercase' }}>
-                    {(cellule ?? MA_CELLULE).role ?? 'Membre actif'}
-                  </Typography>
-                  <Typography sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 800, fontSize: '1.25rem', color: 'text.primary' }}>
-                    {(cellule ?? MA_CELLULE).nom}
-                  </Typography>
+                <Divider sx={{ my: 2 }} />
+                <Box sx={{ height: 16, borderRadius: 8, bgcolor: 'action.hover', mb: 1.5, width: '30%' }} />
+                <Box sx={{ display: 'grid', gap: 1.2 }}>
+                  {[1, 2, 3].map((i) => (
+                    <Box key={i} sx={{ display: 'flex', gap: 1.4, alignItems: 'flex-start', p: 1.6, bgcolor: (theme) => theme.palette.background.paper, borderRadius: '12px', border: '1px solid', borderColor: 'divider' }}>
+                      <Box sx={{ width: 24, height: 24, borderRadius: 8, bgcolor: 'action.hover', flexShrink: 0 }} />
+                      <Box sx={{ flex: 1, minWidth: 0 }}>
+                        <Box sx={{ height: 16, borderRadius: 8, bgcolor: 'action.hover', mb: 0.5, width: '30%' }} />
+                        <Box sx={{ height: 14, borderRadius: 6, bgcolor: 'action.hover', width: '50%' }} />
+                      </Box>
+                    </Box>
+                  ))}
+                  </Box>
+                </Box>
+              </motion.div>
+            </Box>
+          ) : cellule ? (
+            <Box sx={{ display: 'grid', gap: 3, gridTemplateColumns: { xs: '1fr', md: '1.2fr 1fr' }, alignItems: 'start' }}>
+              <Box sx={{
+                p: { xs: 2.8, md: 3.2 }, bgcolor: (theme) => theme.palette.background.paper, borderRadius: '18px',
+                border: `1.5px solid ${cellule.couleur}45`,
+                boxShadow: `0 12px 30px ${cellule.couleur}1E`,
+              }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
+                  <Box sx={{
+                    width: 56, height: 56, borderRadius: '16px',
+                    background: `linear-gradient(135deg,${cellule.couleur},${cellule.couleur}CC 60%,#0D1B2A)`,
+                    display: 'grid', placeItems: 'center',
+                    boxShadow: `0 8px 20px ${cellule.couleur}44`,
+                  }}>
+                    <IcCube taille={28} couleur="#fff" />
+                  </Box>
+                  <Box>
+                    <Typography sx={{ color: (theme) => (theme.palette.mode === 'dark' ? cellule.couleur : cellule.couleurFonce), fontWeight: 800, fontSize: '0.875rem', letterSpacing: '0.07em', textTransform: 'uppercase' }}>
+                      {cellule.role ?? 'Membre actif'}
+                    </Typography>
+                    <Typography sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 800, fontSize: '1.25rem', color: 'text.primary' }}>
+                      {cellule.nom}
+                    </Typography>
+                  </Box>
+                </Box>
+                <Divider sx={{ my: 2 }} />
+                <Typography sx={{ fontWeight: 800, color: 'text.primary', fontSize: '0.9rem', mb: 1.5 }}>
+                  À propos — {cellule.membres} membres
+                </Typography>
+                <Box sx={{ display: 'grid', gap: 1.2 }}>
+                  {[{ date: `${cellule.membres} membres actifs`, sujet: cellule.description }].map((s, i) => (
+                    <Box key={i} sx={{ display: 'flex', gap: 1.4, alignItems: 'flex-start', p: 1.6, bgcolor: (theme) => theme.palette.background.paper, borderRadius: '12px', border: '1px solid', borderColor: 'divider' }}>
+                      <IcCalendrier taille={15} couleur={sombre ? '#9AFBD7' : cellule.couleurFonce} />
+                      <Box>
+                        <Typography sx={{ fontWeight: 800, color: (theme) => (theme.palette.mode === 'dark' ? '#9AFBD7' : '#0F5B3A'), fontSize: '0.875rem' }}>{s.date}</Typography>
+                        <Typography variant="body2" sx={{ color: 'text.secondary', lineHeight: 1.6, fontSize: '0.875rem' }}>{s.sujet}</Typography>
+                      </Box>
+                    </Box>
+                  ))}
                 </Box>
               </Box>
-              <Divider sx={{ my: 2 }} />
-              <Typography sx={{ fontWeight: 800, color: 'text.primary', fontSize: '0.9rem', mb: 1.5 }}>
-                {cellule ? `À propos — ${cellule.membres} membres` : 'Prochaines sessions'}
-              </Typography>
-              <Box sx={{ display: 'grid', gap: 1.2 }}>
-                {(cellule
-                  ? [{ date: `${cellule.membres} membres actifs`, sujet: cellule.description }]
-                  : MA_CELLULE.prochainesSessions
-                ).map((s, i) => (
-                  <Box key={i} sx={{ display: 'flex', gap: 1.4, alignItems: 'flex-start', p: 1.6, bgcolor: (theme) => theme.palette.background.paper, borderRadius: '12px', border: '1px solid', borderColor: 'divider' }}>
-                    <IcCalendrier taille={15} couleur={sombre ? '#9AFBD7' : (cellule ?? MA_CELLULE).couleurFonce} />
-                    <Box>
-                      <Typography sx={{ fontWeight: 800, color: (theme) => (theme.palette.mode === 'dark' ? '#9AFBD7' : '#0F5B3A'), fontSize: '0.875rem' }}>{s.date}</Typography>
-                      <Typography variant="body2" sx={{ color: 'text.secondary', lineHeight: 1.6, fontSize: '0.875rem' }}>{s.sujet}</Typography>
+
+              <Box sx={{ display: 'grid', gap: 2, alignContent: 'start' }}>
+                {[
+                  { label: 'Mes inscriptions', valeur: inscriptions === null ? '—' : inscriptions.length, icone: <IcCalendrier taille={20} couleur="#1FAF72" />, couleur: '#1FAF72' },
+                  { label: 'Points', valeur: points === null ? '—' : points, icone: <IcTrophee taille={20} couleur="#2563EB" />, couleur: '#2563EB' },
+                  { label: 'Non lues', valeur: notifs === null ? '—' : notifs.filter((n) => !n.lu).length, icone: <IcDocument taille={20} couleur="#7B61FF" />, couleur: '#7B61FF' },
+                ].map((s, i) => (
+                  <motion.div key={s.label}
+                    initial={reduit ? false : { opacity: 0, y: 14 }} whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: '0px' }}
+                    transition={{ delay: reduit ? 0 : Math.min(0.1 + i * 0.06, 0.2), duration: reduit ? 0 : 0.25 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, p: 2.2, bgcolor: (theme) => theme.palette.background.paper, borderRadius: '16px', border: '1px solid', borderColor: 'divider' }}>
+                      <Box sx={{ width: 46, height: 46, borderRadius: '12px', bgcolor: (theme) => (theme.palette.mode === 'dark' ? theme.palette.background.default : '#F5F7F6'), display: 'grid', placeItems: 'center' }}>
+                        {s.icone}
+                      </Box>
+                      <Box>
+                        <Typography sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 800, fontSize: '1.4rem', color: 'text.primary', lineHeight: 1.2 }}>
+                          {s.valeur}
+                        </Typography>
+                        <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', fontSize: '0.875rem' }}>
+                          {s.label}
+                        </Typography>
+                      </Box>
                     </Box>
-                  </Box>
+                  </motion.div>
                 ))}
               </Box>
             </Box>
-
-            <Box sx={{ display: 'grid', gap: 2, alignContent: 'start' }}>
-              {[
-                { label: 'Mes inscriptions', valeur: inscriptions === null ? '—' : inscriptions.length, icone: <IcCalendrier taille={20} couleur="#1FAF72" />, couleur: '#1FAF72' },
-                { label: 'Points', valeur: points === null ? '—' : points, icone: <IcTrophee taille={20} couleur="#2563EB" />, couleur: '#2563EB' },
-                { label: 'Non lues', valeur: notifs === null ? '—' : notifs.filter((n) => !n.lu).length, icone: <IcDocument taille={20} couleur="#7B61FF" />, couleur: '#7B61FF' },
-              ].map((s, i) => (
-                <motion.div key={s.label}
-                  initial={reduit ? false : { opacity: 0, y: 14 }} whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: '0px' }}
-                  transition={{ delay: reduit ? 0 : Math.min(0.1 + i * 0.06, 0.2), duration: reduit ? 0 : 0.25 }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, p: 2.2, bgcolor: (theme) => theme.palette.background.paper, borderRadius: '16px', border: '1px solid', borderColor: 'divider' }}>
-                    <Box sx={{ width: 46, height: 46, borderRadius: '12px', bgcolor: (theme) => (theme.palette.mode === 'dark' ? theme.palette.background.default : '#F5F7F6'), display: 'grid', placeItems: 'center' }}>
-                      {s.icone}
-                    </Box>
-                    <Box>
-                      <Typography sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 800, fontSize: '1.4rem', color: 'text.primary', lineHeight: 1.2 }}>
-                        {s.valeur}
-                      </Typography>
-                      <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', fontSize: '0.875rem' }}>
-                        {s.label}
-                      </Typography>
-                    </Box>
-                  </Box>
-                </motion.div>
-              ))}
+          ) : (
+            <Box sx={{ px: 2.6, py: 3, textAlign: 'center' }}>
+              <Typography sx={{ color: 'text.secondary', fontSize: '0.9rem', mb: 1.5 }}>
+                Tu n'appartiens à aucune cellule pour le moment.
+              </Typography>
+              <Button variant="contained" onClick={() => allerVers('activites')} sx={{ bgcolor: '#1FAF72', '&:hover': { bgcolor: '#179963' }, fontWeight: 800, borderRadius: 9999, minHeight: 44, fontSize: '0.875rem' }}>
+                Découvrir les cellules
+              </Button>
             </Box>
-          </Box>
+          )}
         </Section>
 
         {/* ═══ MON PROFIL ════════════════════════════════════════ */}
