@@ -1,5 +1,6 @@
 import { motion, useReducedMotion } from 'framer-motion'
 import Box from '@mui/material/Box'
+import { useTheme } from '@mui/material/styles'
 
 /**
  * FondGlobalDonnees — fond vivant du club : quatre fibres optiques qui se
@@ -33,12 +34,14 @@ function Paquet({ d, couleur, taille, duree, retard, reduit }) {
 
 export default function FondGlobalDonnees({ intensite = 1 }) {
   const reduit = useReducedMotion()
+  const theme = useTheme()
+  const sombre = theme.palette.mode === 'dark'
   return (
     <Box
       sx={{ position: 'fixed', inset: 0, zIndex: 0, pointerEvents: 'none', overflow: 'hidden' }}
       aria-hidden
     >
-      <Box sx={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg,#FFFFFF 0%,#F6F8F7 100%)' }} />
+      <Box sx={{ position: 'absolute', inset: 0, background: sombre ? '#0A1420' : 'linear-gradient(180deg,#FFFFFF 0%,#F6F8F7 100%)' }} />
       <svg
         viewBox="0 0 1440 900"
         preserveAspectRatio="xMidYMid slice"

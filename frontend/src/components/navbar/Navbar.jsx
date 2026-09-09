@@ -20,6 +20,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import useScrollTrigger from '@mui/material/useScrollTrigger'
 import { useAuth } from '../../stores/auth'
 import { useThemeMode } from '../../hooks/useThemeMode.jsx'
+import scrollDoux from '../../lib/scrollDoux'
 
 const liens = [
   { label: 'Le club', cible: 'club' },
@@ -54,14 +55,22 @@ export default function Navbar() {
 
   // Ancres : depuis une autre page, naviguer vers / puis scroller après rendu
   const allerVers = (cible) => {
-    if (surAccueil) {
-      document.getElementById(cible)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-    } else {
-      navigate('/')
-      setTimeout(() => {
-        document.getElementById(cible)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-      }, 350)
+    const scroller = () => {
+      const el = document.getElementById(cible)
+      if (!el) return false
+      scrollDoux(el.getBoundingClientRect().top + window.scrollY - 76)
+      return true
     }
+    if (scroller()) return
+    // Section pas encore montée : naviguer vers l'accueil, attendre que ScrollToTop
+    // ait fini (il remet en haut) PUIS que la section se monte, et seulement scroller.
+    navigate('/')
+    let essais = 0
+    const chercher = () => {
+      if (scroller()) return
+      if (++essais < 40) setTimeout(chercher, 150)
+    }
+    setTimeout(chercher, 600)  // > ScrollToTop (instant) + montage lazy de l'accueil
   }
 
   return (

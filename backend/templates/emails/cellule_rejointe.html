@@ -1,0 +1,6 @@
+{% extends "emails/base.html" %}
+{% block contenu %}
+<h2 style="color:#0D1B2A;margin:0 0 12px;">Bienvenue dans la cellule {{ cellule }} !</h2>
+<p style="color:#374151;line-height:1.7;">C'est noté, {{ prenom }} : tu fais maintenant partie de la cellule <strong style="color:#0E7A50;">{{ cellule }}</strong>. Retrouve ton équipe dans ton espace membre — les ateliers, les projets et les échanges de ta cellule t'attendent.</p>
+<p style="text-align:center;margin:22px 0 6px;"><a href="{{ frontend_url }}/espace" style="display:inline-block;background:#0F5B3A;color:#fff;font-weight:800;text-decoration:none;padding:13px 30px;border-radius:9999px;">Ouvrir mon espace →</a></p>
+{% endblock %}

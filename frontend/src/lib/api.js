@@ -329,6 +329,9 @@ export const api = {
     return postJson(endpoint, payload)
   },
   // Invitation : le membre choisit son mot de passe (lien email)
+  async rejoindreCellule(slug) {
+    return postJson(`/api/v1/cellules/${slug}/rejoindre/`, {})
+  },
   async demanderReinitialisation(email) {
     return postJson('/api/v1/auth/mot-de-passe-oublie', { email })
   },

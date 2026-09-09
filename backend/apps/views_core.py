@@ -2,6 +2,7 @@
 API /api/v1/ — ViewSets alignés sur le contrat docs/04 §5.
 Lecture publique (vitrine), écriture par rôles (étape 2 : matrice doc 01).
 """
+import logging
 from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import api_view, permission_classes, throttle_classes, action
 from rest_framework.response import Response
@@ -89,6 +90,8 @@ class BureauWritePermission(permissions.BasePermission):
         except Exception:
             return False
 
+logger = logging.getLogger(__name__)
+
 
 class PublicReadOrStaffWrite(viewsets.ModelViewSet):
     """Lecture ouverte à tous, écriture réservée au Bureau (doc 01)."""
@@ -116,6 +119,30 @@ class CelluleViewSet(PublicReadOrStaffWrite):
     queryset = Cellule.objects.all().prefetch_related('membres')
     serializer_class = CelluleSerializer
     filterset_fields = ['slug']
+    lookup_field = 'slug'  # le slug est l'identifiant public des cellules
+
+    @action(detail=True, methods=['post'], permission_classes=[permissions.IsAuthenticated])
+    def rejoindre(self, request, slug=None):
+        """POST /api/v1/cellules/<slug>/rejoindre — un membre connecté rejoint
+        directement la cellule (pas de formulaire public). Idempotent."""
+        from apps.accounts.models import MembreCellule
+        cellule = self.get_object()
+        obj, created = MembreCellule.objects.get_or_create(
+            cellule=cellule, membre=request.user)
+        if created:
+            logger.info('%s a rejoint la cellule %s', request.user.email, cellule.slug)
+            try:
+                mail.send_email(
+                    request.user.email,
+                    f'Bienvenue dans la cellule {cellule.nom}',
+                    'cellule_rejointe.html',
+                    {'prenom': (request.user.first_name or 'membre').capitalize(),
+                     'cellule': cellule.nom},
+                    notif_type='systeme', user=request.user)
+            except Exception:
+                pass  # l'adhésion est actée, l'email ne doit pas bloquer
+        return Response({'statut': 'ok', 'deja_membre': not created,
+                         'cellule': cellule.nom})
 
 
 class BureauViewSet(viewsets.ReadOnlyModelViewSet):

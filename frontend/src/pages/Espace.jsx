@@ -328,7 +328,10 @@ export default function Espace() {
   }
 
   const scrollTo = useCallback((nom) => {
-    refs[nom]?.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    const el = refs[nom]?.current
+    if (!el) return
+    const y = el.getBoundingClientRect().top + window.scrollY - 96
+    scrollDoux(y)
   }, [])
 
   // Ctrl+K / Cmd+K → palette
@@ -477,16 +480,15 @@ export default function Espace() {
         style={{ position: 'fixed', bottom: 12, left: 12, right: 12, zIndex: 1200 }}
       >
         <Box sx={{
-          display: { xs: 'flex', md: 'none' }, flexDirection: 'column', gap: 1,
+          display: { xs: 'flex', md: 'none' }, alignItems: 'center', gap: 0.6,
           bgcolor: 'rgba(13,27,42,.97)',
-          border: '1px solid rgba(154,251,215,.16)', borderRadius: '18px',
-          px: 1.4, py: 1.1, boxShadow: '0 14px 40px rgba(0,0,0,.45)',
+          border: '1px solid rgba(154,251,215,.16)', borderRadius: '16px',
+          px: 1.2, py: 0.9, boxShadow: '0 14px 40px rgba(0,0,0,.45)',
         }}>
-          <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 0.8 }}>
           {dockSections.map(([id, icone, label]) => (
             <IconButton key={id} onClick={() => scrollTo(id)} aria-label={label} aria-current={sectionActive === id ? 'true' : undefined}
               sx={{
-                minWidth: 44, height: 44, borderRadius: '12px', width: '100%',
+                minWidth: 44, height: 44, borderRadius: '12px', flex: 1,
                 color: sectionActive === id ? '#fff' : '#9AFBD7',
                 bgcolor: sectionActive === id ? '#1FAF72' : 'rgba(154,251,215,.08)',
                 border: sectionActive === id ? '1px solid rgba(255,255,255,.35)' : '1px solid rgba(154,251,215,.15)',
@@ -495,23 +497,21 @@ export default function Espace() {
               {icone}
             </IconButton>
           ))}
-          </Box>
-          <Box sx={{ display: 'flex', gap: 0.8 }}>
-            <Button onClick={() => setPalette(true)} startIcon={<SearchIcon fontSize="small" />}
-              sx={{ flex: 1, minHeight: 44, borderRadius: '12px', color: '#1FAF72', bgcolor: 'rgba(31,175,114,.14)', border: '1px solid rgba(31,175,114,.4)', fontWeight: 800, fontSize: '0.875rem', '&:focus-visible': { outline: '2px solid #fff', outlineOffset: '2px' } }}>
-              Rechercher
-            </Button>
+          <Box sx={{ width: 1, height: 30, bgcolor: 'rgba(154,251,215,.18)', mx: 0.2 }} />
+          <IconButton onClick={() => setPalette(true)} aria-label="Rechercher"
+            sx={{ minWidth: 44, height: 44, borderRadius: '12px', color: '#1FAF72', bgcolor: 'rgba(31,175,114,.14)', border: '1px solid rgba(31,175,114,.4)', '&:focus-visible': { outline: '2px solid #fff', outlineOffset: '2px' } }}>
+            <SearchIcon fontSize="small" />
+          </IconButton>
           {estBureau && (
-            <Button onClick={() => navigate('/backoffice')} startIcon={<DashboardIcon fontSize="small" />}
-              sx={{ flex: 1, minHeight: 44, borderRadius: '12px', color: '#0D1B2A', bgcolor: '#9AFBD7', border: '1px solid rgba(154,251,215,.5)', fontWeight: 800, fontSize: '0.875rem', '&:focus-visible': { outline: '2px solid #fff', outlineOffset: '2px' } }}>
-              Back-office
-            </Button>
+            <IconButton onClick={() => navigate('/backoffice')} aria-label="Back-office"
+              sx={{ minWidth: 44, height: 44, borderRadius: '12px', color: '#0D1B2A', bgcolor: '#9AFBD7', border: '1px solid rgba(154,251,215,.5)', '&:focus-visible': { outline: '2px solid #fff', outlineOffset: '2px' } }}>
+              <DashboardIcon fontSize="small" />
+            </IconButton>
           )}
           <IconButton onClick={() => navigate('/')} aria-label="Site"
             sx={{ minWidth: 44, height: 44, borderRadius: '12px', color: '#9AFBD7', bgcolor: 'rgba(154,251,215,.08)', border: '1px solid rgba(154,251,215,.15)', '&:focus-visible': { outline: '2px solid #fff', outlineOffset: '2px' } }}>
             <HomeIcon fontSize="small" />
           </IconButton>
-          </Box>
         </Box>
       </motion.div>
 

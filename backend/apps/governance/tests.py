@@ -127,11 +127,11 @@ class DashboardAdminTests(TestCase):
         role('P4', p4)
         cell = Cellule.objects.create(nom='Test', slug='test-chef', description='x')
         self.client.force_authenticate(p4)
-        r = self.client.patch(f'/api/v1/cellules/{cell.pk}/',
+        r = self.client.patch(f'/api/v1/cellules/{cell.slug}/',
                               {'chef_email': 'simpdash@x.com'}, format='json')
         self.assertEqual(r.status_code, 200)
         self.assertIn('simpdash', (r.json()['chef_nom'] or '').lower() or 'simpdash@x.com')
-        r = self.client.patch(f'/api/v1/cellules/{cell.pk}/',
+        r = self.client.patch(f'/api/v1/cellules/{cell.slug}/',
                               {'chef_email': 'inconnu@x.com'}, format='json')
         self.assertEqual(r.status_code, 400)
 
@@ -285,7 +285,7 @@ class CrudBureauTests(TestCase):
     def test_cellule_patch(self):
         from apps.accounts.models import Cellule
         c = Cellule.objects.create(nom='Cell', slug='cell', description='x')
-        r = self.client.patch(f'/api/v1/cellules/{c.pk}/', {'nom': 'Cell 2'}, format='json')
+        r = self.client.patch(f'/api/v1/cellules/{c.slug}/', {'nom': 'Cell 2'}, format='json')
         self.assertEqual(r.status_code, 200)
 
     def test_cr_patch_statut(self):

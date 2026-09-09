@@ -1,6 +1,8 @@
 /* ── Fluidité & ergonomie mobile (IT-CLUB EMSP) ───────────── */
+/* PAS de scroll-behavior:smooth ici : il entre en conflit avec les
+   scrolls programmatiques (scrollIntoView/scrollTo) et les annule —
+   les composants gèrent leur propre smooth via window.scrollTo. */
 html {
-  scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
 }
 

@@ -5,16 +5,16 @@ import { useTheme } from '@mui/material/styles'
  * Fond neutre PROPRE — voiles semi-transparents laissant deviner
  * le fond de données global (fixé derrière toute la page).
  * Lisibilité préservée : voiles à 78-92% d'opacité.
- * En mode sombre, les voiles suivent le fond nuit du thème.
+ * En mode sombre : fonds OPAQUES — aucun texte ne transparaît.
  */
 export default function FondPropre({ variante = 'clair' }) {
   const theme = useTheme()
   const sombre = theme.palette.mode === 'dark'
   const fonds = sombre ? {
-    clair: 'rgba(10,20,32,.6)',    // Nuit translucide (background.default)
-    blanc: 'rgba(16,32,47,.55)',   // Nuit papier translucide (background.paper)
-    gris: 'rgba(10,20,32,.72)',    // Nuit (un peu plus couvrant)
-    doux: 'rgba(10,20,32,.78)',    // Nuit (le plus couvrant)
+    clair: '#0B1622',     // Nuit OPAQUE — lisibilité maximale
+    blanc: '#101D2C',     // Nuit papier OPAQUE
+    gris: '#0D1B2A',      // Nuit couvrante OPAQUE
+    doux: '#0F1E2E',      // Nuit la plus couvrante OPAQUE
   } : {
     clair: 'rgba(250,250,250,.6)',   // Blanc cassé translucide
     blanc: 'rgba(255,255,255,.55)',   // Blanc pur translucide

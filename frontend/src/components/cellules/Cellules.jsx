@@ -14,7 +14,10 @@ import { BandeauAccent } from '../ui-components/FondPropre'
 import TitreSection from '../ui-components/TitreSection'
 import FondHalos from '../ui-components/FondHalos'
 import { IcWeb, IcIA, IcCyber, IcDesign, IcMembres, IcCalendrier, IcRocket, IcCube, iconesCellules } from '../ui-components/IconesClub'
+import { useNavigate } from 'react-router-dom'
 import { useCellules } from '../../hooks/useApi'
+import { useAuth } from '../../stores/auth'
+import { api } from '../../lib/api'
 
 /** Icône line art d'une cellule (jamais de texte : IcCube générique en repli). */
 function IconeCellule({ cellule, taille = 28, couleur = 'currentColor' }) {
@@ -34,6 +37,9 @@ const RAYON_DESKTOP = 380        // rayon de l'anneau (px)
 const DUREE_TOUR = 4200  // ms par cellule en auto-rotation
 
 export default function Cellules() {
+  const navigate = useNavigate()
+  const user = useAuth((s) => s.user)
+  const [rejoindreEtat, setRejoindreEtat] = useState(null) // {slug, etat: 'envoi'|'ok'|'deja'}
   const theme = useTheme()
   const mobile = useMediaQuery(theme.breakpoints.down('sm'))
   const tablette = useMediaQuery(theme.breakpoints.between('sm', 'lg'))
@@ -203,13 +209,35 @@ export default function Cellules() {
                       ))}
                     </Box>
                     <Box sx={{ display: 'flex', gap: 1.5, flexWrap: 'wrap' }}>
-                      <Button
-                        variant="contained"
-                        href="/adhesion"
-                        sx={{ bgcolor: actuelle.couleur, '&:hover': { filter: 'brightness(.9)' }, fontWeight: 800, borderRadius: '9999px', px: 3, minHeight: 44 }}
-                      >
-                        Rejoindre cette cellule
-                      </Button>
+                      {user ? (
+                        <Button
+                          variant="contained"
+                          disabled={rejoindreEtat?.slug === actuelle.slug && rejoindreEtat.etat === 'envoi'}
+                          onClick={async () => {
+                            setRejoindreEtat({ slug: actuelle.slug, etat: 'envoi' })
+                            try {
+                              const res = await api.rejoindreCellule(actuelle.slug)
+                              setRejoindreEtat({ slug: actuelle.slug, etat: res.deja_membre ? 'deja' : 'ok' })
+                            } catch {
+                              setRejoindreEtat({ slug: actuelle.slug, etat: 'erreur' })
+                            }
+                          }}
+                          sx={{ bgcolor: actuelle.couleur, '&:hover': { filter: 'brightness(.9)' }, fontWeight: 800, borderRadius: '9999px', px: 3, minHeight: 44 }}
+                        >
+                          {rejoindreEtat?.slug === actuelle.slug && rejoindreEtat.etat === 'envoi' ? 'Inscription…'
+                            : rejoindreEtat?.slug === actuelle.slug && rejoindreEtat.etat === 'ok' ? 'Bienvenue dans la cellule ✓'
+                            : rejoindreEtat?.slug === actuelle.slug && rejoindreEtat.etat === 'deja' ? 'Déjà membre ✓'
+                            : 'Rejoindre cette cellule'}
+                        </Button>
+                      ) : (
+                        <Button
+                          variant="contained"
+                          href="/adhesion"
+                          sx={{ bgcolor: actuelle.couleur, '&:hover': { filter: 'brightness(.9)' }, fontWeight: 800, borderRadius: '9999px', px: 3, minHeight: 44 }}
+                        >
+                          Rejoindre cette cellule
+                        </Button>
+                      )}
                       <Button
                         variant="outlined"
                         onClick={() => setOpenModal(true)}
@@ -361,12 +389,33 @@ function ModaleCellule({ cellule, onClose }) {
                 </Typography>
               ))}
             </Box>
-            <Button
-              fullWidth variant="contained" href="/adhesion" onClick={onClose}
-              sx={{ mt: 3, bgcolor: cellule.couleur, '&:hover': { filter: 'brightness(.9)' }, fontWeight: 800, py: 1.4, borderRadius: '12px' }}
-            >
-              Rejoindre {cellule.nom} →
-            </Button>
+            {user ? (
+              <Button
+                fullWidth variant="contained"
+                disabled={rejoindreEtat?.slug === cellule.slug && rejoindreEtat.etat === 'envoi'}
+                onClick={async () => {
+                  setRejoindreEtat({ slug: cellule.slug, etat: 'envoi' })
+                  try {
+                    const res = await api.rejoindreCellule(cellule.slug)
+                    setRejoindreEtat({ slug: cellule.slug, etat: res.deja_membre ? 'deja' : 'ok' })
+                  } catch {
+                    setRejoindreEtat({ slug: cellule.slug, etat: 'erreur' })
+                  }
+                }}
+                sx={{ mt: 3, bgcolor: cellule.couleur, '&:hover': { filter: 'brightness(.9)' }, fontWeight: 800, py: 1.4, borderRadius: '12px' }}
+              >
+                {rejoindreEtat?.slug === cellule.slug && rejoindreEtat.etat === 'ok' ? 'Bienvenue dans la cellule ✓'
+                  : rejoindreEtat?.slug === cellule.slug && rejoindreEtat.etat === 'deja' ? 'Déjà membre ✓'
+                  : `Rejoindre ${cellule.nom} →`}
+              </Button>
+            ) : (
+              <Button
+                fullWidth variant="contained" href="/adhesion" onClick={onClose}
+                sx={{ mt: 3, bgcolor: cellule.couleur, '&:hover': { filter: 'brightness(.9)' }, fontWeight: 800, py: 1.4, borderRadius: '12px' }}
+              >
+                Rejoindre {cellule.nom} →
+              </Button>
+            )}
           </Box>
         </Box>
       </motion.div>
