@@ -579,7 +579,24 @@ class SondageSerializer(PhotoAuteurMixin, serializers.ModelSerializer):
                   'options', 'mes_votes', 'total_votes', 'cree_le']
         read_only_fields = ['id', 'cree_le']
 
+    def to_representation(self, instance):
+        # Options + compteurs calculés une seule fois par objet (get_options
+        # + get_mes_votes les partagent au lieu de les recalculer 2 fois).
+        try:
+            self._sondage_cache = self._calcul_votes_par_option(instance)
+        except Exception:
+            self._sondage_cache = None
+        try:
+            return super().to_representation(instance)
+        finally:
+            self._sondage_cache = None
+
     def _votes_par_option(self, obj):
+        if getattr(self, '_sondage_cache', None) is not None:
+            return self._sondage_cache
+        return self._calcul_votes_par_option(obj)
+
+    def _calcul_votes_par_option(self, obj):
         try:
             opts = list(obj.options.all())
         except Exception:
