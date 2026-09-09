@@ -354,10 +354,15 @@ class VeilleViewSet(viewsets.ModelViewSet):
     filterset_fields = ['theme']
 
     def get_queryset(self):
-        from django.db.models import Count
-        return super().get_queryset().annotate(
+        from django.db.models import Count, Q
+        qs = super().get_queryset().annotate(
             _votes=Count('votes', distinct=True),
         ).prefetch_related('votes')  # jai_vote lit le cache, pas 1 requête/ligne
+        u = getattr(self.request, 'user', None)
+        if u and u.is_authenticated:
+            # Mon vote en UNE annotation (évite 1 EXISTS/objet quand le prefetch manque)
+            qs = qs.annotate(_ai_vote=Count('votes', filter=Q(votes__membre=u), distinct=True))
+        return qs
 
     def perform_create(self, serializer):
         # Lien = URL http(s) valide (validation modèle) ; auteur = membre

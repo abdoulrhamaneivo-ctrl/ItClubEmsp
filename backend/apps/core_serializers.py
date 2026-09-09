@@ -414,6 +414,9 @@ class VeilleSerializer(serializers.ModelSerializer):
         u = getattr(req, 'user', None)
         if not (u and u.is_authenticated):
             return False
+        ai_vote = getattr(obj, '_ai_vote', None)
+        if ai_vote is not None:
+            return bool(ai_vote)
         if getattr(obj, '_mes_votes', None) is not None:
             return u.id in obj._mes_votes
         cache = getattr(obj, '_prefetched_objects_cache', {}) or {}
