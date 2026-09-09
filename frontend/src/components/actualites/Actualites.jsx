@@ -72,15 +72,20 @@ function CarteActu({ n, index }) {
     }
   }
 
+  const [erreurCommentaires, setErreurCommentaires] = useState(false)
+  const chargerCommentaires = async () => {
+    setErreurCommentaires(false)
+    try {
+      setCommentaires(await api.getCommentaires(n.id))
+    } catch {
+      setErreurCommentaires(true)
+    }
+  }
   const basculerCommentaires = async () => {
     if (ouverts) { setOuverts(false); return }
     setOuverts(true)
-    if (commentaires === null) {
-      try {
-        setCommentaires(await api.getCommentaires(n.id))
-      } catch {
-        setCommentaires([])
-      }
+    if (commentaires === null && !erreurCommentaires) {
+      await chargerCommentaires()
     }
   }
 
@@ -212,8 +217,19 @@ function CarteActu({ n, index }) {
                   </Button>
                   {ouverts && (
                     <Box sx={{ mt: 1, pt: 1.2, borderTop: (theme) => `1px dashed ${theme.palette.mode === 'dark' ? 'rgba(255,255,255,.14)' : '#E5E7EB'}` }}>
-                      {commentaires === null && (
+                      {commentaires === null && !erreurCommentaires && (
                         <Typography variant="caption" sx={{ color: '#6B7280' }}>Chargement…</Typography>
+                      )}
+                      {erreurCommentaires && (
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, py: 0.5 }}>
+                          <Typography role="alert" variant="caption" sx={{ color: '#B42318', fontWeight: 700 }}>
+                            Impossible de charger les commentaires.
+                          </Typography>
+                          <Button size="small" onClick={chargerCommentaires}
+                            sx={{ color: '#0E7A50', fontWeight: 800, minHeight: 44 }}>
+                            Réessayer
+                          </Button>
+                        </Box>
                       )}
                       {(commentaires ?? []).map((c) => (
                         <Box key={c.id} sx={{ mb: 1.2 }}>
