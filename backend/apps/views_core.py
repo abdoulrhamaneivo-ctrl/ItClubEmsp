@@ -4,6 +4,7 @@ Lecture publique (vitrine), écriture par rôles (étape 2 : matrice doc 01).
 """
 import logging
 from rest_framework import viewsets, permissions, status
+from rest_framework import serializers
 from rest_framework.decorators import api_view, permission_classes, throttle_classes, action
 from rest_framework.response import Response
 from rest_framework.throttling import AnonRateThrottle
@@ -800,3 +801,68 @@ def presentation(request):
             'evenements': Evenement.objects.count(),
         },
     })
+
+
+# ── Propositions de cellule ─────────────────────────────────────
+class PropositionSerializer(serializers.ModelSerializer):
+    auteur_nom = serializers.CharField(source='auteur.get_full_name', read_only=True)
+    cellule_nom = serializers.CharField(source='cellule.nom', read_only=True)
+
+    class Meta:
+        from apps.governance.models import Proposition
+        model = Proposition
+        fields = ['id', 'cellule', 'cellule_nom', 'auteur', 'auteur_nom',
+                  'titre', 'detail', 'statut', 'cree_le']
+        read_only_fields = ['auteur', 'statut']
+
+
+@api_view(['GET', 'POST'])
+@permission_classes([permissions.IsAuthenticated])
+def propositions_cellule(request):
+    """GET ?cellule=<slug> : les propositions de la cellule (membres).
+    POST {cellule, titre, detail} : en proposer une (membre de la cellule)."""
+    from apps.accounts.models import Cellule, MembreCellule
+    from apps.governance.models import Proposition
+
+    if request.method == 'GET':
+        slug = request.query_params.get('cellule')
+        if not slug:
+            return Response({'detail': 'Paramètre cellule requis.'}, status=status.HTTP_400_BAD_REQUEST)
+        qs = Proposition.objects.filter(cellule__slug=slug).select_related('auteur', 'cellule')
+        return Response(PropositionSerializer(qs, many=True).data)
+
+    # POST
+    slug = (request.data.get('cellule') or '').strip()
+    titre = (request.data.get('titre') or '').strip()
+    detail = (request.data.get('detail') or '').strip()
+    if not slug or not titre:
+        return Response({'detail': 'Cellule et titre requis.'}, status=status.HTTP_400_BAD_REQUEST)
+    if len(titre) < 5:
+        return Response({'detail': 'Titre trop court (5 caractères minimum).'}, status=status.HTTP_400_BAD_REQUEST)
+    cellule = Cellule.objects.filter(slug=slug).first()
+    if not cellule:
+        return Response({'detail': 'Cellule inconnue.'}, status=status.HTTP_404_NOT_FOUND)
+    membre_de = MembreCellule.objects.filter(cellule=cellule, membre=request.user).exists()
+    if not membre_de and not request.user.is_staff:
+        return Response({'detail': 'Tu ne fais pas partie de cette cellule.'}, status=status.HTTP_403_FORBIDDEN)
+    prop = Proposition.objects.create(cellule=cellule, auteur=request.user, titre=titre, detail=detail)
+    return Response(PropositionSerializer(prop).data, status=status.HTTP_201_CREATED)
+
+
+@api_view(['PATCH'])
+@permission_classes([permissions.IsAuthenticated])
+def changer_statut_proposition(request, pk):
+    """PATCH {statut} — chef de la cellule ou Bureau uniquement."""
+    from apps.governance.models import Proposition
+    prop = Proposition.objects.select_related('cellule').filter(pk=pk).first()
+    if not prop:
+        return Response({'detail': 'Proposition inconnue.'}, status=status.HTTP_404_NOT_FOUND)
+    est_chef = prop.cellule.chef_id == request.user.id
+    if not (est_chef or request.user.is_staff):
+        return Response({'detail': 'Réservé au chef de cellule ou au Bureau.'}, status=status.HTTP_403_FORBIDDEN)
+    nouveau = request.data.get('statut')
+    if nouveau not in dict(Proposition.STATUTS):
+        return Response({'detail': 'Statut invalide.'}, status=status.HTTP_400_BAD_REQUEST)
+    prop.statut = nouveau
+    prop.save(update_fields=['statut'])
+    return Response(PropositionSerializer(prop).data)

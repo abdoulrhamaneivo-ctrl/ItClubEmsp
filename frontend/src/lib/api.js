@@ -329,6 +329,19 @@ export const api = {
     return postJson(endpoint, payload)
   },
   // Invitation : le membre choisit son mot de passe (lien email)
+  async getPropositions(celluleSlug) {
+    return fetchJson(`/api/v1/propositions?cellule=${celluleSlug}`)
+  },
+  async proposer(celluleSlug, titre, detail) {
+    return postJson('/api/v1/propositions', { cellule: celluleSlug, titre, detail })
+  },
+  async changerStatutProposition(id, statut) {
+    return fetchJson(`/api/v1/propositions/${id}/statut`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ statut }),
+    })
+  },
   async rejoindreCellule(slug) {
     return postJson(`/api/v1/cellules/${slug}/rejoindre/`, {})
   },

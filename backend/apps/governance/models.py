@@ -134,3 +134,24 @@ class CompteRendu(models.Model):
         return self.titre
 
 
+
+
+class Proposition(models.Model):
+    """Proposition d'un membre à sa cellule : idée d'atelier, de projet, d'amélioration.
+    Statut suivi par le chef de cellule (P3/P4/P5...)."""
+    STATUTS = [('proposee', 'Proposée'), ('examinee', 'À létude'),
+               ('adoptee', 'Adoptée'), ('refusee', 'Non retenue')]
+    cellule = models.ForeignKey('accounts.Cellule', on_delete=models.CASCADE,
+                                related_name='propositions')
+    auteur = models.ForeignKey('accounts.User', on_delete=models.CASCADE,
+                               related_name='propositions')
+    titre = models.CharField(max_length=140)
+    detail = models.TextField(blank=True)
+    statut = models.CharField(max_length=10, choices=STATUTS, default='proposee')
+    cree_le = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-cree_le']
+
+    def __str__(self):
+        return f'{self.titre} ({self.cellule.slug})'

@@ -21,6 +21,8 @@ import NotificationsIcon from '@mui/icons-material/Notifications'
 import { useAuth, hasRole } from '../stores/auth'
 import { useNavigate } from 'react-router-dom'
 import { api, urlMedia } from '../lib/api'
+import CelluleVivante from '../components/espace/CelluleVivante'
+import scrollDoux from '../lib/scrollDoux'
 import ChampMotDePasse from '../components/ui-components/ChampMotDePasse'
 import FondGlobalDonnees from '../components/ui-components/FondGlobalDonnees'
 import { IcMembres, IcCube, IcCalendrier, IcDocument, IcPhoto, IcTrophee, IcCommunication, iconePoste } from '../components/ui-components/IconesClub'
@@ -314,12 +316,14 @@ export default function Espace() {
 
   const celluleApi = (cellulesApi && cellulesApi.length > 0) ? cellulesApi[0] : null
   const cellule = celluleApi ? {
+    slug: celluleApi.slug,
     nom: celluleApi.nom,
     couleur: celluleApi.couleur ?? '#1FAF72',
     couleurFonce: celluleApi.couleurFonce ?? '#0E7A50',
     role: 'Membre actif',
     description: celluleApi.description ?? '',
     membres: celluleApi.membres ?? 0,
+    programme: celluleApi.programme ?? [],
   } : null
 
   const refs = {
@@ -819,7 +823,7 @@ export default function Espace() {
                 </Box>
                 <Divider sx={{ my: 2 }} />
                 <Typography sx={{ fontWeight: 800, color: 'text.primary', fontSize: '0.9rem', mb: 1.5 }}>
-                  À propos — {cellule.membres} membres
+                  À propos — {cellule.membres} membre{cellule.membres > 1 ? 's' : ''}
                 </Typography>
                 <Box sx={{ display: 'grid', gap: 1.2 }}>
                   {[{ date: `${cellule.membres} membres actifs`, sujet: cellule.description }].map((s, i) => (
@@ -832,6 +836,11 @@ export default function Espace() {
                     </Box>
                   ))}
                 </Box>
+              </Box>
+
+              {/* Espace vivant de la cellule : programmation, forum, propositions */}
+              <Box sx={{ gridColumn: '1 / -1' }}>
+                <CelluleVivante cellule={cellule} sombre={sombre} />
               </Box>
 
               <Box sx={{ display: 'grid', gap: 2, alignContent: 'start' }}>
