@@ -774,10 +774,8 @@ export const api = {
   // Registre membres — candidatures (Bureau P1/P3/P4)
   async getCandidatures() {
     const data = await fetchJson('/api/v1/candidatures/')
-    return data ?? [
-      { id: 101, donnees: { prenom: 'Awa', nom: 'Diallo', email: 'awa.diallo@emsp.int', filiere: 'Digitalisation, 2e année', motivation: 'Je veux apprendre React et aider sur la plateforme.' }, cellules_souhaitees: [1], statut: 'en_attente', cree_le: new Date().toISOString() },
-      { id: 102, donnees: { prenom: 'Yao', nom: 'Kouassi', email: 'yao.kouassi@emsp.int', filiere: 'Réseaux, 1re année' }, cellules_souhaitees: [3], statut: 'en_attente', cree_le: new Date().toISOString() },
-    ]
+    // fetchJson déplie déjà la pagination DRF ; sans backend → liste vide (jamais de mock)
+    return data?.results ?? data ?? []
   },
   async validerCandidature(id) {
     if (USE_MOCK) {
