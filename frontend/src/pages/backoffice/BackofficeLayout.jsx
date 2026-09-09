@@ -11,6 +11,7 @@ import Tooltip from '@mui/material/Tooltip'
 import MenuIcon from '@mui/icons-material/Menu'
 import CloseIcon from '@mui/icons-material/Close'
 import HomeIcon from '@mui/icons-material/Home'
+import PersonIcon from '@mui/icons-material/Person'
 import { useAuth } from '../../stores/auth'
 import { modulesPour, iconeModule } from '../../data/backoffice'
 import TachesNotion from './TachesNotion'
@@ -139,9 +140,15 @@ export default function BackofficeLayout() {
             <Typography sx={{ display: { xs: 'none', sm: 'block' }, color: 'rgba(255,255,255,.5)', fontSize: '0.72rem', fontFamily: "'JetBrains Mono',monospace" }}>
               <Horloge />
             </Typography>
+            <Button href="/espace" size="small" startIcon={<PersonIcon sx={{ fontSize: 17 }} />}
+              sx={{ color: '#9AFBD7', fontWeight: 700, fontSize: '0.78rem', px: { xs: 1, sm: 1.4 }, minWidth: { xs: 40, sm: 0 } }}
+              aria-label="Mon espace membre">
+              <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>Mon espace</Box>
+            </Button>
             <Button href="/" size="small" startIcon={<HomeIcon sx={{ fontSize: 17 }} />}
-              sx={{ color: '#9AFBD7', fontWeight: 700, fontSize: '0.78rem', display: { xs: 'none', sm: 'inline-flex' } }}>
-              Site
+              sx={{ color: '#9AFBD7', fontWeight: 700, fontSize: '0.78rem', px: { xs: 1, sm: 1.4 }, minWidth: { xs: 40, sm: 0 } }}
+              aria-label="Retour au site public">
+              <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>Site</Box>
             </Button>
             <Avatar sx={{ width: 32, height: 32, bgcolor: '#1FAF72', fontFamily: "'Orbitron',sans-serif", fontWeight: 800, fontSize: 14, border: '2px solid rgba(154,251,215,.16)' }}>
               {(user?.nom || 'M')[0]}
@@ -251,6 +258,7 @@ export default function BackofficeLayout() {
                   )
                 })}
                 <Box sx={{ mt: 2, pt: 2, borderTop: '1px solid rgba(154,251,215,.15)', display: 'grid', gap: 0.8 }}>
+                  <Button href="/espace" fullWidth startIcon={<PersonIcon />}>Mon espace</Button>
                   <Button href="/" fullWidth startIcon={<HomeIcon />}
                     sx={{ justifyContent: 'flex-start', color: '#9AFBD7', fontWeight: 700, py: 1.4 }}>
                     Retour au site
