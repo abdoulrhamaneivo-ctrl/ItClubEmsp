@@ -12,6 +12,7 @@ import EmailIcon from '@mui/icons-material/Email'
 import LockIcon from '@mui/icons-material/Lock'
 import { useAuth } from '../stores/auth'
 import ChampMotDePasse from '../components/ui-components/ChampMotDePasse'
+import BoutonRetour from '../components/ui-components/BoutonRetour'
 
 /** Connexion membre / Bureau — écran immersif avec panneau de marque. */
 export default function Login() {
@@ -52,7 +53,7 @@ export default function Login() {
   }
 
   return (
-    <Box sx={{ minHeight: '100vh', display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' } }}>
+    <Box sx={{ minHeight: '100vh', display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, background: '#0A1628' }}>
       {/* Panneau de marque (gauche) — fond animé charte */}
       <Box sx={{ display: { xs: 'none', md: 'flex' }, position: 'relative', overflow: 'hidden', alignItems: 'center' }}>
         <Box sx={{ position: 'absolute', inset: 0, background: '#0D1B2A' }} />
@@ -99,6 +100,9 @@ export default function Login() {
           transition={{ duration: reduit ? 0 : 0.25, ease: [0.22, 1, 0.36, 1] }}
           style={{ width: 'min(400px, 100%)' }}
         >
+          <Box sx={{ mb: 3 }}>
+            <BoutonRetour variante="sombre" label="Retour à l'accueil" cible="/" />
+          </Box>
           <Box sx={{ display: { xs: 'flex', md: 'none' }, justifyContent: 'center', mb: 3 }}>
             <Box component="img" src="/logo-itclub.webp" alt="Logo" sx={{ width: 64, height: 64, borderRadius: 3, border: '2px solid #1FAF72' }} />
           </Box>
@@ -106,10 +110,10 @@ export default function Login() {
           <Typography sx={{ color: (theme) => (theme.palette.mode === 'dark' ? '#6EE7B7' : '#0E7A50'), fontWeight: 700, fontSize: '0.875rem', mb: 0.8 }}>
             Connexion à ton espace membre
           </Typography>
-          <Typography sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 800, fontSize: { xs: '1.6rem', md: '2rem' }, color: 'text.primary', mb: 1 }}>
+          <Typography sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 800, fontSize: { xs: '1.6rem', md: '2rem' }, color: '#FFFFFF', mb: 1 }}>
             Espace membre
           </Typography>
-          <Typography color="text.secondary" mb={4} sx={{ lineHeight: 1.8 }}>
+          <Typography mb={5} sx={{ lineHeight: 1.8, color: 'rgba(232,242,236,.72)' }}>
             Annonces, activités, ressources — tout t'attend ici.
           </Typography>
 
@@ -122,6 +126,12 @@ export default function Login() {
           <Box component="form" onSubmit={submit} sx={{ display: 'grid', gap: 2.5 }}>
             <TextField
               name="email" label="E-mail du club" placeholder="prenom.nom@emsp.int" type="email" required fullWidth autoComplete="email"
+              sx={{
+                '& .MuiOutlinedInput-root': { color: '#FFFFFF' },
+                '& .MuiOutlinedInput-notchedOutline': { borderColor: 'rgba(154,251,215,.35)' },
+                '& .MuiInputLabel-root': { color: 'rgba(232,242,236,.65)' },
+                '& .MuiInputLabel-root.Mui-focused': { color: '#6EE7B7' },
+              }}
               slotProps={{ input: { startAdornment: <InputAdornment position="start"><EmailIcon fontSize="small" sx={{ color: '#1FAF72' }} /></InputAdornment> } }}
             />
             <Box>
@@ -129,8 +139,8 @@ export default function Login() {
               name="password" label="Mot de passe" placeholder="Celui reçu par e-mail" required fullWidth autoComplete="current-password"
               InputProps={{ startAdornment: <InputAdornment position="start"><LockIcon fontSize="small" sx={{ color: '#1FAF72' }} /></InputAdornment> }}
             />
-            <Typography variant="body2" sx={{ mt: 1, color: '#5A6B63', fontSize: '0.875rem' }}>
-              Mot de passe perdu ? <RouterLink to="/mot-de-passe-oublie" style={{ color: '#1FAF72', fontWeight: 700 }}>Recevoir un lien</RouterLink>.
+            <Typography variant="body2" sx={{ mt: 1, color: 'rgba(232,242,236,.72)', fontSize: '0.875rem' }}>
+              Mot de passe perdu ? <RouterLink to="/mot-de-passe-oublie" style={{ color: '#6EE7B7', fontWeight: 700 }}>Recevoir un lien</RouterLink>.
             </Typography>
             </Box>
             <motion.div whileHover={{ scale: 1.015 }} whileTap={{ scale: 0.985 }}>
@@ -139,7 +149,7 @@ export default function Login() {
                 {chargement ? 'Connexion…' : 'Se connecter'}
               </Button>
             </motion.div>
-            <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', lineHeight: 1.8, fontSize: '0.875rem' }}>
+            <Typography variant="body2" sx={{ textAlign: 'center', lineHeight: 1.8, fontSize: '0.875rem', color: 'rgba(232,242,236,.72)' }}>
               Pas encore membre ? <RouterLink to="/adhesion" style={{ color: '#1FAF72', fontWeight: 700, display: 'inline-flex', alignItems: 'center', minHeight: 44 }}>Remplis le formulaire d'adhésion</RouterLink>.
             </Typography>
             {reveil && chargement && (

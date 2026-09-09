@@ -48,11 +48,14 @@ export default function DefinirMotDePasse() {
   }
 
   const champSx = {
-    '& .MuiOutlinedInput-root': { borderRadius: '12px', bgcolor: '#F8FAF9' },
+    '& .MuiOutlinedInput-root': { borderRadius: '12px', bgcolor: 'rgba(255,255,255,.06)', color: '#FFFFFF' },
+    '& .MuiOutlinedInput-notchedOutline': { borderColor: 'rgba(154,251,215,.35)' },
+    '& .MuiInputLabel-root': { color: 'rgba(232,242,236,.65)' },
+    '& .MuiInputLabel-root.Mui-focused': { color: '#6EE7B7' },
   }
 
   return (
-    <Box sx={{ minHeight: '100vh', display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' } }}>
+    <Box sx={{ minHeight: '100vh', display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, background: '#0A1628' }}>
       {/* Panneau de marque — desktop uniquement */}
       <Box sx={{ display: { xs: 'none', md: 'flex' }, position: 'relative', overflow: 'hidden', alignItems: 'center' }}>
         <Box sx={{ position: 'absolute', inset: 0, background: '#0D1B2A' }} />
@@ -71,10 +74,10 @@ export default function DefinirMotDePasse() {
           <Box sx={{ display: { xs: 'flex', md: 'none' }, justifyContent: 'center', mb: 3 }}>
             <Box component="img" src="/logo-itclub.webp" alt="Logo IT-CLUB EMSP" sx={{ width: 64, height: 64, borderRadius: 3, border: '2px solid #1FAF72' }} />
           </Box>
-          <Typography sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 800, fontSize: '1.5rem', color: '#111827' }}>
+          <Typography sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 800, fontSize: '1.5rem', color: '#FFFFFF' }}>
             {ok ? 'C’est noté !' : 'Définis ton mot de passe'}
           </Typography>
-          <Typography variant="body2" color="textSecondary" sx={{ mt: 1, mb: 3, lineHeight: 1.7, fontSize: '0.875rem' }}>
+          <Typography variant="body2" sx={{ mt: 1, mb: 3, lineHeight: 1.7, fontSize: '0.875rem', color: 'rgba(232,242,236,.7)' }}>
             {ok
               ? 'Ton compte est prêt — connecte-toi pour rejoindre ta cellule.'
               : '8 caractères minimum. Le lien ne sert qu’une fois.'}
@@ -103,11 +106,11 @@ export default function DefinirMotDePasse() {
               <ChampMotDePasse label="Confirme ton mot de passe *" placeholder="Retape le même mot de passe" value={mdp2}
                 onChange={(e) => setMdp2(e.target.value)} fullWidth autoComplete="new-password" sx={champSx} />
               <Button type="submit" variant="contained" size="large" disabled={envoi || mdp.length < 8 || lienIncomplet}
-                sx={{ bgcolor: '#1FAF72', '&:hover': { bgcolor: '#179963' }, fontWeight: 800, borderRadius: '12px', mt: 1, minHeight: 44, fontSize: '0.875rem' }}>
+                sx={{ bgcolor: '#1FAF72', '&:hover': { bgcolor: '#179963' }, fontWeight: 800, borderRadius: '12px', mt: 1, minHeight: 44, fontSize: '0.875rem', '&.Mui-disabled': { bgcolor: 'rgba(31,175,114,.25)', color: 'rgba(232,242,236,.55)' } }}>
                 {envoi ? 'Enregistrement…' : 'Activer mon compte →'}
               </Button>
               <Typography variant="body2" sx={{ textAlign: 'center', fontSize: '0.875rem' }}>
-                <RouterLink to="/login" style={{ color: '#0E7A50', fontWeight: 700, display: 'inline-flex', alignItems: 'center', minHeight: 44 }}>Retour à la connexion</RouterLink>
+                <RouterLink to="/login" style={{ color: '#6EE7B7', fontWeight: 700, display: 'inline-flex', alignItems: 'center', minHeight: 44 }}>Retour à la connexion</RouterLink>
               </Typography>
             </Box>
           )}
