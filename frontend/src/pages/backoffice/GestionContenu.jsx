@@ -346,7 +346,7 @@ function OngletGalerie({ notify, idParSlug }) {
 
   const enregistrer = async () => {
     if (!form.titre.trim()) return notify('error', 'Le titre est requis.')
-    if (form.type === 'video' && !form.youtube.trim()) return notify('error', 'L’ID YouTube est requis pour une vidéo.')
+    if (form.type === 'video' && !form.youtube.trim()) return notify('error', 'Le lien YouTube est requis pour une vidéo.')
     if (!REEL) {
       sauverMedia(form)
       notify('success', 'Média enregistré — la galerie est à jour.')
@@ -445,7 +445,7 @@ function OngletGalerie({ notify, idParSlug }) {
             <TextField type="date" label="Date" value={form.date} onChange={(e) => setForm((f) => ({ ...f, date: e.target.value }))} fullWidth InputLabelProps={{ shrink: true }} />
           </Box>
           {form.type === 'video' ? (
-            <TextField label="ID YouTube" value={form.youtube} onChange={(e) => setForm((f) => ({ ...f, youtube: e.target.value }))} fullWidth placeholder="Ex. dQw4w9WgXcQ" helperText="L'identifiant dans l'URL youtube.com/watch?v=…" />
+            <TextField label="Lien YouTube" value={form.youtube} onChange={(e) => setForm((f) => ({ ...f, youtube: e.target.value }))} fullWidth placeholder="Colle le lien de la vidéo" helperText="URL complète acceptée (youtube.com/watch?v=…, youtu.be/…) — l'identifiant est extrait automatiquement." />
           ) : (
             <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', flexWrap: 'wrap' }}>
               {form.image && <Box component="img" src={urlMedia(form.image)} alt="" sx={{ width: 120, height: 74, objectFit: 'cover', borderRadius: 2, border: '1px solid #E5E7EB' }} />}

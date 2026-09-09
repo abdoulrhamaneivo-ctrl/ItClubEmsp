@@ -120,7 +120,6 @@ class CelluleViewSet(PublicReadOrStaffWrite):
     queryset = Cellule.objects.all().prefetch_related('membres')
     serializer_class = CelluleSerializer
     filterset_fields = ['slug']
-    lookup_field = 'slug'  # le slug est l'identifiant public des cellules
 
     @action(detail=True, methods=['post'], permission_classes=[permissions.IsAuthenticated])
     def rejoindre(self, request, slug=None):
@@ -866,3 +865,29 @@ def changer_statut_proposition(request, pk):
     prop.statut = nouveau
     prop.save(update_fields=['statut'])
     return Response(PropositionSerializer(prop).data)
+
+
+@api_view(['POST'])
+@permission_classes([permissions.IsAuthenticated])
+def rejoindre_cellule(request, slug):
+    """POST /api/v1/cellules/<slug>/rejoindre — un membre connecté rejoint
+    directement la cellule (pas de formulaire public). Idempotent."""
+    from apps.accounts.models import Cellule, MembreCellule
+    cellule = Cellule.objects.filter(slug=slug).first()
+    if not cellule:
+        return Response({'detail': 'Cellule inconnue.'}, status=status.HTTP_404_NOT_FOUND)
+    _, created = MembreCellule.objects.get_or_create(cellule=cellule, membre=request.user)
+    if created:
+        logger.info('%s a rejoint la cellule %s', request.user.email, cellule.slug)
+        try:
+            from apps import emails as mail
+            mail.send_email(
+                request.user.email,
+                f'Bienvenue dans la cellule {cellule.nom}',
+                'cellule_rejointe.html',
+                {'prenom': (request.user.first_name or 'membre').capitalize(),
+                 'cellule': cellule.nom},
+                notif_type='systeme', user=request.user)
+        except Exception:
+            pass  # l'adhésion est actée, l'email ne doit pas bloquer
+    return Response({'statut': 'ok', 'deja_membre': not created, 'cellule': cellule.nom})

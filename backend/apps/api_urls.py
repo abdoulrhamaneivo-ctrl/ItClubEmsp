@@ -19,7 +19,7 @@ from apps.views_emails import (
     export_crs_csv, export_retours_csv,
 )
 from apps.views_core import (
-    propositions_cellule, changer_statut_proposition,
+    propositions_cellule, changer_statut_proposition, rejoindre_cellule,
     CelluleViewSet, BureauViewSet, ActualiteViewSet,
     DocumentViewSet, MediaViewSet, EvenementViewSet, register_candidature,
     presentation, qr_adhesion, ProjetViewSet, OpportuniteViewSet, ParametreViewSet,
@@ -51,6 +51,7 @@ urlpatterns = [
     path('api/v1/evenements/<int:pk>/export-presences.csv', export_presences_csv),
     path('api/v1/calendrier.ics', calendrier_ics),
     path('api/v1/admin/export-membres.csv', export_membres_csv),
+    path('api/v1/cellules/<slug:slug>/rejoindre', rejoindre_cellule),
     path('api/v1/cellules/<slug:slug>/export-membres.csv', export_cellule_csv),
     path('api/v1/sondages/<int:pk>/export.csv', export_sondage_csv),
     path('api/v1/comptes-rendus/export.csv', export_crs_csv),

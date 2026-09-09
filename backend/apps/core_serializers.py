@@ -236,6 +236,27 @@ class MediaSerializer(serializers.ModelSerializer):
         fields = ['id', 'titre', 'legende', 'type', 'image', 'url', 'youtube_id',
                   'evenement', 'tag_cellule', 'icone', 'date']
 
+    def validate_youtube_id(self, valeur):
+        """Accepte l'URL complète YouTube (watch, youtu.be, shorts, playlist)
+        ou l'ID brut — et extrait toujours l'identifiant seul."""
+        if not valeur:
+            return valeur
+        v = valeur.strip()
+        if len(v) <= 24 and '/' not in v and '.' not in v and '?' not in v:
+            return v  # déjà un ID brut
+        import re
+        m = (re.search(r'(?:v=|/shorts/|/embed/|youtu\.be/|youtube\.com/|youtube/)([A-Za-z0-9_-]{11})(?:[?&/]|$)', v)
+             or re.search(r'[?&]v=([A-Za-z0-9_-]{11})', v)
+             or re.search(r'/([A-Za-z0-9_-]{11})(?:[?&/]|$)', v))
+        if m:
+            return m.group(1)
+        # liste de lecture : garder l'ID si présent, sinon lever
+        if 'list=' in v:
+            raise serializers.ValidationError(
+                "C'est un lien de playlist — colle le lien d'une vidéo précise : ouvre la vidéo, puis copie l'URL (youtube.com/watch?v=…).")
+        raise serializers.ValidationError(
+            "Lien YouTube non reconnu. Colle le lien d'une vidéo : https://www.youtube.com/watch?v=…")
+
     def get_url(self, obj):
         if obj.type == 'video' and obj.youtube_id:
             return f'https://www.youtube.com/embed/{obj.youtube_id}'

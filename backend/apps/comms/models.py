@@ -153,7 +153,7 @@ class Media(models.Model):
     legende = models.TextField(blank=True)
     type = models.CharField(max_length=6, choices=TYPES, default='photo')
     image = models.ImageField(upload_to='galerie/', blank=True, null=True, max_length=500)
-    youtube_id = models.CharField('ID YouTube', max_length=24, blank=True)
+    youtube_id = models.CharField('Lien ou ID YouTube', max_length=120, blank=True)
     evenement = models.CharField('Événement (filtre)', max_length=80, blank=True)
     tag_cellule = models.ForeignKey(Cellule, on_delete=models.SET_NULL, null=True, blank=True)
     icone = models.CharField('Id icône front', max_length=30, default='trophee')

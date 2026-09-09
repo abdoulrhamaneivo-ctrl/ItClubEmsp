@@ -132,7 +132,10 @@ export function useContenu(type) {
     queryFn: fetchReel, enabled: REEL,
   })
 
-  if (!REEL || !reels) return local
+  // Mode réel : JAMAIS les seeds localStorage (les actions du backoffice dessus
+  // produiraient des 404 — ces objets n'existent pas dans l'API).
+  if (!REEL) return local
+  if (!reels) return []  // API en cours de chargement → liste vide le temps du fetch
   if (type === 'actualites') return reels.map((a) => adapterActu(a, slugParId))
   if (type === 'documents') return reels.map(adapterDoc)
   return reels.map((m) => adapterMedia(m, slugParId))
