@@ -121,6 +121,16 @@ class CelluleViewSet(PublicReadOrStaffWrite):
     serializer_class = CelluleSerializer
     filterset_fields = ['slug']
 
+    def get_object(self):
+        """Résout par slug OU par id — le front backoffice utilise l'id,
+        le front public et l'espace utilisent le slug."""
+        identifiant = self.kwargs.get('pk')
+        qs = self.filter_queryset(self.get_queryset())
+        try:
+            return qs.get(slug=identifiant)
+        except (Cellule.DoesNotExist, ValueError):
+            return super().get_object()
+
     @action(detail=True, methods=['post'], permission_classes=[permissions.IsAuthenticated])
     def rejoindre(self, request, slug=None):
         """POST /api/v1/cellules/<slug>/rejoindre — un membre connecté rejoint
