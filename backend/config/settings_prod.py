@@ -10,7 +10,9 @@ DEBUG = False
 
 SECRET_KEY = os.environ['DJANGO_SECRET_KEY']  # requis, pas de défaut
 
-ALLOWED_HOSTS = os.environ['DJANGO_ALLOWED_HOSTS'].split(',')
+# Hôtes autorisés : le service API (avec défaut sûr si la var manque —
+# ex. cron Render qui n'hérite pas de toutes les envVars).
+ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', 'itclub-emsp-api.onrender.com').split(',')
 
 # ── PostgreSQL managé (Render) ───────────────────────────────
 DATABASES = {
@@ -26,7 +28,7 @@ MIDDLEWARE = ['whitenoise.middleware.WhiteNoiseMiddleware'] + MIDDLEWARE
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # ── CORS strict : uniquement le front Vercel ─────────────────
-CORS_ALLOWED_ORIGINS = os.environ['CORS_ALLOWED_ORIGINS'].split(',')
+CORS_ALLOWED_ORIGINS = os.environ.get('CORS_ALLOWED_ORIGINS', 'https://it-club-emsp.vercel.app').split(',')
 CORS_ALLOW_CREDENTIALS = True
 
 # ── Sécurité (doc 04 §8) ─────────────────────────────────────
