@@ -62,15 +62,20 @@ export default function Navbar() {
       return true
     }
     if (scroller()) return
-    // Section pas encore montée : naviguer vers l'accueil, attendre que ScrollToTop
-    // ait fini (il remet en haut) PUIS que la section se monte, et seulement scroller.
+    // Depuis une autre page : naviguer, attendre le montage de l'accueil (lazy),
+    // puis scroller — et RE-scroller après le montage complet (images/sections
+    // qui allongent la page décalent la cible).
     navigate('/')
     let essais = 0
     const chercher = () => {
-      if (scroller()) return
+      if (scroller()) {
+        // re-calage : la page continue de se montrer après le premier scroll
+        setTimeout(() => scroller(), 900)
+        return
+      }
       if (++essais < 40) setTimeout(chercher, 150)
     }
-    setTimeout(chercher, 600)  // > ScrollToTop (instant) + montage lazy de l'accueil
+    setTimeout(chercher, 700)
   }
 
   return (
