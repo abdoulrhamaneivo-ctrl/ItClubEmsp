@@ -54,7 +54,7 @@ function Vitrine() {
         <Cellules />
         <Activites />
         <Actualites />
-        <Galerie />
+        <Galerie embarque />
         <Documentation />
       </main>
       <Footer />

@@ -29,7 +29,7 @@ function dateCourte(iso) {
   return new Date(iso).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' })
 }
 
-export default function Galerie() {
+export default function Galerie({ embarque = false } = {}) {
   const medias = useContenu('medias')
   const reduit = useReducedMotion()
   const dialogueRef = useRef(null)
@@ -82,15 +82,17 @@ export default function Galerie() {
   }
 
   return (
-    <Box sx={{ pt: { xs: 11, md: 13 }, pb: { xs: 6, md: 8 }, position: 'relative', minHeight: '80vh' }}>
+    <Box sx={{ pt: embarque ? 0 : { xs: 11, md: 13 }, pb: { xs: 6, md: 8 }, position: 'relative', minHeight: embarque ? undefined : '80vh' }}>
       <FondPropre variante="blanc" />
       <BandeauAccent couleur="#1FAF72" />
       <FondHalos couleurs={['rgba(31,175,114,.11)', 'rgba(37,99,235,.09)', 'rgba(245,166,35,.08)']} trame={false} />
 
       <Container maxWidth={false} sx={{ position: 'relative', maxWidth: '1440px !important', px: { xs: 2.5, md: 4 } }}>
-        <Box sx={{ mb: 2 }}>
-          <BoutonRetour variante="sombre" />
-        </Box>
+        {!embarque && (
+          <Box sx={{ mb: 2 }}>
+            <BoutonRetour variante="sombre" />
+          </Box>
+        )}
         <TitreSection
           badge="Médias"
           titre="La galerie du club"
