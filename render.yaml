@@ -33,7 +33,7 @@ services:
       - key: BREVO_API_KEY
         sync: false
       - key: BREVO_FROM
-        value: ""
+        value: "abdoulrhamane.ivo@gmail.com"
       # Fichiers Cloudinary (sans ça, Render efface le disque à chaque
       # redémarrage → images 404). Chaîne complète
       # CLOUDINARY_URL=cloudinary://cle:secret@nom en secret Render, jamais ici.
@@ -63,6 +63,6 @@ services:
       - key: BREVO_API_KEY
         sync: false
       - key: BREVO_FROM
-        value: ""
+        value: "abdoulrhamane.ivo@gmail.com"
       - key: FRONTEND_URL
         value: https://it-club-emsp.vercel.app
