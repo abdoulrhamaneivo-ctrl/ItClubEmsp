@@ -168,8 +168,22 @@ class ActualiteSerializer(PhotoAuteurMixin, serializers.ModelSerializer):
 
     EMOJIS_REACTIONS = ['👍', '❤️', '🔥']
 
+    def to_representation(self, instance):
+        # Liste des réactions calculée une seule fois par objet (get_reactions
+        # + get_ma_reaction la partagent au lieu de la matérialiser 2 fois).
+        try:
+            self._reactions_cache = list(instance.reactions.all())
+        except Exception:
+            self._reactions_cache = []
+        try:
+            return super().to_representation(instance)
+        finally:
+            self._reactions_cache = None
+
     def _reactions_liste(self, obj):
         # Préfetchées par le viewset (zéro requête) ; fallback sinon
+        if getattr(self, '_reactions_cache', None) is not None:
+            return self._reactions_cache
         try:
             return list(obj.reactions.all())
         except Exception:
