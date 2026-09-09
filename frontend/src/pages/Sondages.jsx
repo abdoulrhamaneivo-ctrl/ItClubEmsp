@@ -54,7 +54,7 @@ export default function Sondages() {
           couleur="#1FAF72"
         />
         {message && (
-          <Box role="alert" aria-live="assertive" sx={{ mb: 2, p: 1.6, borderRadius: '12px', bgcolor: '#FDECEC', color: '#B42318', fontWeight: 700, fontSize: '0.875rem' }}>
+          <Box role="alert" aria-live="assertive" sx={{ mb: 2, p: 1.6, borderRadius: '12px', bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(180,35,24,.16)' : '#FDECEC', color: '#B42318', fontWeight: 700, fontSize: '0.875rem' }}>
             {message.m}
           </Box>
         )}
@@ -233,7 +233,7 @@ function CarteSondage({ s, index, onErreur }) {
           </Box>
           {donnees.clos
             ? <Chip label="Clôturé" size="small" sx={{ bgcolor: (theme) => (theme.palette.mode === 'dark' ? theme.palette.background.default : '#F0F5F2'), color: 'text.secondary', fontWeight: 800 }} />
-            : <Chip label="Ouvert" size="small" sx={{ bgcolor: '#E4F8EF', color: '#179963', fontWeight: 800 }} />}
+            : <Chip label="Ouvert" size="small" sx={{ bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(31,175,114,.16)' : '#E4F8EF', color: (theme) => theme.palette.mode === 'dark' ? '#6EE7B7' : '#179963', fontWeight: 800 }} />}
         </Box>
         {donnees.description && (
           <Typography variant="body2" sx={{ color: 'text.secondary', mb: 1.5 }}>{donnees.description}</Typography>

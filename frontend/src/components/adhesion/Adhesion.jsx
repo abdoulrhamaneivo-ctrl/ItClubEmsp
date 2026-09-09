@@ -140,7 +140,7 @@ export default function Adhesion() {
           transition={{ duration: 0.38, ease: [0.22, 1, 0.36, 1] }}
         >
           <Box sx={{ mb: 5 }}>
-            <Typography variant="overline" sx={{ color: '#B45309', fontWeight: 800, letterSpacing: '0.15em', textTransform: 'uppercase', mb: 1.5, display: 'inline-block', borderBottom: '3px solid #F5A623', paddingBottom: 0.5 }}>
+            <Typography variant="overline" sx={{ color: (theme) => theme.palette.mode === 'dark' ? '#F5A623' : '#B45309', fontWeight: 800, letterSpacing: '0.15em', textTransform: 'uppercase', mb: 1.5, display: 'inline-block', borderBottom: '3px solid #F5A623', paddingBottom: 0.5 }}>
               Nous rejoindre
             </Typography>
             <Typography component="h2" sx={{ fontFamily: "'Orbitron', sans-serif", fontWeight: 700, fontSize: { xs: '1.75rem', md: '2.5rem' }, lineHeight: 1.2, color: 'text.primary', mb: 2 }}>
@@ -187,7 +187,7 @@ export default function Adhesion() {
 
               {/* ── Stepper (collant : toujours visible en scrollant) ── */}
               <Box sx={{
-                px: { xs: 2.5, md: 5 }, pt: 2.5, pb: 2.5, borderBottom: '1px solid #EEF2F0', bgcolor: '#FBFDFC',
+                px: { xs: 2.5, md: 5 }, pt: 2.5, pb: 2.5, borderBottom: (theme) => `1px solid ${theme.palette.mode === 'dark' ? 'rgba(255,255,255,.1)' : '#EEF2F0'}`, bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,.04)' : '#FBFDFC',
                 position: 'sticky', top: { xs: 64, md: 72 }, zIndex: 5,
               }}>
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -256,7 +256,7 @@ export default function Adhesion() {
 
                     {erreur && (
                       <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}>
-                        <Alert severity="error" sx={{ mb: 2.5, borderRadius: 2, bgcolor: '#FEF2F2', color: '#991B1B' }}>
+                        <Alert severity="error" sx={{ mb: 2.5, borderRadius: 2, bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(180,35,24,.14)' : '#FEF2F2', color: (theme) => theme.palette.mode === 'dark' ? '#F87171' : '#991B1B' }}>
                           {erreur}
                         </Alert>
                       </motion.div>
@@ -321,7 +321,7 @@ export default function Adhesion() {
                       <Box sx={{ display: 'grid', gap: 2.5 }}>
                         {/* Récap animé */}
                         <Box sx={{
-                          p: 2.5, borderRadius: '14px', bgcolor: '#F6FBF9', border: '1px solid', borderColor: 'divider',
+                          p: 2.5, borderRadius: '14px', bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(154,251,215,.06)' : '#F6FBF9', border: '1px solid', borderColor: 'divider',
                           display: 'flex', flexWrap: 'wrap', gap: 1.5, alignItems: 'center',
                         }}>
                           <Chip label={`${donnees.prenom || ''} ${donnees.nom || ''}`.trim() || 'Candidat'} sx={{ bgcolor: '#0F5B3A', color: '#fff', fontWeight: 700 }} />
@@ -339,7 +339,7 @@ export default function Adhesion() {
 
                         {champsComplement.map(rendreChamp)}
 
-                        <Box sx={{ p: 2.5, bgcolor: '#F0FDF4', border: '1px solid #1FAF72', borderRadius: 3 }}>
+                        <Box sx={{ p: 2.5, bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(31,175,114,.12)' : '#F0FDF4', border: '1px solid #1FAF72', borderRadius: 3 }}>
                           <FormControlLabel
                             control={
                               <Checkbox
@@ -372,8 +372,8 @@ export default function Adhesion() {
 
               {/* ── Navigation — CTA aligné à droite (convention formulaire progressif) ── */}
               <Box sx={{
-                px: { xs: 2, sm: 2.5, md: 5 }, py: 2.5, borderTop: '1px solid #EEF2F0',
-                display: 'flex', justifyContent: 'space-between', alignItems: 'center', bgcolor: '#FBFDFC',
+                px: { xs: 2, sm: 2.5, md: 5 }, py: 2.5, borderTop: (theme) => `1px solid ${theme.palette.mode === 'dark' ? 'rgba(255,255,255,.1)' : '#EEF2F0'}`,
+                display: 'flex', justifyContent: 'space-between', alignItems: 'center', bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,.04)' : '#FBFDFC',
               }}>
                 <Button onClick={() => allerA(etape - 1)} disabled={etape === 0} sx={{ color: 'text.secondary', fontWeight: 700, visibility: etape === 0 ? 'hidden' : 'visible' }}>
                   ← Retour

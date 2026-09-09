@@ -904,13 +904,13 @@ export default function Espace() {
                       <Typography sx={{ fontFamily: "'Orbitron',sans-serif", fontWeight: 800, fontSize: '0.875rem', color: i === 0 ? '#B45309' : 'text.secondary', width: 22 }}>
                         {i + 1}
                       </Typography>
-                      <Avatar src={urlMedia(j.photo) ?? undefined} sx={{ width: 26, height: 26, bgcolor: '#EDE9FE', color: '#5B21B6', fontWeight: 800, fontSize: '0.875rem', flexShrink: 0 }}>
+                      <Avatar src={urlMedia(j.photo) ?? undefined} sx={{ width: 26, height: 26, bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(139,92,246,.18)' : '#EDE9FE', color: (theme) => theme.palette.mode === 'dark' ? '#C4B5FD' : '#5B21B6', fontWeight: 800, fontSize: '0.875rem', flexShrink: 0 }}>
                         {(j.nom || '?').slice(0, 1).toUpperCase()}
                       </Avatar>
                       <Typography variant="body2" sx={{ flex: 1, color: 'text.primary', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                         {j.nom}
                       </Typography>
-                      <Chip label={j.niveau} size="small" sx={{ bgcolor: '#EDE9FE', color: '#5B21B6', fontWeight: 700, fontSize: '0.875rem', height: 28 }} />
+                      <Chip label={j.niveau} size="small" sx={{ bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(139,92,246,.18)' : '#EDE9FE', color: (theme) => theme.palette.mode === 'dark' ? '#C4B5FD' : '#5B21B6', fontWeight: 700, fontSize: '0.875rem', height: 28 }} />
                       <Typography variant="caption" sx={{ color: (theme) => (theme.palette.mode === 'dark' ? '#6EE7B7' : '#0B7A4B'), fontWeight: 800, fontSize: '0.875rem' }}>
                         {j.points} pts
                       </Typography>

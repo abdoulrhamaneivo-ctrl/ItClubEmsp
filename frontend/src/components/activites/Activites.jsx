@@ -87,7 +87,7 @@ export default function Activites() {
         >
           {/* ── Timeline journal — ligne neutre fine ──────────────── */}
           <Box sx={{ position: 'relative', paddingLeft: { xs: 0, md: 2 } }}>
-            <Box sx={{ position: 'absolute', left: { xs: 12, md: 24 }, top: 0, bottom: 0, width: 1.5, bgcolor: '#E5E9E7' }} />
+            <Box sx={{ position: 'absolute', left: { xs: 12, md: 24 }, top: 0, bottom: 0, width: 1.5, bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,.14)' : '#E5E9E7' }} />
 
             {moisOrdres.map((mois, mIdx) => (
               <motion.div
@@ -152,7 +152,7 @@ export default function Activites() {
                           {/* Badge date — LA couleur est ici, fonctionnelle */}
                           <Box sx={{
                             width: { xs: 50, sm: 58 }, flexShrink: 0, borderRadius: '14px', py: 1.4,
-                            bgcolor: '#F5F7F6', border: '1px solid #E5E9E7',
+                            bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(154,251,215,.07)' : '#F5F7F6', border: (theme) => `1px solid ${theme.palette.mode === 'dark' ? 'rgba(255,255,255,.12)' : '#E5E9E7'}`,
                             display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 0.2,
                             alignSelf: 'flex-start',
                             transition: 'transform 200ms ease',
@@ -168,7 +168,7 @@ export default function Activites() {
                           {/* Icône du type */}
                           <Box sx={{
                             width: 48, height: 48, borderRadius: '14px', flexShrink: 0, mt: 0.3,
-                            bgcolor: '#F5F7F6', display: 'grid', placeItems: 'center',
+                            bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(154,251,215,.07)' : '#F5F7F6', display: 'grid', placeItems: 'center',
                           }}>
                             <IconeType taille={24} couleur="#4B5563" />
                           </Box>
@@ -229,7 +229,7 @@ export default function Activites() {
                               size="small" fullWidth onClick={() => reserver(a)}
                               disabled={inscriptions[a.id] === 'envoi' || (inscriptions[a.id] && inscriptions[a.id] !== 'erreur' && inscriptions[a.id] !== 'deja-inscrit')}
                               sx={{ mt: 1.2, fontWeight: 700, display: { xs: 'inline-flex', md: 'none' },
-                                ...(!(inscriptions[a.id] && inscriptions[a.id] !== 'erreur') && { borderColor: '#D1D5DB', color: 'text.secondary' }),
+                                ...(!(inscriptions[a.id] && inscriptions[a.id] !== 'erreur') && { borderColor: 'divider', color: 'text.secondary' }),
                                 ...(inscriptions[a.id] === 'confirme' && { bgcolor: '#1FAF72', '&:hover': { bgcolor: '#179963' } }),
                               }}
                             >
@@ -237,7 +237,7 @@ export default function Activites() {
                                inscriptions[a.id] === 'erreur' ? 'Réessayer' :
                                inscriptions[a.id] === 'confirme' ? 'Inscrit ✓' :
                                String(inscriptions[a.id] ?? '').startsWith('attente') ? `En attente (n°${String(inscriptions[a.id]).split(':')[1]})` :
-                               user ? "S'inscrire" : 'Se connecter pour réserver'}
+                               user ? "S'inscrire" : 'Connexion requise'}
                             </Button>
                           </Box>
 
@@ -247,7 +247,7 @@ export default function Activites() {
                             size="small" onClick={() => reserver(a)}
                             disabled={inscriptions[a.id] === 'envoi' || (inscriptions[a.id] && inscriptions[a.id] !== 'erreur' && inscriptions[a.id] !== 'deja-inscrit')}
                             sx={{ alignSelf: 'center', fontWeight: 700, flexShrink: 0, display: { xs: 'none', md: 'inline-flex' },
-                              ...(!(inscriptions[a.id] && inscriptions[a.id] !== 'erreur') && { borderColor: '#D1D5DB', color: 'text.secondary' }),
+                              ...(!(inscriptions[a.id] && inscriptions[a.id] !== 'erreur') && { borderColor: 'divider', color: 'text.secondary' }),
                               ...(String(inscriptions[a.id] ?? '').startsWith('attente') && { bgcolor: '#F5A623', '&:hover': { bgcolor: '#D97706' } }),
                               ...(inscriptions[a.id] === 'confirme' && { bgcolor: '#1FAF72', '&:hover': { bgcolor: '#179963' } }),
                             }}
@@ -324,7 +324,7 @@ function BilansPasses() {
                 </Typography>
                 {e.note_moyenne && (
                   <Chip label={`★ ${e.note_moyenne}/5 · ${e.nb_retours} avis`} size="small"
-                    sx={{ bgcolor: '#FFF6E0', color: '#B45309', fontWeight: 800, height: 24 }} />
+                    sx={{ bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(245,166,35,.14)' : '#FFF6E0', color: (theme) => theme.palette.mode === 'dark' ? '#F5A623' : '#B45309', fontWeight: 800, height: 24 }} />
                 )}
               </Box>
               {e.bilan && (
@@ -338,7 +338,7 @@ function BilansPasses() {
                     </Typography>
                   )}
                   {e.bilan.points_ameliorer && (
-                    <Typography variant="caption" sx={{ display: 'block', mt: 0.4, color: '#B45309', fontWeight: 700 }}>
+                    <Typography variant="caption" sx={{ display: 'block', mt: 0.4, color: (theme) => theme.palette.mode === 'dark' ? '#F5A623' : '#B45309', fontWeight: 700 }}>
                       À améliorer : {e.bilan.points_ameliorer}
                     </Typography>
                   )}
@@ -362,7 +362,7 @@ function SqueletteActivites() {
         </Typography>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
           {[1, 2, 3, 4].map((i) => (
-            <Box key={i} sx={{ height: 110, bgcolor: '#F5F5F5', borderRadius: 3 }} />
+            <Box key={i} sx={{ height: 110, bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,.06)' : '#F5F5F5', borderRadius: 3 }} />
           ))}
         </Box>
       </Container>

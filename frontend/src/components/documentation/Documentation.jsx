@@ -97,7 +97,7 @@ export default function Documentation() {
                       px: { xs: 2, md: 2.6 }, py: 2, textAlign: 'left', cursor: 'pointer',
                       bgcolor: 'transparent', border: 'none', fontFamily: 'inherit',
                       transition: 'background 160ms ease',
-                      '&:hover': { bgcolor: '#F6FBF9' },
+                      '&:hover': { bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(154,251,215,.06)' : '#F6FBF9' },
                     }}
                   >
                     <Box sx={{
@@ -141,7 +141,7 @@ export default function Documentation() {
                             borderRadius: '12px',
                             textDecoration: 'none',
                             transition: 'background 150ms ease',
-                            '&:hover': { bgcolor: '#EDF7F1' },
+                            '&:hover': { bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(154,251,215,.08)' : '#EDF7F1' },
                             '&:hover .doc-ouvrir': { opacity: 1, transform: 'translateX(0)' },
                           }}
                         >
@@ -201,7 +201,7 @@ export default function Documentation() {
                 return (
                   <Box key={cr.id} sx={{ bgcolor: (theme) => theme.palette.background.paper, borderRadius: '14px', border: '1px solid', borderColor: 'divider', overflow: 'hidden' }}>
                     <Box onClick={() => setCrOuvert(ouvert ? null : cr.id)}
-                      sx={{ display: 'flex', gap: 1.4, alignItems: 'center', px: 2.2, py: 1.5, cursor: 'pointer', '&:hover': { bgcolor: '#F6FBF9' } }}>
+                      sx={{ display: 'flex', gap: 1.4, alignItems: 'center', px: 2.2, py: 1.5, cursor: 'pointer', '&:hover': { bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(154,251,215,.06)' : '#F6FBF9' } }}>
                       <Box sx={{ width: 38, height: 38, borderRadius: '10px', flexShrink: 0, bgcolor: '#7B61FF12', border: '1px solid #7B61FF30', display: 'grid', placeItems: 'center' }}>
                         <IcMembres taille={18} couleur="#7B61FF" />
                       </Box>
@@ -217,7 +217,7 @@ export default function Documentation() {
                       <ExpandMoreIcon sx={{ fontSize: 20, color: '#9CA3AF', transform: ouvert ? 'rotate(180deg)' : 'none', transition: 'transform 200ms' }} />
                     </Box>
                     <Collapse in={ouvert} timeout={240} unmountOnExit>
-                      <Box sx={{ px: 2.2, pb: 2, pt: 0.5, borderTop: '1px solid #EEF2F0' }}>
+                      <Box sx={{ px: 2.2, pb: 2, pt: 0.5, borderTop: (theme) => `1px solid ${theme.palette.mode === 'dark' ? 'rgba(255,255,255,.1)' : '#EEF2F0'}` }}>
                         {cr.ordre_du_jour && (
                           <Typography variant="body2" sx={{ color: 'text.secondary', fontSize: '0.82rem', mb: 1, whiteSpace: 'pre-wrap' }}>
                             <strong>Ordre du jour —</strong> {cr.ordre_du_jour}

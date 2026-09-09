@@ -140,11 +140,11 @@ function CarteActu({ n, index }) {
 
                 <Box sx={{ p: 2.8, flex: 1, display: 'flex', flexDirection: 'column' }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap', mb: 1.2 }}>
-                    {n.image && <Chip label={n.tag} size="small" sx={{ bgcolor: '#F5F7F6', color: n.couleur, fontWeight: 800, fontSize: '0.66rem', height: 22 }} />}
+                    {n.image && <Chip label={n.tag} size="small" sx={{ bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(154,251,215,.07)' : '#F5F7F6', color: n.couleur, fontWeight: 800, fontSize: '0.66rem', height: 22 }} />}
                     <Chip
                       label={CELLULES_TAGGABLES.find((c) => c.id === n.cellule)?.label ?? 'Général'}
                       size="small"
-                      sx={{ bgcolor: '#F0F5F2', color: 'text.secondary', fontWeight: 700, fontSize: '0.64rem', height: 22 }}
+                      sx={{ bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(154,251,215,.07)' : '#F0F5F2', color: 'text.secondary', fontWeight: 700, fontSize: '0.64rem', height: 22 }}
                     />
                     <Typography variant="caption" sx={{ color: '#4B5563', fontWeight: 600, ml: 'auto' }}>
                       {new Date(n.date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
@@ -164,7 +164,7 @@ function CarteActu({ n, index }) {
                     </Button>
                   )}
 
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 2, pt: 1.6, borderTop: '1px solid #EEF2F0' }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 2, pt: 1.6, borderTop: (theme) => `1px solid ${theme.palette.mode === 'dark' ? 'rgba(255,255,255,.1)' : '#EEF2F0'}` }}>
                     <Avatar src={n.auteur_photo ?? undefined} sx={{
                       width: 26, height: 26, bgcolor: `${n.couleur}22`,
                       color: n.couleur, fontWeight: 800, fontSize: '0.7rem',
@@ -190,7 +190,7 @@ function CarteActu({ n, index }) {
                               px: 1, minWidth: 44, height: 44, fontSize: '0.95rem', cursor: 'pointer',
                               display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0.4,
                               transition: 'transform 140ms ease, background 140ms ease',
-                              '&:hover': { bgcolor: '#F6FBF9' },
+                              '&:hover': { bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(154,251,215,.06)' : '#F6FBF9' },
                               '&:focus-visible': { outline: '2px solid #1FAF72', outlineOffset: '2px' },
                             }}>
                             <span>{emoji}</span>
@@ -253,7 +253,7 @@ function CarteActu({ n, index }) {
                         <TextField size="small" fullWidth placeholder={user ? 'Écris un commentaire…' : 'Connecte-toi pour commenter'}
                           value={texte} onChange={(e) => setTexte(e.target.value.slice(0, 1000))}
                           onKeyDown={(e) => { if (e.key === 'Enter') commenter() }}
-                          sx={{ '& .MuiOutlinedInput-root': { borderRadius: '10px', bgcolor: '#F8FAF9' } }} />
+                          sx={{ '& .MuiOutlinedInput-root': { borderRadius: '10px', bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,.06)' : '#F8FAF9' } }} />
                         <Button size="small" variant="contained" onClick={commenter} disabled={!texte.trim() || envoi}
                           sx={{ bgcolor: '#1FAF72', '&:hover': { bgcolor: '#179963' }, fontWeight: 800, borderRadius: '10px', flexShrink: 0 }}>
                           {envoi ? '…' : 'OK'}

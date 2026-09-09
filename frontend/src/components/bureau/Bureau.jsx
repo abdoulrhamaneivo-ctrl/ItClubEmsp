@@ -285,8 +285,8 @@ function SqueletteBureau() {
           Le Bureau
         </Typography>
         <Box sx={{ display: 'grid', gap: 4, gridTemplateColumns: { xs: '1fr', md: '1.1fr 1fr' }, alignItems: 'center' }}>
-          <Box sx={{ height: 420, bgcolor: '#F5F5F5', borderRadius: '20px' }} />
-          <Box sx={{ height: 300, bgcolor: '#F5F5F5', borderRadius: '20px' }} />
+          <Box sx={{ height: 420, bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,.06)' : '#F5F5F5', borderRadius: '20px' }} />
+          <Box sx={{ height: 300, bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,.06)' : '#F5F5F5', borderRadius: '20px' }} />
         </Box>
       </Container>
     </Box>

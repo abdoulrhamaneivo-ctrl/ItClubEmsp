@@ -350,7 +350,7 @@ function ModaleCellule({ cellule, onClose }) {
             <Typography color="textSecondary" sx={{ lineHeight: 1.8, mb: 2.5 }}>
               {cellule.description}
             </Typography>
-            <Box sx={{ p: 3, bgcolor: '#F6FBF9', borderRadius: 3, border: '1px solid #E3EEE8' }}>
+            <Box sx={{ p: 3, bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(154,251,215,.06)' : '#F6FBF9', borderRadius: 3, border: (theme) => `1px solid ${theme.palette.mode === 'dark' ? 'rgba(255,255,255,.12)' : '#E3EEE8'}` }}>
               <Typography sx={{ fontWeight: 800, color: '#0F5B3A', mb: 1.5, fontSize: '0.9rem' }}>
                 Ce que tu y apprendras
               </Typography>
@@ -401,8 +401,8 @@ function SqueletteCellules() {
           Nos cellules
         </Typography>
         <Box sx={{ display: 'grid', gap: 3, gridTemplateColumns: { xs: '1fr', md: '1.15fr 1fr' } }}>
-          <Box sx={{ height: 420, bgcolor: '#F5F5F5', borderRadius: 4 }} />
-          <Box sx={{ height: 420, bgcolor: '#F5F5F5', borderRadius: 4 }} />
+          <Box sx={{ height: 420, bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,.06)' : '#F5F5F5', borderRadius: 4 }} />
+          <Box sx={{ height: 420, bgcolor: (theme) => theme.palette.mode === 'dark' ? 'rgba(255,255,255,.06)' : '#F5F5F5', borderRadius: 4 }} />
         </Box>
       </Container>
     </Box>
