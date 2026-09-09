@@ -329,6 +329,9 @@ export const api = {
     return postJson(endpoint, payload)
   },
   // Invitation : le membre choisit son mot de passe (lien email)
+  async getToutesPropositions() {
+    return fetchJson('/api/v1/propositions')
+  },
   async getPropositions(celluleSlug) {
     return fetchJson(`/api/v1/propositions?cellule=${celluleSlug}`)
   },

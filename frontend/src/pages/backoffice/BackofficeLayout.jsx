@@ -28,6 +28,7 @@ import Ateliers from './Ateliers'
 import Projets from './Projets'
 import Opportunites from './Opportunites'
 import CellulesAdmin from './CellulesAdmin'
+import Propositions from './Propositions'
 import Communication from './Communication'
 import Admin from './Admin'
 import Bilans from './Bilans'
@@ -300,6 +301,7 @@ export default function BackofficeLayout() {
                     m.path === 'dashboard' ? <Dashboard /> :
                     m.path === 'projets-suivi' ? <Projets /> :
                     m.path === 'cellules' ? <CellulesAdmin /> :
+                    m.path === 'propositions' ? <Propositions /> :
                     m.path === 'communication' ? <Communication /> :
                     m.path === 'opportunites' ? <Opportunites /> :
                     m.path === 'admin' ? <Admin /> :

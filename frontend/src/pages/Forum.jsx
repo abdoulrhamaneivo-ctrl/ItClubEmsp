@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import Box from '@mui/material/Box'
@@ -37,6 +38,7 @@ function dateCourte(iso) {
 
 export default function Forum() {
   const user = useAuth((s) => s.user)
+  const [params] = useSearchParams()
   const reduit = useReducedMotion()
   const modo = hasRole(user, ['P1', 'P5', 'ADMIN'])
   const bureau = hasRole(user, ['P1', 'P2', 'P3', 'P4', 'P5', 'P6', 'P7', 'P8', 'P9', 'P10', 'CHEF_CELLULE', 'ADMIN'])
@@ -59,6 +61,14 @@ export default function Forum() {
   const { data: projets = [] } = useQuery({
     queryKey: ['projets'], queryFn: () => api.getProjets(),
   })
+
+  // Arrivée depuis « Discussions de la cellule » : préfiltrer sur la cellule
+  const celluleDemandee = params.get('cellule')
+  useEffect(() => {
+    if (!celluleDemandee || cellules.length === 0) return
+    const c = cellules.find((x) => x.slug === celluleDemandee)
+    if (c) setEspace(`cellule:${c.id}`)
+  }, [celluleDemandee, cellules])
 
   const notify = (t, m) => { setMessage({ t, m }); setTimeout(() => setMessage(null), 4000) }
 

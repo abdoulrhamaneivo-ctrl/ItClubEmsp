@@ -139,7 +139,7 @@ class CompteRendu(models.Model):
 class Proposition(models.Model):
     """Proposition d'un membre à sa cellule : idée d'atelier, de projet, d'amélioration.
     Statut suivi par le chef de cellule (P3/P4/P5...)."""
-    STATUTS = [('proposee', 'Proposée'), ('examinee', 'À létude'),
+    STATUTS = [('proposee', 'Proposée'), ('examinee', 'À l’étude'),
                ('adoptee', 'Adoptée'), ('refusee', 'Non retenue')]
     cellule = models.ForeignKey('accounts.Cellule', on_delete=models.CASCADE,
                                 related_name='propositions')

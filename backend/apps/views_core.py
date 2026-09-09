@@ -826,8 +826,15 @@ def propositions_cellule(request):
     if request.method == 'GET':
         slug = request.query_params.get('cellule')
         if not slug:
-            return Response({'detail': 'Paramètre cellule requis.'}, status=status.HTTP_400_BAD_REQUEST)
-        qs = Proposition.objects.filter(cellule__slug=slug).select_related('auteur', 'cellule')
+            if not request.user.is_staff:
+                return Response({'detail': 'Paramètre cellule requis.'}, status=status.HTTP_400_BAD_REQUEST)
+            qs = Proposition.objects.select_related('auteur', 'cellule')  # staff : tout voir
+        else:
+            qs = Proposition.objects.filter(cellule__slug=slug)
+        qs = qs.select_related('auteur', 'cellule')
+        statut = request.query_params.get('statut')
+        if statut:
+            qs = qs.filter(statut=statut)
         return Response(PropositionSerializer(qs, many=True).data)
 
     # POST

@@ -7,7 +7,7 @@
 import {
   Megaphone, LayoutDashboard, FolderKanban, ListChecks, FileSignature,
   BookUser, Users2, Share2, CalendarClock, QrCode, Newspaper,
-  ClipboardPen, Target, CalendarRange, Presentation, ShieldCheck,
+  ClipboardPen, Target, CalendarRange, Presentation, ShieldCheck, Lightbulb,
 } from 'lucide-react'
 
 export const modulesBackoffice = [
@@ -18,6 +18,7 @@ export const modulesBackoffice = [
   { path: 'comptes-rendus', label: 'Comptes rendus', roles: ['P3', 'P1'], desc: 'Rédiger, valider, publier ; convocations H-48h.', Icone: FileSignature },
   { path: 'registre-membres', label: 'Registre membres', roles: ['P3', 'P4'], desc: 'Registre complet, validation des candidatures.', Icone: BookUser },
   { path: 'cellules', label: 'Cellules', roles: ['P4'], desc: 'Créer les cellules, nommer les chefs.', Icone: Users2 },
+  { path: 'propositions', label: 'Propositions', roles: ['P1', 'P2', 'P4', 'ADMIN'], desc: 'Les idées des membres de chaque cellule — examiner, adopter, refuser.', Icone: Lightbulb },
   { path: 'communication', label: 'Communication', roles: ['P5'], desc: 'Affiches, galerie, calendrier éditorial, réseaux sociaux.', Icone: Share2 },
   { path: 'evenements', label: 'Événements', roles: ['P6'], desc: 'Fiches, checklists, places, retours, bilans.', Icone: CalendarClock },
   { path: 'bilans', label: 'Retours & bilans', roles: ['P6'], desc: 'Avis des membres après l\'activité, bilan publié sur la vitrine.', Icone: CalendarClock },

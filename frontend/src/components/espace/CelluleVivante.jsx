@@ -13,7 +13,7 @@ import { api } from '../../lib/api'
 
 const STATUTS = {
   proposee: { label: 'Proposée', couleur: '#F5A623' },
-  examinee: { label: 'À l\u2019étude', couleur: '#2563EB' },
+  examinee: { label: 'À l’étude', couleur: '#2563EB' },
   adoptee: { label: 'Adoptée ✓', couleur: '#1FAF72' },
   refusee: { label: 'Non retenue', couleur: '#B42318' },
 }
